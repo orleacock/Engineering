@@ -26,9 +26,11 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-_HOM_ROOT = Path(__file__).resolve().parents[3]
-if str(_HOM_ROOT / "scripts") not in sys.path:
-    sys.path.insert(0, str(_HOM_ROOT / "scripts"))
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_HOM_ROOT = _SCRIPT_DIR.parents[2]
+for _p in (str(_SCRIPT_DIR), str(_HOM_ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
 
 VAULT_TEMPLATES_DIR = _HOM_ROOT / "templates" / "diagrams"

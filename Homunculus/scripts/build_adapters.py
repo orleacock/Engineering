@@ -24,6 +24,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import sys
@@ -41,16 +42,20 @@ RULE_ORDER = (
     "verifiable-accuracy.md",
     "data-and-credential-safety.md",
 )
+MAX_AGENTS_MD_BYTES = 24_000
+TARGET_AGENTS_MD_BYTES = 22_500
+_RE_SKILL_BOILERPLATE_PREFIX = re.compile(
+    r"^(?:Optional side-loaded Drop-In add-on skill(?:\s+for)?\.?\s*|"
+    r"Use this skill (?:whenever|when|to)\s+|"
+    r"Use whenever\s+|"
+    r"Activate (?:this skill )?(?:on Turn 1 )?whenever\s+)",
+    re.IGNORECASE,
+)
 
 
 def _strip_yaml_frontmatter(text: str) -> str:
     """Strip leading YAML frontmatter (`--- ... ---`) for harnesses expecting plain Markdown bodies."""
-    lines = text.splitlines()
-    if lines and lines[0].strip() == "---":
-        for idx in range(1, len(lines)):
-            if lines[idx].strip() == "---":
-                return "\n".join(lines[idx + 1 :]).strip()
-    return text.strip()
+    return homunculus_paths.strip_yaml_frontmatter(text)
 
 
 def _load_ordered_rules(fw_root: Path) -> list[tuple[str, Path, str]]:
@@ -78,25 +83,9 @@ def _discover_skills_and_addons(fw_root: Path) -> tuple[list[dict[str, str]], li
         for skill_md in sorted(base.glob("*/SKILL.md")):
             s_dir = skill_md.parent
             txt = skill_md.read_text(encoding="utf-8")
-            name = s_dir.name
-            desc = ""
-            lines = txt.splitlines()
-            if lines and lines[0].strip() == "---":
-                in_desc = False
-                for ln in lines[1:]:
-                    if ln.strip() == "---":
-                        break
-                    if ln.startswith("name:"):
-                        name = ln.split(":", 1)[1].strip().strip("\"'")
-                    elif ln.startswith("description:"):
-                        val = ln.split(":", 1)[1].strip()
-                        if val not in (">-", ">", "|", "|-"):
-                            desc = val.strip("\"'")
-                        in_desc = True
-                    elif in_desc and (ln.startswith("  ") or ln.startswith("\t")):
-                        desc = (desc + " " + ln.strip()).strip()
-                    elif in_desc:
-                        in_desc = False
+            fm, _body, _start = homunculus_paths.parse_frontmatter_full(txt)
+            name = str(fm.get("name") or s_dir.name).strip()
+            desc = str(fm.get("description") or "").strip()
             items.append({
                 "name": name,
                 "folder": s_dir.name,
@@ -108,12 +97,45 @@ def _discover_skills_and_addons(fw_root: Path) -> tuple[list[dict[str, str]], li
     return _scan_dir(fw_root / "skills"), _scan_dir(fw_root / "addons")
 
 
+def _compact_trigger_summary(desc: str, max_chars: int = 80) -> str:
+    """Extract a concise trigger summary from SKILL.md frontmatter description."""
+    cleaned = " ".join(desc.split())
+    cleaned = _RE_SKILL_BOILERPLATE_PREFIX.sub("", cleaned).strip()
+    if cleaned:
+        cleaned = cleaned[0].upper() + cleaned[1:]
+    first_sent = cleaned.split(". ", 1)[0].rstrip(".")
+    if len(first_sent) <= max_chars:
+        return first_sent + "."
+    clipped = first_sent[:max_chars].rsplit(" ", 1)[0].rstrip(",;:")
+    return clipped + "..."
+
+
 def _render_skill_index_markdown(
     active_skills: list[dict[str, str]],
     dormant_addons: list[dict[str, str]],
     rel_prefix: str = "<HOMUNCULUS_ROOT>",
+    *,
+    compact: bool = False,
 ) -> str:
-    lines: list[str] = [
+    if compact:
+        lines: list[str] = [
+            "## On-Demand Skill Runbooks (`skills/` & `addons/` — Read Before Invoking CLIs)",
+        ]
+        if active_skills:
+            for s in active_skills:
+                summary = _compact_trigger_summary(s["description"], max_chars=46)
+                lines.append(f"- `{rel_prefix}/{s['rel_path']}`: {summary}")
+        else:
+            lines.append("- *(Core skills populate in `skills/*/SKILL.md`)*")
+        if dormant_addons:
+            for a in dormant_addons:
+                summary = _compact_trigger_summary(a["description"], max_chars=46)
+                lines.append(f"- `{rel_prefix}/{a['rel_path']}` *(dormant; copy to `skills/`)*: {summary}")
+        else:
+            lines.append("- *(No dormant add-ons currently installed)*")
+        return "\n".join(lines)
+
+    lines = [
         "## Modular On-Demand Skills & Side-Loaded Add-Ons",
         "",
         "Read the relevant `SKILL.md` runbook before executing specialized workflows (never guess CLI flags):",
@@ -139,16 +161,16 @@ def _render_skill_index_markdown(
 
 
 def render_agents_md(fw_root: Path, rel_prefix: str = "<HOMUNCULUS_ROOT>") -> str:
-    """Render Universal AGENTS.md combining the Governing Priority Law, 3 Core Rules, and Skill Index."""
+    """Render Universal AGENTS.md combining the Governing Priority Law, 3 Core Rules, and compact Skill Index."""
     rules = _load_ordered_rules(fw_root)
     skills, addons = _discover_skills_and_addons(fw_root)
     parts: list[str] = [
         "# AGENTS.md — Homunculus Co-Engineering & Verification Framework",
         "",
         "> **Supreme Governing Priority Hierarchy (`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`)**",
-        "> This workspace is governed by **Homunculus**. Every response, code edit, documentation update, and tool invocation must strictly obey the 3 Core Engineering Rules and on-demand Skill Runbooks below.",
+        "> This workspace is governed by **Homunculus**. Obey all 3 Core Engineering Rules and on-demand Skill Runbooks below.",
         "",
-        _render_skill_index_markdown(skills, addons, rel_prefix=rel_prefix),
+        _render_skill_index_markdown(skills, addons, rel_prefix=rel_prefix, compact=True),
         "",
         "---",
     ]
@@ -156,7 +178,14 @@ def render_agents_md(fw_root: Path, rel_prefix: str = "<HOMUNCULUS_ROOT>") -> st
         replaced = text.replace("<HOMUNCULUS_ROOT>", rel_prefix)
         parts.append(replaced)
         parts.append("\n---")
-    return "\n".join(parts).rstrip() + "\n"
+    rendered = "\n".join(parts).rstrip() + "\n"
+    rendered_bytes = len(rendered.encode("utf-8"))
+    if rendered_bytes > MAX_AGENTS_MD_BYTES:
+        raise ValueError(
+            f"Rendered AGENTS.md is {rendered_bytes} UTF-8 bytes, exceeding the "
+            f"{MAX_AGENTS_MD_BYTES}-byte platform truncation cap."
+        )
+    return rendered
 
 
 def render_claude_md(fw_root: Path, rel_prefix: str = "<HOMUNCULUS_ROOT>") -> str:
@@ -176,7 +205,7 @@ def render_claude_md(fw_root: Path, rel_prefix: str = "<HOMUNCULUS_ROOT>") -> st
         "  - `[deep]` / `'pro'` (complex synthesis / Mode A-B1 / adversarial audit) $\\rightarrow$ Claude **`opus`**",
         "- **Zero Per-Edit Hooks**: Do not run `--sync-visuals` or `.svg` diagram renders after intermediate file edits; execute the `pre-commit-gate` (`X -> Y -> Z`) sequence once prior to `git commit`.",
         "",
-        _render_skill_index_markdown(skills, addons, rel_prefix=rel_prefix),
+        _render_skill_index_markdown(skills, addons, rel_prefix=rel_prefix, compact=True),
         "",
         "---",
     ]
@@ -368,6 +397,7 @@ def apply_workspace_adapters(
     install_git_hooks: bool = False,
     package_cowork_zips: bool = False,
     global_agy_config_dir: Path | None = None,
+    include_agents_md: bool = False,
 ) -> dict[str, Any]:
     """Install selected client adapters, context-ignore files, and optional Git hooks into workspace_dir."""
     workspace_dir = workspace_dir.resolve()
@@ -426,7 +456,10 @@ def apply_workspace_adapters(
                     )
                     installed_files.append(str(dst_ig))
 
-    if "agents_md" in clients:
+    write_agents_md = "agents_md" in clients and (
+        include_agents_md or "antigravity" not in clients
+    )
+    if write_agents_md:
         agents_out = workspace_dir / "AGENTS.md"
         agents_out.write_text(render_agents_md(fw_root, rel_prefix=rel_fw), encoding="utf-8")
         installed_files.append(str(agents_out))
@@ -487,10 +520,13 @@ def apply_workspace_adapters(
                     shutil.rmtree(existing)
                 else:
                     existing.unlink()
+        shared_paths_py = fw_root / "scripts" / "homunculus_paths.py"
         for skill_dir in sorted((fw_root / "skills").glob("*")):
             if (skill_dir / "SKILL.md").is_file():
                 dst = ws_agents_skills / skill_dir.name
-                _link_or_copy(skill_dir, dst, prefer_copy=prefer_copy)
+                mode = _link_or_copy(skill_dir, dst, prefer_copy=prefer_copy)
+                if mode == "copy" and (dst / "scripts").is_dir() and shared_paths_py.is_file():
+                    shutil.copy2(shared_paths_py, dst / "scripts" / "homunculus_paths.py")
                 installed_files.append(str(dst))
 
         if global_agy_config_dir is not None:
@@ -504,7 +540,9 @@ def apply_workspace_adapters(
             for s_dir in sorted((fw_root / "skills").glob("*")):
                 if (s_dir / "SKILL.md").is_file():
                     dst_s = g_cfg / "skills" / s_dir.name
-                    _link_or_copy(s_dir, dst_s, prefer_copy=prefer_copy)
+                    mode_s = _link_or_copy(s_dir, dst_s, prefer_copy=prefer_copy)
+                    if mode_s == "copy" and (dst_s / "scripts").is_dir() and shared_paths_py.is_file():
+                        shutil.copy2(shared_paths_py, dst_s / "scripts" / "homunculus_paths.py")
                     installed_files.append(str(dst_s))
             if (fw_root / "hooks" / "hooks.json").is_file():
                 dst_h = g_cfg / "hooks.json"
@@ -514,6 +552,7 @@ def apply_workspace_adapters(
     if "claude_cowork" in clients and package_cowork_zips:
         zip_out_dir = workspace_dir / ".homunculus_cowork_bundles"
         zip_out_dir.mkdir(parents=True, exist_ok=True)
+        shared_paths_py = fw_root / "scripts" / "homunculus_paths.py"
         for s_dir in sorted((fw_root / "skills").glob("*")):
             if not (s_dir / "SKILL.md").is_file():
                 continue
@@ -523,6 +562,8 @@ def apply_workspace_adapters(
                     if f.is_file() and "__pycache__" not in f.parts:
                         arcname = f"{s_dir.name}/{f.relative_to(s_dir).as_posix()}"
                         zf.write(f, arcname=arcname)
+                if (s_dir / "scripts").is_dir() and shared_paths_py.is_file():
+                    zf.write(shared_paths_py, arcname=f"{s_dir.name}/scripts/homunculus_paths.py")
             installed_files.append(str(z_path))
 
     if install_git_hooks and (workspace_dir / ".git" / "hooks").is_dir():
@@ -593,6 +634,11 @@ def main(argv: list[str] | None = None) -> int:
         "--global-agy-config-dir",
         help="Optional Antigravity config directory (e.g. ~/.gemini/config) to link/copy rules and skills into.",
     )
+    parser.add_argument(
+        "--include-agents-md",
+        action="store_true",
+        help="Also generate workspace AGENTS.md when 'antigravity' is active under --client all.",
+    )
     parser.add_argument("--json", action="store_true", help="Emit JSON output.")
     args = parser.parse_args(argv)
 
@@ -622,6 +668,7 @@ def main(argv: list[str] | None = None) -> int:
         install_git_hooks=args.install_git_hooks,
         package_cowork_zips=args.package_cowork_zips,
         global_agy_config_dir=agy_cfg,
+        include_agents_md=args.include_agents_md,
     )
     if args.json:
         print(json.dumps(result, indent=2))

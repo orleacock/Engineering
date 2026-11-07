@@ -18,11 +18,21 @@ from __future__ import annotations
 
 import argparse
 import ast
+import importlib.util
 import json
+import os
 import re
 import sys
 from pathlib import Path
 from typing import Any
+
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_HOM_ROOT = _SCRIPT_DIR.parents[2]
+for _p in (str(_SCRIPT_DIR), str(_HOM_ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+import homunculus_paths  # noqa: E402
 
 STOPWORDS = {
     "the", "and", "for", "with", "that", "this", "from", "into", "when", "whenever",
@@ -33,11 +43,15 @@ STOPWORDS = {
     "every", "both", "other", "such", "where", "which", "while", "also", "more",
 }
 
-ALLOWED_PLACEHOLDER_USERS: frozenset[str] = frozenset(
-    {"user", "username", "your_user", "your-user", "engineer", "developer", "example"}
+ALLOWED_PLACEHOLDER_USERS: frozenset[str] = homunculus_paths.ALLOWED_PLACEHOLDER_USERS
+RE_POSIX_HOME = homunculus_paths.RE_POSIX_HOME
+RE_WIN_USERS = homunculus_paths.RE_WIN_USERS
+
+MAX_RULE_FILE_BYTES = 24_000
+TARGET_AGENTS_MD_BYTES = 22_500
+MISNAMED_RULE_FILENAMES: frozenset[str] = frozenset(
+    {"Agent.md", "Agents.md", "agents.md", "Gemini.md", "gemini.md"}
 )
-RE_POSIX_HOME = re.compile(r"(?<![A-Za-z0-9_])/(?:home|Users)/([A-Za-z0-9._-]+)")
-RE_WIN_USERS = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z]:\\\\?Users\\\\?([A-Za-z0-9._-]+)", re.IGNORECASE)
 
 
 def resolve_default_root() -> Path:
@@ -51,30 +65,8 @@ def resolve_default_root() -> Path:
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], int]:
     """Parse YAML frontmatter and return (fields_dict, body_start_line_1based)."""
-    lines = text.splitlines()
-    if not lines or lines[0].strip() != "---":
-        return {}, 1
-    fields: dict[str, str] = {}
-    current_key: str | None = None
-    end_idx = 0
-    for idx in range(1, len(lines)):
-        line = lines[idx]
-        if line.strip() == "---":
-            end_idx = idx
-            break
-        m = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", line)
-        if m:
-            current_key = m.group(1).strip()
-            val = m.group(2).strip()
-            if val in (">-", ">", "|", "|-"):
-                fields[current_key] = ""
-            else:
-                fields[current_key] = val.strip("\"'")
-        elif current_key and (line.startswith("  ") or line.startswith("\t")):
-            fields[current_key] = (fields[current_key] + " " + line.strip()).strip()
-    if end_idx == 0:
-        return {}, 1
-    return fields, end_idx + 2
+    fields, _body, start_line = homunculus_paths.parse_frontmatter_full(text)
+    return {k: str(v) for k, v in fields.items()}, start_line
 
 
 def strip_markdown_formatting(text: str) -> str:
@@ -629,6 +621,17 @@ def run_audit(
     )
     all_referenced_scripts: set[Path] = set()
     for r in rules:
+        r_bytes = len(r["text"].encode("utf-8"))
+        if r_bytes > MAX_RULE_FILE_BYTES:
+            load_bearing_defects.append({
+                "category": "[LOAD-BEARING DEFECT]",
+                "code": "RULE_BYTE_CAP_EXCEEDED",
+                "location": f"{r['path']}#L1-L5",
+                "summary": (
+                    f"Global rule `{r['name']}` is {r_bytes} UTF-8 bytes, exceeding the "
+                    f"{MAX_RULE_FILE_BYTES}-byte platform truncation cap."
+                ),
+            })
         if not r["frontmatter"].get("trigger"):
             load_bearing_defects.append({
                 "category": "[LOAD-BEARING DEFECT]",
@@ -657,11 +660,137 @@ def run_audit(
             "rule": r["name"],
             "path": str(r["path"]),
             "trigger": r["frontmatter"].get("trigger", "always_on"),
+            "bytes": r_bytes,
             "lines": r["lines"],
             "words": r["words"],
             "est_tokens": r["est_tokens"],
             "scripts_referenced": len(r["referenced_scripts"]),
         })
+
+    # Audit case-exact filenames, byte caps, frontmatter polarity, and adapter sync drift
+    adapters_dir = root / "adapters"
+    case_scan_dirs: list[Path] = [root]
+    if adapters_dir.is_dir():
+        for dirpath, _dirnames, _filenames in os.walk(adapters_dir):
+            case_scan_dirs.append(Path(dirpath))
+    for c_dir in case_scan_dirs:
+        try:
+            dir_entries = sorted(os.listdir(c_dir))
+        except OSError:
+            continue
+        for fname in dir_entries:
+            if fname in MISNAMED_RULE_FILENAMES:
+                bad_case_path = c_dir / fname
+                load_bearing_defects.append({
+                    "category": "[LOAD-BEARING DEFECT]",
+                    "code": "MISNAMED_AGENTS_MD_CASE",
+                    "location": f"{bad_case_path}#L1-L1",
+                    "summary": (
+                        f"Case-variant rule file `{fname}` fails case-sensitive loader discovery "
+                        "(must be uppercase `AGENTS.md` or `GEMINI.md`)."
+                    ),
+                })
+
+    for root_rule_name in ("AGENTS.md", "GEMINI.md"):
+        root_rule_path = root / root_rule_name
+        if root_rule_path.is_file():
+            rr_bytes = len(root_rule_path.read_bytes())
+            if rr_bytes > MAX_RULE_FILE_BYTES:
+                load_bearing_defects.append({
+                    "category": "[LOAD-BEARING DEFECT]",
+                    "code": "RULE_BYTE_CAP_EXCEEDED",
+                    "location": f"{root_rule_path}#L1-L5",
+                    "summary": (
+                        f"Workspace `{root_rule_name}` is {rr_bytes} UTF-8 bytes, exceeding the "
+                        f"{MAX_RULE_FILE_BYTES}-byte platform truncation cap."
+                    ),
+                })
+
+    if adapters_dir.is_dir():
+        adapter_agents_md = adapters_dir / "agents_md" / "AGENTS.md"
+        adapter_claude_md = adapters_dir / "claude_code" / "CLAUDE.md"
+        adapter_cursor_dir = adapters_dir / "cursor" / "rules"
+
+        if adapter_agents_md.is_file():
+            ag_bytes = len(adapter_agents_md.read_bytes())
+            if ag_bytes > TARGET_AGENTS_MD_BYTES:
+                load_bearing_defects.append({
+                    "category": "[LOAD-BEARING DEFECT]",
+                    "code": "RULE_BYTE_CAP_EXCEEDED",
+                    "location": f"{adapter_agents_md}#L1-L5",
+                    "summary": (
+                        f"Generated `adapters/agents_md/AGENTS.md` is {ag_bytes} UTF-8 bytes, exceeding the "
+                        f"{TARGET_AGENTS_MD_BYTES}-byte safety ceiling ({MAX_RULE_FILE_BYTES}-byte hard cap)."
+                    ),
+                })
+
+        for plain_adapter in (adapter_agents_md, adapter_claude_md):
+            if plain_adapter.is_file():
+                p_text = plain_adapter.read_text(encoding="utf-8", errors="replace")
+                if p_text.lstrip().startswith("---"):
+                    load_bearing_defects.append({
+                        "category": "[LOAD-BEARING DEFECT]",
+                        "code": "INVALID_ADAPTER_FRONTMATTER_POLARITY",
+                        "location": f"{plain_adapter}#L1-L5",
+                        "summary": (
+                            f"`{plain_adapter.relative_to(root).as_posix()}` starts with YAML frontmatter `---` "
+                            "(plain Markdown body required for AGENTS.md / CLAUDE.md)."
+                        ),
+                    })
+
+        if adapter_cursor_dir.is_dir():
+            for mdc_file in sorted(adapter_cursor_dir.glob("*.mdc")):
+                mdc_text = mdc_file.read_text(encoding="utf-8", errors="replace")
+                mdc_fm, _ = parse_frontmatter(mdc_text)
+                if not mdc_text.startswith("---") or str(mdc_fm.get("alwaysApply", "")).lower() != "true":
+                    load_bearing_defects.append({
+                        "category": "[LOAD-BEARING DEFECT]",
+                        "code": "INVALID_ADAPTER_FRONTMATTER_POLARITY",
+                        "location": f"{mdc_file}#L1-L6",
+                        "summary": (
+                            f"Cursor rule `{mdc_file.name}` is missing leading YAML frontmatter with `alwaysApply: true`."
+                        ),
+                    })
+
+        build_adapters_py = root / "scripts" / "build_adapters.py"
+        if build_adapters_py.is_file() and not target_skill:
+            try:
+                spec = importlib.util.spec_from_file_location("_homunculus_adapter_drift_probe", build_adapters_py)
+                if spec is not None and spec.loader is not None:
+                    ba_mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(ba_mod)
+                    expected_pairs: list[tuple[Path, str]] = []
+                    try:
+                        expected_pairs.append((adapter_agents_md, ba_mod.render_agents_md(root, rel_prefix="Homunculus")))
+                    except ValueError as exc:
+                        load_bearing_defects.append({
+                            "category": "[LOAD-BEARING DEFECT]",
+                            "code": "RULE_BYTE_CAP_EXCEEDED",
+                            "location": f"{adapter_agents_md}#L1-L5",
+                            "summary": f"`render_agents_md()` failed byte-cap check: {exc}",
+                        })
+                    expected_pairs.append((adapter_claude_md, ba_mod.render_claude_md(root, rel_prefix="Homunculus")))
+                    for mdc_name, mdc_expected in ba_mod.render_cursor_mdc_files(root, rel_prefix="Homunculus").items():
+                        expected_pairs.append((adapter_cursor_dir / mdc_name, mdc_expected))
+
+                    for disk_path, expected_content in expected_pairs:
+                        if not disk_path.is_file() or disk_path.read_text(encoding="utf-8", errors="replace") != expected_content:
+                            load_bearing_defects.append({
+                                "category": "[LOAD-BEARING DEFECT]",
+                                "code": "ADAPTER_STALE_DRIFT",
+                                "location": f"{disk_path}#L1-L1",
+                                "summary": (
+                                    f"Adapter `{disk_path.relative_to(root).as_posix()}` is missing or out of sync with `rules/` "
+                                    "(re-run `python3 scripts/build_adapters.py --build-repo-adapters`)."
+                                ),
+                            })
+            except Exception as exc:
+                load_bearing_defects.append({
+                    "category": "[LOAD-BEARING DEFECT]",
+                    "code": "ADAPTER_STALE_DRIFT",
+                    "location": f"{build_adapters_py}#L1-L1",
+                    "summary": f"Failed to verify adapter parity via `build_adapters.py`: {exc}",
+                })
 
     # Rule-to-Rule overlap check (highest priority since always_on rules burn tokens on every turn)
     for i in range(len(rules)):

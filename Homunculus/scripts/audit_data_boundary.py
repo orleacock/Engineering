@@ -34,6 +34,12 @@ import subprocess
 import sys
 from typing import Any, Iterable
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import homunculus_paths  # noqa: E402
+
 ZERO_OID = "0" * 40
 MAX_FULL_SCAN_BYTES = 16 * 1024 * 1024
 STREAM_WINDOW_BYTES = 4 * 1024 * 1024
@@ -41,17 +47,7 @@ STREAM_OVERLAP_BYTES = 4096  # Strictly 4-byte aligned for UTF-16 / UTF-32
 STEP_NUMERIC_ENTITY_RE = re.compile(r"^#\d+\s*=\s*[A-Z0-9_]+\([0-9.,E+\-\s#()*]*\);\s*$")
 
 # Allowed placeholder usernames in documentation examples
-ALLOWED_PLACEHOLDER_USERS: frozenset[str] = frozenset(
-    {
-        "user",
-        "username",
-        "your_user",
-        "your-user",
-        "engineer",
-        "developer",
-        "example",
-    }
-)
+ALLOWED_PLACEHOLDER_USERS: frozenset[str] = homunculus_paths.ALLOWED_PLACEHOLDER_USERS
 
 # Universal Forbidden Filenames (All Compartments)
 UNIVERSAL_BAD_FILENAME_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
@@ -77,8 +73,8 @@ UNIVERSAL_SECRET_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("pem_or_openssh_private_key", re.compile(r"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----")),
 )
 
-RE_POSIX_HOME = re.compile(r"(?<![A-Za-z0-9_])/(?:home|Users)/([A-Za-z0-9._-]+)")
-RE_WIN_USERS = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z]:\\\\?Users\\\\?([A-Za-z0-9._-]+)", re.IGNORECASE)
+RE_POSIX_HOME = homunculus_paths.RE_POSIX_HOME
+RE_WIN_USERS = homunculus_paths.RE_WIN_USERS
 RE_AFFILIATE_PARAM = re.compile(r"(?:\?|&|\b)(?:affp|dt_id|aff_id|affiliate_id)=[A-Za-z0-9_-]+", re.IGNORECASE)
 RE_CANDIDATE_TOKENS = re.compile(r"[A-Za-z0-9._@=-]{6,64}")
 
@@ -86,23 +82,8 @@ CLEANROOM_DEFAULT_BAD_FILENAMES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("voice_corpus_export", re.compile(r"(^|/)corpus_inbox/(?!README\.md$|\.gitkeep$).+", re.IGNORECASE)),
 )
 
-# Upstream clean-room SHA-256 token digests (shared with audit_portability.py so zero plaintext identifiers exist in source)
-CLEANROOM_FORBIDDEN_SHA256: frozenset[str] = frozenset(
-    {
-        "006e859119a65852bcd4db4279a10462c3b4b910e940863f2a4a5598b11867c6",
-        "67534844ed84422fd1175541de8159dd5f341089b93971b84ca3a7bc5abdbfd7",
-        "fe5ef45dd1860bd3e49cf94307153e10cf45b9decea8f29ef54e9d6d5e212011",
-        "81651bb716e09cc0724f2fd881c268098d83b9c3ec1d6697aedb0f3aefe5084d",
-        "977aa0a5bc4be3b497fe31ff0db3185b2a502546a5d1e3eca50fbb7f1aa66baa",
-        "7df90d0bcfee1d2484228c0ca2e0279471587536a6bd42642d890beff4efdfbc",
-        "1e19681259d3cfe1e3ad46a7723e3e4535a9cac8ab5f96cac950b535f65b3c37",
-        "4deef0f5764e4bc89f4ac6c6f3fe473892b3e287d2dad15dd0c895b3f13b6370",
-        "802a5416dc59d7ac669bcf803e64b40b87187e475c7556cc4c4a45a37d79ff6a",
-        "129e9cc0d21b429986663b4e6cf6ee934fb3b9fea8834052ea57aca5fd03c357",
-        "bc696bc0c6719b23cd38d26010454e9ca9e6c744de6b3883cd9b39e2497617dc",
-        "adcadeec55be7018c3335a39f019fbe62f2497f1e7cc0e3022236e7269fb6176",
-    }
-)
+# Upstream clean-room SHA-256 token digests (shared with homunculus_paths.py so zero plaintext identifiers exist in source)
+CLEANROOM_FORBIDDEN_SHA256: frozenset[str] = homunculus_paths.CLEANROOM_FORBIDDEN_SHA256
 
 
 class BoundaryPolicy:

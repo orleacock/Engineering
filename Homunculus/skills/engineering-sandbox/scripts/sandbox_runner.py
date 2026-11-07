@@ -87,11 +87,12 @@ SHELL_PY_SNOOP_RE = re.compile(
     r"|\bpython3?(?:\.\d+)?\s+-c\b[^\n]*?(?:open|read_text)\s*\([^\n)]*?\.py\b)"
 )
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 SKILLS_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 HOMUNCULUS_ROOT = os.path.abspath(os.path.join(SKILLS_ROOT, ".."))
-if os.path.join(HOMUNCULUS_ROOT, "scripts") not in sys.path:
-    sys.path.insert(0, os.path.join(HOMUNCULUS_ROOT, "scripts"))
+for _p in (SCRIPT_DIR, os.path.join(HOMUNCULUS_ROOT, "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
 
 DEFAULT_AUDIT_DOCS_SCRIPT = os.path.join(SKILLS_ROOT, "doc-and-card-studio", "scripts", "audit_repo_docs.py")

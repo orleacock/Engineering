@@ -25,15 +25,16 @@ from typing import Dict, List, Optional, Tuple
 
 sys.dont_write_bytecode = True
 
-_HOM_ROOT = Path(__file__).resolve().parents[3]
-if str(_HOM_ROOT / "scripts") not in sys.path:
-    sys.path.insert(0, str(_HOM_ROOT / "scripts"))
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_HOM_ROOT = _SCRIPT_DIR.parents[2]
+for _p in (str(_SCRIPT_DIR), str(_HOM_ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
 
 DEFAULT_VAULT = "./memory"
 DEFAULT_REPOS_ROOT = "."
 
-FRONTMATTER_RE = re.compile(r"^---[ \t]*\n(.*?)\n---[ \t]*(?:\n|$)", re.DOTALL)
 VERTEX_PT_RE = re.compile(r"#(\d+)\s*=\s*VERTEX_POINT\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*\)")
 CARTESIAN_PT_RE = re.compile(
     r"#(\d+)\s*=\s*CARTESIAN_POINT\s*\(\s*'[^']*'\s*,\s*\(\s*([-\d.Ee+]+)\s*,\s*([-\d.Ee+]+)\s*,\s*([-\d.Ee+]+)\s*\)\s*\)"
@@ -71,19 +72,8 @@ STEM_SUFFIX_RE = re.compile(r"(?:\(\d+\)|\s*<\d+>)$")
 
 
 def parse_frontmatter(text: str) -> Dict[str, str]:
-    text = text.replace("\r\n", "\n")
-    m = FRONTMATTER_RE.match(text)
-    if not m:
-        return {}
-    meta: Dict[str, str] = {}
-    for line in m.group(1).splitlines():
-        if ":" in line and not line.startswith((" ", "\t", "-")):
-            k, v = line.split(":", 1)
-            val = v.strip()
-            if len(val) >= 2 and val[0] == val[-1] and val[0] in ('"', "'"):
-                val = val[1:-1].strip()
-            meta[k.strip()] = val
-    return meta
+    fields, _body, _line = homunculus_paths.parse_frontmatter_full(text)
+    return {k: str(v) for k, v in fields.items()}
 
 
 def normalize_part_stem(filename: str, repo_prefix: str = "") -> str:

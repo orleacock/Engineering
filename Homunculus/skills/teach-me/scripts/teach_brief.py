@@ -37,7 +37,9 @@ from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 HOMUNCULUS_ROOT = SCRIPT_DIR.parent.parent.parent
-sys.path.insert(0, str(HOMUNCULUS_ROOT / "scripts"))
+for _p in (str(SCRIPT_DIR), str(HOMUNCULUS_ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import homunculus_paths  # noqa: E402
 

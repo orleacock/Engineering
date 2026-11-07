@@ -4,7 +4,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
 tree_hash: "c299b4b2e81f"
-last_synced: "2026-11-06"
+last_synced: "2026-11-07"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -371,7 +371,7 @@ last_synced: "2026-11-06"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: ebab3e2bf224` | `Tree: 08c699da1d2b`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 87eee6ffc0fa` | `Tree: f73cd4360aed`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -462,6 +462,12 @@ last_synced: "2026-11-06"
 │   │   ├── scripts/
 │   │   │   └── inspect_hardware_ecosystem.py
 │   │   └── SKILL.md
+│   ├── teach-me/
+│   │   ├── references/
+│   │   │   └── brief_authoring_playbook.md
+│   │   ├── scripts/
+│   │   │   └── teach_brief.py
+│   │   └── SKILL.md
 │   └── visual-studio/
 │       ├── scripts/
 │       │   └── render_diagram.py
@@ -480,6 +486,7 @@ last_synced: "2026-11-06"
 │   │   │   └── Spatial_Topology_Blueprint.md
 │   │   └── Diagram_Palettes.json
 │   ├── hooks/
+│   │   ├── post-worktree-sync.sh
 │   │   ├── pre-commit.sh
 │   │   └── pre-push.sh
 │   ├── ignore/
@@ -497,11 +504,13 @@ last_synced: "2026-11-06"
 │   │   └── Task_Umbrella.md
 │   └── homunculus_safety.example.json
 ├── tests/
-│   ├── test_phase1_foundation.py
-│   ├── test_phase2a_data_safety.py
-│   ├── test_phase2b_adapters.py
-│   ├── test_phase3a_memory.py
-│   └── test_phase3b_skills.py
+│   ├── test_adapters.py
+│   ├── test_claim_verification.py
+│   ├── test_core_skills.py
+│   ├── test_data_safety.py
+│   ├── test_foundation.py
+│   ├── test_project_memory.py
+│   └── test_teach_me.py
 ├── .git/ (excluded)
 ├── .gitignore
 ├── HOMUNCULUS_START_HERE.md

@@ -4,13 +4,13 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
 note_type: "reference"
-last_synced: "2026-11-06"
+last_synced: "2026-11-07"
 ---
 
 # 🔬 Homunculus Workstation (`Engineering/Homunculus`) vs. Clean-Room (`Alchemical3D/Homunculus`) Validation & Promotion Diff Manifest
 
 > **Canonical Reference Role**: This document is the authoritative local validation and promotion ledger comparing the dogfooded **Parent Workstation Deployment** (`/home/orin/Projects/Engineering/Homunculus`) against the **Clean-Room Commercial Repository** (`/home/orin/Projects/Alchemical3D/Homunculus`).
-> **Current Synchronization State (`2026-11-06`)**: **`100%` BYTE-FOR-BYTE IDENTICAL (`91 / 91` files, `0` diff lines)** following the Section A–D architectural review (`Option A1`, `Option B1`, `Option C1`, `Option B2-Yes`) and CoW sandbox promotion (`SBX-20261106_104836-ab78d9a8` & `SBX-20261106_105046-6eb9123f`).
+> **Current Synchronization State (`2026-11-07`)**: **`100%` BYTE-FOR-BYTE IDENTICAL (`97 / 97` files, `0` diff lines)** following promotion of `skills/teach-me/`, the 7 functional domain test modules (`29/29` unit tests `OK`), the `Combination 1` live `Directory/` freshness spine, and the `LL-027` 2-Tier Single-Source Rule Diet (`co-engineering-partner.md` `7,303` B, `AGENTS.md` `21,880` B `<= 22,500` B, symlink/`prefer_copy`/`.zip` `homunculus_paths.py` resolution, and shared stdlib dedup; verified via `SBX-20261107_114357-f7c6405e`, `SBX-20261107_115321-71b82997`, and `SBX-20261107_115840-d0c27973`).
 > **Usage Law**: Consult and update this document whenever staging or promoting a new feature, bugfix, reference guide, or script from `/home/orin/Projects/Engineering/Homunculus` into `/home/orin/Projects/Alchemical3D/Homunculus`. *(For an optional, non-authoritative maintainer lookup of cross-skill couplings and naming hygiene, see [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md).)*
 
 ---
@@ -110,27 +110,11 @@ Whenever dogfooding a new capability in `/home/orin/Projects/Engineering/Homuncu
 
 ---
 
-## 5. Staged Local Expansion Queue (`Engineering/Homunculus` Only — Clean-Room Untouched Until Approved)
+## 5. Promoted Release Wave 2 (`2026-11-07` — `skills/teach-me/`, `Directory/` Freshness Spine, 7 Functional Test Modules & `LL-027` 2-Tier Rule Diet — `97 / 97` Parity)
 
-### Expansion Priority #1: Universal Engineering & Technical Learning Engine (`skills/teach-me/` — `Brief+` & Throw-Away Subagent Tutor) + Functional Naming & Rule-Trigger Hardening
-- **Current State (`2026-11-06T19:09-06:00`)**: Hardened, refactored onto 7 functional test modules (`27/27` `OK`), scrubbed of all internal build/migration tags (`0` matches), restored `trigger: always_on` Antigravity rule injection across `rules/*.md` + `.agents/rules/` (verified live via probe `c11064d3`), skill-hygiene verified (`0` defects, `~582` tok `teach-me` slash footprint), and CoW sandbox-verified (`SBX-20261106_190903-bcf1c394`: `Controls: 4/4 passed`, `+faults: 3/3 caught`, `Live Host Mutations: 0`) in `/home/orin/Projects/Engineering/Homunculus`.
-- **Clean-Room Isolation**: `/home/orin/Projects/Alchemical3D/Homunculus` remains **100% untouched** by `teach-me` and the `tests/` rename (`91` files) until explicit promotion approval.
-- **Staged Files in `/home/orin/Projects/Engineering/Homunculus` (`96` Total Tracked Files)**:
-  - **New Skill & Playbook Files (`+3`)**:
-    1. [`skills/teach-me/SKILL.md`](../../../Homunculus/skills/teach-me/SKILL.md) (`45L`) — Compact Primary-Thread delegation & quarantine gate (`~582` tok).
-    2. [`skills/teach-me/references/brief_authoring_playbook.md`](../../../Homunculus/skills/teach-me/references/brief_authoring_playbook.md) (`92L`) — Delegated subagent `Brief+` authoring, `[CALC]` dimensional unit pairings, and `--promote` playbook.
-    3. [`skills/teach-me/scripts/teach_brief.py`](../../../Homunculus/skills/teach-me/scripts/teach_brief.py) (`1033L`) — Pure-stdlib CLI (`--init-brief`, `--rename-clean`, `--verify`, `--list`, `--promote`), whole-word `<Subject>_on_<Impact>` slugging, `< 80`-col solid-line datasheet card rails (`┏━━ ... ━━┓` / `┗━━ ... ━━┛`), `THEORY_ZONE_EVASION_BLOCKED` guard, and `VRF-<12hex>` stamping.
-  - **Refactored Functional Test Modules (`7` Domain Suites Replacing `5` Legacy `test_phase*` Files)**:
-    1. [`tests/test_foundation.py`](../../../Homunculus/tests/test_foundation.py) (`92L` — replaces `test_phase1_foundation.py`)
-    2. [`tests/test_data_safety.py`](../../../Homunculus/tests/test_data_safety.py) (`152L` — replaces `test_phase2a_data_safety.py`)
-    3. [`tests/test_adapters.py`](../../../Homunculus/tests/test_adapters.py) (`196L` — replaces `test_phase2b_adapters.py`; adds non-destructive `.geminiignore` upgrade sync test)
-    4. [`tests/test_project_memory.py`](../../../Homunculus/tests/test_project_memory.py) (`289L` — replaces `test_phase3a_memory.py`)
-    5. [`tests/test_claim_verification.py`](../../../Homunculus/tests/test_claim_verification.py) (`391L` — split from `test_phase3b_skills.py`)
-    6. [`tests/test_core_skills.py`](../../../Homunculus/tests/test_core_skills.py) (`481L` — split from `test_phase3b_skills.py`)
-    7. [`tests/test_teach_me.py`](../../../Homunculus/tests/test_teach_me.py) (`385L` — dedicated `teach-me` + umbrella-org anti-hallucination regression suite)
-  - **Modified Core Engine, Rule, Doc & Adapter Files (`~14`)**:
-    1. [`scripts/homunculus_paths.py`](../../../Homunculus/scripts/homunculus_paths.py) (`341L`) — Resolves `study_briefs_root` (`HOMUNCULUS_BRIEFS_ROOT` -> `.homunculus.json` `study_briefs_dir` -> `<memory_root.parent>/study_briefs`).
-    2. [`scripts/build_adapters.py`](../../../Homunculus/scripts/build_adapters.py) (`626L`) — Strips YAML frontmatter (`_strip_yaml_frontmatter`) when rendering `AGENTS.md`, `CLAUDE.md`, and Cursor `.mdc` files; populates `<workspace>/.agents/rules/*.md` for `--client antigravity`; and non-destructively appends missing context-ignore rules (`**/study_briefs/*`, `!README.md`, `!.gitkeep`) into pre-existing `.geminiignore` / `.cursorignore` / `.claudeignore` files.
-    3. [`skills/claim-verification/scripts/verify_claims.py`](../../../Homunculus/skills/claim-verification/scripts/verify_claims.py) (`2998L`) — Innermost-outward git/project entity scoping (`_detect_entity`), compound prefix preservation (`_canonicalize_entity_token`), unambiguous 1-to-1 `dynamic_aliases` vs. fail-closed `ambiguous_umbrellas` (`CROSS_ENTITY_BORROWING` across sibling projects sharing `entity: "Alchemical-3D"` / `"Umbrella-Org"`), `authoritative: false` frontmatter exclusion, `STUDY_BRIEF_SOURCE_REJECTED` firewall, and `FIRST-PRINCIPLES-THEORY` dimensional math verification.
-    4. [`rules/co-engineering-partner.md`](../../../Homunculus/rules/co-engineering-partner.md), [`rules/verifiable-accuracy.md`](../../../Homunculus/rules/verifiable-accuracy.md), [`rules/data-and-credential-safety.md`](../../../Homunculus/rules/data-and-credential-safety.md), [`HOMUNCULUS_START_HERE.md`](../../../Homunculus/HOMUNCULUS_START_HERE.md), & [`docs/Commands_and_Prompts_Reference.md`](../../../Homunculus/docs/Commands_and_Prompts_Reference.md) — Added `trigger: always_on` frontmatter to all 3 global rules (`MISSING_RULE_TRIGGER_FRONTMATTER` enforced in `audit_skill_hygiene.py`) and registered `skills/teach-me/SKILL.md` + `teach_brief.py` CLI flags.
-    5. `templates/ignore/{.cursorignore,.claudeignore,.geminiignore}` & `adapters/{agents_md/AGENTS.md,claude_code/CLAUDE.md,cursor/rules/homunculus-co-engineering-partner.mdc}` — Synced ignore patterns and rebuilt reference client adapters.
+### Promoted & Verified (`SBX-20261107_105613-b210d998`, `SBX-20261107_114357-f7c6405e`, `SBX-20261107_115321-71b82997`, `SBX-20261107_115840-d0c27973`)
+- **Synchronization State (`2026-11-07T11:58-06:00`)**: **`100%` BYTE-FOR-BYTE IDENTICAL (`97 / 97` files, `0` diff lines)** across `/home/orin/Projects/Engineering/Homunculus` and `/home/orin/Projects/Alchemical3D/Homunculus` (`29/29` unit tests `OK`, `0` portability/boundary/hygiene/doc defects, `Post-Promotion Overlay Changes: +0 ~0 -0`).
+- **Promoted Wave 2 Highlights**:
+  - **2-Tier Single-Source Rule Diet & Byte-Cap Lock (`LL-027`)**: Condensed `rules/co-engineering-partner.md` to `7,303` B (`894` w; 3-rule `always_on` footprint cut `-42.3%` to `2,609` w / `~3,522` tok/turn), compacted the `AGENTS.md` skill index (`adapters/agents_md/AGENTS.md` = `21,880` B `<= 22,500` B ceiling / `24,000` B hard cap; `CLAUDE.md` = `22,547` B), suppressed workspace `AGENTS.md` double-injection when `antigravity` is active unless `--include-agents-md`, and enforced fail-closed `RULE_BYTE_CAP_EXCEEDED`, `MISNAMED_AGENTS_MD_CASE`, `INVALID_ADAPTER_FRONTMATTER_POLARITY`, and dynamic `ADAPTER_STALE_DRIFT` checks in `audit_skill_hygiene.py`.
+  - **Shared Stdlib Dedup + Symlink/`prefer_copy`/`.zip` Isolation**: Centralized `CLEANROOM_FORBIDDEN_SHA256` (`15` SHA-256 digests), `parse_frontmatter_full()`, `strip_yaml_frontmatter()`, and `decode_file_text()` in `scripts/homunculus_paths.py`; switched all skill scripts to `os.path.realpath(__file__)` / `Path(__file__).resolve()`; co-bundled `homunculus_paths.py` into Cowork `.zip` bundles and `prefer_copy=True` skill copies; and verified isolated `python3 -I` execution across symlinked, copied, and `.zip`-extracted scripts (`29/29` unit tests `OK`).
+  - **Promoted Core Skill (`skills/teach-me/`), `Directory/` Freshness Spine & 7 Domain Test Suites**: Promoted `skills/teach-me/{SKILL.md,references/brief_authoring_playbook.md,scripts/teach_brief.py}`, `templates/hooks/post-worktree-sync.sh`, and the 7 functional test modules (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, replacing the 5 legacy `test_phase*.py` files).

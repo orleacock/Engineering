@@ -13,10 +13,11 @@ This skill governs repository documentation structure, Markdown alert hygiene, r
 
 1. **Modular Documentation Architecture**:
    - Keep top-level `README.md` focused on project overview, quick-start navigation, and verified capability highlights while linking cleanly to modular sub-documents (`BOM.md`, `Assembly_Guide.md`, `Print_Settings.md`, `ALPHA_&_DIRECTION.md`, or `docs/*.md`).
-   - Load [`references/doc_templates.md`](references/doc_templates.md) on demand when scaffolding or unifying hardware, software, or catalog documentation.
+   - Read [`references/doc_templates.md`](references/doc_templates.md) **before** drafting `README.md`, `BOM.md`, `Print_Settings.md`, or `Assembly_Guide.md` (never scan unrelated sibling project repositories for style templates). Retain every canonical parameter row in the template (e.g., `Nozzle Diameter`, `Layer Height`, `Extrusion Width`, `Wall Perimeters`, `Top / Bottom Solid Layers`, `Infill`, and `Supports`, split into Rigid vs. Elastomer/`TPU` columns when flexible parts exist) instead of dropping unrecorded rows.
    - Inspect `<memory_root>/Standards_and_Specs/Standards_Index.md` and any workspace `.homunculus_brand.json` to load organization-specific style guides, canonical link tables, and disclosure rules on demand without hardcoding vendor or brand URLs inside the skill.
-2. **Closed-World Specification Lock**:
-   - Every BOM row, fastener count, print setting, or dimensional specification must trace to verified repository sources (`verify_claims.py`) or carry an explicit `[TBD: <specific_missing_variable>]` marker.
+2. **Closed-World Specification & Conflict Lock**:
+   - Every BOM row, fastener count, print setting, or dimensional specification must trace to verified repository sources (`verify_claims.py`) or carry an explicit `[TBD: <specific_missing_variable>]` marker (never borrow rigid `ABS`/`ASA` slicer settings onto `TPU` elastomers).
+   - Whenever primary sources disagree on a fastener count, insert count, or hardware topology (e.g., `BOM.md` vs. CAD `<Project>_Hardware.md` bore telemetry or `Assembly_Guide.md`), insert an explicit **`[TBD: CONFLICT — <source_A> vs <source_B>]`** marker inline in the document body rather than smoothing over the discrepancy with qualitative prose notes.
 3. **Pure-Stdlib Default + Lazy Optional Image Dependencies**:
    - Both `audit_repo_docs.py` and `format_image.py` load `PIL` (`Pillow`) and `numpy` lazily via `importlib.import_module` only when pixel-level card rendering is invoked, falling back to pure-stdlib PNG header inspection when `Pillow` is absent.
 

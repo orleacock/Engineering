@@ -37,9 +37,11 @@ import subprocess
 import sys
 from typing import Dict, List, Optional, Set, Tuple
 
-_HOM_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
-if os.path.join(_HOM_ROOT, "scripts") not in sys.path:
-    sys.path.insert(0, os.path.join(_HOM_ROOT, "scripts"))
+_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+_HOM_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
+for _p in (_SCRIPT_DIR, os.path.join(_HOM_ROOT, "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
 
 TEXT_EXTENSIONS = {
@@ -1219,7 +1221,7 @@ class SourceIndex:
             self._index_text(text, info.entity)
 
         # Register customer_entity -> project_entity ONLY when unambiguous (1-to-1 across indexed sources).
-        # Never alias an umbrella owner (e.g. Alchemical-3D) across multiple distinct projects (e.g. alembic vs pneuma).
+        # Never alias an umbrella owner (e.g. Umbrella-Org) across multiple distinct projects (e.g. project_alpha vs project_beta).
         for cust_tok, proj_set in cust_to_projects.items():
             if len(proj_set) == 1:
                 self.dynamic_aliases[cust_tok] = next(iter(proj_set))

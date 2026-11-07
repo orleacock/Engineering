@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -37,6 +38,8 @@ class TestAdapters(unittest.TestCase):
 
         agents_text = agents_md.read_text(encoding="utf-8")
         claude_text = claude_md.read_text(encoding="utf-8")
+        self.assertLessEqual(len(agents_md.read_bytes()), 22_500)
+        self.assertEqual(agents_text.count("# Global Rule:"), 3)
         self.assertFalse(agents_text.startswith("---\n"))
         self.assertFalse(claude_text.startswith("---\n"))
         self.assertNotIn("trigger: always_on", agents_text)
@@ -85,7 +88,8 @@ class TestAdapters(unittest.TestCase):
                 package_cowork_zips=True,
             )
             self.assertGreaterEqual(result["installed_count"], 10)
-            self.assertTrue((ws / "AGENTS.md").exists())
+            # Mutual exclusion: workspace AGENTS.md is skipped by default when antigravity is active
+            self.assertFalse((ws / "AGENTS.md").exists())
             self.assertTrue((ws / "CLAUDE.md").exists())
             self.assertTrue((ws / ".claude" / "settings.json").exists())
             self.assertTrue((ws / ".cursor" / "rules" / "homunculus-co-engineering-partner.mdc").exists())
@@ -105,6 +109,77 @@ class TestAdapters(unittest.TestCase):
             self.assertTrue((ws / ".git" / "hooks" / "post-checkout").exists())
             self.assertTrue((ws / ".git" / "hooks" / "post-merge").exists())
             self.assertTrue((ws / ".git" / "hooks" / "post-rewrite").exists())
+
+            # Explicit include_agents_md=True or standalone clients=["agents_md"] emits AGENTS.md <= 22,500 B
+            build_adapters.apply_workspace_adapters(
+                workspace_dir=ws,
+                fw_root=REPO_ROOT,
+                clients=list(build_adapters.SUPPORTED_CLIENTS),
+                prefer_copy=True,
+                include_agents_md=True,
+            )
+            self.assertTrue((ws / "AGENTS.md").exists())
+            self.assertLessEqual(len((ws / "AGENTS.md").read_bytes()), 22_500)
+
+            # Verify copied .agents/skills/*/scripts/*.py execute standalone under python3 -I
+            for skill_folder, script_name in (
+                ("claim-verification", "verify_claims.py"),
+                ("doc-and-card-studio", "audit_repo_docs.py"),
+            ):
+                copied_script = ws / ".agents" / "skills" / skill_folder / "scripts" / script_name
+                self.assertTrue((copied_script.parent / "homunculus_paths.py").is_file())
+                proc_copied = subprocess.run(
+                    [sys.executable, "-I", str(copied_script), "--help"],
+                    cwd=str(ws),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(proc_copied.returncode, 0, msg=proc_copied.stderr + proc_copied.stdout)
+
+            # Verify symlinked .agents/skills/*/scripts/*.py also resolve homunculus_paths under python3 -I
+            ws_sym = Path(tmp) / "workspace_symlink"
+            build_adapters.apply_workspace_adapters(
+                workspace_dir=ws_sym,
+                fw_root=REPO_ROOT,
+                clients=["antigravity"],
+                prefer_copy=False,
+            )
+            for skill_folder, script_name in (
+                ("claim-verification", "verify_claims.py"),
+                ("doc-and-card-studio", "audit_repo_docs.py"),
+                ("engineering-sandbox", "sandbox_runner.py"),
+            ):
+                sym_script = ws_sym / ".agents" / "skills" / skill_folder / "scripts" / script_name
+                proc_sym = subprocess.run(
+                    [sys.executable, "-I", str(sym_script), "--help"],
+                    cwd=str(ws_sym),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(proc_sym.returncode, 0, msg=proc_sym.stderr + proc_sym.stdout)
+
+            # Verify extracted Cowork .zip bundles execute standalone without repo-level scripts/
+            isolated_extract = Path(tmp) / "isolated_cowork"
+            isolated_extract.mkdir(parents=True, exist_ok=True)
+            for zip_name, script_name in (
+                ("skill-architect.zip", "audit_skill_hygiene.py"),
+                ("claim-verification.zip", "verify_claims.py"),
+            ):
+                with zipfile.ZipFile(ws / ".homunculus_cowork_bundles" / zip_name, "r") as zf:
+                    zf.extractall(isolated_extract)
+                skill_folder = zip_name[:-4]
+                script_path = isolated_extract / skill_folder / "scripts" / script_name
+                self.assertTrue((isolated_extract / skill_folder / "scripts" / "homunculus_paths.py").is_file())
+                proc_zip = subprocess.run(
+                    [sys.executable, "-I", str(script_path), "--help"],
+                    cwd=str(isolated_extract),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(proc_zip.returncode, 0, msg=proc_zip.stderr + proc_zip.stdout)
 
     def test_install_sh_client_and_hooks_integration(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -203,14 +278,20 @@ class TestAdapters(unittest.TestCase):
             )
             self.assertFalse((ws_copy / ".agents" / "skills" / "sample-addon").exists())
 
-            # Verify audit_skill_hygiene.py blocks non-functional milestone skill/module names and missing rule trigger frontmatter
+            # Verify audit_skill_hygiene.py blocks non-functional milestone names, missing triggers, case-variant Agent.md, and >24KB rules
             bad_script = fw_copy / "scripts" / "phase_3b.py"
             bad_script.write_text("x = 1\n", encoding="utf-8")
-            (fw_copy / "rules" / "co-engineering-partner.md").write_text("# Missing trigger frontmatter\n", encoding="utf-8")
+            (fw_copy / "Agent.md").write_text("# Wrong case\n", encoding="utf-8")
+            (fw_copy / "rules" / "co-engineering-partner.md").write_text(
+                "# Missing trigger frontmatter\n" + ("x " * 12_500) + "\n",
+                encoding="utf-8",
+            )
             bad_report = audit_skill_hygiene.run_audit(fw_copy, fw_copy / "rules", fw_copy / "skills")
             defect_codes = {d["code"] for d in bad_report["load_bearing_defects"]}
             self.assertIn("NON_FUNCTIONAL_MODULE_NAME", defect_codes)
             self.assertIn("MISSING_RULE_TRIGGER_FRONTMATTER", defect_codes)
+            self.assertIn("MISNAMED_AGENTS_MD_CASE", defect_codes)
+            self.assertIn("RULE_BYTE_CAP_EXCEEDED", defect_codes)
 
 
 if __name__ == "__main__":

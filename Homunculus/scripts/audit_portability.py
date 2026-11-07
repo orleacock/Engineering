@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import ast
-import codecs
 import hashlib
 import json
 import re
@@ -25,41 +24,22 @@ import sys
 from pathlib import Path
 from typing import Any
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import homunculus_paths  # noqa: E402
+
 # SHA-256 lowercase digests of forbidden upstream workstation, personal, partner-personal,
 # independent-enterprise, and affiliate identifiers (zero plaintext storage).
-FORBIDDEN_TOKEN_SHA256: frozenset[str] = frozenset(
-    {
-        "006e859119a65852bcd4db4279a10462c3b4b910e940863f2a4a5598b11867c6",
-        "67534844ed84422fd1175541de8159dd5f341089b93971b84ca3a7bc5abdbfd7",
-        "fe5ef45dd1860bd3e49cf94307153e10cf45b9decea8f29ef54e9d6d5e212011",
-        "81651bb716e09cc0724f2fd881c268098d83b9c3ec1d6697aedb0f3aefe5084d",
-        "977aa0a5bc4be3b497fe31ff0db3185b2a502546a5d1e3eca50fbb7f1aa66baa",
-        "7df90d0bcfee1d2484228c0ca2e0279471587536a6bd42642d890beff4efdfbc",
-        "1e19681259d3cfe1e3ad46a7723e3e4535a9cac8ab5f96cac950b535f65b3c37",
-        "4deef0f5764e4bc89f4ac6c6f3fe473892b3e287d2dad15dd0c895b3f13b6370",
-        "802a5416dc59d7ac669bcf803e64b40b87187e475c7556cc4c4a45a37d79ff6a",
-        "129e9cc0d21b429986663b4e6cf6ee934fb3b9fea8834052ea57aca5fd03c357",
-        "bc696bc0c6719b23cd38d26010454e9ca9e6c744de6b3883cd9b39e2497617dc",
-        "adcadeec55be7018c3335a39f019fbe62f2497f1e7cc0e3022236e7269fb6176",
-    }
-)
+FORBIDDEN_TOKEN_SHA256: frozenset[str] = homunculus_paths.CLEANROOM_FORBIDDEN_SHA256
 
 # Allowed placeholder usernames in documentation examples
-ALLOWED_PLACEHOLDER_USERS: frozenset[str] = frozenset(
-    {
-        "user",
-        "username",
-        "your_user",
-        "your-user",
-        "engineer",
-        "developer",
-        "example",
-    }
-)
+ALLOWED_PLACEHOLDER_USERS: frozenset[str] = homunculus_paths.ALLOWED_PLACEHOLDER_USERS
 
 # Hardcoded OS user-directory regexes across Linux, macOS, and Windows
-RE_POSIX_HOME = re.compile(r"(?<![A-Za-z0-9_])/(?:home|Users)/([A-Za-z0-9._-]+)")
-RE_WIN_USERS = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z]:\\\\?Users\\\\?([A-Za-z0-9._-]+)", re.IGNORECASE)
+RE_POSIX_HOME = homunculus_paths.RE_POSIX_HOME
+RE_WIN_USERS = homunculus_paths.RE_WIN_USERS
 RE_AFFILIATE_PARAM = re.compile(r"(?:\?|&|\b)(?:affp|dt_id|aff_id|affiliate_id)=[A-Za-z0-9_-]+", re.IGNORECASE)
 
 # Credential and secret patterns
@@ -82,26 +62,7 @@ SKIP_DIRS: frozenset[str] = frozenset(
 
 def decode_file_text(raw_bytes: bytes) -> str:
     """Decode text handling UTF-8, UTF-16 (LE/BE), and UTF-32 (LE/BE) BOMs or NUL-interleaved text."""
-    for bom, enc in (
-        (codecs.BOM_UTF32_LE, "utf-32-le"),
-        (codecs.BOM_UTF32_BE, "utf-32-be"),
-        (codecs.BOM_UTF16_LE, "utf-16-le"),
-        (codecs.BOM_UTF16_BE, "utf-16-be"),
-        (codecs.BOM_UTF8, "utf-8-sig"),
-    ):
-        if raw_bytes.startswith(bom):
-            return raw_bytes[len(bom) :].decode(enc, errors="replace")
-
-    if b"\x00" in raw_bytes[:512]:
-        for enc in ("utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be"):
-            try:
-                decoded = raw_bytes.decode(enc)
-                if any(ch.isprintable() for ch in decoded[:128]):
-                    return decoded
-            except UnicodeDecodeError:
-                continue
-
-    return raw_bytes.decode("utf-8", errors="replace")
+    return homunculus_paths.decode_file_text(raw_bytes)
 
 
 def _check_cleanroom_hashes(line: str) -> str | None:

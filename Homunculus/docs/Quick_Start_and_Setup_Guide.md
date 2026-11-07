@@ -60,7 +60,7 @@ Ideal for getting started in 30 seconds—and works even on locked-down corporat
 ---
 
 ### Option B (Optional): Automated Workspace & Client Config Setup
-If you want Homunculus to automatically generate native startup files for your favorite AI tool (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.agent/rules/`) and optional Git safety hooks:
+If you want Homunculus to automatically generate native startup files for your favorite AI tool (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.agents/rules/`) and optional Git safety hooks:
 
 **Windows (`PowerShell`):**
 ```powershell
@@ -97,7 +97,7 @@ Homunculus works across all major AI coding and technical writing assistants on 
 | **Cursor IDE** | Reference `@HOMUNCULUS_START_HERE.md` in Chat/Composer. | Generates `.cursor/rules/*.mdc` and `.cursorignore` (`--client cursor`). |
 | **Claude Code (CLI)** | Paste: `"Read Homunculus/HOMUNCULUS_START_HERE.md..."` | Generates root `CLAUDE.md` and `.claudeignore` (`--client claude-code`). |
 | **Claude Cowork (Desktop)** | Select your project folder containing `Homunculus/` and point Claude to `HOMUNCULUS_START_HERE.md`. | Generates ready-to-use skill bundles (`--client claude-cowork`). |
-| **Antigravity / Gemini CLI** | Paste: `"Read Homunculus/HOMUNCULUS_START_HERE.md..."` | Generates `.agent/rules/`, `.agent/skills/`, and `.geminiignore` (`--client antigravity`). |
+| **Antigravity / Gemini CLI** | Paste: `"Read Homunculus/HOMUNCULUS_START_HERE.md..."` | Generates `.agents/rules/`, `.agents/skills/`, and `.geminiignore` (`--client antigravity`). |
 | **Windsurf / Cline / Aider / Codex** | Point the assistant to `Homunculus/HOMUNCULUS_START_HERE.md`. | Generates a universal root `AGENTS.md` (`--client agents-md`). |
 
 ---

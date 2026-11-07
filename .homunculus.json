@@ -10,7 +10,6 @@
     "export_canvas_opt_in": false
   },
   "enabled_clients": [
-    "agents_md",
     "antigravity",
     "claude_code",
     "claude_cowork",

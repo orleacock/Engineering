@@ -42,7 +42,7 @@ from urllib.parse import unquote
 
 import importlib
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 _HOM_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", ".."))
 BRAND_CONFIG_FILENAME = ".homunculus_brand.json"
 sys.dont_write_bytecode = True

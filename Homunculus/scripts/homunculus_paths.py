@@ -10,6 +10,7 @@ in both Zero-Install "Drop-In & Point" mode and Optional Installer mode.
 from __future__ import annotations
 
 import argparse
+import codecs
 import hashlib
 import importlib.util
 import json
@@ -27,6 +28,128 @@ CONFIG_FILENAME = ".homunculus.json"
 START_HERE_FILENAME = "HOMUNCULUS_START_HERE.md"
 VALID_MEMORY_MODES = ("headless", "obsidian")
 VALID_CLIENTS = ("all", "agents_md", "antigravity", "claude_code", "claude_cowork", "cursor")
+
+# Shared Clean-Room SHA-256 lowercase digests (zero plaintext storage in source)
+CLEANROOM_FORBIDDEN_SHA256: frozenset[str] = frozenset(
+    {
+        "006e859119a65852bcd4db4279a10462c3b4b910e940863f2a4a5598b11867c6",
+        "67534844ed84422fd1175541de8159dd5f341089b93971b84ca3a7bc5abdbfd7",
+        "fe5ef45dd1860bd3e49cf94307153e10cf45b9decea8f29ef54e9d6d5e212011",
+        "81651bb716e09cc0724f2fd881c268098d83b9c3ec1d6697aedb0f3aefe5084d",
+        "977aa0a5bc4be3b497fe31ff0db3185b2a502546a5d1e3eca50fbb7f1aa66baa",
+        "7df90d0bcfee1d2484228c0ca2e0279471587536a6bd42642d890beff4efdfbc",
+        "1e19681259d3cfe1e3ad46a7723e3e4535a9cac8ab5f96cac950b535f65b3c37",
+        "4deef0f5764e4bc89f4ac6c6f3fe473892b3e287d2dad15dd0c895b3f13b6370",
+        "802a5416dc59d7ac669bcf803e64b40b87187e475c7556cc4c4a45a37d79ff6a",
+        "129e9cc0d21b429986663b4e6cf6ee934fb3b9fea8834052ea57aca5fd03c357",
+        "bc696bc0c6719b23cd38d26010454e9ca9e6c744de6b3883cd9b39e2497617dc",
+        "adcadeec55be7018c3335a39f019fbe62f2497f1e7cc0e3022236e7269fb6176",
+        "8249d2c3468df10e22dbbcd6a3ddd4c6e9dd777783539e319b182bc21c61e682",
+        "a855a33958c67c32a1169b03676b461a07c00c829352a487480967855fbb5d74",
+        "95a185991305e4ea853efa8293e5b720d186c142e0ec4f41c5f31af8dad9bd23",
+    }
+)
+
+# Shared allowed placeholder usernames in documentation examples
+ALLOWED_PLACEHOLDER_USERS: frozenset[str] = frozenset(
+    {
+        "user",
+        "username",
+        "your_user",
+        "your-user",
+        "engineer",
+        "developer",
+        "example",
+    }
+)
+
+# Shared hardcoded OS user-directory regexes across Linux, macOS, and Windows
+RE_POSIX_HOME = re.compile(r"(?<![A-Za-z0-9_])/(?:home|Users)/([A-Za-z0-9._-]+)")
+RE_WIN_USERS = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z]:\\\\?Users\\\\?([A-Za-z0-9._-]+)", re.IGNORECASE)
+
+
+def parse_frontmatter_full(
+    text: str,
+    *,
+    coerce_bools: bool = False,
+) -> tuple[dict[str, Any], str, int]:
+    """Parse leading `--- ... ---` YAML frontmatter using 100% Python stdlib.
+
+    Returns (fields_dict, body_text, body_start_line_1based). Supports quoted
+    strings, folded/literal multiline scalars (`>-`, `>`, `|`, `|-`), and
+    optional boolean coercion (`coerce_bools=True`).
+    """
+    norm = text.replace("\r\n", "\n")
+    lines = norm.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return {}, text, 1
+    end_idx = 0
+    fields: dict[str, Any] = {}
+    current_key: str | None = None
+    for idx in range(1, len(lines)):
+        raw_line = lines[idx]
+        stripped_nl = raw_line.rstrip("\n")
+        if stripped_nl.strip() == "---":
+            end_idx = idx
+            break
+        if stripped_nl.lstrip().startswith("#"):
+            continue
+        m = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", stripped_nl)
+        if m:
+            current_key = m.group(1).strip()
+            val = m.group(2).strip()
+            if val in (">-", ">", "|", "|-"):
+                fields[current_key] = ""
+            else:
+                if len(val) >= 2 and val[0] == val[-1] and val[0] in ('"', "'"):
+                    val = val[1:-1]
+                if coerce_bools and val.lower() == "true":
+                    fields[current_key] = True
+                elif coerce_bools and val.lower() == "false":
+                    fields[current_key] = False
+                else:
+                    fields[current_key] = val
+        elif current_key and (stripped_nl.startswith("  ") or stripped_nl.startswith("\t")):
+            prev = str(fields.get(current_key, ""))
+            fields[current_key] = (prev + " " + stripped_nl.strip()).strip()
+        elif not stripped_nl.strip():
+            continue
+        else:
+            current_key = None
+    if end_idx == 0:
+        return {}, text, 1
+    body = "".join(lines[end_idx + 1 :])
+    return fields, body, end_idx + 2
+
+
+def strip_yaml_frontmatter(text: str) -> str:
+    """Return Markdown body with leading YAML frontmatter stripped."""
+    _fields, body, _line = parse_frontmatter_full(text)
+    return body.strip()
+
+
+def decode_file_text(raw_bytes: bytes) -> str:
+    """Decode text handling UTF-8, UTF-16 (LE/BE), and UTF-32 (LE/BE) BOMs or NUL-interleaved bytes."""
+    for bom, enc in (
+        (codecs.BOM_UTF32_LE, "utf-32-le"),
+        (codecs.BOM_UTF32_BE, "utf-32-be"),
+        (codecs.BOM_UTF16_LE, "utf-16-le"),
+        (codecs.BOM_UTF16_BE, "utf-16-be"),
+        (codecs.BOM_UTF8, "utf-8-sig"),
+    ):
+        if raw_bytes.startswith(bom):
+            return raw_bytes[len(bom) :].decode(enc, errors="replace")
+
+    if b"\x00" in raw_bytes[:512]:
+        for enc in ("utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be"):
+            try:
+                decoded = raw_bytes.decode(enc)
+                if any(ch.isprintable() for ch in decoded[:128]):
+                    return decoded
+            except UnicodeDecodeError:
+                continue
+
+    return raw_bytes.decode("utf-8", errors="replace")
 
 
 def detect_os_tier(sys_platform: str | None = None) -> dict[str, Any]:
@@ -253,7 +376,7 @@ def write_workspace_config(
             "default_format": "svg",
             "export_canvas_opt_in": False,
         },
-        "enabled_clients": clients or ["agents_md", "antigravity", "claude_code", "claude_cowork", "cursor"],
+        "enabled_clients": clients or ["antigravity", "claude_code", "claude_cowork", "cursor"],
         "compartment_firewall": {
             "enforce_secret_scan": True,
             "forbidden_tokens": [],

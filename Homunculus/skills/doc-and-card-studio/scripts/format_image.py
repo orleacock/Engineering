@@ -29,9 +29,11 @@ import importlib
 import struct
 from typing import Any
 
-_HOM_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
-if os.path.join(_HOM_ROOT, "scripts") not in sys.path:
-    sys.path.insert(0, os.path.join(_HOM_ROOT, "scripts"))
+_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+_HOM_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
+for _p in (_SCRIPT_DIR, os.path.join(_HOM_ROOT, "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
 
 

@@ -35,8 +35,9 @@ from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 HOMUNCULUS_ROOT = SCRIPT_DIR.parents[2]
-if str(HOMUNCULUS_ROOT / "scripts") not in sys.path:
-    sys.path.insert(0, str(HOMUNCULUS_ROOT / "scripts"))
+for _p in (str(SCRIPT_DIR), str(HOMUNCULUS_ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import homunculus_paths  # noqa: E402
 
@@ -78,27 +79,7 @@ def sanitize_entity_filename(entity: str) -> str:
 
 def parse_stdlib_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     """Parse simple YAML frontmatter using 100% Python stdlib."""
-    match = FRONTMATTER_RE.match(text)
-    if not match:
-        return {}, text
-    raw_fm = match.group(1)
-    body = text[match.end() :]
-    meta: dict[str, Any] = {}
-    for line in raw_fm.splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#") or ":" not in stripped:
-            continue
-        key, val = stripped.split(":", 1)
-        key = key.strip()
-        val = val.strip()
-        if len(val) >= 2 and ((val[0] == '"' and val[-1] == '"') or (val[0] == "'" and val[-1] == "'")):
-            val = val[1:-1]
-        if val.lower() == "true":
-            meta[key] = True
-        elif val.lower() == "false":
-            meta[key] = False
-        else:
-            meta[key] = val
+    meta, body, _start_line = homunculus_paths.parse_frontmatter_full(text, coerce_bools=True)
     return meta, body
 
 
