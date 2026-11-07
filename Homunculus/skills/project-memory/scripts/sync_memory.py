@@ -1570,23 +1570,31 @@ def sync_software_telemetry(
 
 
 def sync_project_tree(memory_root: Path, project_name: str, repo_override: Path | None = None) -> dict[str, Any]:
-    """Refresh the `AUTO-TREE` block and `repo_head_sha` inside `Projects/<Project>/<Project>.md`."""
+    """Refresh the `AUTO-TREE` block and `repo_head_sha` inside `Projects/<Project>/<Project>.md` (write-if-changed)."""
     hub_path, repo_dir, _fm = _resolve_project_repo(memory_root, project_name, repo_override)
     tree_block, tree_hash = build_repo_auto_tree(repo_dir)
     head_sha = get_git_head_sha(repo_dir)
-    text = hub_path.read_text(encoding="utf-8")
-    text = replace_marker_block(text, "AUTO-TREE", tree_block)
-    text = update_frontmatter_fields(
-        text,
-        {"repo_head_sha": head_sha, "tree_hash": tree_hash, "last_synced": today_iso()},
-    )
-    hub_path.write_text(text, encoding="utf-8")
-    sync_directory_trees(memory_root)
+    orig_text = hub_path.read_text(encoding="utf-8")
+    cur_tree_block = extract_marker_block(orig_text, "AUTO-TREE")
+    cur_head = str(_fm.get("repo_head_sha", ""))
+    cur_hash = str(_fm.get("tree_hash", ""))
+    updated = False
+    if cur_tree_block != tree_block.strip() or cur_head != head_sha or cur_hash != tree_hash:
+        text = replace_marker_block(orig_text, "AUTO-TREE", tree_block)
+        text = update_frontmatter_fields(
+            text,
+            {"repo_head_sha": head_sha, "tree_hash": tree_hash, "last_synced": today_iso()},
+        )
+        hub_path.write_text(text, encoding="utf-8")
+        updated = True
+    dir_res = sync_directory_trees(memory_root)
     return {
         "status": "PASS",
         "project": hub_path.stem,
+        "updated": updated,
         "repo_head_sha": head_sha,
         "tree_hash": tree_hash,
+        "directory_files_written": dir_res.get("written_files", []),
     }
 
 
@@ -1802,6 +1810,11 @@ def kickstart_project(
     if tree_changed:
         drift_reasons.append(f"TREE_HASH_CHANGED ({saved_tree} -> {live_tree})")
 
+    # Auto-heal AUTO-TREE and Directory/*.md on Turn-1 kickstart AFTER recording drift truth
+    trees_refresh: dict[str, Any] = {"status": "SKIPPED"}
+    if hasattr(homunculus_paths, "ensure_directory_fresh"):
+        trees_refresh = homunculus_paths.ensure_directory_fresh(memory_root_override=memory_root)
+
     return {
         "status": "DRIFT_DETECTED" if drift_detected else "VERIFIED_MATCH",
         "project": project_name,
@@ -1819,6 +1832,7 @@ def kickstart_project(
         "dirty_files": dirty_files[:20],
         "drift_detected": drift_detected,
         "drift_reasons": drift_reasons,
+        "trees_auto_refreshed": trees_refresh.get("status", "SKIPPED"),
         "session_handoff": handoff_block or "(No SESSION-HANDOFF block recorded yet; run --save-handoff)",
     }
 
@@ -2210,11 +2224,16 @@ def sync_root_project_index(memory_root: Path) -> None:
     readme_path.write_text(text, encoding="utf-8")
 
 
+def _strip_last_synced_line(text: str) -> str:
+    """Mask `last_synced:` frontmatter lines so write-if-changed skips pure date-only churn."""
+    return re.sub(r'^last_synced:\s*"[^"]*"\s*$', 'last_synced: "__KEEP__"', text, flags=re.MULTILINE)
+
+
 def sync_directory_trees(memory_root: Path) -> dict[str, Any]:
     """
     Maintain `<memory_root>/Directory/` Turn-1 location lookup maps (`Directory_Index.md` +
-    entity-isolated `<Entity_Safe>_Directory.md` box trees) so agents resolve exact paths across
-    `<memory_root>/` and live repositories without `ls`/`find`/`os.listdir` probes or cross-entity bleed.
+    entity-isolated `<Entity_Safe>_Directory.md` box trees) using write-if-changed semantics so
+    unchanged runs touch 0 disk bytes while resolving exact paths without `ls`/`find`/`os.listdir`.
     """
     memory_root = memory_root.resolve()
     dir_root = memory_root / "Directory"
@@ -2345,17 +2364,22 @@ def sync_directory_trees(memory_root: Path) -> dict[str, Any]:
                 "",
             ])
 
-        ent_path.write_text("\n".join(sec_lines).rstrip() + "\n", encoding="utf-8")
-        written_files.append(str(ent_path))
+        rendered_ent = "\n".join(sec_lines).rstrip() + "\n"
+        existing_ent = ent_path.read_text(encoding="utf-8", errors="ignore") if ent_path.is_file() else ""
+        if _strip_last_synced_line(existing_ent) != _strip_last_synced_line(rendered_ent):
+            ent_path.write_text(rendered_ent, encoding="utf-8")
+            written_files.append(str(ent_path))
         idx_task_link = f"[`{task_fname}`](../Tasks/{task_fname})" if (memory_root / "Tasks" / task_fname).is_file() else "—"
         entity_rows.append(
             f"| `{ent}` | `{strictest_comp}` | `{len(plist)}` | [`{ent_fname}`]({ent_fname}) | {idx_task_link} |"
         )
 
     # Prune stale entity directory files if an entity no longer exists
+    pruned_files: list[str] = []
     for existing_md in sorted(dir_root.glob("*_Directory.md")):
         if existing_md.name not in expected_entity_files:
             existing_md.unlink()
+            pruned_files.append(str(existing_md))
 
     if len(entity_rows) == 2:
         entity_rows.append("| *(No projects onboarded yet — run `--init-project`)* | — | `0` | — | — |")
@@ -2396,14 +2420,18 @@ def sync_directory_trees(memory_root: Path) -> dict[str, Any]:
         *entity_rows,
         "",
     ]
-    index_path.write_text("\n".join(idx_lines), encoding="utf-8")
-    written_files.insert(0, str(index_path))
+    rendered_idx = "\n".join(idx_lines)
+    existing_idx = index_path.read_text(encoding="utf-8", errors="ignore") if index_path.is_file() else ""
+    if _strip_last_synced_line(existing_idx) != _strip_last_synced_line(rendered_idx):
+        index_path.write_text(rendered_idx, encoding="utf-8")
+        written_files.insert(0, str(index_path))
 
     return {
         "status": "PASS",
         "directory_root": str(dir_root),
         "entities_indexed": len(entities_projects),
         "written_files": written_files,
+        "pruned_files": pruned_files,
     }
 
 
@@ -2865,6 +2893,8 @@ def main(argv: list[str] | None = None) -> int:
         if not target_proj:
             print("[FAIL] --section requires --project <Project>.", file=sys.stderr)
             return 2
+        if not args.audit and not args.check_stale and hasattr(homunculus_paths, "ensure_directory_fresh"):
+            homunculus_paths.ensure_directory_fresh(memory_root_override=mem_root)
         sec_choice = args.section or "all"
         q_res = query_project_section(mem_root, target_proj, sec_choice, repo_override)
         results["query_section"] = q_res
@@ -2890,9 +2920,13 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     if args.tasks or (args.umbrella is not None and not args.tbd_ledger):
+        if not args.audit and not args.check_stale and hasattr(homunculus_paths, "ensure_directory_fresh"):
+            homunculus_paths.ensure_directory_fresh(memory_root_override=mem_root)
         results["query_tasks"] = query_open_tasks(mem_root, args.umbrella or "all")
 
     if args.tbd_ledger:
+        if not args.audit and not args.check_stale and hasattr(homunculus_paths, "ensure_directory_fresh"):
+            homunculus_paths.ensure_directory_fresh(memory_root_override=mem_root)
         results["tbd_ledger"] = query_tbd_ledger(
             mem_root,
             umbrella_filter=args.umbrella or "all",

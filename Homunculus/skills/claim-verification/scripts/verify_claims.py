@@ -37,6 +37,11 @@ import subprocess
 import sys
 from typing import Dict, List, Optional, Set, Tuple
 
+_HOM_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+if os.path.join(_HOM_ROOT, "scripts") not in sys.path:
+    sys.path.insert(0, os.path.join(_HOM_ROOT, "scripts"))
+import homunculus_paths  # noqa: E402
+
 TEXT_EXTENSIONS = {
     ".md", ".txt", ".cfg", ".conf", ".ini", ".toml", ".yaml", ".yml",
     ".json", ".csv", ".tsv", ".py", ".sh", ".js", ".ts", ".c", ".h",
@@ -2917,6 +2922,8 @@ def main() -> int:
             return 3
         return 0
     t_dir = os.path.dirname(os.path.abspath(args.target)) if (args.target and args.target != "-") else None
+    if t_dir and os.path.basename(t_dir) != "Directory":
+        homunculus_paths.ensure_directory_fresh(workspace_dir=t_dir, homunculus_root=_HOM_ROOT)
     def_ent = args.entity or (os.path.basename(os.path.normpath(args.project_dir)) if args.project_dir else "")
     report = audit_target(target_text, idx, target_dir=t_dir, default_entity=def_ent)
 

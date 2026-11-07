@@ -1749,6 +1749,9 @@ def main() -> int:
     else:
         png_label = str(png_path) if png_ok else "SKIPPED (no rasterizer)"
 
+    if not gate_failed:
+        homunculus_paths.ensure_directory_fresh(workspace_dir=svg_path.parent, homunculus_root=_HOM_ROOT)
+
     print(
         f"Rendered [{archetype}] with palette [{palette.get('palette_id')}]:\n"
         f"  - SVG: {svg_path}\n"

@@ -81,3 +81,109 @@ if [[ -f "$MEMORY_SCRIPT" && -d "${REPO_ROOT}/memory" ]]; then
         fi
     fi
 fi
+
+# Maintainer Script-Skill Interaction Matrix Parity Gate (active only when Engineering maintainer matrix exists)
+MATRIX_FILE="${REPO_ROOT}/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md"
+if [[ -f "$MATRIX_FILE" && -d "${REPO_ROOT}/Homunculus" ]]; then
+    if [[ "${HOMUNCULUS_FORCE_MATRIX_AUDIT:-0}" == "1" ]] || git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^(Homunculus/|memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix\.md$)' >/dev/null; then
+        if ! matrix_out="$("$PYTHON_BIN" - "$REPO_ROOT" "$MATRIX_FILE" << 'PY'
+import ast, re, sys
+from pathlib import Path
+
+repo_root = Path(sys.argv[1]).resolve()
+matrix_path = Path(sys.argv[2]).resolve()
+hom_root = repo_root / "Homunculus"
+text = matrix_path.read_text(encoding="utf-8")
+errors = []
+
+# 1. Verify every relative link pointing into Homunculus/ resolves on disk
+link_re = re.compile(r"\]\((\.\./\.\./\.\./Homunculus/[^)#\s]+)")
+linked_rel_paths = set()
+for m in link_re.finditer(text):
+    rel_target = m.group(1)
+    resolved = (matrix_path.parent / rel_target).resolve()
+    if not resolved.exists():
+        errors.append(f"DEAD_MATRIX_LINK: {rel_target} does not exist on disk")
+    else:
+        try:
+            linked_rel_paths.add(resolved.relative_to(hom_root).as_posix())
+        except ValueError:
+            pass
+
+# 2. Parse Master Table rows (Section 1)
+sec1_match = re.search(r"## 1\. Master Script-to-Skill Cross-Reference Summary(.*?)(?:\n---\n|\n## 2\.)", text, re.S)
+master_rows = {}
+if not sec1_match:
+    errors.append("MISSING_MASTER_TABLE: Section 1 Master Script-to-Skill table not found")
+else:
+    for line in sec1_match.group(1).splitlines():
+        row_m = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
+        if row_m:
+            rel_p = row_m.group(2).strip()
+            master_rows[rel_p] = {
+                "role": row_m.group(3).strip(),
+                "owner": row_m.group(4).strip().strip("`"),
+                "callers": row_m.group(5).strip(),
+            }
+
+# 3. Verify 100% script, hook, installer & test coverage in Master Table
+for path in sorted(hom_root.rglob("*")):
+    if not path.is_file() or "__pycache__" in path.parts or ".git" in path.parts:
+        continue
+    if path.suffix not in {".py", ".sh", ".ps1"}:
+        continue
+    rel_p = path.relative_to(hom_root).as_posix()
+    if rel_p not in master_rows:
+        errors.append(f"UNLISTED_HOMUNCULUS_SCRIPT: '{rel_p}' is missing from Section 1 of {matrix_path.name}")
+
+# 4. Verify AST cross-script Python imports are reflected in Master Table rows
+module_to_rel = {}
+for rel_p, info in master_rows.items():
+    p = Path(rel_p)
+    if p.suffix == ".py" and not rel_p.startswith("tests/"):
+        module_to_rel[p.stem] = (rel_p, p.name, info["owner"])
+
+for rel_p, info in master_rows.items():
+    p = hom_root / rel_p
+    if p.suffix != ".py" or rel_p.startswith("tests/") or not p.is_file():
+        continue
+    try:
+        tree = ast.parse(p.read_text(encoding="utf-8"), filename=str(p))
+    except SyntaxError as exc:
+        errors.append(f"SYNTAX_ERROR: {rel_p}: {exc}")
+        continue
+    imported_stems = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                imported_stems.add(alias.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported_stems.add(node.module.split(".")[0])
+    for stem in sorted(imported_stems):
+        if stem not in module_to_rel or module_to_rel[stem][0] == rel_p:
+            continue
+        tgt_rel, tgt_base, tgt_owner = module_to_rel[stem]
+        src_base = p.name
+        src_owner = info["owner"]
+        if tgt_base not in info["callers"] and tgt_owner not in info["callers"]:
+            errors.append(
+                f"MISSING_IMPORT_EDGE: '{rel_p}' imports '{tgt_base}', but '{rel_p}' Master Table row does not list '{tgt_base}' or '{tgt_owner}'"
+            )
+        tgt_callers = master_rows[tgt_rel]["callers"]
+        if src_base not in tgt_callers and src_owner not in tgt_callers:
+            errors.append(
+                f"MISSING_REVERSE_EDGE: '{rel_p}' imports '{tgt_base}', but '{tgt_rel}' Master Table row does not list '{src_base}' or '{src_owner}'"
+            )
+
+if errors:
+    for e in errors:
+        print(f"  - {e}")
+    sys.exit(1)
+PY
+        )"; then
+            echo "[BLOCKED] Homunculus Maintainer Script-Skill Matrix is out of sync (${MATRIX_FILE}):" >&2
+            echo "$matrix_out" >&2
+            exit 1
+        fi
+    fi
+fi

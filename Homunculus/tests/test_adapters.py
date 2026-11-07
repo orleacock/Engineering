@@ -102,6 +102,9 @@ class TestAdapters(unittest.TestCase):
             self.assertTrue((ws / ".homunculus_cowork_bundles" / "skill-architect.zip").exists())
             self.assertTrue((ws / ".git" / "hooks" / "pre-commit").exists())
             self.assertTrue((ws / ".git" / "hooks" / "pre-push").exists())
+            self.assertTrue((ws / ".git" / "hooks" / "post-checkout").exists())
+            self.assertTrue((ws / ".git" / "hooks" / "post-merge").exists())
+            self.assertTrue((ws / ".git" / "hooks" / "post-rewrite").exists())
 
     def test_install_sh_client_and_hooks_integration(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

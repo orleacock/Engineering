@@ -78,8 +78,8 @@ Never use a monolithic parser for unrelated domains. Invoke the specific telemet
      --next-steps "<Step 1 | Step 2 | Step 3>" \
      --discussion "<Key decision or alignment point for next session>"
    ```
-2. **Turn-1 Cold-Resume Verification (`--kickstart`)**:
-   - When resuming a project after days or weeks, verify live `git HEAD` and `tree_hash` provenance against the saved checkpoint before mutating files:
+2. **Turn-1 Cold-Resume Verification & Auto-Heal (`--kickstart`)**:
+   - When resuming a project after days or weeks, verify live `git HEAD` and `tree_hash` provenance against the saved checkpoint before mutating files (`--kickstart` records `DRIFT_DETECTED` against `checkpoint_tree_hash` *first*, then automatically refreshes `Directory/*.md` and `AUTO-TREE` via write-if-changed):
    ```bash
    python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
      --memory-root <memory_root> --project <Project> --kickstart

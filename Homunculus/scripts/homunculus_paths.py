@@ -10,9 +10,12 @@ in both Zero-Install "Drop-In & Point" mode and Optional Installer mode.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -261,12 +264,272 @@ def write_workspace_config(
     return cfg_path
 
 
+_STAMP_IGNORE_DIRS = frozenset({
+    ".git",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "node_modules",
+    ".venv",
+    "venv",
+    ".tox",
+    ".eggs",
+    "build",
+    "dist",
+    ".obsidian",
+})
+_LOCAL_PATH_RE = re.compile(r'^local_path:\s*["\']?([^"\'\r\n]+)["\']?\s*$', re.MULTILINE)
+
+
+def _resolve_tree_stamp_cache_dir() -> Path:
+    """Resolve an out-of-repo stamp cache directory so freshness checks never dirty git status."""
+    env_dir = os.environ.get("HOMUNCULUS_TREE_STAMP_CACHE", "").strip()
+    candidates: list[Path] = []
+    if env_dir:
+        candidates.append(Path(env_dir).expanduser())
+    candidates.append(Path.home() / ".cache" / "homunculus_tree_stamp")
+    candidates.append(Path(tempfile.gettempdir()) / "homunculus_tree_stamp")
+    for cand in candidates:
+        try:
+            cand.mkdir(parents=True, exist_ok=True)
+            if os.access(cand, os.W_OK):
+                return cand
+        except OSError:
+            continue
+    return Path(tempfile.gettempdir())
+
+
+def _resolve_memory_root_fast(workspace_dir: str | Path | None = None) -> Path:
+    """Resolve `<memory_root>` without invoking subprocesses or `shutil.which` PATH scans."""
+    start = Path(workspace_dir).expanduser().resolve() if workspace_dir else Path.cwd().resolve()
+    config_path: Path | None = None
+    for directory in (start, *start.parents):
+        cand = directory / CONFIG_FILENAME
+        if cand.is_file():
+            config_path = cand
+            break
+
+    raw_cfg: dict[str, Any] = {}
+    if config_path is not None:
+        try:
+            raw_cfg = json.loads(config_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raw_cfg = {}
+        project_root = config_path.parent
+    else:
+        git_root = _find_git_root(start)
+        project_root = git_root if git_root is not None else start
+
+    env_mem = os.environ.get("HOMUNCULUS_MEMORY_ROOT", "").strip()
+    if env_mem:
+        p = Path(env_mem.replace("\\", "/")).expanduser()
+        return p.resolve() if p.is_absolute() else (project_root / p).resolve()
+
+    rel_mem = str(raw_cfg.get("memory_dir", "memory")).replace("\\", "/")
+    return (project_root / rel_mem).resolve()
+
+
+def _read_git_head_signature(repo_dir: Path) -> str:
+    """Read `.git/HEAD` (+ target ref) directly without spawning a `git` subprocess."""
+    git_entry = repo_dir / ".git"
+    try:
+        if git_entry.is_file():
+            txt = git_entry.read_text(encoding="utf-8", errors="ignore").strip()
+            if txt.startswith("gitdir:"):
+                git_dir = (repo_dir / txt.split(":", 1)[1].strip()).resolve()
+            else:
+                return ""
+        elif git_entry.is_dir():
+            git_dir = git_entry
+        else:
+            return ""
+
+        head_file = git_dir / "HEAD"
+        if not head_file.is_file():
+            return ""
+        head_val = head_file.read_text(encoding="utf-8", errors="ignore").strip()
+        if head_val.startswith("ref:"):
+            ref_rel = head_val.split(":", 1)[1].strip()
+            ref_file = git_dir / ref_rel
+            if ref_file.is_file():
+                return f"{ref_rel}:{ref_file.read_text(encoding='utf-8', errors='ignore').strip()}"
+            packed = git_dir / "packed-refs"
+            if packed.is_file():
+                return f"{ref_rel}:packed:{packed.stat().st_mtime_ns}"
+        return head_val
+    except OSError:
+        return ""
+
+
+def _compute_structural_stamp(
+    memory_root: Path,
+    cached_hub_mtimes: dict[str, int] | None = None,
+    cached_repo_roots: list[str] | None = None,
+) -> dict[str, Any]:
+    """Compute a ~1.7ms dentry + git-HEAD structural digest across memory_root and indexed repos."""
+    projects_dir = memory_root / "Projects"
+    hub_mtimes: dict[str, int] = {}
+    if projects_dir.is_dir():
+        for hub in sorted(projects_dir.glob("*/*.md")):
+            if hub.stem == hub.parent.name:
+                try:
+                    hub_mtimes[str(hub)] = hub.stat().st_mtime_ns
+                except OSError:
+                    continue
+
+    if (
+        cached_hub_mtimes is not None
+        and cached_repo_roots is not None
+        and hub_mtimes == cached_hub_mtimes
+    ):
+        repo_roots = [Path(p) for p in cached_repo_roots]
+    else:
+        repo_roots = []
+        seen_r: set[str] = set()
+        for hub_str in sorted(hub_mtimes.keys()):
+            try:
+                txt = Path(hub_str).read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            m = _LOCAL_PATH_RE.search(txt[:2048])
+            if not m:
+                continue
+            lp = m.group(1).strip().replace("\\", "/")
+            if not lp:
+                continue
+            cand = Path(lp)
+            resolved_r = cand.resolve() if cand.is_absolute() else (memory_root / cand).resolve()
+            r_str = str(resolved_r)
+            if r_str not in seen_r and resolved_r.is_dir():
+                seen_r.add(r_str)
+                repo_roots.append(resolved_r)
+
+    hasher = hashlib.sha256()
+    for root in (memory_root, *repo_roots):
+        if not root.is_dir():
+            hasher.update(f"MISSING:{root}\n".encode("utf-8"))
+            continue
+        hasher.update(f"ROOT:{root}|HEAD:{_read_git_head_signature(root)}\n".encode("utf-8"))
+        for dirpath, dirnames, filenames in os.walk(root, topdown=True, followlinks=False):
+            dirnames[:] = sorted(d for d in dirnames if d not in _STAMP_IGNORE_DIRS)
+            filenames_sorted = sorted(filenames)
+            rel_d = os.path.relpath(dirpath, root).replace("\\", "/")
+            hasher.update(
+                f"D:{rel_d}|{'/'.join(dirnames)}|{'/'.join(filenames_sorted)}\n".encode("utf-8")
+            )
+
+    return {
+        "digest": hasher.hexdigest()[:24],
+        "hub_mtimes": hub_mtimes,
+        "repo_roots": [str(r) for r in repo_roots],
+    }
+
+
+def _load_sync_memory_module(fw_root: Path) -> Any:
+    existing = sys.modules.get("sync_memory")
+    if existing is not None and hasattr(existing, "sync_all_project_trees"):
+        return existing
+    sync_script = fw_root / "skills" / "project-memory" / "scripts" / "sync_memory.py"
+    if not sync_script.is_file():
+        return None
+    spec = importlib.util.spec_from_file_location("sync_memory", sync_script)
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["sync_memory"] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def ensure_directory_fresh(
+    workspace_dir: str | Path | None = None,
+    homunculus_root: str | Path | None = None,
+    memory_root_override: str | Path | None = None,
+    force: bool = False,
+) -> dict[str, Any]:
+    """
+    Fast (`~3.2ms` cached / `~25ms` rebuild) write-if-changed structural freshness guard for
+    `<memory_root>/Directory/*.md` and `Projects/<P>/<P>.md` `AUTO-TREE` blocks.
+
+    Automatically skips on read-only filesystems (`EROFS` inside `bwrap` when `memory/` is not
+    a writable target), when `HOMUNCULUS_DISABLE_AUTO_TREE_SYNC=1`, and in Zero-Vault repositories.
+    """
+    if not force and os.environ.get("HOMUNCULUS_DISABLE_AUTO_TREE_SYNC") == "1":
+        return {"status": "SKIPPED_DISABLED", "synced": False}
+
+    try:
+        fw_root = resolve_homunculus_root(homunculus_root)
+        mem_root = (
+            Path(memory_root_override).expanduser().resolve()
+            if memory_root_override
+            else _resolve_memory_root_fast(workspace_dir)
+        )
+        if not (mem_root / "Projects").is_dir():
+            return {"status": "SKIPPED_NO_MEMORY", "synced": False, "memory_root": str(mem_root)}
+        if not os.access(mem_root, os.W_OK):
+            return {"status": "SKIPPED_READONLY", "synced": False, "memory_root": str(mem_root)}
+
+        cache_dir = _resolve_tree_stamp_cache_dir()
+        mem_key = hashlib.sha256(str(mem_root).encode("utf-8")).hexdigest()[:16]
+        stamp_file = cache_dir / f"stamp_{mem_key}.json"
+
+        cached_data: dict[str, Any] = {}
+        if stamp_file.is_file():
+            try:
+                cached_data = json.loads(stamp_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                cached_data = {}
+
+        cur_stamp = _compute_structural_stamp(
+            mem_root,
+            cached_hub_mtimes=cached_data.get("hub_mtimes") if isinstance(cached_data.get("hub_mtimes"), dict) else None,
+            cached_repo_roots=cached_data.get("repo_roots") if isinstance(cached_data.get("repo_roots"), list) else None,
+        )
+        dir_index_exists = (mem_root / "Directory" / "Directory_Index.md").is_file()
+
+        if not force and dir_index_exists and cached_data.get("digest") == cur_stamp["digest"]:
+            return {
+                "status": "FRESH_CACHED",
+                "synced": False,
+                "memory_root": str(mem_root),
+                "digest": cur_stamp["digest"],
+            }
+
+        sync_mod = _load_sync_memory_module(fw_root)
+        if sync_mod is None:
+            return {"status": "SKIPPED_NO_SYNC_MODULE", "synced": False, "memory_root": str(mem_root)}
+
+        sync_res = sync_mod.sync_all_project_trees(mem_root)
+        post_stamp = _compute_structural_stamp(
+            mem_root,
+            cached_hub_mtimes=None,
+            cached_repo_roots=None,
+        )
+        try:
+            stamp_file.write_text(json.dumps(post_stamp), encoding="utf-8")
+        except OSError:
+            pass
+
+        updated_projs = sync_res.get("updated_projects", [])
+        return {
+            "status": "SYNCED",
+            "synced": True,
+            "memory_root": str(mem_root),
+            "updated_projects": updated_projs,
+            "digest": post_stamp["digest"],
+        }
+    except OSError as exc:
+        return {"status": "SKIPPED_OS_ERROR", "synced": False, "reason": str(exc)}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Homunculus Cross-OS Workspace, Memory-Mode & Capability Resolver."
     )
     parser.add_argument("--workspace", help="Target project/workspace directory (default: CWD).")
     parser.add_argument("--homunculus-root", help="Explicit Homunculus framework root directory.")
+    parser.add_argument("--memory-root", help="Optional explicit memory root override for --ensure-fresh.")
     parser.add_argument(
         "--init-config",
         action="store_true",
@@ -289,11 +552,33 @@ def main(argv: list[str] | None = None) -> int:
         help="Simulate OS platform detection for cross-OS verification tests.",
     )
     parser.add_argument("--check", action="store_true", help="Verify framework directories exist.")
+    parser.add_argument(
+        "--ensure-fresh",
+        action="store_true",
+        help="Run the ~1.7ms structural dentry/HEAD check and write-if-changed refresh of memory/Directory/ + AUTO-TREE.",
+    )
+    parser.add_argument("--quiet", action="store_true", help="Suppress stdout banner when running --ensure-fresh.")
     parser.add_argument("--json", action="store_true", help="Emit resolved configuration as JSON.")
     args = parser.parse_args(argv)
 
     fw_root = resolve_homunculus_root(args.homunculus_root)
     target_ws = Path(args.workspace).expanduser().resolve() if args.workspace else Path.cwd().resolve()
+
+    if args.ensure_fresh and not args.init_config and not args.check:
+        fresh_res = ensure_directory_fresh(
+            workspace_dir=target_ws,
+            homunculus_root=fw_root,
+            memory_root_override=args.memory_root,
+        )
+        if args.json:
+            print(json.dumps(fresh_res, indent=2))
+        elif not args.quiet:
+            print(
+                f"[{fresh_res.get('status', 'OK')}] Directory Freshness Guard | "
+                f"Synced: {fresh_res.get('synced', False)} | "
+                f"Memory: {fresh_res.get('memory_root', 'none')}"
+            )
+        return 0
 
     if args.init_config:
         cfg_path = write_workspace_config(
@@ -302,7 +587,7 @@ def main(argv: list[str] | None = None) -> int:
             memory_mode=args.memory_mode,
             memory_dir=args.memory_dir,
         )
-        if not args.json:
+        if not args.json and not args.quiet:
             print(f"[OK] Wrote portable workspace config: {cfg_path.name} (memory_mode={args.memory_mode})")
 
     resolved = resolve_workspace_config(workspace_dir=target_ws, homunculus_root=fw_root)
@@ -310,6 +595,14 @@ def main(argv: list[str] | None = None) -> int:
         sim_os = detect_os_tier(args.simulate_os)
         resolved["os"] = sim_os
         resolved["capabilities"] = probe_runtime_capabilities(sim_os["os_id"])
+
+    if args.check or args.ensure_fresh:
+        fresh_res = ensure_directory_fresh(
+            workspace_dir=target_ws,
+            homunculus_root=fw_root,
+            memory_root_override=args.memory_root,
+        )
+        resolved["directory_freshness"] = fresh_res
 
     if args.check:
         required_dirs = ("rules", "skills", "adapters", "templates", "scripts", "tests")
@@ -323,7 +616,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.json:
         print(json.dumps(resolved, indent=2))
-    else:
+    elif not args.quiet:
         os_meta = resolved["os"]
         cap = resolved["capabilities"]
         print(

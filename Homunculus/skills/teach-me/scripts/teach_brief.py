@@ -930,6 +930,11 @@ def main(argv: list[str] | None = None) -> int:
         memory_root_arg=args.memory_root,
         briefs_root_arg=args.briefs_root,
     )
+    homunculus_paths.ensure_directory_fresh(
+        workspace_dir=args.workspace,
+        homunculus_root=HOMUNCULUS_ROOT,
+        memory_root_override=mem_root,
+    )
 
     if args.init_brief:
         if not args.subject.strip():

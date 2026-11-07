@@ -48,6 +48,9 @@ BRAND_CONFIG_FILENAME = ".homunculus_brand.json"
 sys.dont_write_bytecode = True
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
+if os.path.join(_HOM_ROOT, "scripts") not in sys.path:
+    sys.path.insert(0, os.path.join(_HOM_ROOT, "scripts"))
+import homunculus_paths  # noqa: E402
 from format_image import _inspect_png_stdlib, is_already_formatted  # noqa: E402
 
 
@@ -675,6 +678,10 @@ def main() -> int:
         else:
             print(f"Error: {t_item} does not exist.", file=sys.stderr)
             return 2
+
+    abs_target = os.path.abspath(target)
+    if os.path.basename(abs_target) != "Directory" and os.path.basename(os.path.dirname(abs_target)) != "Directory":
+        homunculus_paths.ensure_directory_fresh(workspace_dir=repo_root, homunculus_root=_HOM_ROOT)
 
     cad_exact, cad_suffixes = collect_repo_cad_files(repo_root)
     brand_cfg = load_brand_config(

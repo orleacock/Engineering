@@ -3,7 +3,7 @@ title: "NetCom — Domain Task Umbrella"
 entity: "NetCom"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-06"
+last_synced: "2026-11-07"
 ---
 
 # 🏢 NetCom — Active Engineering Task Umbrella (`Tasks/NetCom_Tasks.md`)

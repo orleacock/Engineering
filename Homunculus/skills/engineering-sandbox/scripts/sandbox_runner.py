@@ -48,6 +48,7 @@ def _resolve_default_cache_root() -> str:
 
 DEFAULT_CACHE_ROOT = _resolve_default_cache_root()
 VALID_MODES = (
+    "prepare",
     "dry-run",
     "blind-light",
     "blind-full",
@@ -89,6 +90,10 @@ SHELL_PY_SNOOP_RE = re.compile(
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILLS_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 HOMUNCULUS_ROOT = os.path.abspath(os.path.join(SKILLS_ROOT, ".."))
+if os.path.join(HOMUNCULUS_ROOT, "scripts") not in sys.path:
+    sys.path.insert(0, os.path.join(HOMUNCULUS_ROOT, "scripts"))
+import homunculus_paths  # noqa: E402
+
 DEFAULT_AUDIT_DOCS_SCRIPT = os.path.join(SKILLS_ROOT, "doc-and-card-studio", "scripts", "audit_repo_docs.py")
 DEFAULT_VERIFY_CLAIMS_SCRIPT = os.path.join(SKILLS_ROOT, "claim-verification", "scripts", "verify_claims.py")
 DEFAULT_BRAIN_ROOT = os.path.expanduser(
@@ -260,6 +265,7 @@ def run_in_bwrap(
         env["TEMP"] = isolated_tmp
         env["TMP"] = isolated_tmp
         env["AGY_SANDBOX_ACTIVE"] = "1"
+        env["HOMUNCULUS_SANDBOX_ACTIVE"] = "1"
         cmd_arg = ["bash", "-c", remapped_cmd] if shutil.which("bash") else remapped_cmd
         try:
             proc = subprocess.run(
@@ -301,6 +307,7 @@ def run_in_bwrap(
         "--setenv", "PYTHONDONTWRITEBYTECODE", "1",
         "--setenv", "TMPDIR", "/tmp",
         "--setenv", "AGY_SANDBOX_ACTIVE", "1",
+        "--setenv", "HOMUNCULUS_SANDBOX_ACTIVE", "1",
         "bash", "-c", shell_cmd,
     ])
 
@@ -948,11 +955,46 @@ def main() -> int:
         help="Repository root passed to `audit_repo_docs.py --repo-root` during A/B deliverable comparison.",
     )
     parser.add_argument(
+        "--prepare",
+        action="store_true",
+        help=(
+            "Run Pre-Sandbox Gate 0 only (~1.7ms cached / ~25ms write-if-changed): ensure `<memory_root>/Directory/*.md` "
+            "and `AUTO-TREE` reflect all uncommitted workspace file changes before spawning `Blind`/`Visible`/`Compare-*` subagents."
+        ),
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Print full JSON report to stdout instead of the compact 5-block summary.",
     )
     args = parser.parse_args()
+
+    if args.prepare or args.mode == "prepare":
+        prep_targets = list(args.target_dirs) or ([args.repo_root] if args.repo_root else []) or [args.cwd or os.getcwd()]
+        seen_mem: set[str] = set()
+        prep_records: List[Dict[str, object]] = []
+        for raw_pt in prep_targets:
+            abs_pt = os.path.abspath(os.path.expanduser(raw_pt))
+            if not os.path.isdir(abs_pt):
+                continue
+            res = homunculus_paths.ensure_directory_fresh(
+                workspace_dir=abs_pt,
+                homunculus_root=HOMUNCULUS_ROOT,
+            )
+            m_key = str(res.get("memory_root", abs_pt))
+            if m_key not in seen_mem:
+                seen_mem.add(m_key)
+                prep_records.append(res)
+        if args.json:
+            print(json.dumps({"mode": "prepare", "results": prep_records}, indent=2))
+        else:
+            for r in prep_records:
+                print(
+                    f"[PRE_SANDBOX_GATE] Status: {r.get('status', 'OK')} | "
+                    f"Synced: {r.get('synced', False)} | "
+                    f"Memory: {r.get('memory_root', 'none')}"
+                )
+        return 0
 
     control_expectations: Dict[int, Dict[str, object]] = {}
     fault_expectations: Dict[int, Dict[str, object]] = {}
@@ -1130,6 +1172,15 @@ def main() -> int:
     os.makedirs(overlays_root, exist_ok=True)
 
     t0 = time.monotonic()
+
+    # 0. Pre-Sandbox Directory & AUTO-TREE Freshness Gate (runs BEFORE host_pre SHA-256 baseline so Live Host Mutations == 0)
+    seen_prep_dirs: set[str] = set()
+    for probe_dir in (cwd, *target_dirs):
+        if probe_dir and probe_dir not in seen_prep_dirs and os.path.isdir(probe_dir):
+            seen_prep_dirs.add(probe_dir)
+            homunculus_paths.ensure_directory_fresh(
+                workspace_dir=probe_dir, homunculus_root=HOMUNCULUS_ROOT
+            )
 
     # 1. Pre-run host baseline snapshots (to prove 0 live mutations)
     host_pre: Dict[str, Dict[str, Tuple[int, int, str]]] = {

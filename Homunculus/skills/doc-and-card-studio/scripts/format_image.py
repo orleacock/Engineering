@@ -29,6 +29,11 @@ import importlib
 import struct
 from typing import Any
 
+_HOM_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+if os.path.join(_HOM_ROOT, "scripts") not in sys.path:
+    sys.path.insert(0, os.path.join(_HOM_ROOT, "scripts"))
+import homunculus_paths  # noqa: E402
+
 
 def _load_imaging_libs() -> Tuple[Any, Any, Any, Any, Any]:
     """
@@ -675,6 +680,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             border_color=args.border_color,
             whiten_bg=not args.no_whiten_bg,
         )
+        homunculus_paths.ensure_directory_fresh(
+            workspace_dir=os.path.dirname(os.path.abspath(args.output)), homunculus_root=_HOM_ROOT
+        )
         return 0
 
     for p in expanded_inputs:
@@ -703,6 +711,10 @@ def main(argv: Optional[List[str]] = None) -> int:
             force_inner_padding=args.force_inner_padding,
             force=args.force,
         )
+
+    if expanded_inputs:
+        probe_out = os.path.dirname(os.path.abspath(args.output if args.output else expanded_inputs[0]))
+        homunculus_paths.ensure_directory_fresh(workspace_dir=probe_out, homunculus_root=_HOM_ROOT)
 
     return 0
 

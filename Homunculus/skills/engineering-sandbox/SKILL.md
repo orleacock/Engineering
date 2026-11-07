@@ -25,6 +25,13 @@ This skill governs isolated verification of Track-2 deliverables (parsers, valid
 
 ## 2. Step-Level Verification Gates (`sandbox_runner.py` CLI)
 
+### Gate 0 — Pre-Sandbox `Directory/` & `AUTO-TREE` Freshness (`--prepare`)
+`sandbox_runner.py` automatically runs the `~1.7ms` structural freshness guard (`homunculus_paths.ensure_directory_fresh`) *before* taking `host_pre` SHA-256 baselines (`Live Host Mutations: 0`). Before spawning multi-turn `Blind`, `Visible`, or `Compare-*` subagent frames after uncommitted mid-session file creations/renames, run:
+
+```bash
+python3 <HOMUNCULUS_ROOT>/skills/engineering-sandbox/scripts/sandbox_runner.py --prepare --target-dir .
+```
+
 ### Gate 1 — Deterministic OS Dry-Run + Adversarial `+faults` Injection
 Execute positive controls (`--cmd` or `--spec` `controls`) and adversarial fault-injection cases (`--fault-case "<setup> :: <validator>"` or `--spec` `faults` + `--faults`) inside an isolated CoW workspace:
 

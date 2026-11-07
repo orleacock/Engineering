@@ -26,6 +26,10 @@ from typing import Dict, List, Optional, Tuple
 sys.dont_write_bytecode = True
 
 _HOM_ROOT = Path(__file__).resolve().parents[3]
+if str(_HOM_ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(_HOM_ROOT / "scripts"))
+import homunculus_paths  # noqa: E402
+
 DEFAULT_VAULT = "./memory"
 DEFAULT_REPOS_ROOT = "."
 
@@ -934,6 +938,12 @@ def main() -> int:
         help="Force full STEP/STL geometric re-parse even when inventory_sha256 cache is valid",
     )
     args = parser.parse_args()
+    if not args.check_cache:
+        homunculus_paths.ensure_directory_fresh(
+            workspace_dir=args.repo if args.repo else None,
+            homunculus_root=_HOM_ROOT,
+            memory_root_override=args.vault if os.path.isdir(os.path.join(args.vault, "Projects")) else None,
+        )
 
     if args.repo and os.path.isdir(os.path.abspath(args.repo)):
         abs_repo = os.path.abspath(args.repo)

@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
 tree_hash: "568daa9d1fe6"
-last_synced: "2026-11-06"
+last_synced: "2026-11-07"
 ---
 
 # 🗂️ `Orin_Workstation` — Directory Lookup Map (`entity: Orin_Workstation`)

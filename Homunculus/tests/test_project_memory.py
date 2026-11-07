@@ -288,12 +288,14 @@ class TestProjectMemory(unittest.TestCase):
             self.assertIn("SBX-20261105-01", kick1["session_handoff"])
             self.assertIn("[DONE] Completed unit test suite", kick1["session_handoff"])
 
-            # 2. Simulate out-of-band repository file addition between sessions -> DRIFT_DETECTED
+            # 2. Simulate out-of-band repository file addition between sessions -> DRIFT_DETECTED + Turn-1 Auto-Heal
             (repo_dir / "untracked_hotfix.py").write_text("x = 1\n", encoding="utf-8")
             kick2 = sync_memory.kickstart_project(mem_root, "Core_Engine", repo_dir)
             self.assertEqual(kick2["status"], "DRIFT_DETECTED")
             self.assertTrue(kick2["drift_detected"])
             self.assertTrue(any("TREE_HASH_CHANGED" in r for r in kick2["drift_reasons"]))
+            self.assertIn("untracked_hotfix.py", (mem_root / "Projects" / "Core_Engine" / "Core_Engine.md").read_text(encoding="utf-8"))
+            self.assertIn("untracked_hotfix.py", (mem_root / "Directory" / "Client_One_Directory.md").read_text(encoding="utf-8"))
 
             # 3. Verify targeted section reader (--section handoff, tasks, software, all)
             sec_handoff = sync_memory.query_project_section(mem_root, "Core_Engine", "handoff")
@@ -311,6 +313,118 @@ class TestProjectMemory(unittest.TestCase):
             sec_all = sync_memory.query_project_section(mem_root, "core_engine", "all")
             self.assertEqual(sec_all["status"], "PASS")
             self.assertIn("Transcluded from Tasks/Client_One_Tasks.md#Core_Engine", sec_all["content"])
+
+    def test_ensure_directory_fresh_write_if_changed_and_sandbox_skip(self) -> None:
+        import os
+        import subprocess
+        import homunculus_paths
+
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            stamp_cache = base / "stamp_cache"
+            mem_root = base / "memory"
+            repo_a = base / "repos" / "Alpha_App"
+            repo_b = base / "repos" / "Beta_App"
+            repo_a.mkdir(parents=True)
+            repo_b.mkdir(parents=True)
+            (repo_a / "core.py").write_text("x = 1\n", encoding="utf-8")
+            (repo_b / "service.py").write_text("y = 2\n", encoding="utf-8")
+
+            sync_memory.init_project(
+                mem_root,
+                project_name="Alpha_App",
+                repo_path=repo_a,
+                project_type="software",
+                entity="Entity_Alpha",
+                compartment="private",
+            )
+            sync_memory.init_project(
+                mem_root,
+                project_name="Beta_App",
+                repo_path=repo_b,
+                project_type="software",
+                entity="Entity_Beta",
+                compartment="cleanroom",
+            )
+
+            old_cache_env = os.environ.get("HOMUNCULUS_TREE_STAMP_CACHE")
+            os.environ["HOMUNCULUS_TREE_STAMP_CACHE"] = str(stamp_cache)
+            try:
+                # 1. Initial stamp seed -> SYNCED, repeat -> FRESH_CACHED (0 disk rewrites)
+                r1 = homunculus_paths.ensure_directory_fresh(
+                    homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                )
+                self.assertEqual(r1["status"], "SYNCED")
+
+                alpha_dir_md = mem_root / "Directory" / "Entity_Alpha_Directory.md"
+                beta_dir_md = mem_root / "Directory" / "Entity_Beta_Directory.md"
+                mtime_before = alpha_dir_md.stat().st_mtime_ns
+
+                r2 = homunculus_paths.ensure_directory_fresh(
+                    homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                )
+                self.assertEqual(r2["status"], "FRESH_CACHED")
+                self.assertFalse(r2["synced"])
+                self.assertEqual(alpha_dir_md.stat().st_mtime_ns, mtime_before)
+
+                # 2. Pure file content edit (same filename) -> stays FRESH_CACHED & 0 directory file rewrites
+                (repo_a / "core.py").write_text("x = 999\n", encoding="utf-8")
+                r3 = homunculus_paths.ensure_directory_fresh(
+                    homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                )
+                self.assertEqual(r3["status"], "FRESH_CACHED")
+                self.assertEqual(alpha_dir_md.stat().st_mtime_ns, mtime_before)
+
+                # 3. Uncommitted mid-session file creation -> SYNCED & entity-isolated update
+                (repo_a / "mid_session_feature.py").write_text("def feat(): pass\n", encoding="utf-8")
+                r4 = homunculus_paths.ensure_directory_fresh(
+                    homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                )
+                self.assertEqual(r4["status"], "SYNCED")
+                self.assertIn("mid_session_feature.py", alpha_dir_md.read_text(encoding="utf-8"))
+                self.assertNotIn("mid_session_feature.py", beta_dir_md.read_text(encoding="utf-8"))
+
+                # 4. File deletion -> removed from Directory/*.md cleanly
+                (repo_a / "mid_session_feature.py").unlink()
+                r5 = homunculus_paths.ensure_directory_fresh(
+                    homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                )
+                self.assertEqual(r5["status"], "SYNCED")
+                self.assertNotIn("mid_session_feature.py", alpha_dir_md.read_text(encoding="utf-8"))
+
+                # 5. Explicit opt-out (`HOMUNCULUS_DISABLE_AUTO_TREE_SYNC=1`) -> SKIPPED_DISABLED
+                os.environ["HOMUNCULUS_DISABLE_AUTO_TREE_SYNC"] = "1"
+                try:
+                    r_sbx = homunculus_paths.ensure_directory_fresh(
+                        homunculus_root=REPO_ROOT, memory_root_override=mem_root
+                    )
+                    self.assertEqual(r_sbx["status"], "SKIPPED_DISABLED")
+                finally:
+                    os.environ.pop("HOMUNCULUS_DISABLE_AUTO_TREE_SYNC", None)
+
+                # 6. Pre-Sandbox Gate CLI (`sandbox_runner.py --prepare`) refreshes workspace trees cleanly
+                homunculus_paths.write_workspace_config(base, REPO_ROOT, memory_mode="headless", memory_dir="memory")
+                (repo_b / "pre_sandbox_probe.py").write_text("z = 3\n", encoding="utf-8")
+                prep_proc = subprocess.run(
+                    [
+                        sys.executable,
+                        str(REPO_ROOT / "skills" / "engineering-sandbox" / "scripts" / "sandbox_runner.py"),
+                        "--prepare",
+                        "--target-dir",
+                        str(base),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(prep_proc.returncode, 0, msg=prep_proc.stderr + prep_proc.stdout)
+                self.assertIn("[PRE_SANDBOX_GATE]", prep_proc.stdout)
+                self.assertIn("pre_sandbox_probe.py", beta_dir_md.read_text(encoding="utf-8"))
+            finally:
+                if old_cache_env is None:
+                    os.environ.pop("HOMUNCULUS_TREE_STAMP_CACHE", None)
+                else:
+                    os.environ["HOMUNCULUS_TREE_STAMP_CACHE"] = old_cache_env
 
 
 if __name__ == "__main__":

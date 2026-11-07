@@ -11,7 +11,7 @@ checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "56fe0934991e"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-07"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -50,14 +50,13 @@ last_synced: "2026-11-06"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-06`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 56fe0934991e` | `Worktree: untracked` | `Last Verification: SBX-20261106_222258-b4b0e9a3, SBX-20261106_224204-fbb5d972 & SBX-20261106_231352-4f790a47`
+- **Last Session Timestamp**: `2026-11-07`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 56fe0934991e` | `Worktree: untracked` | `Last Verification: SBX-20261107_091652-1f171c12, SBX-20261107_093604-51afcb74`
 - **Where We Stopped (Verified State & Context)**:
-  Completed Round 1–3 local workstation dogfooding of the `teach-me` fast-path (`Visible-Light` down from `24` to `11` turns across 3 hallucination-trap briefs, `6/6` PASS, `0` unbacked claims) and deployed the entity-isolated `memory/Directory/` box-tree lookup hub (`Directory_Index.md` + `<Entity>_Directory.md`, `88` memory files audited with `0` violations in `SBX-20261106_231352-4f790a47`), committed cleanly to local `Engineering` `main` (`0` remote pushes).
-- **Active Project State Ledger & Blockers**: NONE (`Safe nightly stopping checkpoint; live mid-session Directory/ refresh trigger parked for tomorrow's design discussion`)
+  Implemented Combination 1 (H+F+D+E) live Directory/ freshness spine and wired Maintainer Script-Skill Matrix AST/inventory parity gate into git_pre_commit_boundary.sh
+- **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Discuss and compare live mid-session `memory/Directory/` & `AUTO-TREE` freshness mechanisms (`Path A` silent pre-subagent/session hooks vs. `Path D` portable `Pre-Sandbox Gate` vs. Hybrid / CLI-entrypoint `write-if-changed` sync at `~24.7 ms`) so development sandboxes and subagents never lag behind uncommitted file changes
-  2. Implement and sandbox-verify the selected zero-bloat freshness design before Clean-Room promotion
+  1. Optional teach-me CWD/cross-doc polish or Clean-Room promotion when authorized
 <!-- SESSION-HANDOFF:END -->
 
 ---

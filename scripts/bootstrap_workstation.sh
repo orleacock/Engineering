@@ -89,13 +89,18 @@ if [[ -f "${HOMUNCULUS_DIR}/hooks/hooks.json" ]]; then
     ensure_link "${GEMINI_CFG}/hooks.json" "../../Projects/Engineering/Homunculus/hooks/hooks.json" "${HOMUNCULUS_DIR}/hooks/hooks.json"
 fi
 
-# 2bb. Private Engineering Repo Pre-Commit & Pre-Push Firewalls (.git/hooks/*)
+# 2bb. Private Engineering Repo Pre-Commit, Pre-Push & Post-Worktree Sync Hooks (.git/hooks/*)
 if [[ -d "${REPO_ROOT}/.git/hooks" ]]; then
     if [[ -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" ]]; then
         ensure_link "${REPO_ROOT}/.git/hooks/pre-commit" "../../scripts/git_pre_commit_boundary.sh" "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh"
     fi
     if [[ -f "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh" ]]; then
         ensure_link "${REPO_ROOT}/.git/hooks/pre-push" "../../scripts/pre_push_engineering_guard.sh" "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh"
+    fi
+    if [[ -f "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh" ]]; then
+        for wt_hook in post-checkout post-merge post-rewrite; do
+            ensure_link "${REPO_ROOT}/.git/hooks/${wt_hook}" "../../Homunculus/templates/hooks/post-worktree-sync.sh" "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh"
+        done
     fi
 fi
 

@@ -527,13 +527,23 @@ def apply_workspace_adapters(
 
     if install_git_hooks and (workspace_dir / ".git" / "hooks").is_dir():
         hooks_dst = workspace_dir / ".git" / "hooks"
-        for hook_src_name, hook_dst_name in (("pre-commit.sh", "pre-commit"), ("pre-push.sh", "pre-push")):
+        hook_pairs = (
+            ("pre-commit.sh", "pre-commit"),
+            ("pre-push.sh", "pre-push"),
+            ("post-worktree-sync.sh", "post-checkout"),
+            ("post-worktree-sync.sh", "post-merge"),
+            ("post-worktree-sync.sh", "post-rewrite"),
+        )
+        for hook_src_name, hook_dst_name in hook_pairs:
             src_h = fw_root / "templates" / "hooks" / hook_src_name
             if src_h.is_file():
                 dst_h = hooks_dst / hook_dst_name
                 shutil.copy2(src_h, dst_h)
                 dst_h.chmod(dst_h.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
                 installed_files.append(str(dst_h))
+
+    if hasattr(homunculus_paths, "ensure_directory_fresh"):
+        homunculus_paths.ensure_directory_fresh(workspace_dir=workspace_dir, homunculus_root=fw_root)
 
     return {
         "workspace": str(workspace_dir),
