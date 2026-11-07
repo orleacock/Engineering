@@ -574,6 +574,8 @@ def verify_and_stamp_brief(
     fail_on_tbd: bool = False,
     strict_provenance: bool = False,
     briefs_root: Path | None = None,
+    auto_slug: bool = False,
+    slug_override: str = "",
 ) -> dict[str, Any]:
     """Verify `Brief+` structure and claims via `verify_claims.py`, then stamp VRF receipt."""
     brief_path = brief_path.expanduser().resolve()
@@ -583,6 +585,19 @@ def verify_and_stamp_brief(
             "structural_errors": [f"Brief file not found: {brief_path}"],
             "claim_report": None,
         }
+
+    if briefs_root is not None:
+        resolved_root = briefs_root.expanduser().resolve()
+        try:
+            brief_path.relative_to(resolved_root)
+            ensure_briefs_root_readme(resolved_root)
+        except ValueError:
+            pass
+
+    if auto_slug:
+        ren = rename_brief_clean(brief_path, slug_override=slug_override)
+        if ren.get("status") != "FAIL" and ren.get("new_path"):
+            brief_path = Path(ren["new_path"]).resolve()
 
     text = brief_path.read_text(encoding="utf-8")
     struct_errors = verify_brief_structure(text, brief_path)
@@ -878,6 +893,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--verify", metavar="BRIEF_PATH", help="Verify a `Brief+` file and stamp VRF receipt.")
     parser.add_argument(
+        "--auto-slug",
+        action="store_true",
+        help="Snap the target brief filename to clean whole-word YYYY-MM-DD_<Subject>_on_<Impact>.md during --verify.",
+    )
+    parser.add_argument(
         "--sources",
         nargs="+",
         default=[],
@@ -966,6 +986,8 @@ def main(argv: list[str] | None = None) -> int:
             fail_on_tbd=args.fail_on_tbd,
             strict_provenance=args.strict_provenance,
             briefs_root=briefs_root,
+            auto_slug=args.auto_slug,
+            slug_override=args.slug.strip(),
         )
         if args.json:
             print(json.dumps(res, indent=2))
@@ -979,8 +1001,32 @@ def main(argv: list[str] | None = None) -> int:
             for se in res["structural_errors"]:
                 print(f"  [!] {se}")
             if res.get("claim_report") and res["claim_report"].get("unbacked_claims"):
-                for uc in res["claim_report"]["unbacked_claims"]:
+                unbacked_list = res["claim_report"]["unbacked_claims"]
+                for uc in unbacked_list:
                     print(f"  [!] Line {uc['line']} [{uc['type']}]: {uc['claim']}")
+                uc_types = {str(uc.get("type", "")) for uc in unbacked_list}
+                if uc_types & {"LITERAL_ID", "QUANTITY_UNIT"}:
+                    print(
+                        "  [Hint] Sections 3–4 are closed-world audited against --sources: keep generic CLI commands, "
+                        "textbook figures, and unrecorded runtime output inside Sections 1–2 (FIRST-PRINCIPLES-THEORY), "
+                        "tag missing specs as [TBD: <var>], and only backtick exact --sources literals in Sections 3–4."
+                    )
+                if "QUARANTINED_ZONE_CITATION" in uc_types:
+                    print(
+                        "  [Hint] Cite verified architecture/parameter sections or _Hardware.md/_Software.md—never "
+                        "quarantined SESSION-HANDOFF, QUARANTINE-ZONE, or Open [TBD] ledger blocks."
+                    )
+                if "WARNING_CONTEXT_CITATION" in uc_types:
+                    print(
+                        "  [Hint] When citing near a source [!WARNING]/[!CAUTION] or prohibition ('do not'/'never'), "
+                        "include an explicit hazard/negation keyword (warning, caution, hazard, never, do not, avoid, "
+                        "damage, strip, crack) in the claiming bullet so safety warnings are never neutralized."
+                    )
+                if any("COUNTED_ENTITY" in t for t in uc_types):
+                    print(
+                        "  [Hint] Numbers adjacent to hardware nouns (e.g. '12 fasteners') are audited against --sources "
+                        "counts; rephrase step references ('Steps 10–11 specify BHCS hardware') or tag missing counts as [TBD: <var>]."
+                    )
             if res["status"] == "PASS":
                 print("\n--- TEACH-ME CHAT CARD TEMPLATE (RELAY VERBATIM WITH FILLED FIELDS) ---")
                 print(res["chat_card_template"])

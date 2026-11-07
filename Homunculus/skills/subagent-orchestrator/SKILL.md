@@ -11,9 +11,9 @@ This skill governs parallel subagent dispatch, harness-agnostic model tiering, A
 
 ## 1. Pre-Flight Foundation Checks
 
-1. **Turn-1 Memory & Telemetry Check**:
-   - Before spawning subagents across a project, read `<memory_root>/Projects/<Project>/<Project>.md` (`AUTO-TREE`), `<Project>_Hardware.md`, and `<Project>_Software.md` on Turn 1.
-   - If the project is unindexed or `CACHE_STALE`, run `inspect_hardware_ecosystem.py --repo <repo_path>` and `sync_memory.py` so workers receive verified structural maps instead of running blind `find`/`ls` sweeps.
+1. **Turn-1 Memory, `Directory/` & Telemetry Check**:
+   - Before spawning subagents across a project, read `<memory_root>/Projects/<Project>/<Project>.md` (`AUTO-TREE`), `<memory_root>/Directory/<Entity>_Directory.md`, `<Project>_Hardware.md`, and `<Project>_Software.md` on Turn 1.
+   - If the project is unindexed or `CACHE_STALE`, run `inspect_hardware_ecosystem.py --repo <repo_path>` and `sync_memory.py` so workers receive verified structural maps instead of running blind `find`/`ls`/`os.listdir` sweeps.
 2. **Partition Disjoint Shards (`2–4` Workers Max)**:
    - Assign each subagent `1–2` repositories or disjoint subsystem directories so workers never collide on files or duplicate reads.
    - Enforce **Single-Writer Memory**: subagents never mutate `<memory_root>/` directly; they return a structured `[MEMORY_DELTA]` block for the Primary Thread to reconcile.

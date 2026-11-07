@@ -8,6 +8,13 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
+      "query": "path:\"Directory\"",
+      "color": {
+        "a": 1,
+        "rgb": 239321
+      }
+    },
+    {
       "query": "path:\"Tasks\"",
       "color": {
         "a": 1,
@@ -85,7 +92,7 @@
       }
     }
   ],
-  "collapse-display": true,
+  "collapse-display": false,
   "showArrow": false,
   "textFadeMultiplier": 0,
   "nodeSizeMultiplier": 1,
@@ -95,6 +102,6 @@
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.6757621765136719,
+  "scale": 2.2806973457336426,
   "close": true
 }

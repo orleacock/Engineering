@@ -179,6 +179,34 @@ class TestProjectMemory(unittest.TestCase):
             audit_clean = sync_memory.audit_memory(mem_root)
             self.assertEqual(audit_clean["status"], "PASS", msg=str(audit_clean["violations"]))
 
+            # 5. Verify Directory/ box-tree lookup files + strict multi-customer entity isolation
+            dir_idx = mem_root / "Directory" / "Directory_Index.md"
+            alpha_dir = mem_root / "Directory" / "Client_Alpha_Directory.md"
+            beta_dir = mem_root / "Directory" / "Client_Beta_Directory.md"
+            self.assertTrue(dir_idx.is_file())
+            self.assertTrue(alpha_dir.is_file())
+            self.assertTrue(beta_dir.is_file())
+            alpha_txt = alpha_dir.read_text(encoding="utf-8")
+            beta_txt = beta_dir.read_text(encoding="utf-8")
+            self.assertIn("--- DIRECTORY STRUCTURE ---", alpha_txt)
+            self.assertIn("├── ", alpha_txt)
+            self.assertIn("Mech_Bracket", alpha_txt)
+            self.assertNotIn("CLI_Service", alpha_txt)
+            self.assertIn("CLI_Service", beta_txt)
+            self.assertNotIn("Mech_Bracket", beta_txt)
+
+            # Inject cross-entity link into Client_Alpha_Directory.md -> audit_memory must block
+            alpha_dir.write_text(
+                alpha_txt + "\nCross leak: [Beta](Client_Beta_Directory.md)\n",
+                encoding="utf-8",
+            )
+            audit_dir_leak = sync_memory.audit_memory(mem_root)
+            self.assertEqual(audit_dir_leak["status"], "FAIL")
+            self.assertTrue(
+                any(v["code"] == "CROSS_ENTITY_CONTAMINATION" for v in audit_dir_leak["violations"]),
+                msg=str(audit_dir_leak["violations"]),
+            )
+
     def test_multi_customer_cross_entity_contamination_and_checkbox_gates(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             mem_root = Path(tmp) / "memory"

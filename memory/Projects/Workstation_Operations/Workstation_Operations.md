@@ -51,13 +51,13 @@ last_synced: "2026-11-06"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-06`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 56fe0934991e` | `Worktree: untracked` | `Last Verification: SBX-20261106_202239-49ab2028 / VRF-e0deb8ddff1e`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 56fe0934991e` | `Worktree: untracked` | `Last Verification: SBX-20261106_222258-b4b0e9a3, SBX-20261106_224204-fbb5d972 & SBX-20261106_231352-4f790a47`
 - **Where We Stopped (Verified State & Context)**:
-  Flushed 36 MB legacy pre-migration Git history and rebuilt clean single-root private umbrella orleacock/Engineering (Homunculus 9-skill engine + Dual-Mode Memory + NEA v2.2.3 + parent ~/Projects umbrella config wiring + study_briefs quarantine + consolidated pre_push_engineering_guard.sh).
-- **Active Project State Ledger & Blockers**: NONE
+  Completed Round 1–3 local workstation dogfooding of the `teach-me` fast-path (`Visible-Light` down from `24` to `11` turns across 3 hallucination-trap briefs, `6/6` PASS, `0` unbacked claims) and deployed the entity-isolated `memory/Directory/` box-tree lookup hub (`Directory_Index.md` + `<Entity>_Directory.md`, `88` memory files audited with `0` violations in `SBX-20261106_231352-4f790a47`), committed cleanly to local `Engineering` `main` (`0` remote pushes).
+- **Active Project State Ledger & Blockers**: NONE (`Safe nightly stopping checkpoint; live mid-session Directory/ refresh trigger parked for tomorrow's design discussion`)
 - **Next Session Kickstart & Discussion Points**:
-  1. Resume active engineering development across indexed projects
-  2. Promote Expansion Priority #1 (teach-me) and functional test suite into Clean-Room Alchemical3D/Homunculus when explicitly authorized
+  1. Discuss and compare live mid-session `memory/Directory/` & `AUTO-TREE` freshness mechanisms (`Path A` silent pre-subagent/session hooks vs. `Path D` portable `Pre-Sandbox Gate` vs. Hybrid / CLI-entrypoint `write-if-changed` sync at `~24.7 ms`) so development sandboxes and subagents never lag behind uncommitted file changes
+  2. Implement and sandbox-verify the selected zero-bloat freshness design before Clean-Room promotion
 <!-- SESSION-HANDOFF:END -->
 
 ---

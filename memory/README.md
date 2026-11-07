@@ -17,6 +17,7 @@ last_synced: "2026-11-06"
 
 | Directory | Purpose & Single-Writer Governance |
 | :--- | :--- |
+| [`Directory/`](Directory/Directory_Index.md) | Turn-1 location lookup maps (`Directory_Index.md` + entity-isolated `<Entity>_Directory.md` box trees) maintained automatically at `pre-commit-gate` Stage X so agents resolve paths without `ls`/`find` probes. |
 | [`Projects/`](Projects/) | Self-contained per-project folders (`Projects/<Project>/`). Each folder holds `<Project>.md` (Hub + `AUTO-TREE`), domain telemetry (`<Project>_Hardware.md` and/or `<Project>_Software.md`), `<Project>_Lessons_Learned.md`, custom [`Templates/`](Templates/), and [`Quarantine/`](Projects/). |
 | [`Tasks/`](Tasks/) | Single-writer, entity-partitioned task umbrellas (`Tasks/<Entity>_Tasks.md`). All active checkboxes (`- [ ]`) live here so project dossiers never drift out of sync. |
 | [`Standards_and_Specs/`](Standards_and_Specs/) | Locked engineering standards, design rules, and verified cross-project reference specifications. |

@@ -24,8 +24,8 @@ Turns on-the-fly engineering questions (`/teach-me about "<Subject X>" impact on
 
 1. **Throw-Away Subagent Isolation Gate (`Zero Main-Window Spillage`)**:
    - **In an Active Working Window**: The Primary Thread **must not** run exploratory `read_file`, CAD, or `grep` calls in the main conversation.
-   - Extract only a compact **Context Seed** (`subject_x`, `impact_on_y`, `domain`, `project`, `entity`, and `1–3` candidate `<local_path>` or `<memory_root>/Projects/<Project>/` paths) and call `invoke_subagent` (`Model: 'flash'`/`'sonnet'` default; `'pro'`/`'opus'` for `[deep]`) with instructions to read [`references/brief_authoring_playbook.md`](references/brief_authoring_playbook.md).
-   - **Clean Async Handoff (No Blank Wait Turn)**: Output a 1-line `[DISPATCH]` notice in the **same** turn as `invoke_subagent`, then end your turn with no additional tool calls and no empty follow-up message while waiting for wakeup.
+   - Extract only a compact **Context Seed** (`subject_x`, `impact_on_y`, `domain`, `project`, `entity`, and **`1–2` authoritative `--sources` files**—`3` max; never instruct the subagent to run shell `git`/`grep` probes whose output is absent from `--sources`, and resolve unseeded project or standards files on Turn 1 via `<memory_root>/Directory/<Entity>_Directory.md` or `<memory_root>/Projects/<Project>/<Project>.md` rather than `ls`/`find`/`os.listdir`) and call `invoke_subagent` (`Model: 'flash'`/`'sonnet'` default; `'pro'`/`'opus'` for `[deep]`) with instructions to read [`references/brief_authoring_playbook.md`](references/brief_authoring_playbook.md) and seed sources in **one parallel Turn-1 `read_file` batch**.
+   - **Clean Async Handoff**: Emit a 1-line `[DISPATCH]` banner in the **same** turn as `invoke_subagent`; when the tool returns, close the turn with a 1-sentence standby acknowledgment and **zero** additional tool calls while waiting for wakeup.
    - *(Exception: If already running inside the delegated subagent or a dedicated study-only window, read [`references/brief_authoring_playbook.md`](references/brief_authoring_playbook.md) and execute directly without spawning a nested subagent.)*
 2. **Non-Consumed Quarantine Invariant (`<study_briefs_root>/`)**:
    - Store unpromoted briefs exclusively in `<study_briefs_root>/` (`<memory_root.parent>/study_briefs/`), excluded from `sync_memory.py`, `.cursorignore`/`.claudeignore`/`.geminiignore`, and `verify_claims.py --sources` (`STUDY_BRIEF_SOURCE_REJECTED`) until explicit `--promote`.
@@ -34,7 +34,7 @@ Turns on-the-fly engineering questions (`/teach-me about "<Subject X>" impact on
 
 ## 2. Step-by-Step Execution Procedures
 
-1. **Subagent Execution (`Mode A` Create / `Mode B` Promote)**: The delegated subagent follows [`references/brief_authoring_playbook.md`](references/brief_authoring_playbook.md) and [`scripts/teach_brief.py`](scripts/teach_brief.py) (`--init-brief`, `--verify` -> `VRF-<12hex>`, `--list`, `--rename-clean`, `--promote`).
+1. **Subagent Execution (`Mode A` Fast-Path Create / `Mode B` Promote)**: The delegated subagent executes [`references/brief_authoring_playbook.md`](references/brief_authoring_playbook.md) and invokes CLI [`scripts/teach_brief.py`](scripts/teach_brief.py) directly (`write_file` + single-call `--verify --auto-slug` -> `VRF-<12hex>`, which executes `verify_claims.py` deterministically under the hood; during routine `Brief+` creation do not read `teach_brief.py` or `verify_claims.py` source via `read_file` or shell `sed`/`python3 -c` unless porting, auditing, or diagnosing a traceback).
 2. **Primary-Thread Verbatim Card Relay (`Verification Gate`)**: When the subagent returns its verified `TEACH-ME CHAT CARD TEMPLATE`, relay it **verbatim** as live Markdown (**never** wrap in ```` ```markdown ```` fences so `file://` links remain clickable, and never flatten `┏━━ ... ━━┓` / `▸` / `↳` / `┗━━ ... ━━┛` into `###` headings or `•` bullets).
 
 ---

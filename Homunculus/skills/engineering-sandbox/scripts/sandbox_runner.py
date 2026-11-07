@@ -61,10 +61,30 @@ EROFS_RE = re.compile(
     r"(?:Read-only file system|EROFS|\[Errno 30\])[^\n]*",
     re.IGNORECASE,
 )
-TBD_TAG_RE = re.compile(r"\[(?:TBD|CONFLICT)(?::[^\]]+)?\]", re.IGNORECASE)
-CONFLICT_TBD_RE = re.compile(r"\[(?:TBD:\s*)?CONFLICT(?::[^\]]+)?\]", re.IGNORECASE)
+TBD_TAG_RE = re.compile(r"\[(?:TBD|CONFLICT)(?:\s*[:—–-][^\]]*)?\]", re.IGNORECASE)
+CONFLICT_TBD_RE = re.compile(r"\[(?:TBD:\s*)?CONFLICT(?:\s*[:—–-][^\]]*)?\]", re.IGNORECASE)
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
-LS_FIND_CMD_RE = re.compile(r"(?:^|[;&|]\s*)(?:ls|find)\b")
+LS_FIND_CMD_RE = re.compile(
+    r"(?:(?:^|[;&|]\s*)(?:ls|find)\b|\bos\.(?:listdir|walk|scandir)\s*\(|\bglob\.glob\s*\(|\.\s*r?glob\s*\()"
+)
+ORACLE_SCRIPT_NAMES = (
+    "verify_claims",
+    "audit_repo_docs",
+    "sync_memory",
+    "audit_skill_hygiene",
+    "audit_data_boundary",
+    "audit_portability",
+    "teach_brief",
+)
+ORACLE_EXEC_CMD_RE = re.compile(
+    r"(?:^|[;&|]\s*)(?:[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*(?:\S*/)?python3?(?:\.\d+)?\s+"
+    r"(?!-c\b)"
+    r"[^\n;|&]*?\b(?:" + "|".join(ORACLE_SCRIPT_NAMES) + r")\.py\b"
+)
+SHELL_PY_SNOOP_RE = re.compile(
+    r"(?:(?:^|[;&|]\s*)(?:sed|grep|rg|awk|cat|head|tail|nl)\b[^\n;|&]*?\b[A-Za-z0-9_./~-]+\.py\b"
+    r"|\bpython3?(?:\.\d+)?\s+-c\b[^\n]*?(?:open|read_text)\s*\([^\n)]*?\.py\b)"
+)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILLS_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -364,9 +384,10 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
     accessed_paths: List[str] = []
     ls_find_probes = 0
     verification_cmds = 0
+    py_snoop_cmds = 0
 
     def _record_tool_call(raw_name: str, raw_args: object) -> None:
-        nonlocal ls_find_probes, verification_cmds
+        nonlocal ls_find_probes, verification_cmds, py_snoop_cmds
         tname = str(raw_name or "unknown").replace("default_api:", "")
         if tname.lower() == "bash":
             tname = "run_command"
@@ -401,17 +422,9 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
                 sk_p = os.path.expanduser(m_sk.group(1))
                 if sk_p not in skill_files_read:
                     skill_files_read.append(sk_p)
-            if any(
-                k in cmd_line
-                for k in (
-                    "verify_claims.py",
-                    "audit_repo_docs.py",
-                    "sync_memory.py",
-                    "audit_skill_hygiene.py",
-                    "audit_data_boundary.py",
-                    "audit_portability.py",
-                )
-            ):
+            if SHELL_PY_SNOOP_RE.search(cmd_line):
+                py_snoop_cmds += 1
+            elif ORACLE_EXEC_CMD_RE.search(cmd_line):
                 verification_cmds += 1
 
     with open(transcript_path, "r", encoding="utf-8", errors="replace") as f:
@@ -474,6 +487,7 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
         "accessed_paths": accessed_paths,
         "ls_find_probes": ls_find_probes,
         "verification_cmds": verification_cmds,
+        "py_snoop_cmds": py_snoop_cmds,
     }
 
 
@@ -719,9 +733,15 @@ def evaluate_ab_comparison(
             advisories.append(
                 f"POINTER_HOP_DETECTED: Blind read {len(b_skills)} SKILL.md files; Visible read {len(v_skills)} SKILL.md files."
             )
+        b_py_snoops = len(blind_tel.get("py_oracles_read", [])) + int(blind_tel.get("py_snoop_cmds", 0))
+        v_py_snoops = len(visible_tel.get("py_oracles_read", [])) + int(visible_tel.get("py_snoop_cmds", 0))
         if b_ls - v_ls >= 2:
             advisories.append(
-                f"CLI_ERGONOMICS_GAP: Blind executed {b_ls} ls/find probes vs {v_ls} in Visible (+{b_ls - v_ls} path-discovery turns)."
+                f"CLI_ERGONOMICS_GAP: Blind executed {b_ls} ls/find/listdir probes vs {v_ls} in Visible (+{b_ls - v_ls} path-discovery turns)."
+            )
+        if b_py_snoops > 0 or v_py_snoops > 0:
+            advisories.append(
+                f"PY_SOURCE_SNOOPING_DETECTED: Blind read/snooped .py scripts {b_py_snoops} times; Visible {v_py_snoops} times."
             )
         trajectory_delta = {
             "blind_turns": blind_tel["planner_turns"],
@@ -735,6 +755,8 @@ def evaluate_ab_comparison(
             "visible_skill_files_read": v_skills,
             "blind_ls_find_probes": b_ls,
             "visible_ls_find_probes": v_ls,
+            "blind_py_snoops": b_py_snoops,
+            "visible_py_snoops": v_py_snoops,
             "pointer_hop_detected": pointer_hop,
         }
 
@@ -781,7 +803,8 @@ def evaluate_ab_comparison(
             f"| **Total Billed Tokens (`In + Cache + Out`)** | `{blind_tel['total_billed_tokens']:,}` | `{visible_tel['total_billed_tokens']:,}` | `{int(blind_tel['total_billed_tokens']) - int(visible_tel['total_billed_tokens']):+,}` |",
             f"| **Wall-Clock Duration (`s`)** | `{blind_tel['wall_clock_sec']}s` | `{visible_tel['wall_clock_sec']}s` | `{round(float(blind_tel['wall_clock_sec']) - float(visible_tel['wall_clock_sec']), 2):+.2f}s` |",
             f"| **`SKILL.md` Files Read** | `{len(blind_tel['skill_files_read'])}` | `{len(visible_tel['skill_files_read'])}` | `{len(blind_tel['skill_files_read']) - len(visible_tel['skill_files_read']):+d}` |",
-            f"| **`ls` / `find` Shell Path Probes** | `{blind_tel['ls_find_probes']}` | `{visible_tel['ls_find_probes']}` | `{int(blind_tel['ls_find_probes']) - int(visible_tel['ls_find_probes']):+d}` |",
+            f"| **`ls` / `find` / `listdir` Probes** | `{blind_tel['ls_find_probes']}` | `{visible_tel['ls_find_probes']}` | `{int(blind_tel['ls_find_probes']) - int(visible_tel['ls_find_probes']):+d}` |",
+            f"| **`.py` Source Reads / Snoops** | `{trajectory_delta['blind_py_snoops']}` | `{trajectory_delta['visible_py_snoops']}` | `{int(trajectory_delta['blind_py_snoops']) - int(trajectory_delta['visible_py_snoops']):+d}` |",
             f"| **Verification CLI Runs** | `{blind_tel['verification_cmds']}` | `{visible_tel['verification_cmds']}` | `{int(blind_tel['verification_cmds']) - int(visible_tel['verification_cmds']):+d}` |",
         ])
 

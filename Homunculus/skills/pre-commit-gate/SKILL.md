@@ -22,8 +22,8 @@ This skill orchestrates the deferred end-of-task verification sequence (**`X -> 
 
 ## 2. Step-Level Verification Gates (`X -> Y -> Z` Sequence)
 
-### Stage X — Synchronize Project Memory, Session Handoff & Structural Auto-Trees (`project-memory`)
-When a project memory root (`./memory` or `./vault`) is active, refresh the changed project's structural tree, hardware/software telemetry, `SESSION-HANDOFF` stopping checkpoint, and cross-entity isolation audit:
+### Stage X — Synchronize Project Memory, `Directory/` Lookup Trees & Session Handoff (`project-memory`)
+When a project memory root (`./memory` or `./vault`) is active, refresh the changed project's structural `AUTO-TREE`, `<memory_root>/Directory/` (`Directory_Index.md` + entity-isolated `<Entity>_Directory.md` box trees), hardware/software telemetry, `SESSION-HANDOFF` stopping checkpoint, and cross-entity isolation audit:
 
 ```bash
 python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \

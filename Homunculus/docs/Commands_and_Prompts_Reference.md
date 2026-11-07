@@ -152,7 +152,7 @@ python3 Homunculus/skills/engineering-sandbox/scripts/sandbox_runner.py \
 | Tool | Key Arguments & Options | What It Does |
 | :--- | :--- | :--- |
 | **`audit_skill_hygiene.py`** | `--check-new "<NAME>: <DESCRIPTION>"`, `--audit`, `--strict-structure`, `--target-skill <NAME>`, `--root <PATH>`, `--json` | **Mode 1 (`--check-new`)**: Checks if a new skill idea overlaps existing rules or skills.<br>**Mode 2 (`--audit`)**: Reviews existing skills for duplicate text, broken links, or context waste in non-destructive advisory mode. |
-| **`teach_brief.py`** | `--init-brief`, `--subject "<X>"`, `--impact-on "<Y>"`, `--slug "<SLUG>"`, `--domain {mechanical,electrical,firmware,cabling,software,hybrid}`, `--verify <BRIEF>`, `--sources <PATH...>`, `--rename-clean <BRIEF>`, `--list`, `--promote <BRIEF>`, `--target {standards,project-doc,lessons-learned}` | Scaffolds (with whole-word smart naming), verifies (`VRF-<12hex>` + aligned `┏━━ 🎓 TEACH-ME // BRIEF+ ... ━━┓` chat card), clean-renames, lists, and optionally promotes multi-domain `Brief+` study briefs in `study_briefs/`. |
+| **`teach_brief.py`** | `--init-brief`, `--subject "<X>"`, `--impact-on "<Y>"`, `--slug "<SLUG>"`, `--domain {mechanical,electrical,firmware,cabling,software,hybrid}`, `--verify <BRIEF>`, `--auto-slug`, `--sources <PATH...>`, `--rename-clean <BRIEF>`, `--list`, `--promote <BRIEF>`, `--target {standards,project-doc,lessons-learned}` | Scaffolds (or single-call verifies + `--auto-slug` renames with whole-word smart naming), stamps `VRF-<12hex>` + aligned `┏━━ 🎓 TEACH-ME // BRIEF+ ... ━━┓` chat cards, lists, and optionally promotes multi-domain `Brief+` study briefs in `study_briefs/`. |
 
 ```bash
 # 1. Check if a new skill idea overlaps with skills you already have:

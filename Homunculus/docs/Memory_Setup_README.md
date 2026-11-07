@@ -36,6 +36,7 @@ Every project gets its own self-contained folder inside `memory/Projects/<Projec
 ```text
 memory/
 ├── README.md                                     # Workspace overview & project index
+├── Directory/                                    # Turn-1 location lookup trees (Directory_Index.md + <Entity>_Directory.md)
 ├── Projects/                                     # Self-contained per-project folders
 │   └── <Project>/
 │       ├── <Project>.md                          # Project Hub (File Map, Session Handoff, State Ledger)

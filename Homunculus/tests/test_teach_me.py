@@ -24,6 +24,7 @@ import unittest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEACH_BRIEF = REPO_ROOT / "skills/teach-me/scripts/teach_brief.py"
 VERIFY_CLAIMS = REPO_ROOT / "skills/claim-verification/scripts/verify_claims.py"
+SANDBOX_RUNNER_DIR = REPO_ROOT / "skills/engineering-sandbox/scripts"
 
 
 class TestTeachMe(unittest.TestCase):
@@ -210,6 +211,39 @@ class TestTeachMe(unittest.TestCase):
                 text=True,
             )
             self.assertNotEqual(proc_launder.returncode, 0)
+            self.assertIn("[Hint] Sections 3–4 are closed-world audited", proc_launder.stdout)
+
+            # 4b. Fast-Path Single-Call: Direct write_file + --verify --auto-slug ensures README, clean-renames, and stamps VRF
+            fast_root = tdir / "fast_study_briefs"
+            rough_brief = fast_root / "Actuator_Rig" / "2026-11-06_rough_draft.md"
+            rough_brief.parent.mkdir(parents=True, exist_ok=True)
+            rough_brief.write_text(valid_brief_text, encoding="utf-8")
+            proc_fast = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--briefs-root",
+                    str(fast_root),
+                    "--verify",
+                    str(rough_brief),
+                    "--auto-slug",
+                    "--sources",
+                    str(hw_src),
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_fast.returncode, 0, proc_fast.stdout + proc_fast.stderr)
+            fast_data = json.loads(proc_fast.stdout)
+            self.assertEqual(fast_data["status"], "PASS")
+            self.assertTrue((fast_root / "README.md").is_file())
+            self.assertFalse(rough_brief.exists())
+            snapped_path = Path(fast_data["brief_path"])
+            self.assertTrue(snapped_path.is_file())
+            self.assertIn("TMC2209_Sense_Resistor_Power_on_NEMA14_Stepper", snapped_path.name)
+            self.assertIn(fast_data["vrf_token"], snapped_path.read_text(encoding="utf-8"))
+            self.assertIn(f"Actuator_Rig/{snapped_path.name}", fast_data["chat_card_template"])
 
             # 5. Fault C: Passing a study_briefs/ file as --sources to verify_claims.py must be rejected
             dummy_target = tdir / "dummy_doc.md"
@@ -379,6 +413,58 @@ class TestTeachMe(unittest.TestCase):
             )
             self.assertNotEqual(proc_halluc2.returncode, 0, "Unattributed umbrella-entity draft across sibling repos must fail closed")
             self.assertIn("CROSS_ENTITY_BORROWING", proc_halluc2.stdout)
+
+    def test_sandbox_runner_counts_teach_brief_verification_runs(self) -> None:
+        """Verify sandbox_runner telemetry & CONFLICT_TBD_RE distinguish CLI verification vs shell .py snooping."""
+        if str(SANDBOX_RUNNER_DIR) not in sys.path:
+            sys.path.insert(0, str(SANDBOX_RUNNER_DIR))
+        import sandbox_runner  # type: ignore[import-not-found]
+
+        sample_text = (
+            "- [TBD: CONFLICT — BOM (SHCS) vs Steps 10–11 (BHCS)]\n"
+            "- [TBD: CONFLICT: 1 vs 2 thrust bearings]\n"
+            "- [TBD: tpu_shore_hardness]\n"
+        )
+        self.assertEqual(len(sandbox_runner.TBD_TAG_RE.findall(sample_text)), 3)
+        self.assertEqual(len(sandbox_runner.CONFLICT_TBD_RE.findall(sample_text)), 2)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tx_path = Path(tmp) / "transcript.jsonl"
+            step = {
+                "type": "PLANNER_RESPONSE",
+                "created_at": "2026-11-06T22:00:00Z",
+                "tool_calls": [
+                    {
+                        "name": "run_command",
+                        "args": {
+                            "CommandLine": "python3 Homunculus/skills/teach-me/scripts/teach_brief.py --verify /tmp/b.md --auto-slug --sources /tmp/s.md"
+                        },
+                    },
+                    {
+                        "name": "run_command",
+                        "args": {
+                            "CommandLine": "sed -n '1,40p' Homunculus/skills/teach-me/scripts/teach_brief.py"
+                        },
+                    },
+                    {
+                        "name": "run_command",
+                        "args": {
+                            "CommandLine": "python3 -c \"print(open('Homunculus/skills/claim-verification/scripts/verify_claims.py').read()[:200])\""
+                        },
+                    },
+                    {
+                        "name": "run_command",
+                        "args": {
+                            "CommandLine": "python3 -c \"import os; print(os.listdir('/tmp'))\""
+                        },
+                    },
+                ],
+            }
+            tx_path.write_text(json.dumps(step) + "\n", encoding="utf-8")
+            tel = sandbox_runner.parse_transcript_telemetry(str(tx_path))
+            self.assertEqual(tel["verification_cmds"], 1)
+            self.assertEqual(tel["py_snoop_cmds"], 2)
+            self.assertEqual(tel["ls_find_probes"], 1)
 
 
 if __name__ == "__main__":

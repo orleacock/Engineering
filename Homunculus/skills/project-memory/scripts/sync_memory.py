@@ -283,6 +283,119 @@ def build_repo_auto_tree(repo_path: Path, max_depth: int = 3, max_entries: int =
     return "\n".join(lines), digest
 
 
+ALLOWED_DOTFILES = frozenset({
+    ".gitignore",
+    ".gitattributes",
+    ".editorconfig",
+    ".npmrc",
+    ".cursorignore",
+    ".claudeignore",
+    ".geminiignore",
+    ".homunculus.json",
+})
+ALLOWED_DOTDIRS = frozenset({".github"})
+
+
+def build_ascii_directory_tree(
+    root_path: Path,
+    max_depth: int = 3,
+    max_entries: int = 180,
+    allowed_top_dirs: set[str] | None = None,
+    allowed_projects: set[str] | None = None,
+    allowed_task_files: set[str] | None = None,
+    allowed_directory_files: set[str] | None = None,
+) -> tuple[str, str]:
+    """
+    Render a box-header ASCII directory tree (`├──` / `└──`) matching the Homunculus Directory standard,
+    plus a deterministic 12-hex SHA-256 tree hash.
+    """
+    banner = "+------------------------------------------------------------+"
+    header = [
+        "```text",
+        banner,
+        "            --- DIRECTORY STRUCTURE ---",
+        banner,
+        "",
+        "./",
+    ]
+    if not root_path.is_dir():
+        header.append(f"└── [missing on disk: {root_path.name}]")
+        header.append(banner)
+        header.append("```")
+        return "\n".join(header), "MISSING"
+
+    flat_manifest: list[str] = []
+    entry_count = 0
+    truncated = False
+
+    def _walk_dir(cur_dir: Path, prefix: str, depth: int) -> None:
+        nonlocal entry_count, truncated
+        if truncated or depth > max_depth:
+            return
+        try:
+            raw_items = sorted(cur_dir.iterdir(), key=lambda p: p.name.lower())
+        except OSError:
+            return
+
+        subdirs: list[Path] = []
+        files: list[Path] = []
+        rel_cur = cur_dir.relative_to(root_path)
+
+        for item in raw_items:
+            name = item.name
+            if item.is_dir():
+                if name in IGNORED_TREE_DIRS or name.startswith(".cache") or name == ".obsidian":
+                    continue
+                if name.startswith(".") and name not in ALLOWED_DOTDIRS:
+                    continue
+                if depth == 0 and allowed_top_dirs is not None and name not in allowed_top_dirs:
+                    continue
+                if depth == 1 and rel_cur.as_posix() == "Projects" and allowed_projects is not None:
+                    if name not in allowed_projects:
+                        continue
+                subdirs.append(item)
+            elif item.is_file():
+                if name.startswith(".") and name not in ALLOWED_DOTFILES:
+                    continue
+                if depth == 1 and rel_cur.as_posix() == "Projects" and name.endswith(".base"):
+                    continue
+                if depth == 1 and rel_cur.as_posix() == "Tasks" and allowed_task_files is not None:
+                    if name not in allowed_task_files:
+                        continue
+                if depth == 1 and rel_cur.as_posix() == "Directory" and allowed_directory_files is not None:
+                    if name not in allowed_directory_files:
+                        continue
+                files.append(item)
+
+        entries: list[tuple[str, Path | None]] = [(f"{d.name}/", d) for d in subdirs]
+        if depth == 0 and (cur_dir / ".git").exists():
+            entries.append((".git/ (excluded)", None))
+        entries.extend((f.name, None) for f in files)
+
+        for idx, (label, dir_obj) in enumerate(entries):
+            if entry_count >= max_entries:
+                truncated = True
+                header.append(f"{prefix}└── ... (truncated at {max_entries} entries)")
+                return
+            is_last = idx == len(entries) - 1
+            connector = "└── " if is_last else "├── "
+            header.append(f"{prefix}{connector}{label}")
+            rel_entry = (rel_cur / label.rstrip("/")).as_posix() if str(rel_cur) != "." else label
+            flat_manifest.append(rel_entry)
+            entry_count += 1
+            if dir_obj is not None and depth < max_depth:
+                child_prefix = prefix + ("    " if is_last else "│   ")
+                _walk_dir(dir_obj, child_prefix, depth + 1)
+                if truncated:
+                    return
+
+    _walk_dir(root_path, "", 0)
+    header.append(banner)
+    header.append("```")
+    digest = hashlib.sha256("\n".join(flat_manifest).encode("utf-8")).hexdigest()[:12]
+    return "\n".join(header), digest
+
+
 def init_memory_root(
     memory_root: Path,
     mode: str = "headless",
@@ -291,7 +404,7 @@ def init_memory_root(
 ) -> dict[str, Any]:
     """Scaffold a Dual-Mode (`headless` or `obsidian`) memory root directory."""
     memory_root = memory_root.resolve()
-    for subdir in ("Projects", "Tasks", "Standards_and_Specs", "Templates", "Diagrams"):
+    for subdir in ("Directory", "Projects", "Tasks", "Standards_and_Specs", "Templates", "Diagrams"):
         (memory_root / subdir).mkdir(parents=True, exist_ok=True)
 
     # Copy canonical templates from Homunculus/templates/memory/ into <memory_root>/Templates/
@@ -318,6 +431,7 @@ def init_memory_root(
     if not standards_path.exists():
         standards_path.write_text(render_template("Global_Standards_Index.md", ctx, memory_root), encoding="utf-8")
 
+    sync_directory_trees(memory_root)
     if mode == "obsidian":
         _write_obsidian_extras(memory_root)
 
@@ -468,6 +582,7 @@ def sync_obsidian_visual_brain(
     obs_dir.mkdir(parents=True, exist_ok=True)
     graph_path = obs_dir / "graph.json"
     color_groups: list[dict[str, Any]] = [
+        {"query": 'path:"Directory"', "color": {"a": 1, "rgb": _hex_to_obsidian_rgb("#03A6D9")}},
         {"query": 'path:"Tasks"', "color": {"a": 1, "rgb": _hex_to_obsidian_rgb("#FE8019")}},
         {"query": "file:_Hardware", "color": {"a": 1, "rgb": _hex_to_obsidian_rgb("#8EC07C")}},
         {"query": "file:_Software", "color": {"a": 1, "rgb": _hex_to_obsidian_rgb("#83A598")}},
@@ -811,6 +926,7 @@ def init_project(
 
     sync_task_rollups(memory_root)
     sync_root_project_index(memory_root)
+    sync_directory_trees(memory_root)
 
     return {
         "status": "PASS",
@@ -1465,6 +1581,7 @@ def sync_project_tree(memory_root: Path, project_name: str, repo_override: Path 
         {"repo_head_sha": head_sha, "tree_hash": tree_hash, "last_synced": today_iso()},
     )
     hub_path.write_text(text, encoding="utf-8")
+    sync_directory_trees(memory_root)
     return {
         "status": "PASS",
         "project": hub_path.stem,
@@ -1529,6 +1646,7 @@ def sync_all_project_trees(memory_root: Path) -> dict[str, Any]:
         hub.write_text(new_text, encoding="utf-8")
         updated_projects.append(proj)
 
+    sync_directory_trees(memory_root)
     return {
         "status": "PASS",
         "projects_checked": len(hub_files),
@@ -2092,6 +2210,203 @@ def sync_root_project_index(memory_root: Path) -> None:
     readme_path.write_text(text, encoding="utf-8")
 
 
+def sync_directory_trees(memory_root: Path) -> dict[str, Any]:
+    """
+    Maintain `<memory_root>/Directory/` Turn-1 location lookup maps (`Directory_Index.md` +
+    entity-isolated `<Entity_Safe>_Directory.md` box trees) so agents resolve exact paths across
+    `<memory_root>/` and live repositories without `ls`/`find`/`os.listdir` probes or cross-entity bleed.
+    """
+    memory_root = memory_root.resolve()
+    dir_root = memory_root / "Directory"
+    dir_root.mkdir(parents=True, exist_ok=True)
+    projects_dir = memory_root / "Projects"
+    today_str = today_iso()
+
+    # Group indexed projects by owning entity
+    entities_projects: dict[str, list[dict[str, Any]]] = {}
+    if projects_dir.is_dir():
+        for hub in sorted(projects_dir.glob("*/*.md")):
+            if hub.stem != hub.parent.name:
+                continue
+            proj = hub.stem
+            fm, _ = parse_stdlib_frontmatter(hub.read_text(encoding="utf-8", errors="ignore"))
+            ent = str(fm.get("entity", "Default_Entity")).strip() or "Default_Entity"
+            comp = str(fm.get("compartment", "private")).strip() or "private"
+            ptype = str(fm.get("project_type", "software")).strip() or "software"
+            local_p = str(fm.get("local_path", "")).strip().replace("\\", "/")
+            head_sha = str(fm.get("repo_head_sha", "UNTRACKED")).strip() or "UNTRACKED"
+            repo_dir: Path | None = None
+            if local_p:
+                cand = Path(local_p)
+                if not cand.is_absolute():
+                    cand = (memory_root / cand).resolve()
+                if cand.is_dir():
+                    repo_dir = cand
+                    live_sha = get_git_head_sha(cand)
+                    if live_sha != "UNTRACKED":
+                        head_sha = live_sha
+            entities_projects.setdefault(ent, []).append({
+                "project": proj,
+                "entity": ent,
+                "compartment": comp,
+                "project_type": ptype,
+                "local_path": local_p or f"../Projects/{proj}",
+                "repo_dir": repo_dir,
+                "head_sha": head_sha,
+            })
+
+    written_files: list[str] = []
+    index_path = dir_root / "Directory_Index.md"
+    if not index_path.exists():
+        index_path.write_text("# Memory & Workspace Directory Index\n", encoding="utf-8")
+
+    expected_entity_files: set[str] = {"Directory_Index.md"}
+    entity_rows: list[str] = [
+        "| Entity Scope | Compartment | Projects Indexed | Entity Directory Map | Task Umbrella |",
+        "| :--- | :--- | :---: | :--- | :--- |",
+    ]
+    comp_rank = {"cleanroom": 3, "public": 2, "private": 1}
+
+    for ent in sorted(entities_projects.keys()):
+        plist = entities_projects[ent]
+        ent_safe = sanitize_entity_filename(ent)
+        ent_fname = f"{ent_safe}_Directory.md"
+        expected_entity_files.add(ent_fname)
+        ent_path = dir_root / ent_fname
+        if not ent_path.exists():
+            ent_path.write_text(f"# {ent}\n", encoding="utf-8")
+        strictest_comp = max((p["compartment"] for p in plist), key=lambda c: comp_rank.get(c, 1))
+        proj_names = {p["project"] for p in plist}
+        task_fname = f"{ent_safe}_Tasks.md"
+        task_link = f"[`{task_fname}`](../Tasks/{task_fname})" if (memory_root / "Tasks" / task_fname).is_file() else "—"
+
+        mem_tree, mem_hash = build_ascii_directory_tree(
+            memory_root,
+            max_depth=3,
+            max_entries=180,
+            allowed_projects=proj_names,
+            allowed_task_files={task_fname},
+            allowed_directory_files={"Directory_Index.md", ent_fname},
+        )
+
+        sec_lines = [
+            "---",
+            f'title: "{ent} — Memory & Repository Directory Tree"',
+            f'entity: "{ent}"',
+            f'compartment: "{strictest_comp}"',
+            'type: "entity-directory"',
+            f'tree_hash: "{mem_hash}"',
+            f'last_synced: "{today_str}"',
+            "---",
+            "",
+            f"# 🗂️ `{ent}` — Directory Lookup Map (`entity: {ent}`)",
+            "",
+            "> **Turn-1 Cold-Start Location Map (`pre-commit-gate` Stage X)**: Read this note on Turn 1 to resolve exact file paths across `<memory_root>/` and `"
+            + ent
+            + "` repositories without running `ls`, `find`, or `os.listdir` probes. Cross-entity repositories outside `"
+            + ent
+            + "` are strictly excluded (`CROSS_ENTITY_CONTAMINATION` firewall).",
+            "",
+            f"- **Directory Index**: [`Directory_Index.md`](Directory_Index.md) | **Task Umbrella**: {task_link}",
+            "",
+            "---",
+            "",
+            f"## 1. `{ent}` Memory Dossiers, Standards & Templates (`<memory_root>/`)",
+            "",
+            mem_tree,
+            "",
+            "---",
+            "",
+            f"## 2. `{ent}` Repository Directory Trees (`{len(plist)}` Indexed)",
+            "",
+        ]
+        for p in plist:
+            pname = p["project"]
+            rdir = p["repo_dir"]
+            if rdir is not None and rdir.is_dir():
+                rtree, rhash = build_ascii_directory_tree(rdir, max_depth=3, max_entries=160)
+            else:
+                rtree = (
+                    "```text\n"
+                    "+------------------------------------------------------------+\n"
+                    "            --- DIRECTORY STRUCTURE ---\n"
+                    "+------------------------------------------------------------+\n\n"
+                    "./\n"
+                    f"└── [unmounted or external path: {p['local_path']}]\n"
+                    "+------------------------------------------------------------+\n"
+                    "```"
+                )
+                rhash = "UNMOUNTED"
+            sec_lines.extend([
+                f"### [`{pname}`](../Projects/{pname}/{pname}.md) (`{p['project_type']}` | `HEAD: {p['head_sha']}` | `Tree: {rhash}`)",
+                f"- **Repository Location**: `{p['local_path']}`",
+                "",
+                rtree,
+                "",
+            ])
+
+        ent_path.write_text("\n".join(sec_lines).rstrip() + "\n", encoding="utf-8")
+        written_files.append(str(ent_path))
+        idx_task_link = f"[`{task_fname}`](../Tasks/{task_fname})" if (memory_root / "Tasks" / task_fname).is_file() else "—"
+        entity_rows.append(
+            f"| `{ent}` | `{strictest_comp}` | `{len(plist)}` | [`{ent_fname}`]({ent_fname}) | {idx_task_link} |"
+        )
+
+    # Prune stale entity directory files if an entity no longer exists
+    for existing_md in sorted(dir_root.glob("*_Directory.md")):
+        if existing_md.name not in expected_entity_files:
+            existing_md.unlink()
+
+    if len(entity_rows) == 2:
+        entity_rows.append("| *(No projects onboarded yet — run `--init-project`)* | — | `0` | — | — |")
+
+    shared_tree, shared_hash = build_ascii_directory_tree(
+        memory_root,
+        max_depth=3,
+        max_entries=160,
+        allowed_top_dirs={"Directory", "Standards_and_Specs", "Templates", "Diagrams"},
+        allowed_directory_files={"Directory_Index.md"},
+    )
+    idx_lines = [
+        "---",
+        'title: "Memory & Workspace Directory Index"',
+        'type: "directory-index"',
+        f'tree_hash: "{shared_hash}"',
+        f'last_synced: "{today_str}"',
+        "---",
+        "",
+        "# 🗂️ Engineering Memory — Directory Lookup Hub (`Directory/`)",
+        "",
+        "> **Turn-1 Location Lookup (`Zero Shell Recon`)**: Maintained automatically by `sync_memory.py` (`--sync-trees` / `--sync-visuals` at `pre-commit-gate` Stage X). Agents read [`Directory_Index.md`](Directory_Index.md) or the active entity's `<Entity>_Directory.md` map on Turn 1 to locate standards, templates, dossiers, and repository files without `ls`, `find`, or `os.listdir` probes.",
+        "",
+        "- **Memory Hub**: [`README.md`](../README.md) | **Global Standards**: [`Standards_Index.md`](../Standards_and_Specs/Standards_Index.md)",
+        "",
+        "---",
+        "",
+        "## 1. Shared `<memory_root>/` Directory Structure",
+        "",
+        shared_tree,
+        "",
+        "---",
+        "",
+        "## 2. Entity-Isolated Directory Trees (`Multi-Customer Firewall`)",
+        "",
+        "> **Containment Rule**: Only open the `<Entity>_Directory.md` file matching the active task's `entity:` scope.",
+        "",
+        *entity_rows,
+        "",
+    ]
+    index_path.write_text("\n".join(idx_lines), encoding="utf-8")
+    written_files.insert(0, str(index_path))
+
+    return {
+        "status": "PASS",
+        "directory_root": str(dir_root),
+        "entities_indexed": len(entities_projects),
+        "written_files": written_files,
+    }
+
+
 def audit_memory(memory_root: Path) -> dict[str, Any]:
     """
     Deterministic Memory Containment, Structure & Link Auditor (`--audit`):
@@ -2232,9 +2547,22 @@ def audit_memory(memory_root: Path) -> dict[str, Any]:
                                     f"links to task umbrella `{resolved_target.name}` (`entity: {t_ent}`)."
                                 ),
                             })
+                    elif len(target_rel) >= 2 and target_rel[0] == "Directory" and resolved_target.is_file():
+                        d_fm, _ = parse_stdlib_frontmatter(resolved_target.read_text(encoding="utf-8", errors="ignore"))
+                        d_ent = str(d_fm.get("entity", "")).strip()
+                        if d_ent and d_ent.lower() != "shared" and d_ent != file_entity:
+                            violations.append({
+                                "code": "CROSS_ENTITY_CONTAMINATION",
+                                "file": str(md_file),
+                                "line": lineno,
+                                "detail": (
+                                    f"Cross-customer/entity directory link blocked: `{md_file.name}` (`entity: {file_entity}`) "
+                                    f"links to directory map `{resolved_target.name}` (`entity: {d_ent}`)."
+                                ),
+                            })
 
-            # 3. Also check for unlinked cross-entity project name references inside project dossiers
-            if owning_project and file_entity and file_entity.lower() != "shared":
+            # 3. Also check for unlinked cross-entity project name references inside project dossiers or entity directories
+            if (owning_project or (len(rel_parts) >= 2 and rel_parts[0] == "Directory")) and file_entity and file_entity.lower() != "shared":
                 for other_proj, other_entity in project_entity_map.items():
                     if other_proj == owning_project or not other_entity or other_entity == file_entity:
                         continue
@@ -2404,9 +2732,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--sync-tasks", action="store_true", help="Refresh checkbox rollups across `Tasks/*_Tasks.md`.")
     parser.add_argument(
+        "--sync-directory",
+        action="store_true",
+        help="Refresh `<memory_root>/Directory/` (`Directory_Index.md` + entity-isolated `<Entity>_Directory.md` box trees).",
+    )
+    parser.add_argument(
         "--sync-visuals",
         action="store_true",
-        help="Refresh root `AUTO-PROJECT-INDEX`, task rollups, and (when `memory_mode: obsidian`) `.base` & `graph.json` views.",
+        help="Refresh root `AUTO-PROJECT-INDEX`, `Directory/` lookup trees, task rollups, and (when `memory_mode: obsidian`) `.base` & `graph.json` views.",
     )
     parser.add_argument(
         "--export-canvas",
@@ -2536,9 +2869,14 @@ def main(argv: list[str] | None = None) -> int:
         q_res = query_project_section(mem_root, target_proj, sec_choice, repo_override)
         results["query_section"] = q_res
 
+    if args.sync_directory:
+        results["sync_directory"] = sync_directory_trees(mem_root)
+
     if args.sync_tasks or args.sync_visuals:
         results["sync_tasks"] = sync_task_rollups(mem_root)
         sync_root_project_index(mem_root)
+        if args.sync_visuals:
+            results["sync_directory"] = sync_directory_trees(mem_root)
         if args.sync_visuals and _detect_memory_mode(mem_root) == "obsidian":
             c_dir = Path(str(args.canvas_out_dir).replace("\\", "/")).expanduser().resolve() if args.canvas_out_dir else None
             results["obsidian_visual_brain"] = sync_obsidian_visual_brain(

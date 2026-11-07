@@ -13,8 +13,8 @@ Refer to [`Memory_Setup_README.md`](../../docs/Memory_Setup_README.md) for direc
 
 Before reading or mutating project files or memory notes, verify:
 1. **Memory Root Resolution**: Locate `<memory_root>` via `.homunculus.json` (`memory_dir`), `--memory-root`, or `./memory` / `./vault`. If no memory root exists and the user requests project memory onboarding, initialize it via [`sync_memory.py`](scripts/sync_memory.py) (`--init-memory`) or native file writes from [`templates/memory/`](../../templates/memory/).
-2. **Turn-1 Hub Dossier, Session Kickstart & Staleness Check**: Read `<memory_root>/Projects/<Project>/<Project>.md` on Turn 1 to obtain `entity`, `compartment`, `project_type`, `local_path`, `SESSION-HANDOFF` stopping context, and the `AUTO-TREE` file map without running blind `ls`/`find` scans. When resuming after a break, run `sync_memory.py --memory-root <memory_root> --project <Project> --kickstart` (`< 10ms` provenance check comparing `checkpoint_head_sha` and `checkpoint_tree_hash` against the live repository) and present the saved stopping point and discussion items to the user before mutating files.
-3. **Peer-Entity / Multi-Customer Firewall**: Check the `entity:` key inside `<Project>.md` frontmatter and enforce `CROSS_ENTITY_CONTAMINATION` isolation across `Projects/<Other>/` and `Tasks/<Other>_Tasks.md` whenever `entity:` values differ.
+2. **Turn-1 Hub Dossier, `Directory/` Lookup Tree, Session Kickstart & Staleness Check**: Read `<memory_root>/Projects/<Project>/<Project>.md` or `<memory_root>/Directory/<Entity>_Directory.md` (`Directory/Directory_Index.md` for shared `Standards_and_Specs/` / `Templates/` lookup) on Turn 1 to obtain `entity`, `compartment`, `project_type`, `local_path`, `SESSION-HANDOFF` stopping context, and the `--- DIRECTORY STRUCTURE ---` / `AUTO-TREE` file map without running blind `ls`/`find`/`os.listdir` scans. When resuming after a break, run `sync_memory.py --memory-root <memory_root> --project <Project> --kickstart` (`< 10ms` provenance check comparing `checkpoint_head_sha` and `checkpoint_tree_hash` against the live repository) and present the saved stopping point and discussion items to the user before mutating files.
+3. **Peer-Entity / Multi-Customer Firewall**: Check the `entity:` key inside `<Project>.md` frontmatter and enforce `CROSS_ENTITY_CONTAMINATION` isolation across `Projects/<Other>/`, `Tasks/<Other>_Tasks.md`, and `Directory/<Other>_Directory.md` whenever `entity:` values differ.
 
 ---
 
@@ -48,11 +48,11 @@ Never use a monolithic parser for unrelated domains. Invoke the specific telemet
      --memory-root <memory_root> --project <Project> --sync-software
    ```
    Indexes runtime entrypoints, CLI flags (`argparse`/commands), JSON/YAML schemas, and test suite receipts.
-3. **Single-Project or Batch `AUTO-TREE` Refresh (`--sync-tree` / `--sync-trees`)**:
+3. **Single-Project, Batch `AUTO-TREE` & `Directory/` Tree Refresh (`--sync-tree` / `--sync-trees` / `--sync-directory`)**:
    ```bash
    python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
      --memory-root <memory_root> --project <Project> --sync-tree
-   # Or batch-refresh all indexed projects at pre-commit wrap-up:
+   # Or batch-refresh all indexed project AUTO-TREEs + Directory/ box trees at pre-commit-gate wrap-up:
    python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
      --memory-root <memory_root> --sync-trees
    ```
