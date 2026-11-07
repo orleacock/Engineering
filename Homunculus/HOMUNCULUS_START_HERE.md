@@ -37,8 +37,8 @@ Read and enforce these three portable rules across the session:
   Read Homunculus/HOMUNCULUS_START_HERE.md and operate under Homunculus rules and skills for this project.
   ```
 - **Zero Admin / Zero Install**: Requires **0** admin rights, **0** `.sh`/`.ps1` installers, **0** symlinks, and **0** `pip` packages.
-- **Zero-Install Side-Loaded Modules (`addons/`)**: Optional modules that take time to calibrate—such as `addons/author-voice-cadence/`—are kept dormant in `addons/` so they never clutter day-one startup. To activate an add-on at any time with zero scripts or permissions, simply **drop/copy its folder into `skills/`** (e.g., copy `addons/author-voice-cadence/` $\rightarrow$ `skills/author-voice-cadence/`) or tell the AI: *"Read `Homunculus/addons/author-voice-cadence/SKILL.md` for this task."*
-- **If Local CLI Execution Is Allowed (`Python 3.10+`)**: Invoke deterministic scripts directly via relative paths (e.g., `python3 Homunculus/scripts/homunculus_paths.py --check` on Linux/macOS, or `py -3 Homunculus\scripts\homunculus_paths.py --check` on Windows).
+- **Zero-Install Side-Loaded Modules (`addons/`)**: Optional modules that take time to calibrate or require external MCP setup—such as `addons/author-voice-cadence/` and `addons/gmail-workspace-assistant/`—are kept dormant in `addons/` so they never clutter day-one startup. To activate an add-on at any time with zero scripts or permissions, simply **drop/copy its folder into `skills/`** (e.g., copy `addons/author-voice-cadence/` $\rightarrow$ `skills/author-voice-cadence/`) or tell the AI: *"Read `Homunculus/addons/author-voice-cadence/SKILL.md` for this task."*
+- **If Local CLI Execution Is Allowed (`Python 3.10+`)**: Invoke deterministic scripts directly via relative paths (e.g., `python3 Homunculus/scripts/homunculus_paths.py --check` on Linux/macOS, or `py -3 Homunculus\scripts\homunculus_paths.py --check` on Windows). Every Python and shell script embeds an AST-verified `=== DEVELOPER & AI NAVIGATION MAP ===` header (and `_Software.md` embeds `#Lstart-Lend` symbol coordinates) so AI agents and developers can jump straight to any function in 1 turn (`--map <SCRIPT_OR_ALL>` / `--sync-maps`).
 - **If Local CLI Execution Is Restricted by IT (`Zero-CLI Fallback`)**: Follow the structured Markdown verification tables and inline SVG/Mermaid protocols documented inside each `skills/*/SKILL.md`.
 
 ### Mode B — Optional Automated Setup (`install.sh` / `install.ps1`)
@@ -86,4 +86,5 @@ Load a skill's `SKILL.md` only when relevant to the active task:
 - **Pre-Commit Release Gate (`X -> Y -> Z`)**: `skills/pre-commit-gate/SKILL.md`
 
 ### Side-Loaded Add-Ons (`addons/` — Drop into `skills/` When Ready)
-- **Author Voice & Cadence Calibration**: `addons/author-voice-cadence/SKILL.md` (Drop into `skills/author-voice-cadence/` once writing samples are placed in `./voice_inbox/`).
+- **Author Voice & Cadence Calibration**: [`addons/author-voice-cadence/SKILL.md`](addons/author-voice-cadence/SKILL.md) (`addons/author-voice-cadence/scripts/extract_voice_cadence.py` — drop into `skills/author-voice-cadence/` once writing samples are placed in `./corpus_inbox/`).
+- **Gmail Workspace Assistant**: [`addons/gmail-workspace-assistant/SKILL.md`](addons/gmail-workspace-assistant/SKILL.md) (Drop into `skills/gmail-workspace-assistant/` for multi-account Gmail MCP triage, `visibility_radar` non-visible inbox auditing, `verified_send_as_aliases` draft staging, and attachment quarantine).

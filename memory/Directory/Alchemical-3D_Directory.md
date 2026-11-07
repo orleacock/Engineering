@@ -371,7 +371,7 @@ last_synced: "2026-11-07"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 87eee6ffc0fa` | `Tree: f73cd4360aed`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 79e74e4c8511` | `Tree: f73cd4360aed`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

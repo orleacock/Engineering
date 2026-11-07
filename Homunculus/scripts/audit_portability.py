@@ -12,11 +12,21 @@ Fails closed (exit != 0) if any file inside the Homunculus repository contains:
 
 Decodes files across UTF-8, UTF-16 (LE/BE), and UTF-32 (LE/BE) so multi-byte encoding cannot
 bypass inspection. Requires ONLY Python 3.10+ standard library.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : Core Framework (`scripts/`)
+  Callers       : `install.sh`, `install.ps1`, `pre-commit-gate` (Stage Z2), `test_foundation.py`, `test_data_safety.py`, `test_adapters.py`
+  Callees       : `homunculus_paths.py` (`CLEANROOM_FORBIDDEN_SHA256`, `ALLOWED_PLACEHOLDER_USERS`, `RE_POSIX_HOME`, `RE_WIN_USERS`, `decode_file_text`)
+  CLI Flags     : --repo, --root, --repo-root, --forbid-token, --json
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def decode_file_text (#L73-L75)                | def _check_cleanroom_hashes (#L78-L91)
+    - def _audit_python_stdlib_only (#L94-L119)      | def audit_repository (#L122-L280)
+    - def main (#L283-L327)
+=== END NAVIGATION MAP ===
 """
 from __future__ import annotations
 
 import argparse
-import ast
 import hashlib
 import json
 import re
@@ -82,48 +92,30 @@ def _check_cleanroom_hashes(line: str) -> str | None:
 
 
 def _audit_python_stdlib_only(file_path: Path, rel_path: str, text: str, local_modules: set[str]) -> list[dict[str, Any]]:
-    """Verify Python files import only Python 3.10+ stdlib or local Homunculus modules."""
+    """Verify Python files import only Python 3.10+ stdlib or local Homunculus modules via Unified AST Kernel."""
     findings: list[dict[str, Any]] = []
-    try:
-        tree = ast.parse(text, filename=rel_path)
-    except SyntaxError as exc:
+    info = homunculus_paths.inspect_python_ast_and_map(file_path, local_modules=local_modules, source_text=text)
+    if info["syntax_error"] is not None:
+        err = info["syntax_error"]
         findings.append(
             {
                 "rule": "PYTHON_SYNTAX_ERROR",
                 "file": rel_path,
-                "line": exc.lineno or 1,
-                "detail": f"SyntaxError: {exc.msg}",
+                "line": err["line"],
+                "detail": f"SyntaxError: {err['msg']}",
             }
         )
         return findings
 
-    stdlib_names = sys.stdlib_module_names
-    for node in ast.walk(tree):
-        mod_name: str | None = None
-        lineno = getattr(node, "lineno", 1)
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                mod_name = alias.name.split(".")[0]
-                if mod_name not in stdlib_names and mod_name not in local_modules:
-                    findings.append(
-                        {
-                            "rule": "NON_STDLIB_PIP_IMPORT",
-                            "file": rel_path,
-                            "line": lineno,
-                            "detail": f"External third-party import '{alias.name}' violates zero-pip portability.",
-                        }
-                    )
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            mod_name = node.module.split(".")[0]
-            if mod_name not in stdlib_names and mod_name not in local_modules:
-                findings.append(
-                    {
-                        "rule": "NON_STDLIB_PIP_IMPORT",
-                        "file": rel_path,
-                        "line": lineno,
-                        "detail": f"External third-party import 'from {node.module}' violates zero-pip portability.",
-                    }
-                )
+    for imp in info["non_stdlib_imports"]:
+        findings.append(
+            {
+                "rule": "NON_STDLIB_PIP_IMPORT",
+                "file": rel_path,
+                "line": imp["line"],
+                "detail": f"External third-party import '{imp['stmt']}' violates zero-pip portability.",
+            }
+        )
     return findings
 
 

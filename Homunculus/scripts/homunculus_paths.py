@@ -6,10 +6,29 @@ Windows, macOS, and Linux.
 
 Requires ONLY Python 3.10+ standard library (zero third-party pip packages) and operates
 in both Zero-Install "Drop-In & Point" mode and Optional Installer mode.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : Core Framework (`scripts/`)
+  Callers       : All 12 core/skill Python scripts, `install.sh`, `install.ps1`, `post-worktree-sync.sh`, `test_foundation.py`, `test_project_memory.py`, `test_adapters.py`
+  Callees       : Stdlib only; lazy-loads `sync_memory.py` inside `ensure_directory_fresh()`
+  CLI Flags     : --workspace, --homunculus-root, --memory-root, --init-config, --memory-mode, --memory-dir, --simulate-os, --check, --ensure-fresh, --map, --sync-maps, --quiet, --json
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def parse_frontmatter_full (#L90-L141)         | def strip_yaml_frontmatter (#L144-L147)
+    - def decode_file_text (#L150-L171)              | def detect_os_tier (#L174-L207)
+    - def resolve_homunculus_root (#L210-L237)       | def _find_git_root (#L240-L245)
+    - def resolve_workspace_config (#L248-L334)      | def probe_runtime_capabilities (#L337-L365)
+    - def write_workspace_config (#L368-L406)        | def _resolve_tree_stamp_cache_dir (#L427-L442)
+    - def _resolve_memory_root_fast (#L445-L472)     | def _read_git_head_signature (#L475-L509)
+    - def read_git_head_sha (#L512-L530)             | def inspect_python_ast_and_map (#L540-L663)
+    - def _format_symbol_index_lines (#L666-L678)    | def sync_script_navigation_map (#L681-L728)
+    - def _compute_structural_stamp (#L731-L792)     | def _load_sync_memory_module (#L795-L808)
+    - def ensure_directory_fresh (#L811-L889)        | def main (#L892-L1049)
+=== END NAVIGATION MAP ===
 """
 from __future__ import annotations
 
 import argparse
+import ast
 import codecs
 import hashlib
 import importlib.util
@@ -479,10 +498,234 @@ def _read_git_head_signature(repo_dir: Path) -> str:
                 return f"{ref_rel}:{ref_file.read_text(encoding='utf-8', errors='ignore').strip()}"
             packed = git_dir / "packed-refs"
             if packed.is_file():
+                for pline in packed.read_text(encoding="utf-8", errors="ignore").splitlines():
+                    if pline.endswith(f" {ref_rel}") and not pline.startswith("#"):
+                        sha_part = pline.split(" ", 1)[0].strip()
+                        if len(sha_part) >= 12:
+                            return f"{ref_rel}:{sha_part}"
                 return f"{ref_rel}:packed:{packed.stat().st_mtime_ns}"
         return head_val
     except OSError:
         return ""
+
+
+def read_git_head_sha(repo_dir: str | Path, length: int = 12) -> str:
+    """Resolve short or full Git HEAD SHA in ~0.06ms via direct `.git/HEAD` read (with subprocess fallback)."""
+    rpath = Path(repo_dir).expanduser().resolve()
+    sig = _read_git_head_signature(rpath)
+    if sig:
+        candidate = sig.rsplit(":", 1)[-1].strip()
+        if re.fullmatch(r"[0-9a-fA-F]{12,64}", candidate):
+            return candidate[:length] if length > 0 else candidate
+    if (rpath / ".git").exists():
+        try:
+            cmd = ["git", "-C", str(rpath), "rev-parse", f"--short={length}" if length > 0 else "HEAD", "HEAD"]
+            if length <= 0:
+                cmd = ["git", "-C", str(rpath), "rev-parse", "HEAD"]
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=2.0, check=False)
+            if proc.returncode == 0 and proc.stdout.strip():
+                return proc.stdout.strip()
+        except Exception:
+            pass
+    return ""
+
+
+_RE_MAP_SYMBOL_ENTRY = re.compile(r"(def|class)\s+([A-Za-z0-9_]+)\s+\(#L(\d+)-L(\d+)\)")
+_RE_NAV_MAP_BLOCK = re.compile(
+    r"(=== DEVELOPER & AI NAVIGATION MAP ===\n)(.*?)(\n\s*=== END NAVIGATION MAP ===)",
+    re.DOTALL,
+)
+
+
+def inspect_python_ast_and_map(
+    file_path: str | Path,
+    local_modules: set[str] | frozenset[str] | None = None,
+    source_text: str | None = None,
+) -> dict[str, Any]:
+    """Single-Pass Unified AST Kernel (`Pairing C`).
+
+    Parses `file_path` once with `ast.parse()` and simultaneously extracts:
+      1. Top-level `def`/`async def`/`class` symbols with exact `#Lstart-Lend` coordinates
+      2. CLI flags (`add_argument(...)`) in source order
+      3. Non-stdlib third-party import violations (`sys.stdlib_module_names` + `local_modules`)
+      4. Verification of the in-script `=== DEVELOPER & AI NAVIGATION MAP ===` header against the live AST
+    """
+    fpath = Path(file_path)
+    if source_text is None:
+        try:
+            source_text = fpath.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            return {
+                "file": str(fpath),
+                "syntax_error": {"line": 1, "msg": str(exc)},
+                "line_count": 0,
+                "cli_flags": [],
+                "symbols": [],
+                "non_stdlib_imports": [],
+                "map_present": False,
+                "map_mismatches": [f"OSError: {exc}"],
+            }
+
+    lines = source_text.splitlines()
+    line_count = len(lines)
+    try:
+        tree = ast.parse(source_text, filename=str(fpath))
+    except SyntaxError as exc:
+        return {
+            "file": str(fpath),
+            "syntax_error": {"line": exc.lineno or 1, "msg": exc.msg or "SyntaxError"},
+            "line_count": line_count,
+            "cli_flags": [],
+            "symbols": [],
+            "non_stdlib_imports": [],
+            "map_present": False,
+            "map_mismatches": [f"SyntaxError at L{exc.lineno or 1}: {exc.msg}"],
+        }
+
+    symbols: list[dict[str, Any]] = []
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            kind = "class" if isinstance(node, ast.ClassDef) else "def"
+            start_ln = int(getattr(node, "lineno", 1))
+            end_ln = int(getattr(node, "end_lineno", start_ln))
+            is_pub = not node.name.startswith("_")
+            symbols.append(
+                {
+                    "kind": kind,
+                    "name": node.name,
+                    "start_line": start_ln,
+                    "end_line": end_ln,
+                    "is_public": is_pub,
+                    "anchor": f"{node.name}(#L{start_ln}-L{end_ln})",
+                }
+            )
+
+    stdlib_names = getattr(sys, "stdlib_module_names", frozenset())
+    allowed_locals = set(local_modules or ()) | {"homunculus_paths"}
+    cli_flags: list[str] = []
+    seen_flags: set[str] = set()
+    non_stdlib_imports: list[dict[str, Any]] = []
+
+    for node in ast.walk(tree):
+        lineno = int(getattr(node, "lineno", 1))
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                mod_root = alias.name.split(".")[0]
+                if mod_root not in stdlib_names and mod_root not in allowed_locals:
+                    non_stdlib_imports.append(
+                        {"module": alias.name, "line": lineno, "stmt": f"import {alias.name}"}
+                    )
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            mod_root = node.module.split(".")[0]
+            if mod_root not in stdlib_names and mod_root not in allowed_locals:
+                non_stdlib_imports.append(
+                    {"module": node.module, "line": lineno, "stmt": f"from {node.module}"}
+                )
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            if node.func.attr == "add_argument" and node.args:
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                        val = arg.value.strip()
+                        if val and val not in seen_flags:
+                            seen_flags.add(val)
+                            cli_flags.append(val)
+
+    doc_head = "\n".join(lines[:75])
+    map_present = "=== DEVELOPER & AI NAVIGATION MAP ===" in doc_head
+    map_mismatches: list[str] = []
+    if map_present:
+        doc_entries = {
+            m.group(2): (m.group(1), int(m.group(3)), int(m.group(4)))
+            for m in _RE_MAP_SYMBOL_ENTRY.finditer(doc_head)
+        }
+        ast_entries = {s["name"]: (s["kind"], s["start_line"], s["end_line"]) for s in symbols}
+        for sym_name, ast_coord in ast_entries.items():
+            if sym_name not in doc_entries:
+                map_mismatches.append(f"Missing symbol in navigation map: {sym_name} (#L{ast_coord[1]}-L{ast_coord[2]})")
+            elif doc_entries[sym_name] != ast_coord:
+                d_coord = doc_entries[sym_name]
+                map_mismatches.append(
+                    f"Drifted line range for {sym_name}: map has #L{d_coord[1]}-L{d_coord[2]} vs AST #L{ast_coord[1]}-L{ast_coord[2]}"
+                )
+        for doc_sym in doc_entries:
+            if doc_sym not in ast_entries:
+                map_mismatches.append(f"Removed symbol still listed in navigation map: {doc_sym}")
+
+    return {
+        "file": str(fpath),
+        "syntax_error": None,
+        "line_count": line_count,
+        "cli_flags": cli_flags,
+        "symbols": symbols,
+        "non_stdlib_imports": non_stdlib_imports,
+        "map_present": map_present,
+        "map_mismatches": map_mismatches,
+    }
+
+
+def _format_symbol_index_lines(symbols: list[dict[str, Any]]) -> list[str]:
+    if not symbols:
+        return ["    - (module-level execution / no top-level def or class)"]
+    entries = [f"{s['kind']} {s['name']} (#L{s['start_line']}-L{s['end_line']})" for s in symbols]
+    rows: list[str] = []
+    for idx in range(0, len(entries), 2):
+        left = entries[idx]
+        if idx + 1 < len(entries):
+            right = entries[idx + 1]
+            rows.append(f"    - {left:<46} | {right}")
+        else:
+            rows.append(f"    - {left}")
+    return rows
+
+
+def sync_script_navigation_map(file_path: str | Path, write: bool = True) -> dict[str, Any]:
+    """Two-pass fixed-point auto-healer for `=== DEVELOPER & AI NAVIGATION MAP ===` headers (`Pairing A`)."""
+    fpath = Path(file_path)
+    try:
+        orig_text = fpath.read_text(encoding="utf-8")
+    except OSError as exc:
+        return {"file": str(fpath), "status": "ERROR", "updated": False, "reason": str(exc)}
+
+    if "=== DEVELOPER & AI NAVIGATION MAP ===" not in orig_text[:4096]:
+        return {"file": str(fpath), "status": "NO_MAP_HEADER", "updated": False}
+
+    cur_text = orig_text
+    for _pass in range(2):
+        info = inspect_python_ast_and_map(fpath, source_text=cur_text)
+        if info["syntax_error"] is not None:
+            return {"file": str(fpath), "status": "SYNTAX_ERROR", "updated": False}
+        sym_lines = _format_symbol_index_lines(info["symbols"])
+        flags_line = ", ".join(info["cli_flags"]) if info["cli_flags"] else "(none / library or positional)"
+
+        def _rebuild_block(match: re.Match[str]) -> str:
+            header = match.group(1)
+            body = match.group(2)
+            footer = match.group(3)
+            kept_meta: list[str] = []
+            for ln in body.splitlines():
+                if ln.strip().startswith("Symbol Index"):
+                    break
+                if ln.strip().startswith("CLI Flags"):
+                    kept_meta.append(f"  CLI Flags     : {flags_line}")
+                else:
+                    kept_meta.append(ln)
+            kept_meta.append("  Symbol Index  (jump directly via read_file StartLine/EndLine):")
+            kept_meta.extend(sym_lines)
+            return header + "\n".join(kept_meta) + footer
+
+        cur_text = _RE_NAV_MAP_BLOCK.sub(_rebuild_block, cur_text, count=1)
+
+    updated = cur_text != orig_text
+    if updated and write:
+        fpath.write_text(cur_text, encoding="utf-8")
+    final_info = inspect_python_ast_and_map(fpath, source_text=cur_text)
+    return {
+        "file": str(fpath),
+        "status": "UPDATED" if updated else "FRESH",
+        "updated": updated,
+        "symbol_count": len(final_info["symbols"]),
+        "mismatches": final_info["map_mismatches"],
+    }
 
 
 def _compute_structural_stamp(
@@ -680,12 +923,65 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Run the ~1.7ms structural dentry/HEAD check and write-if-changed refresh of memory/Directory/ + AUTO-TREE.",
     )
+    parser.add_argument(
+        "--map",
+        metavar="SCRIPT_OR_ALL",
+        help="Print the AST-verified Developer & AI Navigation Map (#Lstart-Lend) for a script name/path or 'all'.",
+    )
+    parser.add_argument(
+        "--sync-maps",
+        action="store_true",
+        help="Auto-heal in-script Developer & AI Navigation Map (#Lstart-Lend) headers across all Python scripts.",
+    )
     parser.add_argument("--quiet", action="store_true", help="Suppress stdout banner when running --ensure-fresh.")
     parser.add_argument("--json", action="store_true", help="Emit resolved configuration as JSON.")
     args = parser.parse_args(argv)
 
     fw_root = resolve_homunculus_root(args.homunculus_root)
     target_ws = Path(args.workspace).expanduser().resolve() if args.workspace else Path.cwd().resolve()
+
+    if args.sync_maps or args.map:
+        py_files: list[Path] = []
+        for sub in ("scripts", "skills", "addons"):
+            sdir = fw_root / sub
+            if sdir.is_dir():
+                py_files.extend(sorted(sdir.rglob("*.py")))
+        if args.sync_maps:
+            results = [sync_script_navigation_map(p, write=True) for p in py_files]
+            if args.json:
+                print(json.dumps({"synced_scripts": len(results), "results": results}, indent=2))
+            else:
+                updated_cnt = sum(1 for r in results if r.get("updated"))
+                print(f"[PASS] Synced {len(results)} script navigation maps ({updated_cnt} updated).")
+            return 0
+        query = args.map.strip()
+        matched = [
+            p
+            for p in py_files
+            if query.lower() == "all"
+            or p.name.lower() == query.lower()
+            or p.stem.lower() == query.lower()
+            or query.replace("\\", "/") in p.as_posix()
+        ]
+        if not matched:
+            cand = Path(query).expanduser().resolve()
+            if cand.is_file():
+                matched = [cand]
+        if not matched:
+            print(f"[FAIL] No Python script matching '{query}' found under {fw_root}", file=sys.stderr)
+            return 1
+        out_maps = [inspect_python_ast_and_map(p) for p in matched]
+        if args.json:
+            print(json.dumps(out_maps[0] if len(out_maps) == 1 else out_maps, indent=2))
+        else:
+            for m in out_maps:
+                rel_m = os.path.relpath(m["file"], fw_root).replace("\\", "/")
+                print(f"=== {rel_m} ({m['line_count']} lines | {len(m['symbols'])} symbols) ===")
+                if m["cli_flags"]:
+                    print("  CLI Flags : " + ", ".join(m["cli_flags"]))
+                for s in m["symbols"]:
+                    print(f"  - {s['kind']} {s['name']} (#L{s['start_line']}-L{s['end_line']})")
+        return 0
 
     if args.ensure_fresh and not args.init_config and not args.check:
         fresh_res = ensure_directory_fresh(

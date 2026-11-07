@@ -16,11 +16,40 @@ Key Architectural Guarantees:
     - Multi-Customer / Peer-Entity Containment (`--audit`):
         Detects and blocks `[CROSS_ENTITY_CONTAMINATION]` across projects belonging to different `entity:` scopes.
     - First-Class Quarantine Zone (`Quarantine/` + `## Quarantine Zone`) and Per-Project `Templates/`.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `project-memory` (`skills/project-memory/SKILL.md`)
+  Callers       : `homunculus_paths.py` (`ensure_directory_fresh`), `pre-commit.sh`, `post-worktree-sync.sh`, `pre-commit-gate` (Stage X), `test_project_memory.py`, `test_claim_verification.py`
+  Callees       : `homunculus_paths.py` (`parse_frontmatter_full`, `ensure_directory_fresh`), `inspect_hardware_ecosystem.py` (`--sync-manifest` subprocess)
+  CLI Flags     : --memory-root, --vault, --init-memory, --init-vault, --mode, --convert-mode, --default-entity, --init-project, --project, --section, --repo-path, --type, --entity, --compartment, --sync-hardware, --sync-software, --sync-tree, --sync-trees, --check-stale, --save-handoff, --stopped-at, --receipt, --blockers, --next-steps, --discussion, --handoff-file, --kickstart, --create-project-template, --tasks, --recommend, --umbrella, --tbd-ledger, --sync-tasks, --sync-directory, --sync-visuals, --export-canvas, --canvas-out-dir, --audit, --check, --json
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def today_iso (#L99-L100)                      | def sanitize_entity_filename (#L103-L106)
+    - def parse_stdlib_frontmatter (#L109-L112)      | def update_frontmatter_fields (#L115-L143)
+    - def replace_marker_block (#L146-L157)          | def extract_marker_block (#L160-L169)
+    - def get_git_worktree_state (#L172-L191)        | def _sanitize_handoff_checkboxes (#L194-L214)
+    - def render_template (#L217-L235)               | def get_git_head_sha (#L238-L243)
+    - def build_repo_auto_tree (#L246-L282)          | def build_ascii_directory_tree (#L298-L395)
+    - def init_memory_root (#L398-L443)              | def _hex_to_obsidian_rgb (#L446-L447)
+    - def _detect_memory_mode (#L450-L459)           | def sync_obsidian_visual_brain (#L462-L777)
+    - def _write_obsidian_extras (#L780-L783)        | def convert_memory_mode (#L786-L808)
+    - def init_project (#L811-L940)                  | def _resolve_project_repo (#L943-L980)
+    - def _extract_markdown_sections (#L1012-L1045)  | def _extract_project_tasks_from_umbrella (#L1048-L1074)
+    - def query_project_section (#L1077-L1211)       | def _detect_step_unit_scale (#L1217-L1237)
+    - def _parse_step_metrics (#L1246-L1279)         | def _parse_stl_metrics (#L1282-L1307)
+    - def sync_hardware_telemetry (#L1310-L1434)     | def _inspect_python_module (#L1440-L1473)
+    - def sync_software_telemetry (#L1476-L1577)     | def sync_project_tree (#L1580-L1606)
+    - def sync_all_project_trees (#L1609-L1672)      | def check_project_staleness (#L1675-L1688)
+    - def save_session_handoff (#L1691-L1785)        | def kickstart_project (#L1788-L1845)
+    - def create_project_template (#L1848-L1888)     | def sync_task_rollups (#L1891-L1922)
+    - def query_open_tasks (#L1925-L2042)            | def query_tbd_ledger (#L2048-L2192)
+    - def sync_root_project_index (#L2195-L2232)     | def _strip_last_synced_line (#L2235-L2237)
+    - def sync_directory_trees (#L2240-L2443)        | def audit_memory (#L2446-L2625)
+    - def main (#L2628-L3014)
+=== END NAVIGATION MAP ===
 """
 from __future__ import annotations
 
 import argparse
-import ast
 import datetime as dt
 import hashlib
 import json
@@ -207,22 +236,11 @@ def render_template(template_name: str, context: dict[str, str], memory_root: Pa
 
 
 def get_git_head_sha(repo_path: Path) -> str:
-    """Return short git HEAD SHA or 'UNTRACKED' if not a git repo (fast <10ms check)."""
+    """Return short git HEAD SHA or 'UNTRACKED' if not a git repo (fast ~0.06ms direct .git/HEAD read)."""
     if not repo_path.is_dir() or not (repo_path / ".git").exists():
         return "UNTRACKED"
-    try:
-        proc = subprocess.run(
-            ["git", "-C", str(repo_path), "rev-parse", "--short=12", "HEAD"],
-            capture_output=True,
-            text=True,
-            timeout=3,
-            check=False,
-        )
-        if proc.returncode == 0 and proc.stdout.strip():
-            return proc.stdout.strip()
-    except Exception:
-        pass
-    return "UNTRACKED"
+    sha = homunculus_paths.read_git_head_sha(repo_path, length=12)
+    return sha if sha else "UNTRACKED"
 
 
 def build_repo_auto_tree(repo_path: Path, max_depth: int = 3, max_entries: int = 160) -> tuple[str, str]:
@@ -1420,31 +1438,38 @@ def sync_hardware_telemetry(
 # Function 2 of 2: Dedicated Software Telemetry (`sync_software_telemetry`)
 # ============================================================================
 def _inspect_python_module(py_file: Path) -> tuple[str, int]:
-    """Extract CLI flags (`add_argument`) and top-level public functions/classes from a Python file."""
-    text = py_file.read_text(encoding="utf-8", errors="ignore")
-    line_count = len(text.splitlines())
-    cli_flags: list[str] = []
-    symbols: list[str] = []
-    try:
-        tree = ast.parse(text, filename=str(py_file))
-        for node in tree.body:
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                if not node.name.startswith("_"):
-                    symbols.append(f"{node.name}()")
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-                if node.func.attr == "add_argument" and node.args:
-                    first_arg = node.args[0]
-                    if isinstance(first_arg, ast.Constant) and isinstance(first_arg.value, str):
-                        cli_flags.append(first_arg.value)
-    except SyntaxError:
-        pass
+    """Extract CLI flags (`add_argument`) and top-level public functions/classes with `#Lstart-Lend` anchors via Unified AST Kernel."""
+    info = homunculus_paths.inspect_python_ast_and_map(py_file)
+    line_count = int(info.get("line_count", 0))
+    cli_flags: list[str] = list(info.get("cli_flags", []))
+    pub_syms = [s for s in info.get("symbols", []) if s.get("is_public")]
 
+    # Prioritize classes and primary entrypoints alongside initial public helpers (up to 12 symbols)
+    if len(pub_syms) > 12:
+        head_syms = pub_syms[:5]
+        head_names = {s["name"] for s in head_syms}
+        tail_candidates = [
+            s
+            for s in pub_syms[5:]
+            if s["name"] not in head_names
+            and (
+                s["kind"] == "class"
+                or s["name"] == "main"
+                or s["name"].startswith(("audit_", "verify_", "render_", "sync_", "inspect_", "build_", "resolve_", "ensure_"))
+            )
+        ]
+        selected_syms = head_syms + tail_candidates[:7]
+    else:
+        selected_syms = pub_syms
+
+    formatted_syms = [
+        f"`{s['name']}()` (`#L{s['start_line']}-L{s['end_line']}`)" for s in selected_syms
+    ]
     summary_parts: list[str] = []
     if cli_flags:
-        summary_parts.append("Flags: `" + "`, `".join(cli_flags[:6]) + "`")
-    if symbols:
-        summary_parts.append("Symbols: `" + "`, `".join(symbols[:5]) + "`")
+        summary_parts.append("Flags: `" + "`, `".join(cli_flags[:8]) + "`")
+    if formatted_syms:
+        summary_parts.append("Symbols: " + ", ".join(formatted_syms))
     return (" — ".join(summary_parts) if summary_parts else "Module"), line_count
 
 
@@ -1504,6 +1529,8 @@ def sync_software_telemetry(
             ext = fpath.suffix.lower()
             if ext in code_exts:
                 mod_count += 1
+                if ext == ".py" and os.access(fpath, os.W_OK):
+                    homunculus_paths.sync_script_navigation_map(fpath, write=True)
                 sha_prefix = hashlib.sha256(fpath.read_bytes()).hexdigest()[:10]
                 hash_inputs.append(f"{rel_path}:{sha_prefix}")
                 if ext == ".py":

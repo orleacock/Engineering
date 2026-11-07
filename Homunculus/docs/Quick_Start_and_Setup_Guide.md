@@ -127,9 +127,10 @@ Save our current stopping point and next-session discussion points to project me
 ```
 - **What Happens Automatically**: Homunculus saves a rich summary of where you stopped and what to tackle next. When you return days or weeks later and say *"Kickstart our project from memory,"* it loads your exact context and warns you if any files changed on disk while you were away.
 
-### Step 4: Customize Colors or Voice Whenever You Want
+### Step 4: Customize Colors, Learn On the Fly, or Activate Side-Loaded Add-Ons
 - **Your Own Brand Colors**: Ask your AI to render diagrams using your own hex color palette (see the [Community Extension SDK](../templates/community_sdk/README.md)).
-- **Your Own Writing Voice**: Whenever you want the AI to match your personal writing style for blog posts or READMEs, drop a few samples of your writing into a local folder and ask the AI to activate the `author-voice-cadence` add-on.
+- **On-the-Fly Engineering Learning (`teach-me` / `Brief+`)**: Invoke `/teach-me about '<Subject X>' impact on '<Subject Y>'` to generate a source-verified `Brief+` in `study_briefs/` and receive a compact Datasheet Card in chat without cluttering your active window.
+- **Optional Side-Loaded Add-Ons (`addons/`)**: Drop writing samples into `corpus_inbox/` and activate `addons/author-voice-cadence/` to match your personal writing style, or activate `addons/gmail-workspace-assistant/` for multi-account Gmail MCP triage and draft staging.
 
 ---
 

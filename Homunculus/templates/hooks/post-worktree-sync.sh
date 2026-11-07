@@ -3,6 +3,12 @@
 # Governed by: 1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
 # Refreshes <memory_root>/Directory/*.md and AUTO-TREE (write-if-changed, ~1.7ms cached / ~25ms rebuild)
 # whenever Git switches branches, merges/pulls, or rebases, without blocking Git operations.
+# === DEVELOPER & AI NAVIGATION MAP ===
+#   Owning Module : Non-Blocking Git Post-Worktree Directory Sync Hook (`templates/hooks/post-worktree-sync.sh`)
+#   Installed By  : `scripts/build_adapters.py --install-git-hooks` -> `.git/hooks/{post-checkout,post-merge,post-rewrite}`
+#   Callees       : `scripts/homunculus_paths.py --workspace <repo> --ensure-fresh --quiet`
+#   Section Index : Repo Root Resolution (#L14-L21) | Python Discovery (#L23-L30) | Homunculus Root Probe (#L32-L63) | Freshness Trigger (#L65-L69)
+# === END NAVIGATION MAP ===
 set -uo pipefail
 
 CALLER_DIR="$(cd "$(dirname "$0")" && pwd)"

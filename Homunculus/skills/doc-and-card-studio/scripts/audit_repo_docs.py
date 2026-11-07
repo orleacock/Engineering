@@ -30,6 +30,17 @@ Checks:
      `core principals`, `granualar`, `roational`, `hight temp`, `dessicant`, `gudeline`).
   9. [ISOLATED] Modular hardware repo file structure (`README.md`, `BOM.md`, `Print_Settings.md`,
      `Assembly_Guide.md`, `LICENSE.md`).
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `doc-and-card-studio` (`skills/doc-and-card-studio/SKILL.md`)
+  Callers       : `sandbox_runner.py` (`_audit_arm_deliverables`), `pre-commit-gate` (Stage Y), `test_core_skills.py`
+  Callees       : `homunculus_paths.py` (`ensure_directory_fresh`), `format_image.py` (`_inspect_png_stdlib`, `is_already_formatted`)
+  CLI Flags     : target, --files, --repo-type, --repo-root, --repo, --fail-on-tbd, --skip-image-check, --brand-config, --no-brand-config
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def _open_image_lazy (#L68-L73)                | def load_brand_config (#L76-L135)
+    - def collect_repo_cad_files (#L213-L227)        | def audit_markdown_file (#L230-L555)
+    - def main (#L558-L735)
+=== END NAVIGATION MAP ===
 """
 
 import argparse

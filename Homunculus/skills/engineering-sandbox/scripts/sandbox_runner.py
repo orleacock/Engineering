@@ -13,6 +13,22 @@ Linux Bubblewrap (`bwrap`) mount namespace where:
      isolated disposable clones to verify validators fail closed (`exit != 0`) on bad data.
   5. Full forensic logs (`report.json`, `mutations.diff`, `stdout.log`, `stderr.log`) are
      written to disk while emitting a compact <=350-token 5-block summary to stdout.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `engineering-sandbox` (`skills/engineering-sandbox/SKILL.md`)
+  Callers       : Track-2 verification workflow (`co-engineering-partner.md`), `pre-commit-gate`, `test_core_skills.py`
+  Callees       : `homunculus_paths.py` (`ensure_directory_fresh` Gate 0), `verify_claims.py` & `audit_repo_docs.py` (in `_audit_arm_deliverables`)
+  CLI Flags     : --mode, --target-dir, --workspace, --writable-dir, --cwd, --spec, --faults, --cmd, --fault-case, --allow-noop-setup, --timeout, --report-dir, --keep-overlay, --keep-failed-cow, --blind-dir, --visible-dir, --blind-transcript, --visible-transcript, --compare-source, --repo-root, --prepare, --json
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def _resolve_default_cache_root (#L51-L62)     | def sha256_file (#L124-L132)
+    - def snapshot_tree_manifest (#L135-L158)        | def diff_manifests (#L161-L174)
+    - def build_unified_diff (#L177-L215)            | def clone_cow_directory (#L218-L252)
+    - def run_in_bwrap (#L255-L343)                  | def check_bwrap_available (#L346-L356)
+    - def _strip_json_arg (#L359-L365)               | def resolve_transcript_path (#L368-L395)
+    - def parse_transcript_telemetry (#L398-L515)    | def _resolve_overlay_path (#L518-L526)
+    - def _collect_md_files (#L529-L537)             | def _audit_arm_deliverables (#L540-L658)
+    - def evaluate_ab_comparison (#L661-L878)        | def main (#L881-L1633)
+=== END NAVIGATION MAP ===
 """
 
 from __future__ import annotations
@@ -535,6 +551,22 @@ def _audit_arm_deliverables(
     import shlex
 
     results: Dict[str, Dict[str, object]] = {}
+    batch_vrf_map: Dict[str, Dict[str, object]] = {}
+    if not target_binds and compare_sources and len(rel_files) > 1 and os.path.isfile(DEFAULT_VERIFY_CLAIMS_SCRIPT):
+        try:
+            vc_dir = os.path.dirname(DEFAULT_VERIFY_CLAIMS_SCRIPT)
+            if vc_dir not in sys.path:
+                sys.path.insert(0, vc_dir)
+            import verify_claims as _vc_batch  # noqa: E402
+
+            abs_targets = [os.path.join(arm_dir, r) for r in rel_files]
+            batch_vrf_map = _vc_batch.verify_multiple_targets_inprocess(
+                target_paths=abs_targets,
+                sources=list(compare_sources),
+            )
+        except Exception:
+            batch_vrf_map = {}
+
     for rel in rel_files:
         abs_f = os.path.join(arm_dir, rel)
         host_f = _resolve_overlay_path(abs_f, target_binds)
@@ -569,16 +601,24 @@ def _audit_arm_deliverables(
                 if "[LOAD-BEARING]" in line:
                     doc_lb_issues.append(line.strip())
 
-        # 2. Run verify_claims.py if --compare-source provided
+        # 2. Run verify_claims.py if --compare-source provided (using shared SourceIndex batch when available)
         vrf_rc = 0
         unbacked_count = 0
         supported_count = 0
         vrf_id = ""
-        if compare_sources and os.path.isfile(DEFAULT_VERIFY_CLAIMS_SCRIPT):
+        if abs_f in batch_vrf_map:
+            v_obj = batch_vrf_map[abs_f]
+            unbacked_count = int(v_obj.get("unbacked_count", 0))
+            supported_count = int(v_obj.get("supported_count", 0))
+            vrf_id = str(v_obj.get("vrf_token") or "")
+            vrf_rc = 1 if unbacked_count > 0 else 0
+            if vrf_id and vrf_id not in vrf_receipts_out:
+                vrf_receipts_out.append(vrf_id)
+        elif compare_sources and os.path.isfile(DEFAULT_VERIFY_CLAIMS_SCRIPT):
             srcs_quoted = " ".join(shlex.quote(s) for s in compare_sources)
             vrf_cmd = (
                 f"python3 {shlex.quote(DEFAULT_VERIFY_CLAIMS_SCRIPT)} "
-                f"--target {shlex.quote(abs_f)} --sources {srcs_quoted} --json"
+                f"--target {shlex.quote(abs_f)} --sources {srcs_quoted} --skip-freshness-check --json"
             )
             vrf_rc, v_out, v_err, _ = run_in_bwrap(
                 shell_cmd=vrf_cmd,

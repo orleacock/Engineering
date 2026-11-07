@@ -7,6 +7,23 @@ and human upkeep. Parses ISO-10303-21 (.step/.stp) analytic B-Rep files, binary/
 (.stl) meshes via pure Python 3.10+ stdlib (struct/math), Klipper (.cfg) firmware files,
 and repository documentation to generate compact Obsidian Hardware Manifests without
 loading raw CAD into LLM context.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `subagent-orchestrator` (`skills/subagent-orchestrator/SKILL.md`)
+  Callers       : `sync_memory.py` (`--sync-hardware`), `teach-me` subagents, `test_core_skills.py`, `test_claim_verification.py`
+  Callees       : `homunculus_paths.py` (`parse_frontmatter_full`, `ensure_directory_fresh`)
+  CLI Flags     : --vault, --memory-root, --project, --repo, --json-out, --all, --check-cache, --sync-manifest, --force-rescan
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def parse_frontmatter (#L91-L93)               | def normalize_part_stem (#L96-L105)
+    - def classify_bore_diameter (#L108-L129)        | def _vec_dot (#L132-L133)
+    - def _vec_cross (#L136-L143)                    | def _vec_norm (#L146-L147)
+    - def _bbox_from_points (#L150-L157)             | def detect_step_unit_scale (#L160-L182)
+    - def inspect_step_file (#L185-L333)             | def inspect_stl_file (#L336-L432)
+    - def inspect_cfg_file (#L435-L460)              | def scan_repo_hardware (#L463-L601)
+    - def _upsert_frontmatter_keys (#L604-L625)      | def _replace_html_marker_block (#L628-L635)
+    - def render_manifest_markdown (#L638-L823)      | def resolve_projects (#L826-L895)
+    - def main (#L898-L1096)
+=== END NAVIGATION MAP ===
 """
 
 import argparse

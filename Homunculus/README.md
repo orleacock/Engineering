@@ -98,7 +98,8 @@ flowchart TD
 4. **Skill Architect & Hygiene Manager**: Helps you build new custom AI skills without creating duplicates, and audits existing skills to trim wasted context only when you approve.
 5. **Parallel Subagent & Safe Sandbox Support**: Coordinates multi-file research efficiently (with simple `[lite]`, `[fast]`, and `[deep]` prompt tags) and tests changes in an isolated sandbox before applying them to your live project.
 6. **Data Privacy & Multi-Project Firewalls**: Protects `.env` secrets and credentials from being read into chat logs and keeps separate client or public/private projects strictly isolated.
-7. **Diagram Studio, Doc Polisher & Optional Voice Add-On**: Generates clean `.svg` and `300 DPI .png` technical diagrams in your choice of color palette, checks repository links and formatting, and includes an optional **Author Voice** add-on that learns your personal writing style when you are ready.
+7. **Diagram Studio, Doc Polisher & Optional Side-Loaded Add-Ons**: Generates clean `.svg` and `300 DPI .png` technical diagrams in your choice of color palette, checks repository links and formatting, and includes optional side-loaded add-ons (`addons/author-voice-cadence/` for personal writing voice matching and `addons/gmail-workspace-assistant/` for multi-account Gmail MCP triage and draft staging).
+8. **On-the-Fly Engineering & Technical Learning (`teach-me` / `Brief+`)**: Generates source-verified first-principles `Brief+` lessons inside the non-consumed `study_briefs/` folder via a throw-away subagent and returns a compact Datasheet Card to chat without cluttering your active context window.
 
 ---
 

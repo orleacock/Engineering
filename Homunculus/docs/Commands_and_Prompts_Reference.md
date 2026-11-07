@@ -45,7 +45,8 @@ Drop the `Homunculus/` folder into your project and paste any of these natural p
 | **Create or Audit Custom AI Skills** | `"Use Skill Architect to check if this new workflow overlaps our existing skills, or run a non-destructive hygiene check."` |
 | **Generate a Diagram in Your Brand Colors** | `"Render an SVG architecture diagram for this system using our custom color palette."` |
 | **Steer Background Subagent Speed vs. Depth** | Add **`[lite]`** (quick lookup), **`[fast]`** (standard parallel scan), or **`[deep]`** (thorough review) to the end of any prompt. |
-| **Activate Personal Writing Voice Matching** | `"Read Homunculus/addons/author-voice-cadence/SKILL.md and calibrate to my writing samples."` |
+| **Activate Personal Writing Voice Matching** | `"Read Homunculus/addons/author-voice-cadence/SKILL.md and calibrate to my writing samples in corpus_inbox/."` |
+| **Activate Multi-Account Gmail MCP Triage** | `"Read Homunculus/addons/gmail-workspace-assistant/SKILL.md and triage our inbox threads safely."` |
 | **Run Pre-Commit Wrap-Up Checks** | `"Run our pre-commit wrap-up checks so we are ready to commit."` |
 
 ---
@@ -56,9 +57,9 @@ Use these optional commands if you want to check environment readiness or auto-g
 
 | Tool | Key Arguments & Options | What It Does |
 | :--- | :--- | :--- |
-| **`install.ps1` *(Windows)*** | `-Check`, `-Workspace <PATH>`, `-MemoryMode {headless,obsidian}`, `-DryRun` | Checks readiness or configures client startup files in a Windows workspace without requiring Admin rights. |
-| **`install.sh` *(macOS / Linux)*** | `--check`, `--workspace <PATH>`, `--client <NAME>`, `--memory-mode {headless,obsidian}`, `--prefer-copy`, `--install-git-hooks`, `--dry-run` | Checks readiness or configures client startup files and optional Git safety hooks on macOS and Linux. |
-| **`homunculus_paths.py`** | `--check`, `--workspace <PATH>`, `--init-config`, `--memory-mode {headless,obsidian}`, `--json` | Verifies cross-platform workspace paths and writes a portable `.homunculus.json` settings file. |
+| **`install.ps1` *(Windows)*** | `-Check`, `-Workspace <PATH>`, `-Client <NAME>`, `-MemoryMode {headless,obsidian}`, `-PreferCopy`, `-UseSymlinks`, `-InstallGitHooks`, `-NoAdapters`, `-DryRun` | Checks readiness or configures client startup files in a Windows workspace without requiring Admin rights. |
+| **`install.sh` *(macOS / Linux)*** | `--check`, `--workspace <PATH>`, `--client <NAME>`, `--memory-mode {headless,obsidian}`, `--no-adapters`, `--prefer-copy`, `--install-git-hooks`, `--dry-run` | Checks readiness or configures client startup files and optional Git safety hooks on macOS and Linux. |
+| **`homunculus_paths.py`** | `--check`, `--workspace <PATH>`, `--init-config`, `--memory-mode {headless,obsidian}`, `--ensure-fresh`, `--map <SCRIPT_OR_ALL>`, `--sync-maps`, `--json` | Verifies cross-platform workspace paths, writes `.homunculus.json`, refreshes `Directory/` trees, and prints or auto-heals `#Lstart-Lend` script navigation maps. |
 | **`build_adapters.py`** | `--workspace <PATH>`, `--client {all,agents-md,antigravity,claude-code,claude-cowork,cursor}`, `--prefer-copy` | Generates native rule/skill bindings and context-ignore files for your chosen AI client(s). |
 
 ```bash
@@ -151,7 +152,7 @@ python3 Homunculus/skills/engineering-sandbox/scripts/sandbox_runner.py \
 
 | Tool | Key Arguments & Options | What It Does |
 | :--- | :--- | :--- |
-| **`audit_skill_hygiene.py`** | `--check-new "<NAME>: <DESCRIPTION>"`, `--audit`, `--strict-structure`, `--target-skill <NAME>`, `--root <PATH>`, `--json` | **Mode 1 (`--check-new`)**: Checks if a new skill idea overlaps existing rules or skills.<br>**Mode 2 (`--audit`)**: Reviews existing skills for duplicate text, broken links, or context waste in non-destructive advisory mode. |
+| **`audit_skill_hygiene.py`** | `--check-new "<NAME>: <DESCRIPTION>"`, `--audit`, `--strict-structure`, `--target-skill <NAME>`, `--root <PATH>`, `--json` | **Mode 1 (`--check-new`)**: Checks if a new skill idea overlaps existing rules or skills; **Mode 2 (`--audit`)**: Reviews existing skills and script navigation maps (`#Lstart-Lend`) for duplicate text, broken links, or context waste in non-destructive advisory mode. |
 | **`teach_brief.py`** | `--init-brief`, `--subject "<X>"`, `--impact-on "<Y>"`, `--slug "<SLUG>"`, `--domain {mechanical,electrical,firmware,cabling,software,hybrid}`, `--verify <BRIEF>`, `--auto-slug`, `--sources <PATH...>`, `--rename-clean <BRIEF>`, `--list`, `--promote <BRIEF>`, `--target {standards,project-doc,lessons-learned}` | Scaffolds (or single-call verifies + `--auto-slug` renames with whole-word smart naming), stamps `VRF-<12hex>` + aligned `┏━━ 🎓 TEACH-ME // BRIEF+ ... ━━┓` chat cards, lists, and optionally promotes multi-domain `Brief+` study briefs in `study_briefs/`. |
 
 ```bash
@@ -186,14 +187,14 @@ python3 Homunculus/scripts/audit_portability.py --repo . --forbid-token "interna
 
 ---
 
-## 7. Diagram Studio, Doc Polisher & Voice Add-On Commands
+## 7. Diagram Studio, Doc Polisher & Side-Loaded Add-On Commands
 
 | Tool | Key Arguments & Options | What It Does |
 | :--- | :--- | :--- |
-| **`render_diagram.py`** | `--spec <JSON>`, `--palette <ID>`, `--output <SVG>`, `--strict`, `--png`, `--dpi 300`, `--list-palettes` | Renders clean `.svg` (and optional `300 DPI .png`) technical diagrams using built-in or custom brand color palettes. |
-| **`audit_repo_docs.py`** | `<TARGET_PATH> [...]`, `--repo-type {hardware,software,auto}`, `--skip-image-check` | Checks Markdown files for broken links, formatting issues, and incomplete assembly steps. |
-| **`format_image.py`** | `<INPUT_PNG>`, `--output <PNG>`, `--inspect <DIR_OR_PNG>`, `--radius 28` | Inspects or formats documentation showcase images with rounded corners and soft drop shadows. |
-| **`extract_voice_cadence.py`** | `--inbox <DIR>`, `--scope {all,long-form,micro}`, `--output <MD>` | *(Optional Add-On)* Analyzes writing samples in `--inbox` to build your personal Author Voice profile. |
+| **`render_diagram.py`** | `--spec <JSON>`, `--blueprint <ID>`, `--palette <ID>`, `-o` / `--output <SVG>`, `--strict`, `--png`, `--preview-png <PNG>`, `--github-card`, `--svg-only`, `--list-palettes`, `--list-blueprints` | Renders clean `.svg` (and optional `300 DPI .png` / showcase card) technical diagrams using built-in or custom brand color palettes. |
+| **`audit_repo_docs.py`** | `<TARGET_PATH> [...]`, `--files <MD...>`, `--repo-type {hardware,software,auto}`, `--repo-root <DIR>`, `--fail-on-tbd`, `--skip-image-check` | Checks Markdown files for broken links, formatting issues, and incomplete assembly steps. |
+| **`format_image.py`** | `<INPUT_PNG...>`, `-o <PNG>`, `--combine`, `--no-divider`, `--inspect`, `--bg-color`, `--radius 28`, `--force` | Inspects, combines, or formats documentation showcase images with rounded corners and soft drop shadows. |
+| **`extract_voice_cadence.py`** | `--inbox <DIR>`, `--scope {all,long-form,micro}`, `--output <MD>`, `--learn-diff`, `--draft <MD>`, `--final <MD>` | *(Optional Add-On)* Analyzes writing samples in `--inbox` (default `./corpus_inbox`) or edit-diffs (`--learn-diff`) to build your personal Author Voice profile. |
 
 ```bash
 # 1. List available diagram color palettes (including your custom palettes):

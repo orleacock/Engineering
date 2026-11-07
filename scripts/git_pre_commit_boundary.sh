@@ -2,6 +2,11 @@
 # Homunculus Universal Git Pre-Commit Boundary & Memory Integrity Gate
 # Governed by: 1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
 # Dynamically resolves Homunculus root via .homunculus.json or relative Homunculus/ folder (zero hardcoded paths).
+# === DEVELOPER & AI NAVIGATION MAP ===
+#   Owning Module : Parent Workstation Pre-Commit Boundary, Memory & Matrix Parity Gate (`scripts/git_pre_commit_boundary.sh`)
+#   Callees       : `audit_data_boundary.py --staged`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
+#   Section Index : Repo Root (#L13-L20) | Python Discovery (#L22-L30) | Homunculus Root Probe (#L33-L67) | Boundary & Memory Gate (#L78-L89) | AST Matrix Parity (#L91-L203)
+# === END NAVIGATION MAP ===
 set -euo pipefail
 
 CALLER_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -117,13 +122,22 @@ if not sec1_match:
     errors.append("MISSING_MASTER_TABLE: Section 1 Master Script-to-Skill table not found")
 else:
     for line in sec1_match.group(1).splitlines():
-        row_m = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
-        if row_m:
-            rel_p = row_m.group(2).strip()
+        row_m6 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
+        row_m5 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
+        if row_m6 and ("#L" in row_m6.group(5) or "N/A" in row_m6.group(5)):
+            rel_p = row_m6.group(2).strip()
             master_rows[rel_p] = {
-                "role": row_m.group(3).strip(),
-                "owner": row_m.group(4).strip().strip("`"),
-                "callers": row_m.group(5).strip(),
+                "role": row_m6.group(3).strip(),
+                "owner": row_m6.group(4).strip().strip("`"),
+                "map_header": row_m6.group(5).strip(),
+                "callers": row_m6.group(6).strip(),
+            }
+        elif row_m5:
+            rel_p = row_m5.group(2).strip()
+            master_rows[rel_p] = {
+                "role": row_m5.group(3).strip(),
+                "owner": row_m5.group(4).strip().strip("`"),
+                "callers": row_m5.group(5).strip(),
             }
 
 # 3. Verify 100% script, hook, installer & test coverage in Master Table

@@ -29,6 +29,23 @@ Deep Pass Stylometrics:
   7. Head-to-head uncontracted vs. contracted ratios + punctuation/ALL-CAPS emphasis profile
   8. Empirical zero-count audit of generic LLM clichés + authentic author idioms/vernacular
   9. Stratified verbatim candidate exemplars across all 5 categories
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `author-voice-cadence` (`addons/author-voice-cadence/SKILL.md` — Dormant Drop-In Add-On)
+  Callers       : Optional `author-voice-cadence` workflow, `test_core_skills.py`, `test_adapters.py`
+  Callees       : 100% standalone Python stdlib (zero core imports so add-on remains movable/deletable)
+  CLI Flags     : --inbox, --scope, --author, --min-words, --stitch-minutes, --exemplars-per-cat, --output
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - class PostRecord (#L219-L238)                  | def parse_ts (#L241-L257)
+    - def clean_post_text (#L260-L264)               | def strip_code_for_prose_metrics (#L267-L270)
+    - def classify_channel_domain (#L273-L294)       | def tier_included_in_scope (#L297-L317)
+    - def stitch_channel_messages (#L320-L359)       | def load_discord_gdpr_package (#L362-L506)
+    - def load_standalone_file (#L509-L602)          | def compute_deep_stylometrics (#L605-L774)
+    - def extract_stratified_exemplars (#L777-L914)  | def _fmt_dist (#L917-L931)
+    - def _sent_band_pcts (#L934-L942)               | def _para_len_pcts (#L945-L953)
+    - def format_deep_report (#L956-L1281)           | def discover_and_load_inbox (#L1284-L1341)
+    - def main (#L1344-L1426)
+=== END NAVIGATION MAP ===
 """
 
 import argparse

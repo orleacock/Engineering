@@ -13,6 +13,25 @@ publication-grade vector (.svg) and 300 DPI raster (.png) diagrams across
   5. spatial_topology          (2D multi-zone container map + Manhattan bus routing)
 
 Supports optional --github-card post-processing via format_image.py.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `visual-studio` (`skills/visual-studio/SKILL.md`)
+  Callers       : `pre-commit-gate` (Stage Y `--strict`), `test_core_skills.py`
+  Callees       : `homunculus_paths.py` (`resolve_workspace_config`, `ensure_directory_fresh`), `format_image.py` (`--github-card` subprocess)
+  CLI Flags     : --list-palettes, --list-blueprints, --memory-root, --spec, --blueprint, --palette, --out-dir, --basename, -o, --output, --png, --preview-png, --github-card, --svg-only, --strict
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def _resolve_active_memory_root (#L63-L84)     | def esc (#L162-L163)
+    - def extract_frontmatter_aliases (#L166-L179)   | def apply_palette_defaults (#L182-L195)
+    - def normalize_key (#L198-L199)                 | def discover_palettes (#L202-L273)
+    - def discover_blueprints (#L276-L312)           | def load_spec (#L315-L324)
+    - def _best_header_text (#L327-L336)             | def strip_inline_markup (#L339-L340)
+    - def render_inline_markup (#L343-L352)          | def resolve_style_colors (#L355-L389)
+    - class DiagramBuilder (#L392-L626)              | def render_layered_architecture (#L629-L790)
+    - def render_column_dataflow (#L793-L944)        | def render_hardware_pinout_pneumatic (#L947-L1178)
+    - def render_comparison_matrix (#L1181-L1314)    | def _rect_port (#L1317-L1330)
+    - def _segment_hits_rect (#L1333-L1358)          | def render_spatial_topology (#L1361-L1594)
+    - def convert_svg_to_png (#L1597-L1620)          | def main (#L1623-L1785)
+=== END NAVIGATION MAP ===
 """
 
 import argparse
@@ -70,7 +89,6 @@ PALETTE_BLOCK_RE = re.compile(
 SPEC_BLOCK_RE = re.compile(
     r"```json\s+diagram_spec\s*\n(.*?)\n```", re.DOTALL
 )
-FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|$)", re.DOTALL)
 
 DEFAULT_DARK_TOKENS: Dict[str, Any] = {
     "mode": "dark",
@@ -147,15 +165,10 @@ def esc(text: Any) -> str:
 
 def extract_frontmatter_aliases(md_text: str) -> List[str]:
     aliases: List[str] = []
-    m = FRONTMATTER_RE.match(md_text)
-    if not m:
-        return aliases
-    for line in m.group(1).splitlines():
-        if ":" not in line:
-            continue
-        k, v = line.split(":", 1)
+    fields, _body, _start = homunculus_paths.parse_frontmatter_full(md_text)
+    for k, val_raw in fields.items():
         if k.strip().lower() in ("aliases", "alias", "palette_id", "blueprint_id"):
-            val = v.strip()
+            val = str(val_raw).strip()
             if val.startswith("[") and val.endswith("]"):
                 for item in val[1:-1].split(","):
                     clean = item.strip().strip("\"'")

@@ -89,8 +89,10 @@ Instead of guessing a random number or writing vague instructions that hide the 
 **Yes, easily.** This GitHub manual uses the Alchemical-3D colors simply because Homunculus is our product.
 Your own projects are never locked to our theme: Homunculus includes neutral dark and light engineering palettes out of the box, and you can prompt your AI with your own brand hex colors anytime (see the [Community Extension SDK](../templates/community_sdk/README.md)).
 
-### Q5.2: How does the optional Author Voice & Cadence add-on work?
-Located in `addons/author-voice-cadence/`, this optional module stays dormant on Day 1 so it never gets in your way. Whenever you want the AI to write devlogs, documentation, or posts in your natural voice, drop a few samples of your writing into a local folder and ask the AI to activate the add-on.
+### Q5.2: How do the optional side-loaded add-ons (`author-voice-cadence` and `gmail-workspace-assistant`) and `/teach-me` work?
+- **`addons/author-voice-cadence/`**: Stays dormant on Day 1 so it never gets in your way. Whenever you want the AI to write devlogs, documentation, or posts in your natural voice, drop writing samples into `corpus_inbox/` and ask the AI to activate the add-on.
+- **`addons/gmail-workspace-assistant/`**: Optional side-loaded add-on for multi-account Gmail MCP triage, `visibility_radar` inbox auditing, and safe draft staging.
+- **`skills/teach-me/` (`Brief+`)**: Active core skill that runs `/teach-me` queries in a throw-away subagent, saves a verified `Brief+` lesson in the non-consumed `study_briefs/` folder, and returns a compact Datasheet Card to chat.
 
 ---
 

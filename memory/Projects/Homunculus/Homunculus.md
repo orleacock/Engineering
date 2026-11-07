@@ -5,9 +5,9 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v1.0.0 Release Candidate"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "87eee6ffc0fa"
+repo_head_sha: "79e74e4c8511"
 tree_hash: "ce2e098ff2e6"
-checkpoint_head_sha: "87eee6ffc0fa"
+checkpoint_head_sha: "79e74e4c8511"
 checkpoint_tree_hash: "ce2e098ff2e6"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
@@ -65,7 +65,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 87eee6ffc0fa | Tree Hash: ce2e098ff2e6
+Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
   .gitignore
   HOMUNCULUS_START_HERE.md
   LICENSE.md
@@ -253,12 +253,14 @@ Repository: Homunculus | HEAD SHA: 87eee6ffc0fa | Tree Hash: ce2e098ff2e6
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-07`
-- **Checkpoint Provenance**: `HEAD SHA: 87eee6ffc0fa` | `Tree Hash: ce2e098ff2e6` | `Worktree: clean` | `Last Verification: VRF-9558a2136173, VRF-46b66d6b3f13, VRF-d8146caa462f, SBX-20261107_115321-71b82997, SBX-20261107_115840-d0c27973`
+- **Checkpoint Provenance**: `HEAD SHA: 79e74e4c8511` | `Tree Hash: ce2e098ff2e6` | `Worktree: clean` | `Last Verification: SBX-20261107_164747-0996f501 (30/30 unit tests OK, 6/6 controls, 2/2 +faults caught, 97/97 clean-room parity, Clean-Room commit 79e74e4)`
 - **Where We Stopped (Verified State & Context)**:
-  Completed 2-Tier Single-Source Rule Diet (AGENTS.md 21,880 B <= 22,500 B), 97/97 Clean-Room promotion (87eee6f), LL-027, and Old vs. Current System Performance Scorecard (VRF-d8146caa462f)
+  Completed 5-part Script/Skill Matrix audit, AST-verified in-script Developer & AI Navigation Maps across all 20 scripts (261 symbols), Pairing D Full-Spectrum Synthesis (Single-Pass Unified AST Kernel, Dual-Surface _Software.md line anchors, In-Process/Shared-SourceIndex verify_claims fast-path), and D-01..D-09 doc/installer parity.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Discuss & design on-call internal telemetry/bloat-drift pulse tool (parent workstation + shipping inside Homunculus alongside skill-architect / audit_skill_hygiene.py)
+  1. Review queued [SKILL-ARCHITECT TELEMETRY PULSE] discussion item when ready
+  2. Push to remote when confirmed
+- **Open Discussion / Alignment Questions**: Evaluate internal on-call telemetry pulse design for skill-architect.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

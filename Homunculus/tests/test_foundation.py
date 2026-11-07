@@ -87,6 +87,36 @@ class TestFoundation(unittest.TestCase):
         self.assertEqual(res_dry.returncode, 0, res_dry.stderr)
         self.assertIn("[DRY-RUN]", res_dry.stdout)
 
+    def test_unified_ast_kernel_and_navigation_maps(self) -> None:
+        # 1. Verify all 14 Python scripts have valid, zero-mismatch AST navigation maps
+        for sub in ("scripts", "skills", "addons"):
+            sdir = REPO_ROOT / sub
+            for py_f in sorted(sdir.rglob("*.py")):
+                info = homunculus_paths.inspect_python_ast_and_map(py_f)
+                self.assertIsNone(info["syntax_error"], f"SyntaxError in {py_f}")
+                self.assertTrue(info["map_present"], f"Missing navigation map in {py_f}")
+                self.assertEqual(info["map_mismatches"], [], f"Map drift in {py_f}: {info['map_mismatches']}")
+
+        # 2. Verify two-pass sync_script_navigation_map auto-heals shifted line ranges
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            sample = Path(tmp_dir) / "sample_mod.py"
+            sample.write_text(
+                '"""Sample docstring.\n\n=== DEVELOPER & AI NAVIGATION MAP ===\n'
+                "  Owning Module : Test\n"
+                "  CLI Flags     : --old\n"
+                "  Symbol Index  (jump directly via read_file StartLine/EndLine):\n"
+                "    - def alpha (#L1-L2)\n"
+                '=== END NAVIGATION MAP ===\n"""\n\n'
+                "def alpha() -> int:\n    return 1\n\ndef beta() -> int:\n    return 2\n",
+                encoding="utf-8",
+            )
+            healed = homunculus_paths.sync_script_navigation_map(sample, write=True)
+            self.assertEqual(healed["status"], "UPDATED")
+            self.assertEqual(healed["mismatches"], [])
+            rechecked = homunculus_paths.inspect_python_ast_and_map(sample)
+            self.assertEqual(rechecked["map_mismatches"], [])
+            self.assertEqual(len(rechecked["symbols"]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

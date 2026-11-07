@@ -2,6 +2,13 @@
 # Homunculus Optional Setup Wrapper for Linux and macOS.
 # Note: Homunculus also supports 100% Zero-Install Drop-In mode via HOMUNCULUS_START_HERE.md
 # for locked-down workstations where running setup scripts is not permitted.
+# === DEVELOPER & AI NAVIGATION MAP ===
+#   Owning Module : Core Framework POSIX Installer (`install.sh`)
+#   Callers       : End-user / CI setup (`bash ./install.sh`), `test_foundation.py`, `test_adapters.py`
+#   Callees       : `scripts/audit_portability.py`, `scripts/homunculus_paths.py`, `scripts/build_adapters.py`
+#   CLI Flags     : --workspace, --memory-mode, --client, --no-adapters, --prefer-copy, --install-git-hooks, --dry-run, --check, -h/--help
+#   Section Index : Defaults (#L14-L22) | usage() (#L24-L44) | CLI Arg Loop (#L46-L90) | Python Discovery (#L92-L100) | Execution (#L102-L132)
+# === END NAVIGATION MAP ===
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,6 +34,7 @@ Options:
   --memory-mode <headless|obsidian> Memory architecture mode (default: headless)
   --client <all|agents_md|antigravity|claude_code|claude_cowork|cursor>
                                   Generate client harness adapters and context-ignore files in workspace
+  --no-adapters                   Initialize .homunculus.json without generating client harness adapters
   --prefer-copy                   Copy rule/skill files instead of symlinking when applying client adapters
   --install-git-hooks             Install portable pre-commit & pre-push data-boundary hooks into workspace/.git/hooks
   --dry-run                       Print planned actions without writing files

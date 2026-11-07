@@ -42,9 +42,9 @@ Every Homunculus session is guided by three core behavioral standards that keep 
 
 | Capability | What Problem It Solves | What It Does for You Automatically |
 | :--- | :--- | :--- |
-| **1. Co-Engineering Partner & State Ledger** | Stock AI agrees with broken ideas at Step 1 and often breaks Feature A while fixing Bug B. | • **Checks Foundations First**: Verifies key assumptions before writing dependent code.<br>• **Tracks Project State**: Maintains a live ledger of what is locked, what is already solved, and what is still open so new edits don't regress working features.<br>• **Waits for Your Go-Ahead**: Never pushes code or alters shared systems until you confirm you are ready. |
-| **2. Verifiable Accuracy & Honest `[TBD]` Tagging** | Stock AI invents "typical" numbers when a spec is missing or writes vague sentences that hide missing details. | • **No Made-Up Numbers**: Every measurement, count, pin, fastener, or setting must trace to your real project files.<br>• **Clear `[TBD]` & `[CONFLICT]` Markers**: If a specification isn't decided yet—or two files disagree—the AI flags it clearly so you can decide, instead of guessing silently. |
-| **3. Credential & Project Privacy** | Stock AI can accidentally read local secret files into chat logs or mix up data between different clients. | • **Protects Secrets**: Prevents private keys, `.env` files, and tokens from being read or printed into chat.<br>• **Separates Projects & Clients**: Keeps personal notes, public repos, and separate client projects strictly isolated. |
+| **1. Co-Engineering Partner & State Ledger** | Stock AI agrees with broken ideas at Step 1 and often breaks Feature A while fixing Bug B. | **Checks Foundations First** (verifies key assumptions before writing dependent code); **Tracks Project State** (maintains a live ledger of locked, solved, and open items so new edits don't regress working features); **Waits for Your Go-Ahead** (never pushes code or alters shared systems until you confirm). |
+| **2. Verifiable Accuracy & Honest `[TBD]` Tagging** | Stock AI invents "typical" numbers when a spec is missing or writes vague sentences that hide missing details. | **No Made-Up Numbers** (every measurement, count, pin, fastener, or setting must trace to your real project files); **Clear `[TBD]` & `[CONFLICT]` Markers** (if a specification isn't decided yet or two files disagree, the AI flags it clearly instead of guessing silently). |
+| **3. Credential & Project Privacy** | Stock AI can accidentally read local secret files into chat logs or mix up data between different clients. | **Protects Secrets** (prevents private keys, `.env` files, and tokens from being read or printed into chat); **Separates Projects & Clients** (keeps personal notes, public repos, and separate client projects strictly isolated). |
 
 ---
 
@@ -104,8 +104,12 @@ Homunculus includes **Skill Architect**, a two-mode assistant for building and m
 - Need a clean system architecture diagram, dataflow chart, wiring/pinout map, or side-by-side comparison card? Homunculus renders crisp `.svg` and high-resolution `300 DPI .png` diagrams offline in fractions of a second.
 - **Use Your Own Colors**: While our documentation uses the Alchemical-3D pink and dark-slate palette, you can switch to neutral engineering themes or prompt your own brand colors at any time (see the [Community Extension SDK](../templates/community_sdk/README.md)).
 
-### Optional Author Voice & Cadence Add-On
-- Included inside `addons/author-voice-cadence/`, this optional module stays out of your way on Day 1. Whenever you want your AI to draft blog posts, devlogs, or READMEs in your natural writing voice, drop a few samples of your own writing into a local folder and activate the add-on in seconds.
+### On-the-Fly Engineering & Technical Learning (`teach-me` / `Brief+`)
+- Included as Core Skill #9 (`skills/teach-me/`), `/teach-me` executes inside a throw-away subagent so active coding context is never polluted, writes a source-verified `Brief+` lesson to the non-consumed `study_briefs/` folder, and returns a compact Datasheet Card (`┏━━ 🎓 TEACH-ME // BRIEF+ ... ━━┓`) to your chat window.
+
+### Optional Side-Loaded Add-Ons (`Author Voice` & `Gmail Workspace Assistant`)
+- **`addons/author-voice-cadence/`**: Stays dormant on Day 1. Whenever you want your AI to draft blog posts, devlogs, or READMEs in your natural writing voice, drop a few samples of your writing into `corpus_inbox/` and activate the add-on in seconds.
+- **`addons/gmail-workspace-assistant/`**: Optional side-loaded add-on for multi-account Gmail MCP triage, `visibility_radar` non-visible inbox auditing, `verified_send_as_aliases` draft creation, and attachment quarantine.
 
 ---
 

@@ -2,6 +2,12 @@
 # Homunculus Universal Git Pre-Commit Boundary & Memory Integrity Gate
 # Governed by: 1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
 # Dynamically resolves Homunculus root via .homunculus.json or relative Homunculus/ folder (zero hardcoded paths).
+# === DEVELOPER & AI NAVIGATION MAP ===
+#   Owning Module : Git Pre-Commit Boundary & Memory Gate (`templates/hooks/pre-commit.sh`)
+#   Installed By  : `scripts/build_adapters.py --install-git-hooks` -> `.git/hooks/pre-commit`
+#   Callees       : `scripts/audit_data_boundary.py --staged`, `skills/project-memory/scripts/sync_memory.py --audit`
+#   Section Index : Repo Root Resolution (#L13-L20) | Python Discovery (#L22-L30) | Homunculus & Memory Root Probe (#L33-L69) | Gate Execution (#L71-L87)
+# === END NAVIGATION MAP ===
 set -euo pipefail
 
 CALLER_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -23,39 +29,44 @@ else
     exit 1
 fi
 
-# Resolve Homunculus root dynamically via Python stdlib
-HOMUNCULUS_ROOT="$("$PYTHON_BIN" - "$REPO_ROOT" << 'PY'
+# Resolve Homunculus root and memory_dir dynamically via Python stdlib
+RESOLVED_PATHS="$("$PYTHON_BIN" - "$REPO_ROOT" << 'PY'
 import json, os, sys
 from pathlib import Path
 
 repo = Path(sys.argv[1]).resolve()
 env_root = os.environ.get("HOMUNCULUS_ROOT", "").strip()
-if env_root and Path(env_root).is_dir():
-    print(Path(env_root).resolve())
-    sys.exit(0)
+hom_root = ""
+mem_dir = os.environ.get("HOMUNCULUS_MEMORY_ROOT", "").strip()
 
 for d in (repo, *repo.parents):
     cfg = d / ".homunculus.json"
     if cfg.is_file():
         try:
             data = json.loads(cfg.read_text(encoding="utf-8"))
+            if not mem_dir and data.get("memory_dir"):
+                mem_dir = str((d / str(data["memory_dir"])).resolve())
             rel = data.get("homunculus_rel_path", "")
-            if rel:
+            if rel and not hom_root:
                 cand = (d / rel).resolve()
                 if (cand / "HOMUNCULUS_START_HERE.md").is_file():
-                    print(cand)
-                    sys.exit(0)
+                    hom_root = str(cand)
         except Exception:
             pass
-    if (d / "HOMUNCULUS_START_HERE.md").is_file():
-        print(d)
-        sys.exit(0)
-    if (d / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
-        print((d / "Homunculus").resolve())
-        sys.exit(0)
-print("")
+    if not hom_root and (d / "HOMUNCULUS_START_HERE.md").is_file():
+        hom_root = str(d)
+    if not hom_root and (d / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
+        hom_root = str((d / "Homunculus").resolve())
+
+if env_root and Path(env_root).is_dir():
+    hom_root = str(Path(env_root).resolve())
+if not mem_dir:
+    mem_dir = str((repo / "memory").resolve())
+print(f"{hom_root}|{mem_dir}")
 PY
 )"
+HOMUNCULUS_ROOT="${RESOLVED_PATHS%%|*}"
+MEMORY_ROOT="${RESOLVED_PATHS#*|}"
 
 if [[ -z "$HOMUNCULUS_ROOT" || ! -f "${HOMUNCULUS_ROOT}/scripts/audit_data_boundary.py" ]]; then
     echo "[BLOCKED] Could not resolve Homunculus root from ${REPO_ROOT}. Set HOMUNCULUS_ROOT or run install.sh." >&2
@@ -65,10 +76,10 @@ fi
 "$PYTHON_BIN" "${HOMUNCULUS_ROOT}/scripts/audit_data_boundary.py" --repo "$REPO_ROOT" --staged
 
 MEMORY_SCRIPT="${HOMUNCULUS_ROOT}/skills/project-memory/scripts/sync_memory.py"
-if [[ -f "$MEMORY_SCRIPT" && -d "${REPO_ROOT}/memory" ]]; then
+if [[ -f "$MEMORY_SCRIPT" && -d "$MEMORY_ROOT" ]]; then
     if git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^(memory|rules|skills|addons)/' >/dev/null; then
-        if ! mem_out="$("$PYTHON_BIN" "$MEMORY_SCRIPT" --memory-root "${REPO_ROOT}/memory" --audit 2>&1)"; then
-            echo "[BLOCKED] Homunculus pre-commit memory gate failed (run: ${PYTHON_BIN} ${MEMORY_SCRIPT} --memory-root ${REPO_ROOT}/memory --audit):" >&2
+        if ! mem_out="$("$PYTHON_BIN" "$MEMORY_SCRIPT" --memory-root "$MEMORY_ROOT" --audit 2>&1)"; then
+            echo "[BLOCKED] Homunculus pre-commit memory gate failed (run: ${PYTHON_BIN} ${MEMORY_SCRIPT} --memory-root ${MEMORY_ROOT} --audit):" >&2
             echo "$mem_out" >&2
             exit 1
         fi

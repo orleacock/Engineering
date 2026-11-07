@@ -2,6 +2,12 @@
 # Homunculus Universal Git Pre-Push Boundary, Remote-Lock & Author-Identity Gate
 # Governed by: 1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
 # Dynamically resolves Homunculus root via .homunculus.json or relative Homunculus/ folder (zero hardcoded paths).
+# === DEVELOPER & AI NAVIGATION MAP ===
+#   Owning Module : Git Pre-Push Boundary, Remote-Lock & Author Gate (`templates/hooks/pre-push.sh`)
+#   Installed By  : `scripts/build_adapters.py --install-git-hooks` -> `.git/hooks/pre-push`
+#   Callees       : `scripts/audit_data_boundary.py --push-stdin --remote-name <name> --remote-url <url>`
+#   Section Index : Repo Root Resolution (#L13-L17) | Python Discovery (#L19-L27) | Homunculus Root Probe (#L29-L60) | Gate Execution (#L66-L71)
+# === END NAVIGATION MAP ===
 set -euo pipefail
 
 if ! REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"; then

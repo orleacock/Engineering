@@ -20,6 +20,27 @@ Modes:
       Scans all tracked + untracked non-ignored text files (UTF-8/16/32) and filenames in <path>.
   --all-in-root <dir>
       Runs --worktree across every git repository under <dir>.
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : Core Framework (`scripts/`)
+  Callers       : `pre-commit.sh`, `pre-push.sh`, `git_pre_commit_boundary.sh`, `pre-commit-gate` (Stage Z3), `test_data_safety.py`, `test_adapters.py`
+  Callees       : `homunculus_paths.py` (`CLEANROOM_FORBIDDEN_SHA256`, `ALLOWED_PLACEHOLDER_USERS`, `RE_POSIX_HOME`, `RE_WIN_USERS`)
+  CLI Flags     : --repo, --config, --compartment, --staged, --push-stdin, --remote-name, --remote-url, --worktree, --all-in-root
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - class BoundaryPolicy (#L110-L124)              | def _reset_policy (#L130-L132)
+    - def load_boundary_config (#L135-L234)          | def classify_compartment (#L237-L264)
+    - def active_filename_rules (#L267-L273)         | def active_content_rules (#L276-L280)
+    - def _should_block_os_user_paths (#L283-L286)   | def _should_block_affiliate_params (#L289-L292)
+    - def _active_forbidden_hashes (#L295-L301)      | def redact_snippet (#L304-L314)
+    - def scan_filenames (#L317-L325)                | def detect_text_encoding (#L328-L354)
+    - def decode_candidate_text_bytes (#L357-L367)   | def scan_raw_bytes_complete (#L370-L406)
+    - def check_symlink_escape (#L409-L417)          | def scan_git_tree_entries (#L420-L466)
+    - def _find_forbidden_hash_token (#L469-L482)    | def scan_text_lines (#L485-L532)
+    - def parse_unified_diff_added_lines (#L535-L559) | def scan_git_binary_flagged_blobs (#L562-L579)
+    - def audit_staged (#L582-L605)                  | def verify_remote_and_author_for_push (#L608-L659)
+    - def audit_push_stdin (#L662-L727)              | def audit_worktree (#L730-L766)
+    - def main (#L769-L831)
+=== END NAVIGATION MAP ===
 """
 
 from __future__ import annotations

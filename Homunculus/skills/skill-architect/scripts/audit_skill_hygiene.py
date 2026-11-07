@@ -12,12 +12,28 @@ Modes:
   --target-skill <name>  Filter --audit to a specific skill or add-on name
   --strict-structure     Fail closed (exit 1) on structural defects, broken links/scripts, portability leaks, or accuracy-inverting rules
   --json                 Output machine-readable JSON
+
+=== DEVELOPER & AI NAVIGATION MAP ===
+  Owning Module : `skill-architect` (`skills/skill-architect/SKILL.md`)
+  Callers       : `pre-commit-gate` (Stage Z4), `sandbox_runner.py` (transcript telemetry), `test_adapters.py`
+  Callees       : `homunculus_paths.py` (`parse_frontmatter_full`), `build_adapters.py` (dynamic `ADAPTER_STALE_DRIFT` probe)
+  CLI Flags     : --audit, --check-new, --target-skill, --root, --repo, --repo-root, --strict-structure, --json
+  Symbol Index  (jump directly via read_file StartLine/EndLine):
+    - def resolve_default_root (#L73-L79)            | def parse_frontmatter (#L82-L85)
+    - def strip_markdown_formatting (#L88-L91)       | def stem_token (#L94-L103)
+    - def tokenize_words (#L106-L121)                | def word_shingles (#L124-L129)
+    - def extract_blocks (#L132-L190)                | def _resolve_root_placeholder (#L193-L200)
+    - def check_local_links_and_scripts (#L203-L282) | def audit_script_stdlib_compliance (#L285-L357)
+    - def scan_turn_waste_and_accuracy_hazards (#L360-L492) | def load_rules (#L495-L524)
+    - def load_skills (#L527-L575)                   | def run_audit (#L578-L1095)
+    - def run_check_new (#L1098-L1209)               | def print_human_audit (#L1212-L1289)
+    - def main (#L1292-L1352)
+=== END NAVIGATION MAP ===
 """
 
 from __future__ import annotations
 
 import argparse
-import ast
 import importlib.util
 import json
 import os
@@ -267,7 +283,7 @@ def check_local_links_and_scripts(
 
 
 def audit_script_stdlib_compliance(py_script: Path, local_modules: set[str]) -> list[dict[str, Any]]:
-    """Verify a skill or root .py script uses functional naming, zero internal ticket bleed, and Python 3.10+ stdlib."""
+    """Verify a skill or root .py script uses functional naming, zero internal ticket bleed, stdlib imports, and an up-to-date navigation map."""
     defects: list[dict[str, Any]] = []
     if re.search(r"(?:^|[_-])(?:phase|stage|wave|sprint|milestone)[_-]?\d+[a-z]?(?:$|[_.-])", py_script.stem, re.IGNORECASE):
         defects.append({
@@ -280,13 +296,25 @@ def audit_script_stdlib_compliance(py_script: Path, local_modules: set[str]) -> 
         })
     try:
         text = py_script.read_text(encoding="utf-8")
-        tree = ast.parse(text, filename=str(py_script))
-    except SyntaxError as exc:
+    except OSError as exc:
+        defects.append({
+            "category": "[LOAD-BEARING DEFECT]",
+            "code": "SCRIPT_READ_ERROR",
+            "location": f"{py_script}#L1-L1",
+            "summary": f"OSError reading `{py_script.name}`: {exc}",
+        })
+        return defects
+
+    ast_info = homunculus_paths.inspect_python_ast_and_map(
+        py_script, local_modules=local_modules, source_text=text
+    )
+    if ast_info["syntax_error"] is not None:
+        err = ast_info["syntax_error"]
         defects.append({
             "category": "[LOAD-BEARING DEFECT]",
             "code": "SCRIPT_SYNTAX_ERROR",
-            "location": f"{py_script}#L{exc.lineno or 1}-L{exc.lineno or 1}",
-            "summary": f"SyntaxError in `{py_script.name}`: {exc.msg}",
+            "location": f"{py_script}#L{err['line']}-L{err['line']}",
+            "summary": f"SyntaxError in `{py_script.name}`: {err['msg']}",
         })
         return defects
 
@@ -303,34 +331,29 @@ def audit_script_stdlib_compliance(py_script: Path, local_modules: set[str]) -> 
                 ),
             })
 
-    stdlib_names = sys.stdlib_module_names
-    for node in ast.walk(tree):
-        lineno = getattr(node, "lineno", 1)
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                mod_name = alias.name.split(".")[0]
-                if mod_name not in stdlib_names and mod_name not in local_modules:
-                    defects.append({
-                        "category": "[LOAD-BEARING DEFECT]",
-                        "code": "NON_STDLIB_SKILL_SCRIPT",
-                        "location": f"{py_script}#L{lineno}-L{lineno}",
-                        "summary": (
-                            f"`{py_script.name}` imports non-stdlib package `{alias.name}` at top level "
-                            "(violates Homunculus Zero-Pip Portability Invariant)."
-                        ),
-                    })
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            mod_name = node.module.split(".")[0]
-            if mod_name not in stdlib_names and mod_name not in local_modules:
-                defects.append({
-                    "category": "[LOAD-BEARING DEFECT]",
-                    "code": "NON_STDLIB_SKILL_SCRIPT",
-                    "location": f"{py_script}#L{lineno}-L{lineno}",
-                    "summary": (
-                        f"`{py_script.name}` imports non-stdlib package `from {node.module}` at top level "
-                        "(violates Homunculus Zero-Pip Portability Invariant)."
-                    ),
-                })
+    for imp in ast_info["non_stdlib_imports"]:
+        lineno = imp["line"]
+        defects.append({
+            "category": "[LOAD-BEARING DEFECT]",
+            "code": "NON_STDLIB_SKILL_SCRIPT",
+            "location": f"{py_script}#L{lineno}-L{lineno}",
+            "summary": (
+                f"`{py_script.name}` imports non-stdlib package `{imp['stmt']}` at top level "
+                "(violates Homunculus Zero-Pip Portability Invariant)."
+            ),
+        })
+
+    if ast_info["map_present"] and ast_info["map_mismatches"]:
+        first_mismatch = ast_info["map_mismatches"][0]
+        defects.append({
+            "category": "[LOAD-BEARING DEFECT]",
+            "code": "STALE_SCRIPT_NAVIGATION_MAP",
+            "location": f"{py_script}#L1-L50",
+            "summary": (
+                f"`{py_script.name}` navigation map `#Lstart-Lend` coordinates drifted from AST "
+                f"({first_mismatch}; run `python3 scripts/homunculus_paths.py --sync-maps` to heal)."
+            ),
+        })
     return defects
 
 
