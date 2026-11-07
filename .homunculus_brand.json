@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "organization": "Alchemical-3D",
+  "match_path_prefixes": [
+    "/home/orin/Projects/Alchemical3D",
+    "/home/orin/Projects/Engineering"
+  ],
+  "exclude_repos": [
+    "Homunculus",
+    "memory",
+    "study_briefs",
+    "NEA_v2.2.3"
+  ],
+  "exclude_repos_from_affiliate_check": [
+    "Homunculus"
+  ],
+  "canonical_discord": "https://discord.gg/aE49DW2xXe",
+  "deprecated_discord_codes": [
+    "r97kK5B7B7"
+  ],
+  "deprecated_repo_urls": {
+    "github.com/Alchemical-3D/Alembic": "https://github.com/Alchemical-3D/Alembic_Toolhead",
+    "github.com/Alchemical-3D/Pestle": "https://github.com/Alchemical-3D/Pestle_Rotational_Bowden",
+    "github.com/Alchemical-3D/Pneuma": "https://github.com/Alchemical-3D/Pneuma_Remote_Air",
+    "github.com/Alchemical-3D/A3DP_Gantry": "https://github.com/Alchemical-3D/A3DP_Gantry_Assembly"
+  },
+  "required_affiliate_params": {
+    "kb-3d.com/store/": "affp=6182",
+    "west3d.com/": "dt_id=Alchemical3D"
+  },
+  "required_hardware_support_footer": "https://ko-fi.com/alchemical3d",
+  "required_ai_footer_substring": "ai editorial assistance",
+  "brand_mermaid_palette_hint": "`#1E1E24`, `#FF3985`, `#C90448`, `#595959`, `#808080`"
+}

@@ -1,0 +1,74 @@
+# Project Metadata & Initialization Standard
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-001
+Logical Name: Project_Metadata_Standard
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the project identity fields, Cover Sheet synchronization requirements, project initialization prerequisites, and the three-domain operational status architecture used across all NetCom Engineering Assistant (NEA) workbooks and deliverables.
+
+Current approved artifact versions are governed by `Repository_Index.md`.
+
+---
+
+## 1. Project Identity & Metadata Requirements
+
+Every project managed by NEA shall maintain a single, consistent project identity across all deliverables (`Project BOM`, `Cable Running List`, standalone `Cover Sheet`, and future project workbooks).
+
+| Metadata Field | Authority Level | BOM `Cover Sheet` Cell | CRL & Standalone `Cover Sheet` Cell | Synchronization & Validation Requirement (`Review_Standards`) |
+| :--- | :---: | :---: | :---: | :--- |
+| **Project Name** | **Required** | `D10` | `D10` | Must match across all workbooks in the deliverable package (`Mismatch = Action Required` or `Review Recommended`). |
+| **Project Number** | **Required** | `D12` *(Linked to `Project BOM!B2`)* | *Row Absent (`GOV-006`)* | Authoritative in `BOM Cover Sheet!D12`. Missing row on CRL/Standalone Cover Sheets is a known template item (`GOV-006` / `TPL-##`), not a project data error. |
+| **Customer** | **Required** | `D14` | `D12` | Must match across all workbooks in the deliverable package. |
+| **Customer Contact** | **Recommended** | `D16` | `D14` | Should remain consistent when populated across package Cover Sheets. |
+| **Building / Site Address** | **Required** | `D18` *(Linked to `Project BOM!E2`)* | `D16` | Must identify the same physical site/building across package workbooks. |
+| **Project Manager** | **Recommended** | `D20` | `D18` | Should match across package workbooks. |
+| **Designer / Engineer** | **Required** | `D22` | `D20` | Identifies the responsible engineer; should match across package workbooks. |
+| **Installation Contractor** | **Conditional** | *Row Absent (`GOV-006`)* | `D22` | Required on installation-facing Cover Sheets (`CRL` and `Standalone`); intentional omission on `BOM Cover Sheet` is not a finding. |
+| **Issue Date** | **Required** | `D24` *(Linked to `C30`)* | `D24` *(Linked to `C30`)* | Valid date required. Independent Issue Dates between BOM and CRL workbooks are permitted when issued on separate cycles (`Informational` / `Advisory`). |
+| **Revision & History Link** | **Required** | `H24` *(Linked to `B30` & `BOM!H2`)* | `H24` *(Linked to `B30`)* | `B30` (`Rev`) and `C30` (`Date`) in Revision History should dynamically reference `H24` (`=IF($H$24="","",$H$24)`) and `D24` (`=IF($D$24="","",$D$24)`). Static overrides decoupling `H24` from `B30` require review (`RR-##` / `ADV-##`). |
+| **Document Status** | **Required** *(Document Level)* | *Template Gap (`GOV-006`)* | *Template Gap (`GOV-006`)* | Governs document lifecycle at the workbook level (`Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived`). |
+
+---
+
+## 2. Project Initialization Requirements
+
+Before populating `Project BOM` or `Cable Running List` rows for a new project, project initialization shall:
+
+1. **Select Approved Controlled Templates**: Start from the current templates in `Templates/` governed by `Repository_Index.md`.
+2. **Populate Authoritative Cover Sheet Metadata**: Enter `Project Name`, `Project Number`, `Customer`, `Customer Contact`, `Building / Site Address`, `Project Manager`, `Designer / Engineer`, `Issue Date`, and initial `Revision` on the workbook `Cover Sheet` tabs.
+3. **Verify Internal Formula Propagation**:
+   - Confirm `Project BOM!B2` (`Project #`), `E2` (`Building`), and `H2` (`Revision`) dynamically pull from `Cover Sheet!D12`, `D18`, and `H24`.
+   - Confirm Revision History row 1 (`B30:C30`) preserves its dynamic link formulas to `H24` and `D24`.
+4. **Never Invent Missing Metadata**: Leave unknown required metadata identifiable for engineering review rather than inserting fabricated placeholders.
+
+---
+
+## 3. Three-Domain Active Status Architecture
+
+NEA enforces strict separation across **three active operational status domains**. Values from one domain shall never be substituted into another:
+
+| Status Domain | Governed Scope | Approved Values | Governing Authority |
+| :--- | :--- | :--- | :--- |
+| **1. Document Status** | Complete workbooks / deliverables at the Cover Sheet level | `Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived` *(plus `As-Built` where applicable at document level)* | `Project_Metadata_Standard` (`NEA-STD-001`) |
+| **2. Material Status** | Catalog records in `Materials Master` (`tblMaterials`) and `Project BOM` Column `I` | `Pending`, `Active`, `Preferred`, `Limited Use`, `Inactive`, `Obsolete` | `Material_Master_Standards` (`NEA-STD-006`) |
+| **3. Review Status** | Engineering review findings and governance register items (`GOV-###`) | `Open`, `Under Review`, `Approved`, `Deferred`, `Rejected`, `Complete` | `Review_Standards` (`NEA-STD-003`) & `NEA_Governance_Register` |
+
+### Retired Domain Boundary: No Per-Row `Cable Run Status`
+
+- **`Cable Run Status` Is Retired**: NEA does **not** use or require a per-row `Cable Run Status` column (`Planned`, `Released`, `Installed`, `Tested`, `As-Built`) on the `Cable Running List`.
+- **Paper Truth at Installation Handoff**: CRL finality is governed strictly at the **document level** via `Document Status`, `Revision`, and `Issue Date`. Once released and handed to the installation team, the CRL serves as the installation team's **paper truth** and is not circled back for routine per-row field-installation tracking. A missing per-row status column on the CRL shall **never** generate a review finding.
+
+---
+
+## 4. Default Metadata Finding Classifications
+
+| Observed Metadata Condition | Default Classification (`Review_Standards`) |
+| :--- | :---: |
+| Missing or conflicting `Project Name`, `Project Number` (where field exists), `Customer`, or `Building / Site` across package workbooks | **`Action Required` (`AR-##`)** or **`Review Recommended` (`RR-##`)** |
+| Static override in Revision History (`B30` / `C30`) conflicting with Cover Sheet header `H24` / `D24` | **`Review Recommended` (`RR-##`)** *(if values conflict)* or **`Advisory` (`ADV-##`)** *(if formula replaced by matching static value)* |
+| Independent `Issue Date` or `Revision` between separately issued BOM and CRL workbooks | **`Informational` (`INF-##`)** or **`Advisory` (`ADV-##`)** |
+| Missing `Project Number` row on CRL/Standalone Cover Sheet or missing dedicated `Document Status` cell across templates | **`Template Referral` (`TPL-##` / `GOV-006`)** *(Never penalize the project engineer)* |

@@ -1,0 +1,92 @@
+# Project Review & Cross-Document Validation Workflow
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-WF-004
+Logical Name: Project_Review_Workflow
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Workflow defines the step-by-step operational runbook used by the NetCom Engineering Assistant (NEA) to execute single-workbook or full-package engineering reviews, cross-document validations (`Cover Sheet` ↔ `Materials Master` ↔ `Project BOM` ↔ `Cable Running List`), and release-readiness assessments.
+
+Current approved artifact versions are governed by the `NEA v2.2.3` Copilot Agent suite (`README.md`). Finding severities and Release Readiness Outcomes are governed by `Review_Standards_v2.2.3.txt` (`NEA-STD-003`). Report layout is governed by `Review_Report_Template_v2.2.3.txt` (`NEA-REF-003`).
+
+---
+
+## Pre-Flight Guardrails
+
+1. **Strict Read-Only Default**: Never modify, overwrite, or save changes to `.xlsx` files during a review unless explicitly instructed to apply fixes.
+2. **Core Knowledge Pack Loading**:
+   - Load the core reviewer Knowledge pack (`Review_Standards_v2.2.3.txt` `NEA-STD-003`, `Project_Review_Workflow_v2.2.3.txt` `NEA-WF-004`, and `Review_Report_Template_v2.2.3.txt` `NEA-REF-003`).
+   - Only load `Workbook_Types_v2.2.3.txt` or `Behavior_v2.2.3.txt` if Section 6 of `scripts/inspect_nea_workbooks.py` emits a `🚨 [TIER-2 ESCALATION REQUIRED]` trigger.
+3. **Single-Command Deterministic Extraction & Hard Fail-Closed Gate (`scripts/inspect_nea_workbooks.py`)**:
+   - Execute `python3 scripts/inspect_nea_workbooks.py <target_dir> --scope review` (bundled inside the skill `.zip` package; pass `--scope {full,delta,bom,crl,catalog}` for scoped/incremental revision rechecks) in **one single command call**.
+   - **Hard Fail-Closed Anti-Hallucination Rule (`Pillar 1`)**: If `scripts/inspect_nea_workbooks.py` (or direct `.xlsx` reading) fails, times out, or is denied permission, **HALT IMMEDIATELY** on the very next turn and output **only** the 5-line `[EXTRACTION BLOCKED — REVIEW ABORTED]` block defined in `Review_Report_Template_v2.2.3.txt`. Never scrape documentation files for clues, and never fabricate or infer a review report without live `.xlsx` telemetry.
+   - **Proof-of-Inspection & Closed-World Binding (`Pillars 3–4`)**: Cite the live `Inspection Engine` (`NEA-SCR-001`), `NEA-VRF-...` token, and 10-char `SHA256` workbook hashes in the report header, and report only values verbatim from the telemetry output.
+
+---
+
+## Step-by-Step Review Procedure
+
+### Step 1 — Run Deterministic Workbook Inspector (`scripts/inspect_nea_workbooks.py`)
+
+Execute `python3 scripts/inspect_nea_workbooks.py <target_dir> --scope review` (`--scope full` for an unscoped diagnostic, or `--scope {delta,bom,crl,catalog}` for incremental revision rechecks) to extract all workbook facts in a single pass:
+1. **Workbook Inventory, Role Classification & SHA-256 Immutability (`Section 0`)**: Classifies `.xlsx` files by internal worksheet tabs (supporting both template filenames and project-renamed files such as `BOM_Materials_Master.xlsx` or `Cable_Running_List_Template_V2.xlsx`), verifies `Pre/Post SHA-256` source immutability (`0 bytes modified`), and compares against the delta cache.
+2. **Cover Sheets (`Section 1`)**: Extracts all populated cells (`B2:H38`), including `Project Name` (`D10`), `Project Number` (`BOM D12`), `Customer` (`BOM D14` / `CRL D12`), `Customer Contact`, `Site / Building`, `Project Manager`, `Designer / Engineer`, `Installation Contractor` (`CRL D22`), `Issue Date` (`D24`), `Revision` (`H24`), Revision History row `B30:H30` (`<f>` formula vs. static override), and `Project BOM` Row 2 banner formulas (`B2`, `E2`, `H2`).
+3. **Catalog Hygiene (`Section 2`)**: Audits `tblMaterials` (`$A$3:$G$600`), `Fiber Assemblies` (`$A$3:$H$1258`), and `Cable Harness` (`$A$3:$H$1258`) for duplicate primary keys, duplicate `(Manufacturer, MFG Part Number)` pairs, and incomplete/misclassified records, separating **BOM-active conflicting duplicate keys (`AR-##`)** from background referrals (`CAT-##`).
+4. **`Project BOM` Audit (`Section 3`)**: Extracts Summary Row 4 (`E4`, `G4`), native/shared `<f>` formula overwrites across `A8:I155` (`AR-##`), active lines with blank `Qty` (`AR-##`), active `TPN##` rows (`INF-##`), blank-row spacing gaps `> 5` (`ADV-##`), and all free-text `Column J (Notes)` entries.
+5. **`Cable Running List` & Cross-Document Takeoff (`Sections 4–5`)**: Audits all active CRL runs across `A:P` (including Run ID sequence continuity `1..N`, missing `Fiber Count`, intra-row contradictions, and duplicate `NE/FE` endpoint assignments) and reconciles copper/fiber footage and endpoint terminations (`RJ45`, `Punch`, `LC`) against `Project BOM` lines.
+6. **Deterministic `[TIER-2 ESCALATION]` Gate (`Section 6`)**: Confirms whether 100% of rule, coordinate, and section citation coverage is complete (`[NO TIER-2 ESCALATION REQUIRED]`) or flags specific Tier 2 files to read if an unmapped structure/anomaly is detected.
+
+---
+
+### Step 2 — Evaluate Project Identity & Cover Sheet Alignment (`Section 2`)
+
+Evaluate the extracted Cover Sheet data against `Project_Metadata_Standard`:
+- Verify that `Project Name`, `Customer`, `Customer Contact`, `Building / Site`, `Project Manager`, and `Designer / Engineer` match across all package Cover Sheets (`Mismatch = AR-## / RR-##`).
+- Route structural Cover Sheet mechanics (`Cover Sheet!B30:C30` static overrides decoupling from `H24`/`D24`, `Project Number` row absent on CRL/Standalone Cover Sheets under `GOV-006`) to **Section 6 (`Cross-Duty Agent Advisories -> NEA Repair Tool`)** rather than cluttering Section 4/5 deliverable findings.
+
+---
+
+### Step 3 — Audit `Project BOM` & Active Catalog Lookups (`Section 4`)
+
+Evaluate `Project BOM` rows against `BOM_Standards`, `Material_Master_Standards`, and `Formatting_Standards`:
+1. **Formula Integrity (`AR-##` + `-> NEA Repair Tool`)**: Flag any row in `Rows 8–155` where `Column A` or `Columns D:I` lacks an `<f>` formula tag (static overwrite) or evaluates to `"Not found"`.
+2. **Quantity & Bulk-Pack Completeness (`AR-##`)**: Flag any active BOM line (`Column B` populated) with a blank, zero, or non-numeric `Qty` (`Column C`), or a bulk-box UOM multiplier error (`UOM = BX` with `Qty >= 100` on 1,000-pack ties).
+3. **BOM-Active Catalog Shadowing & Lifecycle (`AR-##` / `RR-##`)**: Flag any `MB P/N` ordered on the `Project BOM` that hits a conflicting duplicate key in `tblMaterials` (`AR-##`) or references an `Obsolete`, `Inactive`, or `Pending` SKU (`RR-##`).
+4. **Notes & Scope Verification (`RR-##` / `INF-##`)**:
+   - Flag unresolved `Verify`, `Change to ...`, or `(optional)` scope notes in `Column J` as `Review Recommended` (`RR-##`).
+   - Log intentional per-run bulk fiber lines with room/run notes in `Column J` and valid `TPN##` lines as `Informational` (`INF-##`).
+5. **Spacing Hygiene (`ADV-##`) & Template Mechanics (`Section 6`)**: Flag blank row spacing gaps `> 5` rows as `Advisory` (`ADV-##`), and route `Project BOM!G4` mixed-UOM sum (`GOV-002`) and `Lists!H1` zero-spill (`GOV-007`) strictly to **Section 6 (`-> NEA Repair Tool`)**.
+
+---
+
+### Step 4 — Audit `Cable Running List` Schema & Technical Consistency (`Section 4`)
+
+Evaluate `Cable Running List` rows against `CRL_Standards`:
+1. **Required Fields & `Cable Qty` (`AR-##`)**: Flag missing `Run ID`, missing `NE/FE Location`, missing `Media Type` / `Cable Type`, missing `Length (ft)`, or missing `Cable Qty` (`Column M`, or `Column K` on legacy sheets) when `Media Type = Fiber`.
+2. **Intra-Row Technical Contradictions (`RR-##`)**:
+   - Flag pathway fire-rating contradictions (`Special Requirement = Plenum` paired with `Comments = OFNR` Riser rating).
+   - Flag strand-count vs. duplex contradictions (`Fiber Count = 1` paired with `Comments = Red Duplex` and duplex `LC` connectors).
+   - Flag media vs. connector incompatibilities (`Copper` media paired with `LC`/`SC`/`MPO` or `Fiber` media paired with `RJ45`/`Punch`).
+3. **Unresolved Placeholders (`RR-##`)**: Flag rows where `Classification = Unknown` (`Column B`).
+4. **Paper-Truth Boundary**: Never flag the absence of a per-row `Cable Run Status` column.
+
+---
+
+### Step 5 — Reconcile Cross-Document Material & Cable Takeoffs (`Section 3`)
+
+Whenever both a `Cable Running List` and a `Project BOM` are in scope, quantitatively compare CRL requirements against BOM ordered quantities:
+1. **Bulk Copper Cable Takeoff**: Sum CRL `Length (ft)` by `Cable Type`, `Special Requirement` (`Shielded`, `Plenum`), and jacket color (`Comments`), and compare against BOM bulk copper lines (`FT`). Flag omitted cable types, cable-footage-to-jack transpositions (`AR-##`), category mismatches (`Cat6A` CRL vs `Cat6` BOM, `RR-##`), or spool rounding deficits (`RR-##`).
+2. **Bulk Fiber Backbone Takeoff**: Compare CRL backbone fiber runs (`24F`, `48F`, etc.) against BOM bulk fiber lines (e.g., `BF1001`, `BF1002`), verifying 1:1 cut-length and room-note alignment (`INF-##` when aligned; `AR-##` if a line is missing `MB P/N` or footage).
+3. **Station Fiber / Pre-Terminated Jumpers**: Compare CRL station fiber run counts, lengths, and jacket colors against BOM `Term Fiber` jumper lines (`EA`).
+4. **Connectivity & Termination Coverage**: Compare total CRL `NE Conn.` + `FE Conn.` endpoints (`RJ45`, `Punch`, `LC`) against BOM jacks, patch panels, adapter panels, and bulk connector packs.
+
+---
+
+### Step 6 — Render Project Punch List & Cross-Duty Agent Advisories (`Sections 5–6`)
+
+1. Determine the governed **Release Readiness Outcome** (`Action Required Before Release`, `Engineering Review Recommended`, `Approved with Advisory Notes`, or `Approved`) per `Review_Standards`.
+2. Render the **Engineer Closeout Punch List** (`Section 5`) covering active project findings (`A. Project BOM`, `B. Cable Running List`).
+3. Append **Section 6 (`> [!TIP] Cross-Duty Agent Advisories`)** directly from `SECTION 7` of `scripts/inspect_nea_workbooks.py`, routing any workbook formula/validation/template repairs (`TPL-##`, `GOV-002`, `GOV-006`, `[4E]`) to **`NEA Repair Tool`** and any unreferenced catalog hygiene items (`CAT-##`) to **`NEA Catalog Manager`**.

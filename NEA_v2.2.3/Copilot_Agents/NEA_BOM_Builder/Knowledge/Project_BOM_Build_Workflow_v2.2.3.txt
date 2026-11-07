@@ -1,0 +1,88 @@
+# Project BOM Build & Maintenance Workflow
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-WF-002
+Logical Name: Project_BOM_Build_Workflow
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Workflow defines the step-by-step procedural sequence for initializing, populating, organizing, and validating a Project Bill of Materials (`Project BOM`) in `BOM_Materials_Master_Template.xlsx`.
+
+Current approved artifact versions are governed by `Repository_Index.md`. Governing requirements are defined in `BOM_Standards` (`NEA-STD-005`), `Material_Master_Standards` (`NEA-STD-006`), `Project_Metadata_Standard` (`NEA-STD-001`), and `Formatting_Standards` (`NEA-STD-002`).
+
+---
+
+## Pre-Flight Formula & Structure Lock
+
+Before editing any cell in `BOM_Materials_Master_Template.xlsx`, enforce these non-negotiable guardrails:
+1. **Only 3 Columns on `Project BOM` Are User-Editable**:
+   - **Column `B` (`MB P/N` — `B8:B155`)**
+   - **Column `C` (`Qty` — `C8:C155`)**
+   - **Column `J` (`Notes` — `J8:J155`)**
+2. **Never Overwrite Formula-Controlled Columns (`A` and `D:I`)**:
+   - Column `A` (`Line`) and Columns `D:I` (`Category`, `Manufacturer`, `MFG Part Number`, `UOM`, `Description`, `Status`) contain prebuilt 3-tier cascading `XLOOKUP` formulas across `Rows 8–155`.
+   - Never type static values over `Columns D:I` to mask a missing or incorrect catalog lookup, and never delete formulas from intentionally blank grouping rows.
+3. **Preserve `tblMaterials` & Range Structure (`GOV-007`)**:
+   - Never rename `tblMaterials` on `Materials Master`, and never convert `Project BOM` (`A7:J155`) into an Excel Table.
+
+---
+
+## Step-by-Step Build Procedure
+
+### Step 1 — Initialize Project Metadata on `Cover Sheet`
+
+1. Populate `Cover Sheet` cells in `BOM_Materials_Master_Template.xlsx` per `Project_Metadata_Standard`:
+   - `D10`: `Project Name`
+   - `D12`: `Project Number`
+   - `D14`: `Customer`
+   - `D16`: `Customer Contact`
+   - `D18`: `Building`
+   - `D20`: `Project Manager`
+   - `D22`: `Designer / Engineer`
+   - `D24`: `Issue Date`
+   - `H24`: `Revision`
+2. Verify that `Cover Sheet!B30:C30` (`Revision History`) and `Project BOM!B2, E2, H2` dynamically display the entered `Project Number`, `Building`, `Revision`, and `Issue Date`.
+
+---
+
+### Step 2 — Derive Material Takeoff Requirements
+
+Compile project material requirements from the `Cable Running List` (when present) and engineering drawings:
+- **Bulk Copper & Fiber Cabling (`FT`)**: Sum CRL lengths by media, performance grade (`Cat6`, `Cat6A`, `OS2`, `OM4`), strand count (`24F`, `48F`), pathway fire rating (`Plenum` / `Riser`), shielding, and jacket color, applying appropriate spool rounding or per-run cut-length allocation.
+- **Pre-Terminated Assemblies (`EA`)**: Count copper patch cords and station fiber jumpers by type, color, and length.
+- **Connectivity (`EA` / `KT` / `BX`)**: Count modular jacks, faceplates, surface-mount boxes, RJ45 plugs, patch panels, fiber adapter panels, splice cassettes, and bulk optical connectors (`LC`/`SC`/`MPO`) required to terminate both ends (`NE Conn.` + `FE Conn.`) of all CRL runs.
+- **Racks, Pathways, Grounding & Consumables**: Count racks/cabinets, wire managers, ladder rack/runway sections, splice/mounting kits, J-hooks, grounding kits, and Velcro/labels.
+
+---
+
+### Step 3 — Match Materials Against `Materials Master` & `Fiber Assemblies` (Catalog Anti-Hallucination Gate)
+
+For each required item:
+1. **Verify via Deterministic Catalog Lookup (`--lookup`)**:
+   - Run `python3 scripts/inspect_nea_workbooks.py . --lookup "<keyword or P/N>"` (or inspect `Lists!$H$1#` `BOMPartNumbers`) to locate the exact approved `MB P/N` in `Materials Master` (`tblMaterials`) or `Part Number` in `Fiber Assemblies`.
+   - **Strict Anti-Hallucination Rule (`Pillar 5`)**: Never guess or invent an `MB P/N`, `TPN##`, or manufacturer SKU from pretraining memory. Every part key placed in `Project BOM` Column `B` must be empirically verified in `tblMaterials` or `Fiber Assemblies`.
+2. Verify that the catalog record has the correct `Category`, `UOM` (`FT` for bulk cable vs. `EA`/`KT`/`BX` for discrete items), `Description`, and `Status = Active` (or `Preferred`).
+3. Confirm no conflicting duplicate key in `tblMaterials` shadows the intended record.
+4. If a required material does not yet exist in the catalog, flag **`[CATALOG ADDITION REQUIRED]`** and create a governed record or approved `TPN##` in `Materials Master` using `Material_Catalog_Workflow`—never type unindexed part numbers or manual descriptions directly into `Project BOM` `Columns D:I`.
+
+---
+
+### Step 4 — Populate `Project BOM` Editable Inputs (`Columns B, C, J`)
+
+Group BOM items logically by discipline (e.g., Copper Cable, Patch Cords, Connectivity, Station Fiber, Bulk Fiber Backbone, Racks & Wire Management, Pathways) using blank spacing gaps of **`<= 5` rows** (leaving formulas intact in `A` and `D:I`):
+1. **Column `B` (`MB P/N`)**: Enter the verified `MB P/N`, fiber `Part Number`, or `TPN##`.
+2. **Column `C` (`Qty`)**: Enter a positive numeric quantity (`> 0`) matching the catalog `UOM` in `Column G`. Do not leave `Column C` blank on any populated row.
+3. **Column `J` (`Notes`)**:
+   - Add system/room identifiers (`Data Subnet A`, `Zone B MDF`, `Workstation Drops`).
+   - When listing multiple cut-length reels of the same bulk fiber part (e.g., `BF1001`, `BF1002`), record the specific room/run destination in `Column J` (`Zone A MDF`, `02-233 to 01-C103`) so reviews recognize the lines as intentional per-run allocations (`INF-##`).
+   - Clearly mark any optional or pending items (`(optional)`, `Verify`) and resolve them prior to final release.
+
+---
+
+### Step 5 — Verify Formula Outputs & Execute Self-Review
+
+1. Confirm that every populated row in `Rows 8–167` preserves its `<f>` formulas in `Column A` and `Columns D:I` and displays valid attributes (`Status = Active`, zero `"Not found"` errors).
+2. Generate a **unit-aware takeoff summary** (separating bulk cable/fiber `FT` from discrete items `EA`/`KT`/`BX` rather than relying on the mixed-UOM sum in `G4`).
+3. Run `Project_Review_Workflow` to cross-validate the `Project BOM` against the `Cable Running List` and `Cover Sheet` before release.

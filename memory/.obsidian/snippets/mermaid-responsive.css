@@ -1,0 +1,150 @@
+/* Responsive Mermaid Diagrams for Obsidian_Notes Vault (Gruvbox Dark Default + Alchemical-3D Brand Support)
+ * 1. Disables Obsidian's built-in `.theme-dark .mermaid > svg { filter: invert(100%) hue-rotate(180deg) saturate(1.25); }`
+ *    which otherwise inverts dark diagram fills into light grey and blanks out edge labels.
+ * 2. Prevents flowcharts from stretching off-screen horizontally or vertically.
+ * 3. Prevents Chromium foreignObject right-edge text clipping on emoji labels.
+ * 4. Defaults to Gruvbox Dark (`#282828`), while notes with `cssclasses: [alchemical-brand]`
+ *    use the official Alchemical-3D Dark Slate (`#1E1E24`) container & edge pills.
+ */
+
+.markdown-rendered .mermaid,
+.markdown-preview-view .mermaid,
+.cm-embed-block .mermaid {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto;
+  text-align: center;
+  margin: 0.85rem auto !important;
+  padding: 0.85rem 0.5rem;
+  background-color: #282828 !important;
+  border: 1px solid #504945 !important;
+  border-radius: 8px;
+}
+
+.alchemical-brand .mermaid,
+.markdown-rendered.alchemical-brand .mermaid,
+.markdown-preview-view.alchemical-brand .mermaid {
+  background-color: #1e1e24 !important;
+  border: 1px solid #595959 !important;
+}
+
+/* CRITICAL: Override Obsidian's default dark-mode SVG color inversion filter */
+.theme-dark .mermaid > svg,
+.markdown-rendered .mermaid > svg,
+.markdown-preview-view .mermaid > svg,
+.cm-embed-block .mermaid > svg,
+.mermaid svg {
+  filter: none !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: 72vh !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Prevent right-edge character clipping inside SVG foreignObject containers */
+.mermaid foreignObject,
+.mermaid foreignObject > div {
+  overflow: visible !important;
+}
+
+/* Default Gruvbox node surfaces (overridable by inline Mermaid classDef) */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+  fill: #3c3836;
+  stroke: #fabd2f;
+  stroke-width: 1.8px;
+}
+
+/* Node typography (without !important so inline classDef color:#FFFFFF / #B4B4C0 is respected) */
+.mermaid .nodeLabel,
+.mermaid .node text,
+.mermaid .node tspan,
+.mermaid .label {
+  color: #ebdbb2;
+  fill: #ebdbb2;
+  font-weight: 500;
+}
+
+.alchemical-brand .mermaid .nodeLabel,
+.alchemical-brand .mermaid .node text,
+.alchemical-brand .mermaid .node tspan,
+.alchemical-brand .mermaid .label {
+  color: #f5f5f7;
+  fill: #f5f5f7;
+}
+
+/* Connector lines & arrowheads (Gruvbox default; Alchemical-3D slate override) */
+.mermaid .edgePath .path,
+.mermaid .flowchart-link {
+  stroke: #a89984 !important;
+  stroke-width: 1.8px !important;
+}
+
+.alchemical-brand .mermaid .edgePath .path,
+.alchemical-brand .mermaid .flowchart-link {
+  stroke: #808080 !important;
+}
+
+.mermaid marker path,
+.mermaid .arrowheadPath {
+  fill: #a89984 !important;
+  stroke: #a89984 !important;
+}
+
+.alchemical-brand .mermaid marker path,
+.alchemical-brand .mermaid .arrowheadPath {
+  fill: #808080 !important;
+  stroke: #808080 !important;
+}
+
+/* Edge label pills & guaranteed visible text */
+.mermaid .edgeLabel,
+.mermaid .edgeLabel span,
+.mermaid .edgeLabel div,
+.mermaid .edgeLabel p,
+.mermaid .edgeLabel foreignObject *,
+.mermaid g.edgeLabel text,
+.mermaid g.edgeLabel tspan {
+  background-color: #1d2021 !important;
+  color: #fbf1c7 !important;
+  fill: #fbf1c7 !important;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.88em;
+  font-weight: 500;
+}
+
+.alchemical-brand .mermaid .edgeLabel,
+.alchemical-brand .mermaid .edgeLabel span,
+.alchemical-brand .mermaid .edgeLabel div,
+.alchemical-brand .mermaid .edgeLabel p,
+.alchemical-brand .mermaid .edgeLabel foreignObject *,
+.alchemical-brand .mermaid g.edgeLabel text,
+.alchemical-brand .mermaid g.edgeLabel tspan {
+  background-color: #141417 !important;
+  color: #f5f5f7 !important;
+  fill: #f5f5f7 !important;
+}
+
+.mermaid .edgeLabel rect,
+.mermaid .labelBkg {
+  fill: #1d2021 !important;
+  background-color: #1d2021 !important;
+  stroke: #665c54 !important;
+  stroke-width: 1px !important;
+  opacity: 1 !important;
+  rx: 4px;
+  ry: 4px;
+}
+
+.alchemical-brand .mermaid .edgeLabel rect,
+.alchemical-brand .mermaid .labelBkg {
+  fill: #141417 !important;
+  background-color: #141417 !important;
+  stroke: #595959 !important;
+}

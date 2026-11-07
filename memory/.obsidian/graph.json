@@ -1,0 +1,100 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:\"Tasks\"",
+      "color": {
+        "a": 1,
+        "rgb": 16678937
+      }
+    },
+    {
+      "query": "file:_Hardware",
+      "color": {
+        "a": 1,
+        "rgb": 9355388
+      }
+    },
+    {
+      "query": "file:_Software",
+      "color": {
+        "a": 1,
+        "rgb": 8627608
+      }
+    },
+    {
+      "query": "file:_Lessons_Learned",
+      "color": {
+        "a": 1,
+        "rgb": 13862555
+      }
+    },
+    {
+      "query": "path:\"Quarantine\"",
+      "color": {
+        "a": 1,
+        "rgb": 16468276
+      }
+    },
+    {
+      "query": "path:\"Standards_and_Specs\"",
+      "color": {
+        "a": 1,
+        "rgb": 16432431
+      }
+    },
+    {
+      "query": "path:\"Templates\"",
+      "color": {
+        "a": 1,
+        "rgb": 12106534
+      }
+    },
+    {
+      "query": "[\"entity\":\"Alchemical-3D\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16726405
+      }
+    },
+    {
+      "query": "[\"entity\":\"NetCom\"]",
+      "color": {
+        "a": 1,
+        "rgb": 239321
+      }
+    },
+    {
+      "query": "[\"entity\":\"Orin_Workstation\"]",
+      "color": {
+        "a": 1,
+        "rgb": 12106534
+      }
+    },
+    {
+      "query": "path:\"Projects\"",
+      "color": {
+        "a": 1,
+        "rgb": 16726405
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.6757621765136719,
+  "close": true
+}

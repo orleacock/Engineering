@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Orin Workstation 3-Compartment Continuity Firewall (deployed at Homunculus cutover; slated for post-migration review).",
+  "default_compartment": "private",
+  "enforce_posix_win_user_paths_in_public": true,
+  "compartments": {
+    "private": {
+      "description": "Compartment A & C: Private Workstation (orleacock/Engineering & NEA_v2.2.3)",
+      "root_paths": [
+        "/home/orin/Projects/Engineering"
+      ],
+      "expected_author_email": "orleacock@gmail.com",
+      "expected_remote_url": "git@github-orleacock:orleacock/Engineering.git",
+      "push_locked": false,
+      "block_os_user_paths": false,
+      "block_affiliate_params": false,
+      "extra_filename_patterns": [
+        {
+          "name": "unpromoted_study_brief",
+          "pattern": "(^|/)study_briefs/(?!README\\.md$|\\.gitkeep$).+"
+        }
+      ],
+      "forbidden_tokens": []
+    },
+    "public": {
+      "description": "Compartment B: Public / Org (Alchemical-3D OSS Hardware & Software Repos)",
+      "root_paths": [
+        "/home/orin/Projects/Alchemical3D"
+      ],
+      "expected_author_email": "109475365+Orin-Alchemical-3D@users.noreply.github.com",
+      "expected_remote_url_template": "git@github-alchemical:Alchemical-3D/{repo_name}.git",
+      "push_locked": false,
+      "block_os_user_paths": true,
+      "block_affiliate_params": false,
+      "extra_filename_patterns": [
+        {
+          "name": "unpromoted_study_brief",
+          "pattern": "(^|/)study_briefs/(?!README\\.md$|\\.gitkeep$).+"
+        }
+      ],
+      "forbidden_tokens": [
+        "orleacock",
+        "orleacock@gmail.com",
+        "Obsidian_Notes",
+        "AI_Skill_Project",
+        "agy-gmail",
+        "gmail_mcp",
+        "NetCom",
+        "NEA_v2",
+        "Homunculus_Script_Skill_Interaction_Matrix"
+      ]
+    },
+    "cleanroom": {
+      "description": "Compartment B2: Homunculus Commercial Clean-Room",
+      "root_paths": [
+        "/home/orin/Projects/Alchemical3D/Homunculus"
+      ],
+      "expected_author_email": "109475365+Orin-Alchemical-3D@users.noreply.github.com",
+      "expected_remote_url": "",
+      "push_locked": true,
+      "block_os_user_paths": true,
+      "block_affiliate_params": true,
+      "extra_filename_patterns": [
+        {
+          "name": "unpromoted_study_brief",
+          "pattern": "(^|/)study_briefs/(?!README\\.md$|\\.gitkeep$).+"
+        }
+      ],
+      "forbidden_tokens": [
+        "orleacock",
+        "orleacock@gmail.com",
+        "orin@alchemical3d.net",
+        "Obsidian_Notes",
+        "AI_Skill_Project",
+        "agy-gmail",
+        "gmail_mcp",
+        "NetCom",
+        "NEA_v2",
+        "Homunculus_Script_Skill_Interaction_Matrix"
+      ]
+    }
+  }
+}

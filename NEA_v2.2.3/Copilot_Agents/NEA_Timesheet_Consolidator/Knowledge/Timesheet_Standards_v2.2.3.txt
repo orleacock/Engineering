@@ -1,0 +1,80 @@
+# Missouri Timesheet & Weekly Consolidation Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-007
+Logical Name: Timesheet_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the data schema, formula-protection rules, multi-media ingestion requirements, expense-stripping boundary, and weekly consolidation architecture for `Timesheet_Template.xlsx` (`NEA-TPL-004`) and consolidated weekly workbooks (`Week_of_MM-DD_to_MM-DD.xlsx`).
+
+---
+
+## 1. Multi-Media Ingestion & Non-Timesheet Page Filtering
+
+1. **Supported Input Media**:
+   - **Digital Spreadsheets (`.xlsx`, `.csv`)**: Native Excel Missouri Timesheet files uploaded directly into chat.
+   - **Scanned / Printed Packets (`.pdf`)**: Multi-page Epson/office scanner packets containing printed or handwritten Missouri Timesheets (such as weekly Boeing / Local #1 packets).
+   - **Photographs / Screenshots (`.png`, `.jpg`, `.jpeg`)**: Camera photos or screenshots of physical or digital Missouri Timesheet grids.
+2. **Strict Expense, Receipt & Invoice Exclusion (`Expense Report` Stripped)**:
+   - Scanned packets frequently interleave `Missouri Timesheet` pages with `NetCom, Inc. Expense Report` sheets (`MISCELLANEOUS EXPENSES` / `Mileage`), hardware store receipts (`Home Depot`, `True Value`), and vendor/software invoices (`Microsoft Invoice`).
+   - **Mandatory Rule**: Ignore all expense reports, mileage tables, receipts, and invoices during extraction, and **strip the `Expense Report` worksheet tab completely** from `Timesheet_Template.xlsx` and all consolidated `Week_of_MM-DD_to_MM-DD.xlsx` output workbooks.
+
+---
+
+## 2. Consolidated Workbook Naming, `Weekly Summary`, `Job Summary` & `Last, First` Tab Ordering
+
+1. **Output Workbook Filename (`Week_of_MM-DD_to_MM-DD.xlsx`)**:
+   - Name the consolidated workbook using the Sunday `Begin Week` (`X1`) and Saturday `WEEK ENDING` (`X2`) dates: `Week_of_M-D_to_M-D.xlsx` (e.g., `Week_of_10-25_to_10-31.xlsx` for `10/25/2026` to `10/31/2026`, or `Week_of_10-18_to_10-24.xlsx` for `10/18/2026` to `10/24/2026`).
+2. **Tab 1 — Executive `Weekly Summary` Roll-Up**:
+   - The first worksheet tab (`sheet1.xml`) must be **`Weekly Summary`**, featuring the NetCom Primary Navy Banner (`Row 1`), Metadata Ribbon (`Row 2`), 7 KPI Metric Cards (`Rows 4–5`), Frozen/AutoFiltered Table Headers (`Row 7`), and one row per active employee job line starting at **`Row 8`** across Columns `A:N`:
+     - `A`: `Employee (Last, First)`
+     - `B`: `Position` (`Foreman`, `GF`, `JW`, `Tech`, `Apprentice`, `Designer`, `PM`, `Mgr`)
+     - `C`: `Union Local#` (`1`, `Office`, etc.)
+     - `D`: `Building / Qualifier` (`Boeing STL`, `Card Access`, `Shop`, `ONCALL`, etc.)
+     - `E`: `Job / Project Name` (`307-2`, `245-EAC`, `One Net`, `VACATION`, `MO ONE CALL`, etc.)
+     - `F`: `Job Number` (`20263916`, `20262504`, `260210`, etc.)
+     - `G`: `REG` | `H`: `OT` | `I`: `DT` | `J`: `2ND` | `K`: `3RD` | `L`: `Foreman/GF` | `M`: `Travel`
+     - `N`: `Total Paid Hours` (`=SUM(G{r}:I{r})`)
+   - Conclude `Weekly Summary` with a formula-driven `WEEKLY GRAND TOTALS` row (`=SUM(G8:G{last})` .. `=SUM(N8:N{last})`).
+3. **Tab 2 — Management `Job Summary` Bid-Tracking Roll-Up**:
+   - The second worksheet tab (`sheet2.xml`) must be **`Job Summary`**, using the same NetCom Corporate Palette dashboard layout (`Row 1` Banner, `Row 2` Metadata Ribbon, `Rows 4–5` 7 KPI Metric Cards, `Row 7` Headers, `Rows 8..{last}` Data Rows) to aggregate hours by **`Job Number`** across Columns `A:N` so management can track total hours and shift/overtime types consumed against job bidding:
+     - `A`: `Job Number` (sorted ascending; non-numbered overhead/leave grouped at bottom)
+     - `B`: `Building / Qualifier`
+     - `C`: `Job / Project Name`
+     - `D`: `Tech Count` (distinct employees charging this Job Number)
+     - `E`: `Assigned Crew (Last, First)`
+     - `F`: `% of Week` (`=IF($N${tot_r}=0,0,ROUND(N{r}/$N${tot_r}*100,1))`)
+     - `G`: `REG Hrs` | `H`: `OT Hrs` | `I`: `DT Hrs` | `J`: `2ND Shift` | `K`: `3RD Shift` | `L`: `Foreman / GF` | `M`: `Travel Hrs`
+     - `N`: `Total Job Hours` (`=SUM(G{r}:I{r})`)
+   - Conclude `Job Summary` with a formula-driven `WEEKLY JOB GRAND TOTALS` row (`=SUM(F8:F{last})` .. `=SUM(N8:N{last})`).
+4. **Tabs 3..N+2 — Alphabetically Sorted `Last, First` Employee Tabs**:
+   - Convert each submitting employee's name into **`Last, First`** format (e.g., `Orin Leacock` $\rightarrow$ `Leacock, Orin`; `Andy Beckmann` $\rightarrow$ `Beckmann, Andy`; `Robert O'Shaughnessy` $\rightarrow$ `O'Shaughnessy, Robert`) within Excel's 31-character tab limit.
+   - Sort all employee tabs **alphabetically by `Last, First`** immediately after `Weekly Summary` and `Job Summary`.
+   - Keep `X3` (`EMPLOYEE:`) on the sheet face as the employee's full name (`Orin Leacock`). If an employee submits multiple sheets for the same week, merge their job blocks onto a single tab (up to 10 jobs) or append ` (2)` if exceeding 10 jobs.
+
+---
+
+## 3. Master Template Cell Coordinates & Formula Lock (`NEA-TPL-004`)
+
+| Worksheet Region | Editable Input Coordinates | Formula-Locked Coordinates (NEVER OVERWRITE WITH STATIC TEXT) |
+| :--- | :--- | :--- |
+| **Header Block (`Rows 1–6`)** | • `X2`: `WEEK ENDING autofill` (Saturday date)<br>• `K2`: `Union Local#`<br>• `K3`: `Position`<br>• `X3`: `EMPLOYEE` | • `X1`: `Begin Week` (`=X2-6`)<br>• `F6:AD6`: Daily dates (`F6` `=X1`, `J6` `=F6+1`, `N6` `=J6+1`, `R6` `=N6+1`, `V6` `=R6+1`, `Z6` `=V6+1`, `AD6` `=Z6+1`)<br>• `AU1:AU4`: Shift lookup constants (`REG`, `2ND`, `3RD`) |
+| **10 Job Blocks (`Rows 7–35`)**<br>`r_hdr` $\in \{7,10,13,16,19,22,25,28,31,34\}$<br>`r_dat` $\in \{8,11,14,17,20,23,26,29,32,35\}$ | • `A{r_hdr}`: Building / Qualifier top line (`Card Access`, `Boeing`, `Shop`, `ONCALL`)<br>• `A{r_dat}`: Job / Building Name (`307-2`, `245-EAC`, `VACATION`)<br>• `D{r_dat}`: NetCom Job Number (`20263916`, `260210`)<br>• `F, J, N, R, V, Z` on `r_hdr`: Shift code (`REG`, `2ND`, `3RD`)<br>• `F..AF` on `r_dat`: Daily `REG`/`OT`/`DT` hours (`SUN`=`F,G,H`, `MON`=`J,K,L`, `TUES`=`N,O,P`, `WED`=`R,S,T`, `THU`=`V,W,X`, `FRI`=`Z,AA,AB`, `SAT`=`AD,AE,AF`) | • `AD{r_hdr}`: Saturday shift mirror (`=$F{r_hdr}`)<br>• `AG{r_dat}` (`REG` Total, **including `AG35` repair**): `=F{r}+J{r}+N{r}+R{r}+V{r}+Z{r}+AD{r}`<br>• `AH{r_dat}` (`O.T.` Total): `=G{r}+K{r}+O{r}+S{r}+W{r}+AA{r}+AE{r}`<br>• `AI{r_dat}` (`D.T.` Total): `=H{r}+L{r}+P{r}+T{r}+X{r}+AB{r}+AF{r}`<br>• `AJ{r_dat}` (`2ND` Total): `=SUMIF($F{r-1}:$AF{r-1},AJ{r-1},$F{r}:$AF{r})`<br>• `AK{r_dat}` (`3RD` Total): `=SUMIF($F{r-1}:$AF{r-1},AK{r-1},$F{r}:$AF{r})` |
+| **Page Totals (`Row 38`)** | *None (100% Formula-Driven)* | • `F38:AK38`: `=SUM({col}8,{col}11,{col}14,{col}17,{col}20,{col}23,{col}26,{col}29,{col}32,{col}35)` |
+
+---
+
+## 4. Handling Field Union Local #1 Variations (`3RD` Shift, `Foreman`/`GF`, & Job Qualifiers)
+
+1. **`3RD` Shift Highlighted Columns (Local #1 Field Sheets)**:
+   - On Union Local #1 field sheets, employees working 3rd shift (e.g., `Branden Lutz`, `Josh Clark`, `Steve Hartung`, `Scott Hoppe`) have the `3RD` total column highlighted yellow with their regular hours summed under `3RD`.
+   - When consolidating into `Timesheet_Template.xlsx`, enter their daily hours in the daily `REG` columns (`F, J, N, R, V, Z, AD` on `r_dat`) and set the job block's shift header cells (`F, J, N, R, V, Z` on `r_hdr`) to **`"3RD"`**. This allows both `AG{r_dat}` (`REG` base hours) and `AK{r_dat}` (`3RD` shift hours via `SUMIF`) to calculate automatically.
+2. **`Foreman`, `GF`, and `Travel` Columns**:
+   - Local #1 field sheets include `Foreman` (or `GF` / `Forman`) and `Travel` columns in `TOTAL HOURS`. Record `foreman_hours` and `travel_hours` in the consolidation manifest so they are displayed and summed on the front **`Weekly Summary`** tab (`Columns L:M`).
+3. **Two-Line `Job Number` Prefixes (`Shop`, `On Call`, `ONCALL`, `Card Access`)**:
+   - When a timesheet box contains a text qualifier above the Job Number (e.g., `Shop` / `260210` or `On Call` / `20263775`) or red `Card Access` above the building name, place the numeric Job Number (`260210`, `20263775`) in `D{r_dat}` and preserve the qualifier (`Shop`, `On Call`, `Card Access`) in `A{r_hdr}`.
+4. **OCR / Handwritten Confidence Gate**:
+   - Never guess illegible handwritten digits or job numbers. If any scanned/photographed cell is ambiguous, present an **OCR/Vision Verification Table** in chat tagged with `[TBD: <field_description>]` for operator confirmation before finalizing the workbook.

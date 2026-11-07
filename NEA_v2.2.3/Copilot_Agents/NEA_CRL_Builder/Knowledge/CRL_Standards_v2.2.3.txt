@@ -1,0 +1,81 @@
+# Cable Running List (CRL) Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-004
+Logical Name: CRL_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the engineering, schema, field-separation, endpoint, and installation-handoff requirements governing Cable Running Lists (CRLs) in the NetCom Engineering Assistant (NEA).
+
+Current approved artifact versions are governed by `Repository_Index.md`.
+
+---
+
+## 1. Deliverable Role & "Paper Truth" Installation Handoff Boundary
+
+1. **Engineering-to-Installation Contract**: The CRL communicates run-by-run cable routing, media performance, strand counts, lengths, connectors, and pathway requirements from engineering to the installation team.
+2. **Paper Truth Upon Handoff (No Per-Row `Cable Run Status`)**:
+   - Once the engineer completes the CRL and hands the deliverable package to installation, the released CRL serves as the installation team's **paper truth**.
+   - It is not circled back to NEA for routine post-handoff field-progress tracking (`Planned`, `Released`, `Installed`, `Tested`, `As-Built` row statuses are retired). If pricing or scope changes require updates, the deliverable package is adjusted and re-issued.
+   - **Strict Rule**: The approved 16-column CRL schema does not include a per-row `Cable Run Status` column. Missing per-row status shall **never** generate a review finding.
+   - CRL lifecycle and finality are governed at the **document level** via `Cover Sheet` metadata (`Document Status`, `Revision`, `Issue Date`) per `Project_Metadata_Standard`.
+
+---
+
+## 2. Approved 16-Column CRL Schema (`Cable_Running_List_Template.xlsx`)
+
+Every active run row (`Rows 3+` on `Cable Running List`) represents one discrete cable run across 16 columns:
+
+| Col | Field Name | Requirement Level | Validation List / Permitted Values (`Reference Lists`) | Engineering Validation Rule |
+| :---: | :--- | :---: | :--- | :--- |
+| **`A`** | `Run ID` | **Required** | Unique integer or alphanumeric run ID | Sequential numbering preferred; blank row gaps `<= 5` generate no finding (`> 5` = `Advisory`). |
+| **`B`** | `Classification` | **Required** *(Where Applicable)* | `Reference Lists!$A$1:$A$3`:<br>`Classified`, `Unknown`, `Unclassified` | Unresolved `Unknown` placeholder requires engineering confirmation (`Review Recommended`). |
+| **`C`** | `NE Location` | **Required** | Room / enclosure identifier | Must identify the near-end termination space (`NEAR END` group `C1:F1`). |
+| **`D`** | `NE Rack` | **Conditional** | Rack / cabinet / frame ID | Populate when terminated in a rack, cabinet, or wall frame. |
+| **`E`** | `NE Port` | **Conditional** | Patch panel / port ID | Populate when port assignment is defined during engineering. |
+| **`F`** | `NE Connector` | **Required** *(Where Terminated)* | `Reference Lists!$D$1:$D$11`:<br>`RJ45`, `LC`, `SC`, `ST`, `FC`, `MPO-12`, `MTP`, `Punch`, `Wrap`, `Serial`, `Amphenol` | Must be compatible with `Media Type` (`RJ45`/`Punch` for `Copper`; `LC`/`SC`/`ST`/`MPO-12`/`MTP` for `Fiber`). |
+| **`G`** | `FE Location` | **Required** | Room / enclosure / station ID | Must identify the far-end termination space (`FAR END` group `G1:J1`). |
+| **`H`** | `FE Rack` | **Conditional** | Rack / cabinet / workstation ID | Populate when applicable to far-end termination. |
+| **`I`** | `FE Port` | **Conditional** | Patch panel / faceplate port ID | Populate when port assignment is defined during engineering. |
+| **`J`** | `FE Connector` | **Required** *(Where Terminated)* | `Reference Lists!$D$1:$D$11` | Must be compatible with `Media Type`. |
+| **`K`** | `Media Type` | **Required** | `Reference Lists!$B$1:$B$2`:<br>`Copper`, `Fiber` | High-level physical media family only (`CABLE SPECIFICATION` group `K1:N1`). Never put `Cat6A`, `OS2`, `12F`, or `LC` in `Media Type`. |
+| **`L`** | `Cable Type` | **Required** | `Reference Lists!$C$1:$C$12`:<br>`Cat5e`, `Cat6`, `Cat6A`, `Cat7`, `Cat8`, `OM3`, `OM4`, `OM5`, `OS2`, `OM1`, `OM2`, `Bulk Pair` | Must be compatible with `Media Type` (`Cat*` / `Bulk Pair` with `Copper`; `OM*` / `OS2` with `Fiber`). |
+| **`M`** | `Cable Qty` *(Fiber Count)* | **Conditional (Mandatory for Fiber)** | Positive integer strand/cable count (`1`, `2`, `6`, `12`, `24`, `48`, `72`, `144`, etc.) | **Required whenever `Media Type = Fiber`** (`Missing = Action Required`). Leave blank when `Media Type = Copper`. |
+| **`N`** | `Length (ft)` | **Required** | Numeric value `> 0` | Documented in feet (`FT`); drives `Project BOM` bulk cable and assembly takeoff reconciliation. |
+| **`O`** | `Special Requirement` | **Conditional** | `Reference Lists!$E$1:$E$6` (`SpecialRequirementList`):<br>`Standard`, `Crossover`, `Rollover`, `Redundant Path`, `Diverse Route`, `Wrap` | Defines special routing/pinout requirement (`REQUIREMENTS` group `O1:P1`); must not contradict `Comments` or `Project BOM` material specs. |
+| **`P`** | `Comments` | **Optional** | Free text (`Black Shielded`, `Red Duplex`, `OFNP`, `OFNR`, etc.) | Captures jacket color, system grouping, fire rating, or routing notes; must not contradict `Columns K–O` or `Project BOM` material specs. |
+
+*(Note: `inspect_nea_workbooks.py` resolves CRL columns dynamically by `Row 2` header name, supporting both the `v2.2.3` grouped-endpoint layout above and legacy `v1.3` sheets where `NE Conn.`/`FE Conn.` appeared in `Columns M:N`.)*
+
+---
+
+## 3. Intra-Row & Cross-Document Technical Consistency Rules
+
+1. **Strict Separation of `Media Type`, `Cable Type`, `Cable Qty` (`Fiber Count`), and `Connectors`**:
+   - Never conflate fields (e.g., storing `24F OS2` inside `Cable Type` while leaving `Cable Qty` blank, or storing `Cat6A` inside `Media Type`).
+2. **Intra-Row & Cross-Document Contradiction Checks**:
+   - **Pathway Fire Rating (`Column O` / `Column P` vs. `Project BOM`)**: Pairing `Special Requirement = Plenum` (`Column O`) or `Project BOM` Plenum bulk fiber (`BF5008`/`BF5006`) with `Comments = OFNR` (Riser) (`Column P`) creates an NEC fire-rating contradiction and shall be flagged as **`Review Recommended` (`RR-##`)**.
+   - **Strand Count vs. Duplex Comment (`Column M` vs. `Column P` / `F,J`)**: Pairing `Cable Qty = 1` with `Comments = Red Duplex` and duplex `LC` terminations shall be flagged as **`Review Recommended` (`RR-##`)**.
+   - **Media vs. Connector Compatibility (`Column K` vs. `Columns F,J`)**: Pairing `Copper` media with optical connectors (`LC`, `SC`, `MPO-12`) or `Fiber` media with `RJ45`/`Punch` shall be flagged as **`Action Required` (`AR-##`)** or **`Review Recommended` (`RR-##`)**.
+   - **Data Validation & AutoFilter Integrity**: All dropdown and numeric DataValidation ranges on `Cable Running List` must align continuously across `Rows 3..1087` for their respective `Row 2` columns (never split column mappings at an intermediate row such as `Row 755`), and `_FilterDatabase` must span all active rows (`ADV-##` / `TPL-##`).
+3. **Cross-Document Takeoff Coordination (`CRL` ↔ `Project BOM`)**:
+   - Total CRL footage (`Sum of Length (ft)` grouped by `Media Type`, `Cable Type`, `Cable Qty`, `Special Requirement`, and jacket color in `Comments`) and termination counts (`NE Connector` + `FE Connector`) shall be reconciled quantitatively against `Project BOM` ordered quantities in Section 3 of `Review_Report_Template`.
+
+---
+
+## 4. Default CRL Finding Classifications
+
+| Observed CRL Condition | Default Classification (`Review_Standards`) |
+| :--- | :---: |
+| Missing `Run ID`, missing `NE/FE Location`, missing `Media Type` / `Cable Type`, or missing/non-positive `Length (ft)` | **`Action Required` (`AR-##`)** |
+| Missing `Cable Qty` (`Fiber Count`, `Column M`) on any row where `Media Type = Fiber` | **`Action Required` (`AR-##`)** |
+| Incompatible `Media Type` and `Cable Type` (e.g., `Copper` + `OS2`) | **`Action Required` (`AR-##`)** |
+| Intra-row contradiction (`Plenum` vs `OFNR`, `1F` vs `Duplex`, or `Copper` vs `LC`) | **`Review Recommended` (`RR-##`)** |
+| Identical `NE Location`/`NE Rack`/`NE Port` and `FE Location`/`FE Rack`/`FE Port` across multiple runs (`CRL-DATA-003`) | **`Review Recommended` (`RR-##`)** |
+| Unresolved `Classification = Unknown` (`Column B`) on active project runs | **`Review Recommended` (`RR-##`)** |
+| Duplicate `Run ID` values (unless documented as intentional paired/redundant paths) | **`Action Required` (`AR-##`)** or **`Review Recommended` (`RR-##`)** |
+| Blank row or `Run ID` numbering gap `> 5` rows/runs | **`Advisory` (`ADV-##`)** |
+| Blank row or `Run ID` numbering gap `<= 5` rows/runs, or absence of per-row `Cable Run Status` | **No Finding** |

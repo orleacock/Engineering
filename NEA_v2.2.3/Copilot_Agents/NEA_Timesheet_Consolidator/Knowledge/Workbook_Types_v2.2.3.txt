@@ -1,0 +1,161 @@
+# Workbook Types & Technical Schema Reference
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-REF-002
+Logical Name: Workbook_Types
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Reference provides the authoritative technical map of the Excel workbook Templates managed by the NetCom Engineering Assistant (NEA), including worksheet names, Excel Tables, Defined Names, exact cell coordinates, formula architectures, and extensibility rules.
+
+Current approved artifact versions are governed by `Repository_Index.md`. Engineering validation rules are governed by `Standards/`.
+
+---
+
+## 1. Controlled Workbook Ecosystem (`Templates/`)
+
+NEA manages an extensible deliverable package of spreadsheets. Once completed by the engineer and handed off to installation, the package serves as the installation team's **paper truth** (and is re-issued as a package if later adjusted for scope or pricing).
+
+| Template Filename | Document ID | Contained Worksheets | Primary Engineering Role |
+| :--- | :---: | :--- | :--- |
+| **`BOM_Materials_Master_Template.xlsx`** | `NEA-TPL-001` | `Cover Sheet`, `Materials Master`, `Fiber Assemblies`, `Cable Harness`, `Project BOM`, `Lists` | Houses the 3-tier authoritative material catalogs (`tblMaterials`, `Fiber Assemblies`, and `Cable Harness`), dynamic validation lists (`Lists`), and the formula-driven `Project BOM`. |
+| **`Cable_Running_List_Template.xlsx`** | `NEA-TPL-002` | `Cover Sheet`, `Cable Running List`, `Reference Lists` | Houses the 16-column `Cable Running List` defining run-by-run endpoints, media/cable specs, lengths, and terminations for field installation handoff. |
+| **`Project_Cover_Sheet_Template.xlsx`** | `NEA-TPL-003` | `Cover Sheet`, `Reference Lists` | Standalone project cover sheet for package transmittals or supporting deliverables without an embedded Cover Sheet. |
+| **`Timesheet_Template.xlsx`** | `NEA-TPL-004` | `Timesheet Template` *(Consolidated output: `Weekly Summary` + `Last, First` employee tabs)* | Houses the NetCom Missouri Timesheet grid (`10` job blocks `Rows 7–35`, `SUN..SAT` daily `REG`/`OT`/`DT` columns `F:AF`, shift selectors `REG`/`2ND`/`3RD`, row totals `AG:AK`, and `Row 38` page totals) with `Expense Report` stripped. |
+
+---
+
+## 2. Cover Sheet Coordinate & Formula Map (All 3 Workbooks)
+
+Because the BOM `Cover Sheet` includes a `Project Number` row (`Row 12`) and omits `Installation Contractor`, row coordinates below `Row 10` shift by 2 rows between the BOM workbook and the CRL/Standalone workbooks (`GOV-006`):
+
+| Metadata Field | `BOM_Materials_Master_Template.xlsx` (`Cover Sheet`) | `Cable_Running_List_Template.xlsx` & `Project_Cover_Sheet_Template.xlsx` (`Cover Sheet`) | Formula / Linking Behavior |
+| :--- | :---: | :---: | :--- |
+| **Project Name** | `D10` (Label `B10`) | `D10` (Label `B10`) | User input text |
+| **Project Number** | `D12` (Label `B12`) | *Row Absent (`GOV-006`)* | Linked to `Project BOM!B2`: `=IF('Cover Sheet'!D12="","",'Cover Sheet'!D12)` |
+| **Customer** | `D14` (Label `B14`) | `D12` (Label `B12`) | User input text |
+| **Customer Contact** | `D16` (Label `B16`) | `D14` (Label `B14`) | User input text |
+| **Building / Site Address** | `D18` (Label `B18`) | `D16` (Label `B16`) | Linked to `Project BOM!E2`: `=IF('Cover Sheet'!D18="","",'Cover Sheet'!D18)` |
+| **Project Manager** | `D20` (Label `B20`) | `D18` (Label `B18`) | User input text |
+| **Designer / Engineer** | `D22` (Label `B22`) | `D20` (Label `B20`) | User input text |
+| **Installation Contractor** | *Row Absent (`GOV-006`)* | `D22` (Label `B22`) | User input text (CRL & Standalone only) |
+| **Issue Date** | `D24` (Label `B24`) | `D24` (Label `B24`) | Excel date serial; linked to Revision History `C30`: `=IF($D$24="","",$D$24)` |
+| **Revision** | `H24` (Label `F24`) | `H24` (Label `F24`) | Linked to `Project BOM!H2` and Revision History `B30`: `=IF($H$24="","",$H$24)` |
+| **Revision History Row 1** | `B30` (Rev), `C30` (Date), `E30` (Desc), `H30` (Author) | `B30` (Rev), `C30` (Date), `E30` (Desc), `H30` (Author) | `B30` and `C30` should contain dynamic `=IF(...)` formulas pointing to `H24` and `D24` |
+
+---
+
+## 3. `BOM_Materials_Master_Template.xlsx` Internal Architecture
+
+### 3.1 Catalog Sheets (`Materials Master`, `Fiber Assemblies`, and `Cable Harness`)
+
+| Worksheet | Structure Type | Range & Columns | Key Technical Notes & Governance (`GOV-###`) |
+| :--- | :--- | :--- | :--- |
+| **`Materials Master`** | Official Excel Table **`tblMaterials`** | `$A$3:$G$600` (`Row 3` Headers):<br>`A`: `Category`<br>`B`: `MB P/N` *(Primary Key)*<br>`C`: `Manufacturer`<br>`D`: `MFG Part Number`<br>`E`: `UOM`<br>`F`: `Description`<br>`G`: `Status` | • **Priority 1 Lookup Source** for `Project BOM`.<br>• **Never rename `tblMaterials`** (`GOV-007`); `Lists!H1` and all `Project BOM` `XLOOKUP` formulas depend on this exact table name.<br>• Displays reference keys in `Columns I:J` (`Row 3–9`: Material Status Key; `Row 12–19`: UOM Key; `Row 22–38`: Category Key). |
+| **`Fiber Assemblies`** | Standard Worksheet Range | `$A$3:$H$1258` (`Row 3` Headers):<br>`A`: `Category` (`Bulk Fiber` / `Term Fiber`)<br>`B`: `Fiber Type`<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | • **Priority 2 Lookup Source** when an `MB P/N` is not found in `tblMaterials`.<br>• Includes `Column H` (`Status`, `H4:H286` validated against the 6 governed Material Statuses). |
+| **`Cable Harness`** | Standard Worksheet Range | `$A$3:$H$1258` (`Row 3` Headers):<br>`A`: `Category` (`Cable Harness`)<br>`B`: `Cable Type` (`C6A U/UTP`, `C6A U/FTP`)<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | • **Priority 3 Lookup Source** when an `MB P/N` is not found in `tblMaterials` or `Fiber Assemblies`.<br>• Tracks changing cable harness variants (`202` variants across `11` section headers + Suffix Key in `M5:P12`). Unassigned variants leave `Col C` (`MB P/N`) blank and `Col H` (`Status = Pending`) until assigned. |
+| **`Lists`** | Validation & Spill Engine | • `H1`: Dynamic 3-tier `FILTER(VSTACK(...))` spill formula (`BOMPartNumbers` = `Lists!$H$1#`)<br>• Helper validation lists in `Columns A:F` | • **Defined Name `BOMPartNumbers`** (`Lists!$H$1#`) combines `tblMaterials[MB P/N]`, `'Fiber Assemblies'!$C$4:$C$1258`, and `'Cable Harness'!$C$4:$C$1258` while filtering out blank unassigned harness rows so `#CALC!` never occurs:<br>`=_xlfn._xlws.FILTER(_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258),_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258)<>"")` |
+
+### 3.2 `Project BOM` Sheet (`A7:J155` — Formula-Protected Range)
+
+- **Header Summary Banner (`Rows 2 & 4`)**:
+  - `B2`: Project Number (`=IF('Cover Sheet'!D12="","",'Cover Sheet'!D12)`)
+  - `E2`: Building (`=IF('Cover Sheet'!D18="","",'Cover Sheet'!D18)`)
+  - `H2`: Revision (`=IF('Cover Sheet'!H24="","",'Cover Sheet'!H24)`)
+  - `E4`: Line Items (`=COUNTIF(B8:B155,"<>")`)
+  - `G4`: Total Quantity (`=SUM(C8:C155)` — *Note: sums mixed UOMs; flagged under `GOV-002` / `ADV-##`*).
+- **10-Column Schema (`Row 7` Headers, `Rows 8–155` Data Rows)**:
+
+| Col | Header | Control Type | Formula / Validation Rule (`Row 8` Archetype) |
+| :---: | :--- | :---: | :--- |
+| **`A`** | `Line` | **Formula-Locked** | `=IF(B8="","",ROW()-7)` *(Stored in XML as shared formula `<f t="shared" si="..."/>` across `A9:A155`)* |
+| **`B`** | `MB P/N` | **Editable Input** | Data Validation List `=BOMPartNumbers` (`Lists!$H$1#`) |
+| **`C`** | `Qty` | **Editable Input** | Data Validation Whole Number `> 0` or `"TBD"` (Required `> 0` for all active material rows) |
+| **`D`** | `Category` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[Category]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$A$4:$A$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$A$4:$A$1258),"Not found"))))` |
+| **`E`** | `Manufacturer` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[Manufacturer]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$D$4:$D$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$D$4:$D$1258),""))))` |
+| **`F`** | `MFG Part Number` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[MFG Part Number]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$E$4:$E$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$E$4:$E$1258),""))))` |
+| **`G`** | `UOM` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[UOM]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$F$4:$F$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$F$4:$F$1258),""))))` |
+| **`H`** | `Description` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[Description]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$G$4:$G$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$G$4:$G$1258),""))))` |
+| **`I`** | `Status` | **Formula-Locked** | `=IF($B8="","",IFERROR(_xlfn.XLOOKUP($B8&"",tblMaterials[MB P/N]&"",tblMaterials[Status]),IFERROR(_xlfn.XLOOKUP($B8&"",'Fiber Assemblies'!$C$4:$C$1258&"",'Fiber Assemblies'!$H$4:$H$1258),IFERROR(_xlfn.XLOOKUP($B8&"",'Cable Harness'!$C$4:$C$1258&"",'Cable Harness'!$H$4:$H$1258),""))))` |
+| **`J`** | `Notes` | **Editable Input** | Free-text engineering/system/room designation, cut-length routing, or `(optional)` scope note |
+
+---
+
+## 4. `Cable_Running_List_Template.xlsx` Internal Architecture
+
+- **16-Column Approved CRL Schema (`Row 2` Headers, `Rows 3+` Data Rows)**:
+
+| Col | Header | Data / Validation Source (`Reference Lists`) | Engineering Purpose |
+| :---: | :--- | :--- | :--- |
+| **`A`** | `Run ID` | Sequential integer or run identifier | Unique cable run identifier (`<= 5` gap tolerance) |
+| **`B`** | `Classification` | `Reference Lists!$A$1:$A$3` (`Classified`, `Unknown`, `Unclassified`) | Network/pathway segmentation (`Unknown` requires `RR-##` confirmation) |
+| **`C`** | `NE Location` | Room / space identifier (`NEAR END` `C1:F1`) | Near-end room or enclosure location |
+| **`D`** | `NE Rack` | Rack / cabinet identifier | Near-end rack, frame, or surface mount box |
+| **`E`** | `NE Port` | Patch panel / port identifier | Near-end termination port |
+| **`F`** | `NE Connector` | `Reference Lists!$D$1:$D$11` (`RJ45`, `LC`, `SC`, `ST`, `FC`, `MPO-12`, `MTP`, `Punch`, `Wrap`, `Serial`, `Amphenol`) | Near-end connector compatible with `Media Type` |
+| **`G`** | `FE Location` | Room / space identifier (`FAR END` `G1:J1`) | Far-end room or enclosure location |
+| **`H`** | `FE Rack` | Rack / cabinet identifier | Far-end rack, cabinet, or workstation |
+| **`I`** | `FE Port` | Patch panel / port identifier | Far-end termination port |
+| **`J`** | `FE Connector` | `Reference Lists!$D$1:$D$11` | Far-end connector compatible with `Media Type` |
+| **`K`** | `Media Type` | `Reference Lists!$B$1:$B$2` (`Copper`, `Fiber`) | High-level physical media family (`CABLE SPECIFICATION` `K1:N1`) |
+| **`L`** | `Cable Type` | `Reference Lists!$C$1:$C$12` (`Cat5e`, `Cat6`, `Cat6A`, `Cat7`, `Cat8`, `OM3`–`OM5`, `OS2`, `OM1`–`OM2`, `Bulk Pair`) | Specific performance/construction grade compatible with `Media Type` |
+| **`M`** | `Cable Qty` *(Fiber Count)* | Numeric strand count (`1`, `2`, `6`, `12`, `24`, `48`, `72`, `144`) | Mandatory when `Media Type = Fiber`; blank on `Copper` runs |
+| **`N`** | `Length (ft)` | Numeric length `> 0` | Run length in feet used for BOM cable takeoff reconciliation |
+| **`O`** | `Special Requirement` | `Reference Lists!$E$1:$E$6` (`SpecialRequirementList`: `Standard`, `Crossover`, `Rollover`, `Redundant Path`, `Diverse Route`, `Wrap`) | Special routing/pinout requirement (`REQUIREMENTS` `O1:P1`) |
+| **`P`** | `Comments` | Free text | Jacket color, system group (`Black Shielded`, `Red Duplex`), fire rating (`OFNP`/`OFNR`), or routing notes |
+
+---
+
+## 5. `Timesheet_Template.xlsx` (`NEA-TPL-004`) & Consolidated `Week_of_MM-DD_to_MM-DD.xlsx` Architecture
+
+### 5.1 Master Missouri Timesheet Grid (`Timesheet Template` / Employee Tabs)
+- **Header Metadata (`Rows 1–3`)**:
+  - `X1` (`X1:AK1` merged, **Formula-Locked**): `Begin Week` (`=X2-6`, Sunday date derived from `X2`).
+  - `X2` (`X2:AK2` merged, **Editable Input**): `WEEK ENDING autofill` (Saturday date serial or `YYYY-MM-DD`).
+  - `K2` (`K2:N2` merged, **Editable Input**): `Union Local#` (e.g., `1` or `Office`).
+  - `K3` (`K3:N3` merged, **Editable Input**): `Position` (`Foreman`, `GF`, `JW`, `Tech`, `Apprentice`, `Designer`, `PM`, `Mgr`).
+  - `X3` (`X3:AK3` merged, **Editable Input**): `EMPLOYEE` full name (`First Last`, while the worksheet tab is named **`Last, First`** and sorted alphabetically).
+  - `AU1:AU4` (**Template Constants**): `AU1="REG"`, `AU3="2ND"`, `AU4="3RD"` (drives shift selector DataValidation `$AU$1:$AU$4`).
+- **Day Header Dates (`Row 6`, Formula-Locked)**:
+  - `F6` (`=X1`, SUN), `J6` (`=F6+1`, MON), `N6` (`=J6+1`, TUES), `R6` (`=N6+1`, WED), `V6` (`=R6+1`, THU), `Z6` (`=V6+1`, FRI), `AD6` (`=Z6+1`, SAT).
+- **10 Job Blocks (`Rows 7–35`)**:
+  - **Header Rows (`r_hdr`)**: `7, 10, 13, 16, 19, 22, 25, 28, 31, 34`
+    - `A{r_hdr}` (`A:B` merged): Building / Qualifier top line (e.g., `Boeing STL`, `Card Access`, `Shop`, `ONCALL`).
+    - `F, J, N, R, V, Z` on `r_hdr`: Shift selector (`REG`, `2ND`, `3RD`; `AD{r_hdr}` is formula-locked `=$F{r_hdr}`). When a scanned Local #1 field timesheet has `3RD` shift highlighted, set `F..Z` on `r_hdr` to `"3RD"` so `AK{r_dat}` (`=SUMIF($F{r_hdr}:$AF{r_hdr},AK{r_hdr},$F{r_dat}:$AF{r_dat})`) automatically computes the 3rd-shift hours.
+  - **Data Rows (`r_dat`)**: `8, 11, 14, 17, 20, 23, 26, 29, 32, 35`
+    - `A{r_dat}` (`A:B` merged): Job / Project / Building Name (`307-2`, `245-EAC`, `One Net`, `VACATION`, `MO ONE CALL`).
+    - `D{r_dat}`: NetCom Job Number (e.g., `260210`, `20263916`, `20262504`).
+    - **Daily Hours (`F..AF` on `r_dat`, Editable Inputs)**:
+      - `SUN`: `F` (`REG`), `G` (`OT`), `H` (`DT`)
+      - `MON`: `J` (`REG`), `K` (`OT`), `L` (`DT`)
+      - `TUES`: `N` (`REG`), `O` (`OT`), `P` (`DT`)
+      - `WED`: `R` (`REG`), `S` (`OT`), `T` (`DT`)
+      - `THU`: `V` (`REG`), `W` (`OT`), `X` (`DT`)
+      - `FRI`: `Z` (`REG`), `AA` (`OT`), `AB` (`DT`)
+      - `SAT`: `AD` (`REG`), `AE` (`OT`), `AF` (`DT`)
+    - **Row Totals (`AG..AK` on `r_dat`, Formula-Locked — including `AG35` repair)**:
+      - `AG{r_dat}` (`REG`): `=F{r}+J{r}+N{r}+R{r}+V{r}+Z{r}+AD{r}`
+      - `AH{r_dat}` (`O.T.`): `=G{r}+K{r}+O{r}+S{r}+W{r}+AA{r}+AE{r}`
+      - `AI{r_dat}` (`D.T.`): `=H{r}+L{r}+P{r}+T{r}+X{r}+AB{r}+AF{r}`
+      - `AJ{r_dat}` (`2ND`): `=SUMIF($F{r-1}:$AF{r-1},AJ{r-1},$F{r}:$AF{r})`
+      - `AK{r_dat}` (`3RD`): `=SUMIF($F{r-1}:$AF{r-1},AK{r-1},$F{r}:$AF{r})`
+- **Page Totals (`Row 38`, `F38:AK38`, Formula-Locked)**:
+  - `=SUM({col}8,{col}11,{col}14,{col}17,{col}20,{col}23,{col}26,{col}29,{col}32,{col}35)` across all daily and grand total columns.
+- **Expense Report Stripping**:
+  - The legacy `Expense Report` tab (`sheet2.xml`) and any scanned expense reports, hardware receipts, or invoices are stripped/ignored.
+
+### 5.2 Front `Weekly Summary` Tab (`Tab 1` in `Week_of_MM-DD_to_MM-DD.xlsx`)
+- Placed at worksheet index `0` ahead of the alphabetically sorted **`Last, First`** employee tabs.
+- Columns `A:N`: `Employee (Last, First)`, `Position`, `Union Local#`, `Building / Qualifier`, `Job / Project Name`, `Job Number`, `REG`, `OT`, `DT`, `2ND`, `3RD`, `Foreman/GF`, `Travel`, and `Total Paid Hours` (`=SUM(G{r}:I{r})`), with `WEEKLY GRAND TOTALS` (`=SUM(...)`) at the bottom.
+
+---
+
+## 6. Future Workbook Extensibility
+
+As NEA grows to manage additional project deliverable workbooks (such as `Equipment Schedules`, `Rack Elevations`, `Fiber Assignment Records`, `Power Schedules`, or `Test Logs`), each new workbook type shall:
+1. Be registered in `Repository_Index.md` and mapped in Section 1 of this document.
+2. Separate **Controlled Data / Formula Columns** from **Editable Engineer Input Columns**.
+3. Synchronize project identity metadata with the package `Cover Sheet` (`Project_Metadata_Standard`).
+4. Participate in `Project_Review_Workflow` cross-document validation and the standardized `Review_Report_Template`.

@@ -1,0 +1,30 @@
+# Homunculus Context-Window Egress Firewall (.cursorignore)
+# Governed by: 1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
+# Prevents background cloud IDE indexers from uploading local credentials, keys, or personal voice corpora.
+
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+!*.pub
+client_secret*.json
+token*.json
+credentials.json
+DevToolsActivePort
+**/corpus_inbox/*
+!**/corpus_inbox/README.md
+!**/corpus_inbox/.gitkeep
+**/study_briefs/*
+!**/study_briefs/README.md
+!**/study_briefs/.gitkeep
+**/scratch/sandbox_runs/**

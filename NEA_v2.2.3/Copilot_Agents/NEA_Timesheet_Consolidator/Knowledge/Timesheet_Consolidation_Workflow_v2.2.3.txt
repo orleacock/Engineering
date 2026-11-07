@@ -1,0 +1,79 @@
+# Missouri Timesheet Consolidation Workflow
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-WF-006
+Logical Name: Timesheet_Consolidation_Workflow
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Workflow defines the step-by-step execution sequence for the **NEA Timesheet Consolidator** (`NEA-AGT-006`) when consolidating digital (`.xlsx`), scanned (`.pdf`), and photographed (`.png`/`.jpg`) Missouri Timesheets into a weekly multi-tab workbook (`Week_of_MM-DD_to_MM-DD.xlsx`).
+
+---
+
+## Step 1 — Classify Attached Media & Filter Non-Timesheet Pages
+
+1. Inspect all files attached in the Copilot chat turn:
+   - **Digital `.xlsx` Timesheets**: Run `python3 scripts/inspect_nea_workbooks.py . --scope timesheet` in Code Interpreter to extract deterministic cell coordinates, formulas, and job rows.
+   - **Scanned `.pdf` Packets**: Render/inspect each page in Code Interpreter (e.g., via `pypdf`/`pdfplumber`/`pdf2image` or multimodal vision). Classify each page:
+     - **KEEP**: Pages containing the `NetCom, Inc.` `Missouri Timesheet` grid (`Begin Week`, `WEEK ENDING`, `SUN..SAT` columns, `Page 1 of 1`).
+     - **IGNORE / DROP**: Pages containing `Expense Report` (`MISCELLANEOUS EXPENSES` / `Mileage`), retail/hardware receipts (`Home Depot`, `True Value`), or vendor invoices (`Microsoft Invoice`).
+   - **Photos / Images (`.png`, `.jpg`, `.jpeg`)**: Inspect via multimodal vision and extract the header metadata (`Begin Week`, `WEEK ENDING`, `Union Local#`, `Position`, `EMPLOYEE`) and active job blocks (`Slots 1..10`).
+
+---
+
+## Step 2 — Validate Cross-Check Totals & Run the OCR Confidence Gate
+
+1. **Row & Column Math Cross-Check (Self-Verifying OCR)**:
+   - For every extracted timesheet page, verify that:
+     - Each job row's daily hours (`SUN..SAT`) sum exactly to the row total printed in `TOTAL HOURS` (`REG`, `O.T.`, `D.T.`, `3RD`, `Foreman`/`GF`).
+     - The sum of all job rows for each day (`SUN..SAT`) equals the bottom daily total in `Row 38`, and the sum of row totals equals the bottom grand total in `Row 38` (e.g., `40`, `39`, `37`, `36`, `32`, `24`, `42`, `40+5 OT=45`).
+2. **OCR / Handwritten Confidence Gate**:
+   - **Case A — 100% Legible & Cross-Checked**: If all daily hours, job numbers, and employee names reconcile against the row/column totals with zero ambiguity, proceed directly to **Step 3** in the same turn.
+   - **Case B — Low-Confidence / Ambiguous Handwriting or Math Mismatch**: If a handwritten number is illegible, a row sum does not match the daily entries, or a `WEEK ENDING` date conflicts across sheets, **halt before generating the `.xlsx`** and output an **OCR/Vision Verification Table** in chat marking the uncertain cell(s) with **`[TBD: Confirm <employee> <job> <day> hours]`**.
+
+---
+
+## Step 3 — Build JSON Manifest & Execute Deterministic Consolidation (`--consolidate`)
+
+1. Write the verified timesheet data to `timesheet_manifest.json` in Code Interpreter using the canonical schema:
+   ```json
+   {
+     "week_ending": "2026-10-31",
+     "employees": [
+       {
+         "employee": "Orin Leacock",
+         "union_local": "Office",
+         "position": "Designer",
+         "week_ending": "2026-10-31",
+         "jobs": [
+           {
+             "building": "NetCom",
+             "job_name": "Training",
+             "job_number": "260210",
+             "shift": "REG",
+             "foreman_hours": 0,
+             "travel_hours": 0,
+             "hours": {"mon": {"reg": 8}}
+           }
+         ]
+       }
+     ]
+   }
+   ```
+2. Execute the bundled consolidation engine in Code Interpreter:
+   ```bash
+   python3 scripts/inspect_nea_workbooks.py --consolidate timesheet_manifest.json --template Templates/Timesheet_Template.xlsx --out Week_of_10-25_to_10-31.xlsx
+   ```
+   *(If `Templates/Timesheet_Template.xlsx` is not uploaded in the working directory, `--consolidate` automatically materializes the embedded NetCom template, strips `Expense Report`, repairs `AG35`, builds `Tab 1: Weekly Summary` and `Tab 2: Job Summary`, sorts employee tabs as `Last, First` (`Tabs 3..N+2`), and runs `--verify-write`.)*
+
+---
+
+## Step 4 — Issue `--verify-write` Receipt (`NEA-WRT-...`) & Summary Table
+
+1. Confirm that `--consolidate` prints **`[WRITE-VERIFIED: PASS | NEA-WRT-...]`** (`Protected Formula Check (<f>): PASS (0 formulas overwritten)`).
+2. Provide in your response:
+   - The **downloadable link** to `Week_of_MM-DD_to_MM-DD.xlsx`.
+   - The **`NEA-WRT-[12-hex]`** verification receipt and count of ignored non-timesheet pages (e.g., `8 Expense Report / receipt / invoice pages ignored`).
+   - A **Markdown Weekly Consolidation Summary Table** showing every employee (`Last, First`), `Position`, `Local#`, `Active Jobs`, `REG`, `OT`, `DT`, `2ND`, `3RD`, `Foreman/GF`, and `Total Paid Hours`, plus a **Job Number Breakdown Summary** and any `RR-##` advisories (such as missing Job Numbers on non-vacation rows).

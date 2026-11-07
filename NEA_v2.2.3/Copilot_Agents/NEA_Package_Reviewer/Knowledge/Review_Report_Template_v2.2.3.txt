@@ -1,0 +1,240 @@
+# Engineering Review Report Template & Output Specification
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-REF-003
+Logical Name: Review_Report_Template
+Owner: NetCom Technical Services
+
+## Purpose
+
+This document defines the standardized Markdown reporting format, visual uniformity rules, compact summary tables, structured finding blocks, and engineer punch-list layout used by the NetCom Engineering Assistant (NEA) when presenting review results to an engineer.
+
+While NEA currently operates as a read-only engineering assistant and self-review system (prior to future direct-workbook editing automation), its primary deliverable to the operator is a **clear, uniform, traceable, and immediately actionable Engineering Review Report**.
+
+This specification ensures that regardless of which AI model, agent framework, or engineer executes an NEA review, the resulting report is:
+
+- Visually uniform from top to bottom and effortless to scan without horizontal table scrolling.
+- Strictly aligned with the finding severities and Release Readiness Outcomes governed by `Review_Standards`.
+- Traceable to exact workbook filenames, worksheet tabs, row numbers, cell coordinates, and part/run identifiers.
+- Clearly separated between **Active Project Deliverable Findings** (items affecting the current project's release) and **Catalog / Template Maintenance Referrals** (background `Materials Master` or template governance items that do not affect unreferenced parts).
+
+Current approved versions of controlled NEA artifacts are governed by the `NEA v2.2.3` Copilot Agent suite (`README.md`).
+
+---
+
+## Reporting Authority & Governing Relationships
+
+This Reference implements the reporting structure for evaluations governed by:
+
+- `Review_Standards` (`NEA-STD-003`) — Governs the four finding classifications (`Action Required`, `Review Recommended`, `Advisory`, `Informational`) and the four Release Readiness Outcomes (`Approved`, `Approved with Advisory Notes`, `Engineering Review Recommended`, `Action Required Before Release`).
+- `Project_Metadata_Standard` (`NEA-STD-001`) — Governs Cover Sheet and project identity evaluation.
+- `Formatting_Standards` (`NEA-STD-002`) — Governs workbook structure, formula preservation, and unit-aware summaries.
+- `CRL_Standards` (`NEA-STD-004`) — Governs Cable Running List validation.
+- `BOM_Standards` (`NEA-STD-005`) — Governs Project BOM validation.
+- `Material_Master_Standards` (`NEA-STD-006`) — Governs `Materials Master` (`tblMaterials`) and `Fiber Assemblies` catalog integrity.
+
+Workflows using this report format:
+
+- `Project_Review_Workflow` (`NEA-WF-004`)
+- `Project_BOM_Build_Workflow` (`NEA-WF-002`)
+- `CRL_Build_Workflow` (`NEA-WF-003`)
+- `Material_Catalog_Workflow` (`NEA-WF-001`)
+
+---
+
+## Mandatory Review Execution Sequence (Multi-Model Efficiency & Anti-Hallucination Gate)
+
+To prevent AI models or agents from exhausting their context window or tool-call budget reading unnecessary files or writing repetitive ad-hoc Python `.xlsx` scripts—and to ensure zero fabricated or inferred data—every NEA review shall follow this strict four-step execution order:
+
+1. **Step 1 — Load Core Reviewer Knowledge Pack (`3` Files)**:
+   - Read `Review_Standards_v2.2.3.txt` (`NEA-STD-003`), `Project_Review_Workflow_v2.2.3.txt` (`NEA-WF-004`), and `Review_Report_Template_v2.2.3.txt` (`NEA-REF-003`) from `./Knowledge/`.
+2. **Step 2 — Run Deterministic Workbook Inspector (`Knowledge/inspect_nea_workbooks.txt`) in 1 Command**:
+   - Run `python3 Knowledge/inspect_nea_workbooks.txt <target_dir>` (or `python3 Scripts/inspect_nea_workbooks.py <target_dir>`; specify `--scope {full,delta,bom,crl,catalog}` for incremental revision rechecks) in a single tool call.
+   - `inspect_nea_workbooks.txt` identifies workbooks by their internal worksheet names (supporting both template filenames and project-specific filenames such as `BOM_Materials_Master.xlsx` or `Cable_Running_List_Template_V2.xlsx`), verifies `Pre/Post SHA-256` source immutability (`0 bytes modified`), and dynamically extracts 100% of Cover Sheet coordinates, `tblMaterials` / `Fiber Assemblies` / `Cable Harness` keys, `Project BOM` shared/normal `<f>` formulas and `Column J` notes, `Cable Running List` defects (including duplicate endpoint assignments and DataValidation/AutoFilter checks), and `CRL ↔ Project BOM` takeoffs inline (`< 15 KB`), plus the cryptographic **`Live Package Verification Token`** (`NEA-VRF-...`).
+   - **Hard Fail-Closed Anti-Hallucination Gate (`Pillar 1`)**: If `inspect_nea_workbooks.txt` (or direct `.xlsx` inspection) fails, times out, or is denied permission, you are **STRICTLY FORBIDDEN** from generating a 6-section report, scraping text files for clues, or inferring project data. You must **HALT IMMEDIATELY** on the very next turn and output **only** this 5-line diagnostic block:
+     ```markdown
+     # [EXTRACTION BLOCKED — REVIEW ABORTED]
+     - **Status**: `ABORTED (Fail-Closed Anti-Hallucination Gate)`
+     - **Blocked Command / File**: `<exact command or .xlsx file that failed or was denied>`
+     - **Failure Reason**: `<permission denied / timeout / file missing>`
+     - **Required Operator Action**: Attach the project `.xlsx` workbook(s) in chat (`+ Upload from device`) or approve execution of `inspect_nea_workbooks`. NEA is strictly prohibited from generating a review report without live `.xlsx` telemetry.
+     ```
+3. **Step 3 — Check Section 6 Escalation Gate (`Tier 1` vs. `Tier 2`)**:
+   - If Section 6 of `inspect_nea_workbooks.txt` outputs `✅ [NO TIER-2 ESCALATION REQUIRED — 100% RULE, COORDINATE & CITATION COVERAGE COMPLETE]`, **do not open any additional files**—all required severities and canonical section citations are already provided in `Review_Standards_v2.2.3.txt` Section 3 and the script output.
+4. **Step 4 — Render the Uniform Six-Section Engineering Review Report (Closed-World Evidence Binding)**:
+   - Populate the six-section Markdown template below directly from the verified telemetry output, citing the exact `Live Package Verification Token` (`NEA-VRF-...`) and `SHA256` fingerprints in the header. Every reported value must exist verbatim in the live telemetry (or be marked `[UNVERIFIED — NOT IN TELEMETRY]`).
+
+---
+
+## Core Readability & Visual Uniformity Principles
+
+1. **Keep Tables Compact & Numerical (Zero Prose Sentences Inside Table Cells)**:
+   - Tables in Section 1 (`Severity Scorecard`), Section 2 (`Cover Sheet Alignment`), and Section 3 (`Cross-Document Takeoff Summary`) shall contain **only short values, cell references, quantities, and status badges**.
+   - Never place multi-sentence explanations, root-cause narratives, or corrective instructions inside table cells, as wide prose columns wrap poorly and break readability. Place explanatory notes in concise bullet lists directly below the table.
+2. **Use One Uniform Structured Bullet Format for All Findings & Referrals (`Sections 4 & 5`)**:
+   - Never use wide multi-column tables for findings or referrals.
+   - Every item across Section 4 (`AR-##`, `RR-##`, `ADV-##`, `INF-##`) and Section 5 (`CAT-##`, `TPL-##`) uses the **same structured bullet hierarchy**:
+     - Top bullet: `- **`[ID-##]` Short Descriptive Title** — *[Domain / Scope]*`
+     - Indented sub-bullets (`Location`, `Finding`, `Action` for actionable items; `Location` and `Verified Context` for `Informational` items).
+3. **Lead with the Executive Gate & Close with the Engineer Punch List**:
+   - Open with a callout box (`> [!CAUTION]`, `> [!WARNING]`, `> [!IMPORTANT]`, or `> [!NOTE]`) stating the governed `Release Readiness Outcome` and top release blockers.
+   - Close with a prioritized, workbook-by-workbook checkbox (`- [ ]`) punch list so the engineer can work straight down the list in Excel.
+4. **Separate Active Project Deliverable Risks from Background Catalog/Template Hygiene**:
+   - **Active Project Deliverable Findings (`AR-##`, `RR-##`, `ADV-##`, `INF-##`)**: Cover conditions in the active `Project BOM`, `Cable Running List`, `Cover Sheets`, and **any `Materials Master` / `Fiber Assemblies` record actively referenced by the current `Project BOM`** (e.g., a duplicate key or wrong UOM on a part actually ordered on the BOM).
+   - **Catalog & Template Maintenance Referrals (`CAT-##`, `TPL-##`)**: Cover background catalog defects in `Materials Master` / `Fiber Assemblies` for parts **not** used on the current project, as well as known workbook template structure items tracked in `NEA_Governance_Register` (`GOV-002`, `GOV-006`, `GOV-007`).
+5. **Consolidate Related Symptoms into Single Root-Cause Findings**:
+   - Do not generate 20 separate findings when 20 consecutive CRL rows share the same missing `Fiber Count`. Report one consolidated finding citing the exact row/run range (`Rows X–Y / Runs M–N (K runs)`).
+
+---
+
+## Standard Report Template Structure
+
+When generating a Project Review or Multi-Workbook Validation Report, NEA shall organize its output using the following six-section Markdown template (adapting or omitting sections only when the user requests a narrow single-domain check):
+
+```markdown
+# NEA Engineering Review Report — [Project Name] (`[Project Number]`)
+
+- **Review Date**: `YYYY-MM-DD`
+- **Review Scope**: `[Full Deliverable Package Review | Project BOM Review | CRL Review | Catalog Integrity Audit]`
+- **NEA Baseline**: `Version 2.2.3` (`Repository_Index.md`)
+- **Inspection Engine**: `NEA-SCR-001 v2.2.3 (Deterministic Read-Only OpenXML | Source Immutability: PASS)`
+- **Live Package Verification Token**: `NEA-VRF-[12-hex-chars]`
+- **Workbooks Evaluated**:
+  - `[Workbook Filename 1]` (`SHA256=[10-hex-chars]`, `[Sheets Evaluated]`)
+  - `[Workbook Filename 2]` (`SHA256=[10-hex-chars]`, `[Sheets Evaluated]`)
+  - `[Workbook Filename 3]` (`SHA256=[10-hex-chars]`, `[Sheets Evaluated]`)
+
+---
+
+## 1. Executive Gate Summary
+
+> [!CAUTION]
+> **Governed Release Readiness Outcome**: **`[Action Required Before Release | Engineering Review Recommended | Approved with Advisory Notes | Approved]`**
+>
+> **Key Release Gate Takeaways**:
+> - **`[AR-01]` [Top Blocker Title]**: [1-sentence summary with exact impact and coordinates]
+> - **`[AR-02]` [Second Blocker Title]**: [1-sentence summary with exact impact and coordinates]
+> - **`[RR-01]` [Key Engineering Review Item]**: [1-sentence summary with exact impact and coordinates]
+
+### Finding Severity Scorecard
+
+| Classification | Prefix | Active Project Findings | Release Gate Impact (`Review_Standards`) |
+| :--- | :---: | :---: | :--- |
+| **`Action Required`** | `AR-##` | `[N]` | **Blocks Release** — Resolve before procurement or handoff |
+| **`Review Recommended`** | `RR-##` | `[N]` | **Confirmation Required** — Verify engineering intent |
+| **`Advisory`** | `ADV-##` | `[N]` | **Non-Blocking** — Standardization or spacing note |
+| **`Informational`** | `INF-##` | `[N]` | **No Action Needed** — Verified context or design intent |
+
+---
+
+## 2. Project Identity & Cover Sheet Alignment
+
+| Metadata Field | BOM `Cover Sheet` | CRL `Cover Sheet` | Standalone `Cover Sheet` | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Project Name** | `[Value]` (`D10`) | `[Value]` (`D10`) | `[Value]` (`D10`) | `[Aligned | Mismatch -> AR/RR-##]` |
+| **Project Number** | `[Value]` (`D12`) | `[Value / *Absent*]` | `[Value / *Absent*]` | `[Aligned | Template Gap -> TPL-##]` |
+| **Customer** | `[Value]` (`D14`) | `[Value]` (`D12`) | `[Value]` (`D12`) | `[Aligned | Mismatch]` |
+| **Customer Contact** | `[Value]` (`D16`) | `[Value]` (`D14`) | `[Value]` (`D14`) | `[Aligned | Mismatch]` |
+| **Site / Building** | `[Value]` (`D18`) | `[Value]` (`D16`) | `[Value]` (`D16`) | `[Aligned | Mismatch]` |
+| **Project Manager** | `[Value]` (`D20`) | `[Value]` (`D18`) | `[Value]` (`D18`) | `[Aligned | Mismatch]` |
+| **Designer / Engineer** | `[Value]` (`D22`) | `[Value]` (`D20`) | `[Value]` (`D20`) | `[Aligned | Mismatch]` |
+| **Installation Contractor** | `[*Absent* / N/A]` | `[Value]` (`D22`) | `[Value]` (`D22`) | `[Intentional Scope Diff | Mismatch]` |
+| **Issue Date** | `[YYYY-MM-DD]` (`D24`) | `[YYYY-MM-DD]` (`D24`) | `[YYYY-MM-DD]` (`D24`) | `[Aligned | Independent Date -> INF-##]` |
+| **Revision & History Link** | `[Rev]` (`H24`/`B30`) | `[Rev]` (`H24`/`B30`) | `[Rev]` (`H24`/`B30`) | `[Aligned | Static Override -> RR-##]` |
+| **Document Lifecycle State** | `[State / *Absent*]` | `[State / *Absent*]` | `[State / *Absent*]` | `[Aligned | Template Gap -> TPL-##]` |
+
+### Cover Sheet Alignment Notes
+- **`[Field / Topic]`**: `[1-sentence note explaining any mismatch, independent issue date, or GOV-006 template gap without cluttering the table cells.]`
+
+---
+
+## 3. Cross-Document Material & Cable Takeoff (`CRL` ↔ `Project BOM`)
+
+*(Included whenever both `Cable Running List` and `Project BOM` are evaluated.)*
+
+| Material / Media Group | CRL Requirement | Project BOM Ordered | Variance / Delta | Status & Ref |
+| :--- | :--- | :--- | :--- | :--- |
+| **Copper — Primary (`[Type/Color]`)** | `[N runs = X,XXX FT]` | `[Line # (P/N): X,XXX FT]` | `[0 FT / Spec Diff]` | `[Status -> Ref]` |
+| **Copper — Secondary (`[Type/Color]`)** | `[N runs = X,XXX FT]` | `[Line # (P/N): X,XXX FT]` | `[+/- X,XXX FT]` | `[Status -> Ref]` |
+| **Bulk Fiber Backbone (`48F` / `24F`)** | `[N runs = X,XXX FT]` | `[N lines (P/N): X,XXX FT]` | `[0 FT]` | `[Status -> Ref]` |
+| **Station Fiber / Jumpers (`1F` / `2F`)** | `[N runs (Length FT)]` | `[Lines # (P/N): N EA]` | `[Attr / Qty Note]` | `[Status -> Ref]` |
+| **Copper Connectivity (`RJ45` / `Punch`)** | `[N RJ45 / N Punch]` | `[Jacks / Panels / Plugs]` | `[Coverage Summary]` | `[Status -> Ref]` |
+| **Fiber Connectivity (`LC` / Panels)** | `[N LC Endpoints]` | `[Panels / Bulk LC Packs]` | `[Coverage Summary]` | `[Status -> Ref]` |
+
+### Takeoff Reconciliation Notes
+- **`[Takeoff Note Title]`**: `[Concise bullet explaining per-run cut-length matching, spec mismatch details, or connector capacity math.]`
+
+---
+
+## 4. Active Project Deliverable Findings
+
+### 4.1 `Action Required` Findings (`AR-##` — Release-Blocking)
+
+- **`[AR-01]` [Short Descriptive Finding Title]** — *[Domain: e.g., Cross-Document (`Project BOM` ↔ `CRL`) | `Project BOM` Formula Integrity | BOM-Active Catalog Conflict]*
+  - **Location**: `[Workbook Filename]` → `[Sheet Name]` `[Row/Column/Cell Coordinates]` (`[Line # / Run ID / MB P/N]`)
+  - **Finding & Impact**: `[Concise, evidence-based statement of what was observed, exact numbers/values, which governing Standard is violated, and why it blocks procurement or installation handoff.]`
+  - **Action**: `[Exact corrective step the engineer should take in Excel.]`
+
+### 4.2 `Review Recommended` Findings (`RR-##` — Engineering Confirmation Required)
+
+- **`[RR-01]` [Short Descriptive Finding Title]** — *[Domain]*
+  - **Location**: `[Workbook Filename]` → `[Sheet Name]` `[Row/Column/Cell Coordinates]` (`[Line # / Run ID / MB P/N]`)
+  - **Finding & Impact**: `[Concise statement of the technical contradiction, specification mismatch, or unresolved placeholder requiring engineering confirmation.]`
+  - **Action**: `[Confirm design intent or update the specified cells before release.]`
+
+### 4.3 `Advisory` Findings (`ADV-##` — Non-Blocking Improvements)
+
+- **`[ADV-01]` [Short Descriptive Finding Title]** — *[Domain]*
+  - **Location**: `[Workbook Filename]` → `[Sheet Name]` `[Row/Column/Cell Coordinates]`
+  - **Finding & Impact**: `[Concise description of the non-blocking standardization or formatting item, e.g., mixed-UOM total cell or >5 blank row spacing gap.]`
+  - **Action**: `[Optional cleanup recommendation.]`
+
+### 4.4 `Informational` Notes (`INF-##` — Verified Context & Intent)
+
+- **`[INF-01]` [Short Descriptive Topic]** — *[Domain]*: `[Concise 1-to-2 sentence observation confirming valid TPN## usage, intentional per-run bulk fiber lines with room notes in Column J, or spacing gaps <= 5 lines.]`
+
+---
+
+## 5. Engineer Closeout Punch List (Ordered by Project Deliverable)
+
+To advance this deliverable package from **`[Current Outcome]`** to **`Approved`**, complete the following project engineering steps:
+
+### A. `BOM_Materials_Master_Template.xlsx` (`Project BOM` Scope & Quantities)
+- [ ] **`[AR-##]`** `[Exact step 1 with cell coordinates]`
+- [ ] **`[RR-##]`** `[Exact step 2 with cell coordinates]`
+
+### B. `Cable_Running_List_Template.xlsx` (`Cable Running List` & `Cover Sheet`)
+- [ ] **`[AR-##]`** `[Exact step 1 with row/run coordinates]`
+- [ ] **`[RR-##]`** `[Exact step 2 with row/run coordinates]`
+
+---
+
+## 6. Cross-Duty Agent Advisories (`NEA-SCR-001` Section 7)
+
+*(Lightweight cross-duty routing banner generated from `SECTION 7` of `inspect_nea_workbooks.txt`. Instead of detailing background workbook plumbing or unreferenced catalog maintenance inside the project engineering report, route them to the dedicated specialist agents below:)*
+
+> [!TIP]
+> **Cross-Duty Agent Advisories (`NEA-SCR-001`)**
+> - **$\rightarrow$ `NEA Repair Tool` (`NEA-AGT-005`)**: `[Summary of overwritten formulas, Cover Sheet!B30:C30 static overrides, OpenXML [4E] validation/filter anomalies, or GOV-002/GOV-006 template items — recommend running NEA Repair Tool for automated non-destructive repair.]`
+> - **$\rightarrow$ `NEA Catalog Manager` (`NEA-AGT-004`)**: `[Summary of duplicate MB P/Ns, duplicate (Manufacturer, MFG P/N) pairs, or unreferenced CAT-## catalog hygiene anomalies — recommend running NEA Catalog Manager.]`
+> - **$\rightarrow$ `NEA BOM Builder` / `NEA CRL Builder`**: `[Optional handoff if guided Mode 2 takeoff rollup or bulk CRL normalization is needed.]`
+```
+
+---
+
+## Classification & Reporting Guardrails
+
+When populating `Review_Report_Template`, NEA shall enforce the following guardrails:
+
+1. **Never Invent Parallel Severity or Readiness Labels**: Use only `Action Required`, `Review Recommended`, `Advisory`, and `Informational` for findings, and only `Approved`, `Approved with Advisory Notes`, `Engineering Review Recommended`, and `Action Required Before Release` for the overall determination.
+2. **Never Place Prose Paragraphs Inside Tables**: Keep the Section 1, Section 2, and Section 3 tables strictly compact (`<= 5` columns, short values/quantities/badges only), and use the uniform bullet block structure (`- **`[ID-##]` Title** — *Domain*`) for all findings and referrals in Sections 4 and 5.
+3. **Distinguish Shared OpenXML Formulas from Static Overwrites**: When inspecting `.xlsx` XML directly, check for the presence of the `<f>` tag (`c.find('main:f') is not None`, including `<f t="shared" si="..."/>`) before reporting a formula overwrite in `Project BOM` Column `A` (`Line`) or Columns `D:I`.
+4. **Respect Intentional Per-Run BOM Grouping & Spacing Rules**:
+   - Multiple `Project BOM` lines sharing the same `MB P/N` (such as bulk fiber `BF1001` or `BF1002` cut lengths) that are distinguished by room/run notes in `Column J` (`Notes`) and match corresponding CRL runs shall be logged under **`Informational` (`INF-##`)** (and marked `Aligned` in the Cross-Document Takeoff Table), not flagged as duplicate errors.
+   - Blank row spacing gaps of `<= 5` rows on `Project BOM` or `Cable Running List` generate **no finding**; gaps `> 5` rows generate a single **`Advisory` (`ADV-##`)** finding.
+5. **Separate BOM-Referenced Catalog Defects from Unreferenced Catalog Defects**:
+   - If a `Materials Master` defect (such as conflicting duplicate keys or wrong UOM/Status) affects an `MB P/N` **actively used on the `Project BOM`** (e.g., `MB P/N 10001`), it must appear in **Section 4 (`Active Project Deliverable Findings`)** so the project engineer knows their BOM lookup is affected, and be cross-referenced in **Section 5.1 (`CAT-##`)**.
+   - If a `Materials Master` defect affects only **unreferenced** catalog rows (e.g., an unreferenced incomplete `TPN##` at `Row N` or unreferenced exact duplicates), place it in **Section 5.1 (`Catalog & Template Maintenance Referrals`)** so it is captured for `Material_Catalog_Workflow` without cluttering the project's immediate release blockers.
+6. **Include CRL Intra-Row Contradictions & Unresolved Placeholders in Section 4.2 (`Review Recommended`)**:
+   - In addition to cross-document takeoff checks (`CRL` ↔ `Project BOM`), always inspect `Cable Running List` rows for intra-row technical contradictions (for example, `Special Requirement = Plenum` paired with `Comments = OFNR` Riser rating, or `Copper` media paired with `LC` fiber connectors) and unresolved field placeholders (such as `Classification = Unknown`), reporting them as consolidated `Review Recommended` (`RR-##`) findings in Section 4.2 and Section 6.B.

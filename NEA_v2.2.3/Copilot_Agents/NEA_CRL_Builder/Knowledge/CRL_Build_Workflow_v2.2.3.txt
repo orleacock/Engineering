@@ -1,0 +1,78 @@
+# Cable Running List (CRL) Build & Handoff Workflow
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-WF-003
+Logical Name: CRL_Build_Workflow
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Workflow defines the step-by-step procedural sequence for initializing, populating, validating, cross-checking, and releasing a Cable Running List (`Cable_Running_List_Template.xlsx`) for installation handoff.
+
+Current approved artifact versions are governed by `Repository_Index.md`. Governing requirements are defined in `CRL_Standards` (`NEA-STD-004`), `Project_Metadata_Standard` (`NEA-STD-001`), and `Formatting_Standards` (`NEA-STD-002`).
+
+---
+
+## Pre-Flight Schema & Handoff Guardrails
+
+1. **Use the Approved 16-Column CRL Schema (`Columns A:P`)**: Preserve worksheet names (`Cover Sheet`, `Cable Running List`, `Reference Lists`) and column headers in `Row 2`.
+2. **No Per-Row `Cable Run Status` Column**: Never add a per-row status column (`Planned`, `Released`, `Installed`, `Tested`, `As-Built`). Once released to installation, the CRL is the installation team's **paper truth** and is governed at the document level (`Cover Sheet`).
+3. **Keep `Media Type`, `Cable Type`, `Fiber Count`, and `Connectors` Separate**: Populate each attribute in its dedicated column (`Columns I–N`) using the controlled values in `Reference Lists`.
+
+---
+
+## Step-by-Step Build Procedure
+
+### Step 1 — Initialize `Cover Sheet` Metadata
+
+1. Populate `Cover Sheet` cells in `Cable_Running_List_Template.xlsx` per `Project_Metadata_Standard`, ensuring project identity matches the `Project BOM` workbook:
+   - `D10`: `Project Name`
+   - `D12`: `Customer`
+   - `D14`: `Customer Contact`
+   - `D16`: `Site Address` / `Building`
+   - `D18`: `Project Manager`
+   - `D20`: `Designer / Engineer`
+   - `D22`: `Installation Contractor`
+   - `D24`: `Issue Date`
+   - `H24`: `Revision`
+2. Verify that Revision History row 1 (`B30:C30`) uses dynamic formulas (`=IF($H$24="","",$H$24)` and `=IF($D$24="","",$D$24)`) rather than static text overrides.
+
+---
+
+### Step 2 — Populate Run Identification & Endpoints (`Columns A–J`)
+
+For each discrete cable run (`Rows 3+`), group runs logically by system, classification, or room (keeping blank separator rows to **`<= 5` rows**):
+1. **`Column A` (`Run ID`)**: Assign a unique sequential run number (`1, 2, 3...`).
+2. **`Column B` (`Classification`)**: Enter the approved security or pathway classification (`Classified`, `Unclassified`, etc.). Resolve any temporary `Unknown` placeholders before release.
+3. **`Columns C–F` (`NEAR END`: `NE Location`, `NE Rack`, `NE Port`, `NE Connector`)**: Enter the near-end room, rack/enclosure, panel/port assignment, and near-end connector (`RJ45`, `Punch`, `LC`, `SC`, `ST`, `MPO-12`, `MTP`, etc.).
+4. **`Columns G–J` (`FAR END`: `FE Location`, `FE Rack`, `FE Port`, `FE Connector`)**: Enter the far-end room, rack/workstation, panel/faceplate port assignment, and far-end connector. Ensure near-end and far-end designations are consistent and do not duplicate physical port assignments across runs (`CRL-DATA-003`).
+
+---
+
+### Step 3 — Populate Media, Cable Type, Cable Qty (Strand Count) & Length (`Columns K–N`)
+
+1. **`Column K` (`Media Type`)**: Select `Copper` or `Fiber` (`Reference Lists!$B$1:$B$2`).
+2. **`Column L` (`Cable Type`)**: Select the compatible performance/construction designation (`Reference Lists!$C$1:$C$12`):
+   - For `Copper`: `Cat5e`, `Cat6`, `Cat6A`, `Cat7`, `Cat8`, or `Bulk Pair`.
+   - For `Fiber`: `OM1`, `OM2`, `OM3`, `OM4`, `OM5`, or `OS2`.
+3. **`Column M` (`Cable Qty` / `Fiber Count`)**:
+   - **When `Media Type = Fiber`**: Enter the mandatory numeric strand count (`2` for duplex station runs, `6`, `12`, `24`, `48`, `72`, `144` for backbone cables). Never leave `Column M` blank on a fiber run, and ensure duplex runs (`Comments = Duplex`) specify `2` rather than `1`.
+   - **When `Media Type = Copper`**: Leave `Column M` blank.
+4. **`Column N` (`Length (ft)`)**: Enter the engineered cable length in feet (`> 0`), including vertical rise, routing slack, and service loops.
+
+---
+
+### Step 4 — Populate Special Requirement & Comments (`Columns O–P`)
+
+1. **`Column O` (`Special Requirement`)**: Select the routing/pinout requirement (`SpecialRequirementList` = `Reference Lists!$E$1:$E$6`: `Standard`, `Crossover`, `Rollover`, `Redundant Path`, `Diverse Route`, `Wrap`) when applicable.
+2. **`Column P` (`Comments`)**: Record jacket color, system label (`Black Shielded`, `Red Duplex`), fire rating (`OFNP` vs `OFNR`), or routing notes.
+   - **Consistency Check**: Ensure `Comments` (`Column P`) never contradicts `Special Requirement` (`Column O`) or `Project BOM` fire ratings (for example, never pair `OFNR` Riser comments with `Project BOM` Plenum bulk fiber).
+
+---
+
+### Step 5 — Reconcile with `Project BOM` & Release for Installation Handoff
+
+1. Run `Project_Review_Workflow` to verify that total CRL cable lengths, fiber counts, and connector terminations match the ordered quantities and specifications (`Cat6` vs `Cat6A`, `OFNP` vs `OFNR`, jacket colors) on the `Project BOM`.
+2. Resolve all `Action Required` (`AR-##`) and `Review Recommended` (`RR-##`) findings.
+3. Hand off the approved deliverable package to the installation team as the project's controlled **paper truth**.

@@ -1,0 +1,81 @@
+# Project Bill of Materials (BOM) Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-005
+Logical Name: BOM_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the schema, formula-protection rules, quantity and Unit-of-Measure (UOM) validation rules, catalog-lookup governance, and cross-document coordination requirements for Project Bills of Material (BOMs) in the NetCom Engineering Assistant (NEA).
+
+Current approved artifact versions are governed by `Repository_Index.md`.
+
+---
+
+## 1. Approved 10-Column `Project BOM` Control Model (`A7:J155`)
+
+The `Project BOM` worksheet in `BOM_Materials_Master_Template.xlsx` enforces a strict split between **3 Engineer-Editable Input Columns** and **7 Formula-Controlled Output Columns**:
+
+| Col | Column Header | Control Authority | Requirement & Validation Rule |
+| :---: | :--- | :---: | :--- |
+| **`A`** | `Line` | **Formula-Locked** | Prebuilt row counter `=IF(B8="","",ROW()-7)` (stored as OpenXML shared formula across `A9:A155`). Never overwrite or delete. |
+| **`B`** | `MB P/N` | **Editable Input** | Primary material key validated against `=BOMPartNumbers` (`Lists!$H$1#`). Accepts permanent `MB P/N`, fiber/harness `MB P/N`, or approved `TPN##`. |
+| **`C`** | `Qty` | **Editable Input** | Mandatory positive numeric quantity (`> 0`) for every populated `MB P/N` row, expressed in the `UOM` returned in `Column G`. |
+| **`D`** | `Category` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`, fallback `"Not found"`). |
+| **`E`** | `Manufacturer` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`). |
+| **`F`** | `MFG Part Number` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`). |
+| **`G`** | `UOM` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`). |
+| **`H`** | `Description` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`). |
+| **`I`** | `Status` | **Formula-Locked** | 3-Tier Chained `XLOOKUP` (`tblMaterials` $\rightarrow$ `Fiber Assemblies` $\rightarrow$ `Cable Harness`). |
+| **`J`** | `Notes` | **Editable Input** | Project-specific system/room notes (`Data Subnet A`, `Zone B MDF`), cut-length identifiers, `(optional)` scope flags, or `Verify` notes. |
+
+### Strict Formula-Protection Rules
+
+1. **Never Type Over `Columns A` or `D:I`**: Static values typed into `Columns D:I` (or deleted formulas on blank grouping rows within `Rows 8–155`) break catalog traceability and are classified as **`Action Required` (`AR-##`)**.
+2. **Root-Cause Remediation Only**: If `Columns D:I` return `"Not found"`, blank, or an wrong UOM/Status, fix the `MB P/N` in `Column B` or remediate the authoritative catalog record in `Materials Master` (`tblMaterials`), `Fiber Assemblies`, or `Cable Harness` via `Material_Catalog_Workflow`.
+3. **Keep `Project BOM` as a Standard Range (`GOV-007`)**: Do not convert `Project BOM` (`A7:J155`) into an Excel ListObject Table, as intentional blank grouping rows (`<= 5` rows) are used between system sections.
+
+---
+
+## 2. Quantities, Units of Measure (UOM), and Summary Rules
+
+1. **Active Line Quantity Completeness**:
+   - Every row with a populated `MB P/N` (`Column B`) is counted as an active line item in `Project BOM!E4` (`=COUNTIF(B8:B155,"<>")`) and **must** have a numeric `Qty > 0` in `Column C`. Blank quantities on active lines block procurement (**`Action Required` (`AR-##`)**).
+2. **UOM Consistency & Catalog Alignment (`GOV-003`)**:
+   - Primary inline workbook validation codes (`"EA,KT,FT,BX,M"` and `Materials Master!I3:J35` reference keys) are `EA` (Each), `KT` (Kit), `FT` (Feet), `BX` (Box), and `M` (Meter).
+   - Additional catalog-permitted UOMs (`RL` Roll, `PK` Pack) appear in `Materials Master` (`GOV-003`).
+   - Discrete hardware (jacks, patch panels, faceplates, plugs, jumpers) must be quantified in discrete units (`EA`, `KT`, `BX`, `PK`), whereas bulk cable and bulk fiber must be quantified in linear units (`FT`, `M`, `RL`).
+   - Verify that `Column C` (`Qty`) matches the catalog `UOM`—neither entering linear cable footage `FT` onto a jack `MB P/N` with `UOM = EA`, nor entering piece counts (`1000`) into a bulk-pack `UOM = BX` item (such as `PLT2S-M` 1,000-pack cable ties where `Qty = 1000 BX` orders `1,000,000` ties -> **`Action Required` (`AR-##`)**).
+3. **Unit-Aware Summary Requirement (`GOV-002`)**:
+   - Undifferentiated mixed-UOM sums (such as `Project BOM!G4` `=SUM(C8:C155)` combining `FT + EA + KT + BX`) shall not be presented as a meaningful engineering total (routed to **`NEA Repair Tool`** under `GOV-002`). Always report unit-separated totals (`Total FT` vs. `Total EA/KT/BX`).
+
+---
+
+## 3. Intentional Grouping, `TPN##`, Optional Scope & Catalog Shadowing
+
+1. **Intentional Per-Run Bulk Cable/Fiber Lines**:
+   - Multiple `Project BOM` lines sharing the same `MB P/N` (e.g., bulk fiber `BF1001` `48F OS2` or `BF1002` `24F OS2`) that carry distinct room/run notes in `Column J` matching `Cable Running List` backbone runs are valid engineered reel/cut-length allocations (**`Informational` (`INF-##`)**), not duplicate BOM errors.
+2. **Temporary Part Numbers (`TPN##`)**:
+   - Approved `TPN##` identifiers are permitted on `Project BOM` when their `Materials Master` record has a populated `Description`, `UOM`, and `Active` status (**`Informational` (`INF-##`)**).
+3. **Optional Scope & Verification Placeholders in `Column J` (`Notes`)**:
+   - Lines marked `(optional)`, `Future`, `Verify`, or `Change to ...` in `Column J` require engineering confirmation before procurement release (**`Review Recommended` (`RR-##`)**, or **`Action Required` (`AR-##`)** if `Qty` is also blank).
+4. **BOM-Active Catalog Shadowing Check**:
+   - Because `Project BOM` uses first-match `XLOOKUP` against `tblMaterials[MB P/N]`, any duplicate `MB P/N` in `Materials Master` with conflicting `UOM`, `Category`, or `Status` (such as an earlier `Obsolete` row shadowing a later `Active` row) that is referenced on the active `Project BOM` must be flagged in the active project findings (**`AR-##` / `RR-##`**) as well as `CAT-##`.
+
+---
+
+## 4. Default `Project BOM` Finding Classifications
+
+| Observed `Project BOM` Condition | Default Classification (`Review_Standards`) |
+| :--- | :---: |
+| Blank, zero, or non-numeric `Qty` (`Column C`) on an active BOM row (`Column B` populated) | **`Action Required` (`AR-##`)** |
+| Overwritten or deleted formulas in `Column A` or `Columns D:I`, or lookup returning `"Not found"` | **`Action Required` (`AR-##`)** |
+| Cable footage transposed onto a discrete jack/component `MB P/N`, bulk-pack `UOM = BX` multiplier error (`Qty >= 100 BX` on 1,000-pack ties), or required CRL cable omitted from BOM | **`Action Required` (`AR-##`)** |
+| BOM-active `MB P/N` affected by conflicting duplicate keys in `Materials Master` (`UOM` or `Category` conflict) | **`Action Required` (`AR-##` & `CAT-##`)** |
+| Active BOM line displaying `Status = Obsolete / Inactive / Pending` (including via `XLOOKUP` shadowing) | **`Review Recommended` (`RR-##`)** |
+| Unresolved `Verify`, `Change to ...`, or `(optional)` procurement scope note in `Column J` (when `Qty > 0`) | **`Review Recommended` (`RR-##`)** |
+| Copper specification mismatch (`Cat6` BOM vs. `Cat6A` CRL) or minor spool rounding deficit (`< 2%`) | **`Review Recommended` (`RR-##`)** |
+| Blank row spacing gap `> 5` rows, or undifferentiated mixed-UOM total in `G4` (`GOV-002`) | **`Advisory` (`ADV-##`)** |
+| Intentional per-run bulk fiber lines with room notes, valid `TPN##` usage, or blank gaps `<= 5` rows | **`Informational` (`INF-##`)** / **No Finding** |

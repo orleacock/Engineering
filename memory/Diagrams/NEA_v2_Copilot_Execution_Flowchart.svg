@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2640 1487" width="2640" height="1487">
+  <defs>
+    <linearGradient id="banner-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#114573"/>
+      <stop offset="55%" stop-color="#165366"/>
+      <stop offset="100%" stop-color="#03A6D9"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+    <filter id="pill-shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <marker id="arrow-primary" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#114573"/>
+    </marker>
+    <marker id="arrow-secondary" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#03A6D9"/>
+    </marker>
+    <marker id="arrow-tertiary" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#165366"/>
+    </marker>
+    <marker id="arrow-pass" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#5DA423"/>
+    </marker>
+    <marker id="arrow-warn" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#D98200"/>
+    </marker>
+    <marker id="arrow-alert" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#C60F13"/>
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 10 6 L 1 10 z" fill="#8FA6BC"/>
+    </marker>
+  </defs>
+  <g id="layer-backgrounds">
+    <rect x="0" y="0" width="2640" height="1487" fill="#F4F7FA"/>
+    <rect x="24" y="18" width="2592" height="84" rx="10" fill="url(#banner-grad)" stroke="#114573" stroke-width="1.5" filter="url(#card-shadow)"/>
+    <text x="48" y="54" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="23" font-weight="bold" fill="#FFFFFF">NETCOM ENGINEERING ASSISTANT (NEA v2.2.3) — M365 COPILOT 6-AGENT &amp; GUARDRAIL FLOW</text>
+    <text x="48" y="82" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" fill="#D9F2FA">Zero-Latency Chat Attachment • Option 2 Direct .txt Knowledge • 6-Agent Specialist Suite • 3 Core Guardrail .zips • NEA-VRF / NEA-WRT Receipts</text>
+    <rect x="2351" y="38" width="241" height="36" rx="18" fill="#EBF3F9" stroke="#114573" stroke-width="1.5"/>
+    <text x="2471.5" y="61" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="13" font-weight="bold" fill="#114573">NETCOM CORPORATE v2.2.3</text>
+    <rect x="32" y="124" width="2576" height="212" rx="10" fill="#EAF0F6" stroke="#114573" stroke-width="1.6"/>
+    <rect x="32" y="124" width="2576" height="34" rx="10" fill="#114573"/>
+    <rect x="32" y="148" width="2576" height="10" fill="#114573"/>
+    <rect x="44" y="129" width="78.0" height="24" rx="5" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="83.0" y="145" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#114573">LAYER 1</text>
+    <text x="136.0" y="146" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">DESIGNER INPUT, ZERO-LATENCY CHAT ATTACHMENT &amp; OPTION 2 DIRECT .TXT KNOWLEDGE</text>
+    <text x="2592" y="146" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-style="italic" fill="#FFFFFF" opacity="0.92">Bypasses OneDrive Graph Search Indexing Lag — Mounts Live .xlsx / .pdf / Image Bytes Directly in /mnt/data/</text>
+    <rect x="32" y="396" width="2576" height="212" rx="10" fill="#E6F4F9" stroke="#03A6D9" stroke-width="1.6"/>
+    <rect x="32" y="396" width="2576" height="34" rx="10" fill="#03A6D9"/>
+    <rect x="32" y="420" width="2576" height="10" fill="#03A6D9"/>
+    <rect x="44" y="401" width="78.0" height="24" rx="5" fill="#EBF3F9" stroke="#03A6D9" stroke-width="1"/>
+    <text x="83.0" y="417" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#114573">LAYER 2</text>
+    <text x="136.0" y="418" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">M365 COPILOT 6-AGENT MODULAR SPECIALIST SUITE (&lt; 8,000-CHAR INLINE INSTRUCTIONS + CODE INTERPRETER)</text>
+    <text x="2592" y="418" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-style="italic" fill="#FFFFFF" opacity="0.92">Copilot_Agents/&lt;Agent_Slug&gt;/ UI Drop-In Folders + 3 Core Guardrail &lt;skill-name&gt;.zip Archives (Version 2.2.3)</text>
+    <rect x="32" y="668" width="2576" height="212" rx="10" fill="#EAF0F6" stroke="#165366" stroke-width="1.6"/>
+    <rect x="32" y="668" width="2576" height="34" rx="10" fill="#165366"/>
+    <rect x="32" y="692" width="2576" height="10" fill="#165366"/>
+    <rect x="44" y="673" width="78.0" height="24" rx="5" fill="#EBF3F9" stroke="#165366" stroke-width="1"/>
+    <text x="83.0" y="689" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#114573">LAYER 3</text>
+    <text x="136.0" y="690" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">DETERMINISTIC PYTHON CODE INTERPRETER ENGINE (scripts/inspect_nea_workbooks.py — NEA-SCR-001)</text>
+    <text x="2592" y="690" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-style="italic" fill="#FFFFFF" opacity="0.92">Single-Turn Execution Inside Isolated Azure Container — Zero Multi-Turn LLM Arithmetic Drift</text>
+    <rect x="32" y="940" width="2576" height="212" rx="10" fill="#E6F4F9" stroke="#D98200" stroke-width="1.6"/>
+    <rect x="32" y="940" width="2576" height="34" rx="10" fill="#D98200"/>
+    <rect x="32" y="964" width="2576" height="10" fill="#D98200"/>
+    <rect x="44" y="945" width="78.0" height="24" rx="5" fill="#EBF3F9" stroke="#D98200" stroke-width="1"/>
+    <text x="83.0" y="961" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#114573">LAYER 4</text>
+    <text x="136.0" y="962" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#141417">CRYPTOGRAPHIC PROOF-OF-INSPECTION &amp; SAFE-WRITE VERIFICATION GATES (NEA-SKL-001 &amp; NEA-SKL-003)</text>
+    <text x="2592" y="962" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-style="italic" fill="#141417" opacity="0.92">Mandatory Pre-Release Gates — Blocks Unbacked Literals, Formula Overwrites &amp; Stripped Dropdowns</text>
+    <rect x="32" y="1212" width="2576" height="191" rx="10" fill="#EAF0F6" stroke="#5DA423" stroke-width="1.6"/>
+    <rect x="32" y="1212" width="2576" height="34" rx="10" fill="#5DA423"/>
+    <rect x="32" y="1236" width="2576" height="10" fill="#5DA423"/>
+    <rect x="44" y="1217" width="78.0" height="24" rx="5" fill="#EBF3F9" stroke="#5DA423" stroke-width="1"/>
+    <text x="83.0" y="1233" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#114573">LAYER 5</text>
+    <text x="136.0" y="1234" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">ENGINEER DELIVERABLE OUTPUTS &amp; INSTALLATION HANDOFF (&quot;PAPER TRUTH&quot; — GOV-005)</text>
+    <text x="2592" y="1234" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-style="italic" fill="#FFFFFF" opacity="0.92">Final Engineer Sign-Off — Released Spreadsheets Serve as Field Installation Paper Truth</text>
+    <text x="32" y="1471" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" fill="#4A5568">NetCom Engineering Assistant (NEA v2.2.3) • Owner: NetCom Technical Services • Workspace: /home/orin/Projects/Engineering/NEA_v2.2.3</text>
+    <text x="2608" y="1471" text-anchor="end" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" fill="#4A5568">Rendered via visual-studio (render_diagram.py • Palette: netcom_corporate)</text>
+  </g>
+  <g id="layer-cards">
+    <rect x="48.0" y="170.0" width="850.8" height="154.0" rx="8" fill="#FFFFFF" stroke="#114573" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="48.0" y="170.0" width="850.8" height="44" rx="8" fill="#114573"/>
+    <rect x="48.0" y="206.0" width="850.8" height="8" fill="#114573"/>
+    <text x="62.0" y="192.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Live .xlsx / Media Upload (+ Button)</text>
+    <text x="62.0" y="208.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Direct Chat Attachment -&gt; /mnt/data/ (0 Graph Lag)</text>
+    <rect x="755.6" y="177.0" width="133.2" height="20" rx="10" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="822.2" y="191.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">LIVE MEDIA INPUT</text>
+    <text x="62.0" y="236.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">BOM_Materials_Master_Template.xlsx</tspan>: SHA256=f47a9f3ad7 (6 sheets)</text>
+    <text x="62.0" y="257.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Cable_Running_List_Template.xlsx</tspan>: SHA256=e6b4614fa2 (3 sheets + hidden)</text>
+    <text x="62.0" y="278.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Project_Cover_Sheet_Template.xlsx</tspan>: SHA256=82caf65dc0 (1 sheet)</text>
+    <text x="62.0" y="299.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Timesheet_Template.xlsx</tspan>: SHA256=1e61da1be0 (2 sheets + multi-media inputs)</text>
+    <rect x="914.8" y="170.0" width="810.3" height="154.0" rx="8" fill="#F5F8FB" stroke="#165366" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="914.8" y="170.0" width="810.3" height="44" rx="8" fill="#165366"/>
+    <rect x="914.8" y="206.0" width="810.3" height="8" fill="#165366"/>
+    <text x="928.8" y="192.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Option 2 Direct .txt Knowledge Packs</text>
+    <text x="928.8" y="208.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Copilot_Agents/&lt;Agent_Slug&gt;/Knowledge/*.txt</text>
+    <rect x="1589.2" y="177.0" width="126.0" height="20" rx="10" fill="#EBF3F9" stroke="#165366" stroke-width="1"/>
+    <text x="1652.2" y="191.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">GRAPH-INDEXABLE</text>
+    <text x="928.8" y="236.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Zero .md / .py Blind Spots</tspan>: Native .txt indexing in M365 Agent Builder</text>
+    <text x="928.8" y="257.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Standards &amp; Workflows</tspan>: BOM, CRL, Material Master, Repair, Timesheet &amp; Metadata</text>
+    <text x="928.8" y="278.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Review &amp; Schema</tspan>: Review_Standards, Review_Report_Template &amp; Workbook_Types</text>
+    <text x="928.8" y="299.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Zero Duplicate Bloat</tspan>: 3 to 7 scoped .txt files per agent (0 duplicate skills/scripts)</text>
+    <rect x="1741.2" y="170.0" width="850.8" height="154.0" rx="8" fill="#FFFFFF" stroke="#03A6D9" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1741.2" y="170.0" width="850.8" height="44" rx="8" fill="#03A6D9"/>
+    <rect x="1741.2" y="206.0" width="850.8" height="8" fill="#03A6D9"/>
+    <text x="1755.2" y="192.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">3 Packaged Core Guardrail &lt;skill-name&gt;.zip Archives</text>
+    <text x="1755.2" y="208.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Skills/&lt;skill-name&gt;/&lt;skill-name&gt;.zip (SKILL.md + scripts/inspect_nea_workbooks.py)</text>
+    <rect x="2412.8" y="177.0" width="169.2" height="20" rx="10" fill="#EBF3F9" stroke="#03A6D9" stroke-width="1"/>
+    <text x="2497.4" y="191.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">NEA-SKL-001..003 CORE</text>
+    <text x="1755.2" y="236.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">NEA-SKL-001 (All 6 Agents)</tspan>: Closed-World Lock &amp; [TBD] / [CONFLICT] tags</text>
+    <text x="1755.2" y="257.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">NEA-SKL-002 (5 Mode-2 Agents)</tspan>: preserve_openxml_extensions() &amp; formula locks</text>
+    <text x="1755.2" y="278.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">NEA-SKL-003 (All 6 Agents)</tspan>: Pre/Post SHA-256, NEA-VRF/WRT &amp; Gate C Advisories</text>
+    <text x="1755.2" y="299.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Bundled Oracle</tspan>: Each .zip ships root SKILL.md + scripts/inspect_nea_workbooks.py</text>
+    <rect x="48.0" y="442.0" width="400.7" height="154.0" rx="8" fill="#FFFFFF" stroke="#114573" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="48.0" y="442.0" width="400.7" height="44" rx="8" fill="#114573"/>
+    <rect x="48.0" y="478.0" width="400.7" height="8" fill="#114573"/>
+    <text x="62.0" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Package Reviewer</text>
+    <text x="62.0" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">AGT-001 • Mode 1 Read-Only Review</text>
+    <rect x="319.9" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="379.3" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">5,330 / 8,000c</text>
+    <text x="62.0" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope review (5 .txt files)</text>
+    <text x="62.0" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Zero Write Rules</tspan>: Excludes NEA-SKL-002</text>
+    <text x="62.0" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Audit</tspan>: Cover parity + CRL &lt;-&gt; BOM + [3B] BX</text>
+    <text x="62.0" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Output</tspan>: 6-Section Report + Cross-Duty Handoffs</text>
+    <rect x="464.7" y="442.0" width="400.7" height="154.0" rx="8" fill="#FFFFFF" stroke="#03A6D9" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="464.7" y="442.0" width="400.7" height="44" rx="8" fill="#03A6D9"/>
+    <rect x="464.7" y="478.0" width="400.7" height="8" fill="#03A6D9"/>
+    <text x="478.7" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">BOM Builder</text>
+    <text x="478.7" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">AGT-002 • Mode 2 Project BOM Build</text>
+    <rect x="736.5" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#03A6D9" stroke-width="1"/>
+    <text x="795.9" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">3,820 / 8,000c</text>
+    <text x="478.7" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope bom (6 .txt files)</text>
+    <text x="478.7" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Editable</tspan>: Project BOM Cols B, C, J</text>
+    <text x="478.7" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Locks</tspan>: Col A &amp; Cols D..I (3-tier XLOOKUP)</text>
+    <text x="478.7" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Gate</tspan>: Mandatory --lookup before entry</text>
+    <rect x="881.3" y="442.0" width="400.7" height="154.0" rx="8" fill="#F5F8FB" stroke="#165366" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="881.3" y="442.0" width="400.7" height="44" rx="8" fill="#165366"/>
+    <rect x="881.3" y="478.0" width="400.7" height="8" fill="#165366"/>
+    <text x="895.3" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">CRL Builder</text>
+    <text x="895.3" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">AGT-003 • Mode 2 16-Col CRL Build</text>
+    <rect x="1153.2" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#165366" stroke-width="1"/>
+    <text x="1212.6" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">3,342 / 8,000c</text>
+    <text x="895.3" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope crl (6 .txt files)</text>
+    <text x="895.3" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Layout</tspan>: Row 1 banner, Row 2 headers, Row 3+</text>
+    <text x="895.3" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Summary Lock</tspan>: Protects B17:B38 formulas</text>
+    <text x="895.3" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Audit</tspan>: Run ID 1..279 &amp; duplicate NE/FE ports</text>
+    <rect x="1298.0" y="442.0" width="400.7" height="154.0" rx="8" fill="#EDF7ED" stroke="#5DA423" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1298.0" y="442.0" width="400.7" height="44" rx="8" fill="#5DA423"/>
+    <rect x="1298.0" y="478.0" width="400.7" height="8" fill="#5DA423"/>
+    <text x="1312.0" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Catalog Manager</text>
+    <text x="1312.0" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">AGT-004 • Mode 2 Catalog Hygiene</text>
+    <rect x="1569.8" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#5DA423" stroke-width="1"/>
+    <text x="1629.2" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">3,794 / 8,000c</text>
+    <text x="1312.0" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope catalog (7 .txt files)</text>
+    <text x="1312.0" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Tier 1</tspan>: tblMaterials (A3:G508, 505 keys)</text>
+    <text x="1312.0" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Tier 2/3</tspan>: Fiber &amp; Harness (A3:H1258)</text>
+    <text x="1312.0" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Spill</tspan>: Lists!H1 FILTER(VSTACK, &lt;&gt;0)</text>
+    <rect x="1714.6" y="442.0" width="400.7" height="154.0" rx="8" fill="#FFF8E6" stroke="#D98200" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1714.6" y="442.0" width="400.7" height="44" rx="8" fill="#D98200"/>
+    <rect x="1714.6" y="478.0" width="400.7" height="8" fill="#D98200"/>
+    <text x="1728.6" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#141417">Repair Tool</text>
+    <text x="1728.6" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#141417" opacity="0.92">AGT-005 • Mode 2 OpenXML Repair</text>
+    <rect x="1986.5" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#D98200" stroke-width="1"/>
+    <text x="2045.9" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">3,607 / 8,000c</text>
+    <text x="1728.6" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope repair &amp; --repair (6 .txt)</text>
+    <text x="1728.6" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Formulas</tspan>: Restores BOM A8:I155 &amp; B30:C30</text>
+    <text x="1728.6" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">OpenXML</tspan>: Fixes tblMaterials &amp; [4E] DVs</text>
+    <text x="1728.6" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Focus</tspan>: Mechanics only (0 project review)</text>
+    <rect x="2131.3" y="442.0" width="460.7" height="154.0" rx="8" fill="#FFFFFF" stroke="#114573" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="2131.3" y="442.0" width="460.7" height="44" rx="8" fill="#114573"/>
+    <rect x="2131.3" y="478.0" width="460.7" height="8" fill="#114573"/>
+    <text x="2145.3" y="464.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Timesheet Consolidator</text>
+    <text x="2145.3" y="480.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">AGT-006 • Mode 2 Multi-Media Rollup</text>
+    <rect x="2463.2" y="449.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="2522.6" y="463.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">6,206 / 8,000c</text>
+    <text x="2145.3" y="508.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Scope</tspan>: --scope timesheet &amp; --consolidate</text>
+    <text x="2145.3" y="529.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Inputs</tspan>: .xlsx, scanned .pdf &amp; photo media</text>
+    <text x="2145.3" y="550.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Filter</tspan>: Strips Expense Report &amp; receipt pages</text>
+    <text x="2145.3" y="571.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Output</tspan>: ECMA-376 weekly rollup + NEA-WRT</text>
+    <rect x="48.0" y="714.0" width="810.3" height="154.0" rx="8" fill="#FFFFFF" stroke="#114573" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="48.0" y="714.0" width="810.3" height="44" rx="8" fill="#114573"/>
+    <rect x="48.0" y="750.0" width="810.3" height="8" fill="#114573"/>
+    <text x="62.0" y="736.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">OpenXML &lt;f&gt; + &lt;v&gt; &amp; Role Inspector</text>
+    <text x="62.0" y="752.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Pure-Stdlib zipfile + ElementTree Parser</text>
+    <rect x="729.5" y="721.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="788.9" y="735.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">OPENXML KERNEL</text>
+    <text x="62.0" y="780.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Shared Formulas</tspan>: Inspects both &lt;f&gt; (including shared si) and cached &lt;v&gt;</text>
+    <text x="62.0" y="801.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Dynamic Coordinates</tspan>: Resolves Cover Sheet fields by label in Col B/F/G</text>
+    <text x="62.0" y="822.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Row 2 Header Map</tspan>: Maps all 16 CRL headers dynamically across A2:P2</text>
+    <text x="62.0" y="843.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Fallback Snippet</tspan>: Inline Python kernel runs even if Knowledge .txt is absent</text>
+    <rect x="874.3" y="714.0" width="850.8" height="154.0" rx="8" fill="#F5F8FB" stroke="#165366" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="874.3" y="714.0" width="850.8" height="44" rx="8" fill="#165366"/>
+    <rect x="874.3" y="750.0" width="850.8" height="8" fill="#165366"/>
+    <text x="888.3" y="736.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">3-Tier Catalog &amp; Takeoff Rollup Engine</text>
+    <text x="888.3" y="752.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">--lookup &quot;&lt;term&gt;&quot; &amp; Cross-Workbook Audit</text>
+    <rect x="1596.4" y="721.0" width="118.8" height="20" rx="10" fill="#EBF3F9" stroke="#165366" stroke-width="1"/>
+    <text x="1655.8" y="735.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">3-TIER CATALOG</text>
+    <text x="888.3" y="780.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Cascading Lookup</tspan>: Searches tblMaterials -&gt; Fiber Assemblies -&gt; Cable Harness</text>
+    <text x="888.3" y="801.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Duplicate Mfg Check</tspan>: Flags duplicate (Manufacturer, MFG P/N) pairs</text>
+    <text x="888.3" y="822.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Run Continuity</tspan>: Verifies CRL Run IDs 1..279 &amp; duplicate NE/FE endpoints</text>
+    <text x="888.3" y="843.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Zero Guessing</tspan>: Emits [CATALOG ADDITION REQUIRED] when part is absent</text>
+    <rect x="1741.2" y="714.0" width="850.8" height="154.0" rx="8" fill="#FFFFFF" stroke="#03A6D9" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1741.2" y="714.0" width="850.8" height="44" rx="8" fill="#03A6D9"/>
+    <rect x="1741.2" y="750.0" width="850.8" height="8" fill="#03A6D9"/>
+    <text x="1755.2" y="736.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">OpenXML [4E] &amp; &lt;extLst&gt; Preservation</text>
+    <text x="1755.2" y="752.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">preserve_openxml_extensions(orig, saved)</text>
+    <rect x="2470.4" y="721.0" width="111.6" height="20" rx="10" fill="#EBF3F9" stroke="#03A6D9" stroke-width="1"/>
+    <text x="2526.2" y="735.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">DROPDOWN LOCK</text>
+    <text x="1755.2" y="780.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">openpyxl Bug Bypass</tspan>: Restores &lt;extLst&gt; (x14:dataValidations) stripped on save</text>
+    <text x="1755.2" y="801.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Cross-Sheet Lists</tspan>: Preserves &#x27;Reference Lists&#x27;!$A$1:$A$3, $B$1:$B$2, $C$1:$C$12, $D$1:$D$11</text>
+    <text x="1755.2" y="822.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Contiguous Range</tspan>: Enforces 7 CRL DataValidation rules across Rows 3..1087</text>
+    <text x="1755.2" y="843.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">AutoFilter Lock</tspan>: Verifies _FilterDatabase spans $A$2:$P$1087 (0 [4E] anomalies)</text>
+    <rect x="48.0" y="986.0" width="807.1" height="154.0" rx="8" fill="#FDECEC" stroke="#C60F13" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="48.0" y="986.0" width="807.1" height="44" rx="8" fill="#C60F13"/>
+    <rect x="48.0" y="1022.0" width="807.1" height="8" fill="#C60F13"/>
+    <text x="62.0" y="1008.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Fail-Closed &amp; [TBD] Abstention Gate</text>
+    <text x="62.0" y="1024.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">NEA-SKL-001 Anti-Hallucination Enforcement</text>
+    <rect x="747.9" y="993.0" width="97.2" height="20" rx="10" fill="#EBF3F9" stroke="#C60F13" stroke-width="1"/>
+    <text x="796.5" y="1007.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">FAIL-CLOSED</text>
+    <text x="62.0" y="1052.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Hard Stop</tspan>: Emits [EXTRACTION BLOCKED — ABORTED] if .xlsx read fails</text>
+    <text x="62.0" y="1073.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Missing Specs</tspan>: Emits [TBD: &lt;specific_missing_variable&gt;] inline (0 guessing)</text>
+    <text x="62.0" y="1094.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Source Conflicts</tspan>: Emits [CONFLICT: &lt;Source_A_val&gt; vs &lt;Source_B_val&gt;]</text>
+    <text x="62.0" y="1115.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Unbacked Claims</tspan>: Tags [UNVERIFIED — NOT IN TELEMETRY] before output</text>
+    <rect x="871.1" y="986.0" width="840.1" height="154.0" rx="8" fill="#EDF7ED" stroke="#5DA423" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="871.1" y="986.0" width="840.1" height="44" rx="8" fill="#5DA423"/>
+    <rect x="871.1" y="1022.0" width="840.1" height="8" fill="#5DA423"/>
+    <text x="885.1" y="1008.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Mode 1 Review Receipt (NEA-VRF-&lt;12hex&gt;)</text>
+    <text x="885.1" y="1024.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Pre/Post SHA-256 Source Immutability Proof</text>
+    <rect x="1596.8" y="993.0" width="104.4" height="20" rx="10" fill="#EBF3F9" stroke="#5DA423" stroke-width="1"/>
+    <text x="1649.0" y="1007.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">READ RECEIPT</text>
+    <text x="885.1" y="1052.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Immutability</tspan>: Verifies Pre-SHA256 == Post-SHA256 (0 bytes modified)</text>
+    <text x="885.1" y="1073.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Live Token</tspan>: Emits NEA-VRF-31A37EEFB1DF over sorted workbook hashes</text>
+    <text x="885.1" y="1094.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Header Lock</tspan>: Every Review Report must display live NEA-VRF + 10-char SHA256</text>
+    <text x="885.1" y="1115.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Anti-Spoiler</tspan>: 0 hardcoded testbed part numbers or quantities in Knowledge/</text>
+    <rect x="1727.2" y="986.0" width="864.8" height="154.0" rx="8" fill="#FFF8E6" stroke="#D98200" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1727.2" y="986.0" width="864.8" height="44" rx="8" fill="#D98200"/>
+    <rect x="1727.2" y="1022.0" width="864.8" height="8" fill="#D98200"/>
+    <text x="1741.2" y="1008.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#141417">Mode 2 Write Receipt (NEA-WRT-&lt;12hex&gt;)</text>
+    <text x="1741.2" y="1024.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#141417" opacity="0.92">--verify-write ORIG_XLSX EDITED_XLSX</text>
+    <rect x="2470.4" y="993.0" width="111.6" height="20" rx="10" fill="#EBF3F9" stroke="#D98200" stroke-width="1"/>
+    <text x="2526.2" y="1007.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">WRITE RECEIPT</text>
+    <text x="1741.2" y="1052.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Formula Audit</tspan>: Fails closed ([FORMULA_OVERWRITE]) if any &lt;f&gt; cell is lost</text>
+    <text x="1741.2" y="1073.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Dropdown Audit</tspan>: Fails closed ([EXTLST_STRIPPED] / [DV_STRIPPED]) on loss</text>
+    <text x="1741.2" y="1094.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Filter Audit</tspan>: Verifies _FilterDatabase covers all populated CRL rows</text>
+    <text x="1741.2" y="1115.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Cryptographic Proof</tspan>: Emits [WRITE-VERIFIED: PASS | NEA-WRT-845DE5F8B55D]</text>
+    <rect x="48.0" y="1258.0" width="1264.0" height="133.0" rx="8" fill="#FFFFFF" stroke="#114573" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="48.0" y="1258.0" width="1264.0" height="44" rx="8" fill="#114573"/>
+    <rect x="48.0" y="1294.0" width="1264.0" height="8" fill="#114573"/>
+    <text x="62.0" y="1280.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Mode 1 Output: 6-Section Engineering Review Report</text>
+    <text x="62.0" y="1296.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Standardized NEA-REF-003 Markdown Deliverable</text>
+    <rect x="1190.4" y="1265.0" width="111.6" height="20" rx="10" fill="#EBF3F9" stroke="#114573" stroke-width="1"/>
+    <text x="1246.2" y="1279.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">REVIEW REPORT</text>
+    <text x="62.0" y="1324.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Sections 1–3</tspan>: Executive Gate Scorecard, Cover Sheet Parity &amp; CRL &lt;-&gt; BOM Takeoff</text>
+    <text x="62.0" y="1345.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Sections 4–5</tspan>: Deliverable Findings (AR/RR/ADV/INF) vs. Governance (CAT/TPL)</text>
+    <text x="62.0" y="1366.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Section 6</tspan>: Workbook-Ordered Engineer Closeout Punch List (- [ ] checkboxes)</text>
+    <rect x="1328.0" y="1258.0" width="1264.0" height="133.0" rx="8" fill="#EDF7ED" stroke="#5DA423" stroke-width="1.8" filter="url(#card-shadow)"/>
+    <rect x="1328.0" y="1258.0" width="1264.0" height="44" rx="8" fill="#5DA423"/>
+    <rect x="1328.0" y="1294.0" width="1264.0" height="8" fill="#5DA423"/>
+    <text x="1342.0" y="1280.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Mode 2 Output: Verified Downloadable .xlsx Package</text>
+    <text x="1342.0" y="1296.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="11.5" fill="#FFFFFF" opacity="0.92">Returned via Copilot Code Interpreter Download Link</text>
+    <rect x="2484.8" y="1265.0" width="97.2" height="20" rx="10" fill="#EBF3F9" stroke="#5DA423" stroke-width="1"/>
+    <text x="2533.4" y="1279.0" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#114573">PAPER TRUTH</text>
+    <text x="1342.0" y="1324.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">100% Intact OpenXML</tspan>: 3-tier XLOOKUP, COUNTIF/SUMIF, AutoFilter &amp; x14 dropdowns</text>
+    <text x="1342.0" y="1345.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Write Attestation</tspan>: Accompanied by Pre/Post SHA-256 &amp; NEA-WRT-&lt;12hex&gt; receipt</text>
+    <text x="1342.0" y="1366.0" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12.5" fill="#231F20">• <tspan font-weight="bold" fill="#114573">Field Handoff</tspan>: Saved by engineer to OneDrive/SharePoint for installation release</text>
+  </g>
+  <g id="layer-connectors">
+    <polyline points="598.7,336.0 598.7,393.0" fill="none" stroke="#114573" stroke-width="2.4" marker-end="url(#arrow-primary)"/>
+    <polyline points="2041.3,336.0 2041.3,393.0" fill="none" stroke="#03A6D9" stroke-width="2.4" marker-end="url(#arrow-secondary)"/>
+    <polyline points="676.0,608.0 676.0,665.0" fill="none" stroke="#114573" stroke-width="2.4" marker-end="url(#arrow-primary)"/>
+    <polyline points="1964.0,608.0 1964.0,665.0" fill="none" stroke="#165366" stroke-width="2.4" marker-end="url(#arrow-tertiary)"/>
+    <polyline points="1320.0,880.0 1320.0,937.0" fill="none" stroke="#D98200" stroke-width="2.4" marker-end="url(#arrow-warn)"/>
+    <polyline points="753.3,1152.0 753.3,1209.0" fill="none" stroke="#114573" stroke-width="2.4" marker-end="url(#arrow-primary)"/>
+    <polyline points="1886.7,1152.0 1886.7,1209.0" fill="none" stroke="#5DA423" stroke-width="2.4" marker-end="url(#arrow-pass)"/>
+  </g>
+  <g id="layer-pills">
+    <rect x="434.7" y="352.5" width="328.0" height="24" rx="12" fill="#FFFFFF" stroke="#114573" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="598.7" y="369.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Live .xlsx Mounted in /mnt/data/ (0 Lag)</text>
+    <rect x="1858.3" y="352.5" width="366.0" height="24" rx="12" fill="#FFFFFF" stroke="#03A6D9" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="2041.3" y="369.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Knowledge/*.txt + NEA-SKL-001..003 Guardrails</text>
+    <rect x="527.2" y="624.5" width="297.6" height="24" rx="12" fill="#FFFFFF" stroke="#114573" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="676.0" y="641.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Mode 1: Read-Only OpenXML Inspection</text>
+    <rect x="1769.6" y="624.5" width="388.8" height="24" rx="12" fill="#FFFFFF" stroke="#165366" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="1964.0" y="641.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Mode 2: --lookup + preserve_openxml_extensions()</text>
+    <rect x="1125.6" y="896.5" width="388.8" height="24" rx="12" fill="#FFFFFF" stroke="#D98200" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="1320.0" y="913.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Deterministic Telemetry + Pre/Post OpenXML Audit</text>
+    <rect x="619.7" y="1168.5" width="267.2" height="24" rx="12" fill="#FFFFFF" stroke="#114573" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="753.3" y="1185.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">Verified NEA-VRF-&lt;12hex&gt; Receipt</text>
+    <rect x="1722.7" y="1168.5" width="328.0" height="24" rx="12" fill="#FFFFFF" stroke="#5DA423" stroke-width="1.5" filter="url(#pill-shadow)"/>
+    <text x="1886.7" y="1185.0" text-anchor="middle" font-family="Calibri, 'Segoe UI', Aptos, Arial, sans-serif" font-size="12" font-weight="bold" fill="#114573">[WRITE-VERIFIED: PASS | NEA-WRT-&lt;12hex&gt;]</text>
+  </g>
+</svg>

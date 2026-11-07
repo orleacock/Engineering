@@ -1,0 +1,13 @@
+// Syncthing ignore patterns for /home/orin/Projects/Engineering umbrella
+// Prevents .git index corruption and Obsidian UI pane-state sync conflicts
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+~$*
+.sandbox_scratch
+study_briefs
+memory/.obsidian/workspace.json
+memory/.obsidian/workspace-mobile.json
+memory/.trash

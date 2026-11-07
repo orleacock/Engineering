@@ -1,0 +1,31 @@
+# Python bytecode & test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Office / Excel temporary lock files & local inspector delta cache
+~$*
+.nea_inspect_cache.json
+.sandbox_scratch/
+
+# Syncthing local state & conflict/temp artifacts (Part 2 offline sync hygiene)
+.stfolder/
+.stversions/
+.syncthing.*
+*~syncthing~*
+
+# Raw local Discord export inbox (~54 MB — excluded from online Git; covered by Part 2 local/offline redundancy)
+Homunculus/addons/author-voice-cadence/corpus_inbox/*
+!Homunculus/addons/author-voice-cadence/corpus_inbox/.gitkeep
+Homunculus/skills/author-voice-cadence/corpus_inbox/*
+!Homunculus/skills/author-voice-cadence/corpus_inbox/.gitkeep
+
+# Disposable local study briefs (non-consumed /teach-me artifacts; keep README & .gitkeep only)
+study_briefs/*
+!study_briefs/README.md
+!study_briefs/.gitkeep
+
+# Obsidian volatile UI state & local trash in Dual-Mode memory root
+memory/.obsidian/workspace.json
+memory/.obsidian/workspace-mobile.json
+memory/.trash/

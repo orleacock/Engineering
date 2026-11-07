@@ -1,0 +1,82 @@
+# Materials Master & Fiber Assemblies Catalog Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-006
+Logical Name: Material_Master_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the catalog schema, primary-key uniqueness, `XLOOKUP` shadowing rules, controlled `Category` / `UOM` / `Status` domains, and maintenance boundaries governing `Materials Master` (`tblMaterials`) and `Fiber Assemblies` in `BOM_Materials_Master_Template.xlsx`.
+
+Current approved artifact versions are governed by `Repository_Index.md`. Procedural catalog import and maintenance steps are defined in `Material_Catalog_Workflow` (`Workflows/Material_Catalog_Workflow_v2.2.3.md`).
+
+---
+
+## 1. Authoritative Three-Tier Catalog Architecture (`BOM_Materials_Master_Template.xlsx`)
+
+NEA maintains three controlled catalog worksheets inside `BOM_Materials_Master_Template.xlsx` that feed `Lists!H1` (`BOMPartNumbers` `FILTER(VSTACK(...))` spill) and `Project BOM` (`Columns D:I` 3-tier `XLOOKUP` formulas):
+
+| Catalog Worksheet | Structure & Range | Schema (`Row 3` Headers) | Primary Key & Lookup Priority |
+| :--- | :--- | :--- | :--- |
+| **`Materials Master`** | Official Excel Table **`tblMaterials`** (`$A$3:$G$508`; auto-trimmed from `$A$3:$G$600` by `NEA Repair Tool` so empty rows do not coerce to `0` in `Lists!H1#` under `GOV-007`) | **7 Columns (`A:G`)**:<br>`A`: `Category`<br>`B`: `MB P/N` *(Primary Key)*<br>`C`: `Manufacturer`<br>`D`: `MFG Part Number`<br>`E`: `UOM`<br>`F`: `Description`<br>`G`: `Status` | **Priority 1 Lookup**: Searched first by `Project BOM` `XLOOKUP`. Accepts permanent numeric/alphanumeric `MB P/N` and Temporary Part Numbers (`TPN##`). |
+| **`Fiber Assemblies`** | Standard Range (`$A$3:$H$1258`) | **8 Columns (`A:H`)**:<br>`A`: `Category` (`Bulk Fiber` / `Term Fiber`)<br>`B`: `Fiber Type`<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | **Priority 2 Fallback Lookup**: Searched when an identifier is not found in `tblMaterials`. |
+| **`Cable Harness`** | Standard Range (`$A$3:$H$1258`) | **8 Columns (`A:H`)**:<br>`A`: `Category` (`Cable Harness`)<br>`B`: `Cable Type` (`C6A U/UTP`, `C6A U/FTP`)<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | **Priority 3 Fallback Lookup**: Searched when an identifier is not found in `tblMaterials` or `Fiber Assemblies`. Unassigned harness variants keep `Col C` (`MB P/N`) blank and `Col H` (`Status = Pending`) until assigned. |
+
+---
+
+## 2. Primary-Key Uniqueness & `XLOOKUP` Shadowing Rules
+
+1. **Primary-Key & Manufacturer P/N Uniqueness Requirement**:
+   - Every non-blank `MB P/N` and `TPN##` across `tblMaterials[MB P/N]`, `'Fiber Assemblies'!$C$4:$C$1258`, and `'Cable Harness'!$C$4:$C$1258` shall be unique across the catalog.
+   - Each `(Manufacturer, MFG Part Number)` pair should likewise map to a single governed catalog entry (`BOM-CAT-003`).
+2. **First-Match `XLOOKUP` Shadowing Hazard**:
+   - Because `Project BOM` uses first-match `XLOOKUP($B8, tblMaterials[MB P/N], ...)`, any duplicate `MB P/N` or `TPN##` causes the earlier row to shadow all later rows with the same key.
+3. **Governed Duplicate-Key Severity Split**:
+   - **Conflicting Duplicate Keys (`Action Required`)**: When duplicate `MB P/N` or `TPN##` rows have differing `Category`, `UOM`, `Status`, `MFG Part Number`, or `Description` (for example, an `MB P/N` having `EA` vs. `FT`, `BX` vs. `EA`, `Obsolete` vs. `Active`, or a `TPN##` reused across different cord lengths), classify as **`Action Required`** (`AR-##` if referenced on the active `Project BOM`; `CAT-##` in Section 5.1).
+   - **Exact Duplicate Keys (`Review Recommended / Advisory`)**: When duplicate rows have identical governed attributes across all 7 columns (`A:G`), classify as **`Review Recommended (Catalog)` (`CAT-##`)** for cleanup under `Material_Catalog_Workflow` (`GOV-002`).
+
+---
+
+## 3. Governed Catalog Attribute Domains (`Category`, `UOM`, `Status`)
+
+In `BOM_Materials_Master_Template.xlsx`, `Materials Master` enforces controlled values via inline OpenXML DataValidation strings (`"Cable,Bulk Fiber,..."`, `"EA,KT,FT,BX,M"`, `"Pending,Active,..."`) and visual reference keys in **`Materials Master!I3:J35`** (while `Lists!H1#` hosts the dynamic `BOMPartNumbers` spill array):
+
+### 3.1 Material Categories (`Materials Master!I3:J20` & Inline DV — `16` Approved Values)
+
+All catalog records shall use the exact workbook-validated Category names:
+- **Cabling & Fiber (`3`)**: `Cable`, `Bulk Fiber`, `Term Fiber`
+- **Connectivity (`3`)**: `Jacks`, `Faceplates`, `Patch Panels`
+- **Pathways & Support (`4`)**: `Raceway`, `Conduit`, `Superstructure`, `Grounding`
+- **Enclosures, Hardware & Operations (`6`)**: `Hardware`, `Wire Mgmt`, `Racks`, `Consumables`, `Tools`, `Miscellaneous`
+
+*Category Guardrails*:
+- Do not substitute informal labels (`Connector`, `Fiber`, `Pathway`, `Wire Management`).
+- **Discrete Connectivity Misclassification Rule**: Modular jacks, faceplates, and patch panels shall be classified under `Jacks`, `Faceplates`, or `Patch Panels`—never `Cable` (**`Action Required (Catalog)` (`CAT-##`)**).
+
+### 3.2 Units of Measure (`UOM`)
+
+| UOM Scope | Permitted Codes | Engineering Usage Rule |
+| :--- | :---: | :--- |
+| **Inline Workbook Validation & `Materials Master!I22:J26`** | `EA`, `KT`, `FT`, `BX`, `M` | Primary workbook-validated UOM codes. |
+| **Extended Catalog UOMs (`Materials Master` Key / `GOV-003`)** | `RL` *(Roll)*, `PK` *(Pack)* | Permitted in `Materials Master`; tracked under `GOV-003` for validation synchronization. |
+
+*UOM Guardrail*: Discrete connectivity hardware (`Jacks`, `Faceplates`, `Patch Panels`, pre-terminated `Term Fiber` jumpers) shall never be assigned `UOM = FT` (**`Action Required` (`AR-##` / `CAT-##`)**).
+
+### 3.3 Material Lifecycle Status (`Materials Master!I28:J35` & Inline DV — `6` States)
+
+| Material Status | Operational Meaning & `Project BOM` Impact |
+| :--- | :--- |
+| **`Active`** / **`Preferred`** | Approved for standard `Project BOM` selection and procurement. |
+| **`Pending`** | Proposed/new record awaiting catalog verification; requires `Review Recommended` (`RR-##`) confirmation if used on an active BOM. |
+| **`Limited Use`** | Restricted to specific legacy or customer-mandated applications; requires `Review Recommended` (`RR-##`) verification. |
+| **`Inactive`** / **`Obsolete`** | Discontinued or retired; triggers **`Review Recommended` (`RR-##`)** when ordered on an active `Project BOM` (confirm distributor stock or substitute an active SKU). |
+
+---
+
+## 4. Record Completeness & Temporary Part Numbers (`TPN##`)
+
+1. **Mandatory Fields**: Every catalog row containing an `MB P/N` or `TPN##` must have a non-blank **`Category`**, **`UOM`**, **`Description`**, and **`Status`** (`Materials Master`).
+2. **Incomplete Unreferenced Records**: An unreferenced catalog row with a populated `MB P/N` or `TPN##` but blank `Description` or `UOM` (e.g., `TPN01` at `Row N`) is classified as **`Review Recommended (Catalog)`** or **`Action Required (Catalog)` (`CAT-##`)** in Section 5.1 (and escalates to **`AR-##`** if referenced on an active `Project BOM`).
+3. **Catalog Maintenance Boundary**: During a project review, NEA shall report catalog defects without autonomously deleting rows, choosing surviving duplicate records, or renumbering part keys. All catalog modifications follow `Material_Catalog_Workflow`.

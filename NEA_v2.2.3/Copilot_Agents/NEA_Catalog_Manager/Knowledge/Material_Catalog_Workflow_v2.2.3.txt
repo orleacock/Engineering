@@ -1,0 +1,74 @@
+# Material Catalog Import & Maintenance Workflow
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-WF-001
+Logical Name: Material_Catalog_Workflow
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Workflow defines the step-by-step procedural sequence for importing new materials, managing Temporary Part Numbers (`TPN##`), remediating duplicate primary keys, and maintaining `Materials Master` (`tblMaterials`) and `Fiber Assemblies` in `BOM_Materials_Master_Template.xlsx`.
+
+This Workflow consolidates the procedural functions previously distributed across `Material_Import_Workflow`, `Material_Management`, and `Material_Master_Maintenance`. Current approved artifact versions are governed by `Repository_Index.md`. Governing catalog rules are defined in `Material_Master_Standards` (`NEA-STD-006`).
+
+---
+
+## Pre-Flight Catalog Protection Guardrails
+
+1. **`Materials Master` (`tblMaterials`), `Fiber Assemblies` & `Cable Harness` Are Controlled Data**: Never modify catalog records silently during an ordinary project review. All catalog changes require explicit operator confirmation.
+2. **Preserve `tblMaterials` Table Identity (`GOV-007`)**: Never rename `tblMaterials` (`Materials Master!$A$3:$G$600`) or alter column order (`A:G`), as `Lists!H1` (`BOMPartNumbers` `FILTER(VSTACK(...))` spill) and all `Project BOM` 3-tier `XLOOKUP` formulas depend on them.
+3. **No Autonomous Duplicate Deletion**: When duplicate `MB P/N` or `TPN##` keys exist, NEA shall report both rows, their attribute differences, and whether any active `Project BOM` line is affected, waiting for engineering approval before consolidating or retiring a record.
+
+---
+
+## Procedure A — Importing or Adding New Catalog Records
+
+### Step 1 — Normalize & Screen Candidate Material Data
+
+When receiving material data from vendor quotes, manufacturer cut sheets, or project BOMs:
+1. Extract and normalize the 7 required `tblMaterials` fields:
+   - `Column A` (`Category`): Must match one of the `16` approved categories in `Lists!$A$2:$A$17` (`Cable`, `Bulk Fiber`, `Term Fiber`, `Jacks`, `Faceplates`, `Patch Panels`, `Raceway`, `Conduit`, `Superstructure`, `Grounding`, `Hardware`, `Wire Mgmt`, `Racks`, `Consumables`, `Tools`, `Miscellaneous`).
+   - `Column B` (`MB P/N`): Permanent `MB P/N` or sequential `TPN##`.
+   - `Column C` (`Manufacturer`): Standardized manufacturer name (`Panduit`, `Belden`, `Corning`, `Leviton`, `B-Line`, etc.).
+   - `Column D` (`MFG Part Number`): Exact manufacturer catalog number.
+   - `Column E` (`UOM`): Approved code (`EA`, `KT`, `FT`, `BX`, `M`, or catalog-permitted `RL`, `PK` per `GOV-003`). Ensure discrete items (`Jacks`, `Faceplates`, `Patch Panels`) never use `FT`.
+   - `Column F` (`Description`): Clear, human-readable engineering description (including category grade, color, port/strand count, and shielding/rating).
+   - `Column G` (`Status`): `Active`, `Preferred`, `Pending`, `Limited Use`, `Inactive`, or `Obsolete`.
+
+### Step 2 — Check for Existing Records & Key Collisions
+
+Before inserting any row into `tblMaterials` or `Fiber Assemblies`:
+1. Search both `tblMaterials[MB P/N]` and `'Fiber Assemblies'!$C$4:$C$1258` to verify the proposed `MB P/N` or `TPN##` does not already exist.
+2. Search `Manufacturer` + `MFG Part Number` to verify the physical part is not already cataloged under a different `MB P/N`.
+3. If a permanent `MB P/N` is not yet assigned by procurement/warehouse, assign the next unused `TPN##` identifier with `Status = Active` (or `Pending` if awaiting engineering sign-off) and complete all mandatory fields (`Category`, `UOM`, `Description`). Never insert a blank placeholder `TPN##` row.
+
+### Step 3 — Append to `tblMaterials` & Verify `VSTACK` Spill
+
+1. Insert the approved record inside the `tblMaterials` structured table boundary (`Materials Master`) so Excel automatically expands `tblMaterials`.
+2. Confirm that `Lists!$H$1#` (`BOMPartNumbers`) updates without `#SPILL!` or `#REF!` errors and that `Project BOM` `XLOOKUP` formulas resolve the new key cleanly.
+
+---
+
+## Procedure B — Catalog Hygiene & Duplicate Remediation (`GOV-002`)
+
+When `Project_Review_Workflow` logs catalog referrals (`CAT-##` in Section 5.1) or active BOM shadowing findings (`AR-##` in Section 4.1):
+
+### Step 1 — Classify & Prioritize Catalog Defects
+
+1. **Priority 1 — Conflicting Duplicate Keys Referenced on Active `Project BOM` (`AR-##` & `CAT-##`)**:
+   - Inspect both rows sharing the same `MB P/N` or `TPN##` (e.g., an `MB P/N` with `EA` vs `FT`, `BX` vs `EA`, `Obsolete` vs `Active`, or a `TPN##` reused across different cord lengths).
+   - Determine which record reflects the true manufacturer part and UOM needed on the `Project BOM`.
+2. **Priority 2 — Category / UOM Misclassifications & Incomplete Records (`CAT-##`)**:
+   - Identify discrete connectivity items misclassified as `Category = Cable` or `UOM = FT` (e.g., modular jacks) and records missing `UOM` or `Description` (e.g., an incomplete `TPN##` or `MB P/N` at `Row N`).
+3. **Priority 3 — Unreferenced Exact Duplicate Blocks (`CAT-##`)**:
+   - Identify repeated historical blocks where all 7 columns (`A:G`) are identical across two row ranges.
+
+### Step 2 — Execute Approved Catalog Corrections
+
+With operator approval:
+1. **Exact Duplicates**: Remove the redundant second row from `tblMaterials` so each `MB P/N` exists once.
+2. **Conflicting Duplicates**:
+   - If the duplicate was caused by a data-entry error on one of the two rows (such as an earlier row marking a part `Obsolete` while a later row is `Active`, or one row setting a jack to `FT`), update the surviving row with the verified attributes and remove the erroneous duplicate row.
+   - If two genuinely distinct physical parts were accidentally assigned the same key (such as a `TPN##` used for two different patch cord lengths), assign new unique `MB P/N` or `TPN##` identifiers to the second set of parts and update any referencing `Project BOM` lines.
+3. **Revalidate `Project BOM`**: After any catalog edit, check `Project BOM` `Columns D:I` across all active rows to confirm zero broken lookups and accurate UOM/Status values.

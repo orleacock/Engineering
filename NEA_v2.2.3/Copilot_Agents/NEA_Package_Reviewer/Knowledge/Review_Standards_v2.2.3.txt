@@ -1,0 +1,104 @@
+# Engineering Review & Cross-Document Validation Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-003
+Logical Name: Review_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard is the governing authority for finding classifications, release-readiness outcomes, review conduct, and cross-document validation rules across the NetCom Engineering Assistant (NEA).
+
+Current approved artifact versions are governed by `Repository_Index.md`. Standardized report formatting is defined in `Review_Report_Template` (`References/Review_Report_Template_v2.2.3.md`).
+
+---
+
+## 1. Governed Finding Classifications (`4` Levels)
+
+Every NEA review finding shall be assigned one of the following four classifications. Parallel or informal severity labels (`Critical`, `High`, `Medium`, `Low`, `Fail`) are prohibited:
+
+| Classification | Report Prefix | Definition & Release Impact |
+| :--- | :---: | :--- |
+| **`Action Required`** | `AR-##` *(Project)*<br>`CAT-##` *(Catalog)* | **Blocks Release**: A proven defect, missing required field/quantity, broken/overwritten formula, active catalog key conflict, or major cross-document procurement shortfall that must be resolved before release. |
+| **`Review Recommended`** | `RR-##` *(Project)*<br>`CAT-##` *(Catalog)* | **Confirmation Required**: A technical contradiction (e.g., `Cat6` vs `Cat6A`, `Plenum` vs `OFNR`), unresolved placeholder (`Classification = Unknown`, `Verify` note, `(optional)` scope), or minor takeoff variance requiring engineering confirmation before release. |
+| **`Advisory`** | `ADV-##` *(Project)*<br>`TPL-##` *(Template)* | **Non-Blocking Improvement**: A standardization, formatting, or cleanup item (e.g., `> 5` blank row spacing gap, mixed-UOM total in `G4`, unlinked static revision cell matching header) that does not prevent release. |
+| **`Informational`** | `INF-##` | **No Action Needed**: Verified engineering context confirming intentional design choices (e.g., per-run bulk fiber lines with room notes, valid `TPN##` usage, spacing gaps `<= 5` rows, independent workbook issue dates). |
+
+---
+
+## 2. Governed Release Readiness Outcomes (`4` Levels)
+
+Release readiness is determined by the **highest unresolved finding severity** on the active project deliverable package (not by total finding count):
+
+| Release Readiness Outcome | Governing Criteria | Alert Banner Style (`Review_Report_Template`) |
+| :--- | :--- | :---: |
+| **`Action Required Before Release`** | One or more active project **`Action Required` (`AR-##`)** findings remain unresolved. | `> [!CAUTION]` |
+| **`Engineering Review Recommended`** | Zero `AR-##` findings remain, but one or more **`Review Recommended` (`RR-##`)** findings require engineering sign-off or confirmation. | `> [!WARNING]` |
+| **`Approved with Advisory Notes`** | Zero `AR-##` and zero `RR-##` findings remain; only **`Advisory` (`ADV-##`)** or **`Informational` (`INF-##`)** items exist. | `> [!IMPORTANT]` |
+| **`Approved`** | All applicable review criteria are satisfied with no unresolved findings requiring attention. | `> [!NOTE]` |
+
+*Note: NEA Release Readiness Outcomes are engineering review recommendations and do not replace required organizational, Project Manager, procurement, or customer approvals.*
+
+---
+
+## 3. Master Domain Classification & Canonical Citation Table (Tier 1 Self-Contained Authority)
+
+To ensure fast, deterministic classification and exact section citations without opening Tier 2 domain Standards during a standard review, apply the following default severities and canonical citations:
+
+| Domain | Observed Condition | Default Classification | Canonical Standard Citation |
+| :--- | :--- | :---: | :--- |
+| **Cross-Document (`CRL` ↔ `BOM`)** | Required CRL cable/fiber type omitted from BOM, gross shortage, or cable length transposed into jack/connector `Qty` | **`Action Required` (`AR-##`)** | `BOM_Standards` Sec 2.2 & `Review_Standards` Sec 3–4 |
+| **Cross-Document (`CRL` ↔ `BOM`)** | Copper category mismatch (`Cat6A` CRL vs `Cat6` BOM), jacket color mismatch (`Red` vs `Yellow`), or minor spool rounding deficit (`< 2%`) | **`Review Recommended` (`RR-##`)** | `BOM_Standards` Sec 2.2 & `Review_Standards` Sec 3–4 |
+| **Cross-Document (`CRL` ↔ `BOM`)** | Multiple BOM lines for same bulk fiber `MB P/N` (e.g., `BF1001`/`BF1002`) matching CRL run cut lengths via `Column J` notes | **`Informational` (`INF-##`)** | `BOM_Standards` Sec 2.2 & `Review_Standards` Sec 3 |
+| **`Project BOM`** | Blank, zero, negative, or non-numeric `Qty` (`Column C`) on an active BOM line (`Column B` populated), or bulk-box UOM multiplier error (`UOM = BX` with `Qty >= 100` on 1,000-pack ties) | **`Action Required` (`AR-##`)** | `BOM_Standards` Sec 2.1–2.2 |
+| **`Project BOM`** | Static text overwriting prebuilt formulas in `Column A` (`Line`) or `Columns D:I` (`Category` through `Status`), or `"Not found"` output | **`Action Required` (`AR-##`)** + **Route to `NEA Repair Tool`** | `Formatting_Standards` Sec 2.1 & `BOM_Standards` Sec 1 |
+| **`Project BOM`** | Active BOM line referencing an `Obsolete`, `Inactive`, or `Pending` material status, or carrying an unresolved `Verify` / `Change to ...` / `(optional)` note | **`Review Recommended` (`RR-##`)** | `BOM_Standards` Sec 2.1 & `Material_Master_Standards` Sec 3.3 |
+| **`Project BOM`** | Approved `TPN##` with complete `Description`, `UOM`, and `Active` status (`Qty > 0`) | **`Informational` (`INF-##`)** | `BOM_Standards` Sec 2.3 |
+| **`Project BOM`** | Undifferentiated mixed-UOM total in `Project BOM!G4` (`=SUM(C8:C155)`) or `Lists!H1` zero-spill (`GOV-002` / `GOV-007`) | **Route to `NEA Repair Tool` (Section 6)** | `Formatting_Standards` Sec 2.2 & `GOV-002` |
+| **`Cable Running List`** | Missing `Run ID`, missing `NE/FE Location`, missing `Media Type` / `Cable Type`, or missing `Length (ft)` | **`Action Required` (`AR-##`)** | `CRL_Standards` Sec 2.1–2.2 |
+| **`Cable Running List`** | Missing `Cable Qty` / `Fiber Count` (`Column M`, or `Column K` on legacy sheets) when `Media Type = Fiber` | **`Action Required` (`AR-##`)** | `CRL_Standards` Sec 2.2 |
+| **`Cable Running List`** | Intra-row or cross-doc contradiction (`Plenum` vs `OFNR` Riser comment; `1` fiber count vs `Duplex` comment; `Copper` media vs `LC` fiber connector) | **`Review Recommended` (`RR-##`)** | `CRL_Standards` Sec 2.3 |
+| **`Cable Running List`** | Multiple runs assigned identical `NE Location`/`NE Rack`/`NE Port` and `FE Location`/`FE Rack`/`FE Port` endpoints (`CRL-DATA-003`) | **`Review Recommended` (`RR-##`)** | `CRL_Standards` Sec 3–4 |
+| **`Cable Running List`** | Unresolved `Classification = Unknown` (`Column B`) on active runs | **`Review Recommended` (`RR-##`)** | `CRL_Standards` Sec 2.1 |
+| **`Cable Running List`** | Split/misaligned DataValidation column ranges (`Row 755+`), fragmented validation sqrefs, or truncated AutoFilter (`_FilterDatabase`) | **Route to `NEA Repair Tool` (Section 6)** | `Formatting_Standards` Sec 2 & `CRL_Standards` Sec 2 |
+| **`Cable Running List`** | Absence of a per-row `Cable Run Status` column | **No Finding** *(By Design)* | `CRL_Standards` Sec 1.2 (`GOV-004` Retired) |
+| **Formatting & Spacing** | Blank row or run numbering gap `<= 5` lines/runs | **No Finding** *(Or `INF-##`)* | `Formatting_Standards` Sec 3 |
+| **Formatting & Spacing** | Blank row or run numbering gap `> 5` lines/runs | **`Advisory` (`ADV-##`)** | `Formatting_Standards` Sec 3 |
+| **Catalog (`Materials Master`)** | Duplicate `MB P/N` or `TPN##` with **conflicting attributes** (`UOM`, `Category`, `Status`, `Description`), or jacks classified as `Cable`/`FT` | **`Action Required`** (`AR-##` if BOM-active; **Route to `NEA Catalog Manager`** if unreferenced) | `Material_Master_Standards` Sec 2 & `BOM_Standards` Sec 3.4 |
+| **Catalog (`Materials Master`)** | Exact duplicate `MB P/N` rows (identical attributes), blank `Manufacturer`/`Description`/`UOM` on unreferenced row, or legacy `Category = Equipment` | **Route to `NEA Catalog Manager` (Section 6)** | `Material_Master_Standards` Sec 2–4 & `GOV-002` |
+| **Cover Sheet & Templates** | Conflicting `Project Name`, `Customer`, or `Building` across package Cover Sheets | **`Action Required` (`AR-##`)** | `Project_Metadata_Standard` Sec 1 |
+| **Cover Sheet & Templates** | Static override in Revision History (`B30:C30`) decoupling from `H24`/`D24` (`'1'` vs `'001'`), or template parity gaps (`GOV-006`) | **Route to `NEA Repair Tool` (Section 6)** | `Project_Metadata_Standard` Sec 1–3 & `GOV-006` |
+| **Cover Sheet & Templates** | Independent `Issue Date` across package Cover Sheets (`YYYY-MM-DD` BOM vs `YYYY-MM-DD` CRL) | **`Informational` (`INF-##`)** | `Project_Metadata_Standard` Sec 1 |
+
+---
+
+## 4. Cross-Document Validation & Authority Rules
+
+When comparing information across worksheets and workbooks during `Project_Review_Workflow`:
+
+1. **Authoritative Source Hierarchy**:
+   - **Project Identity**: `BOM_Materials_Master_Template.xlsx` (`Cover Sheet`) is authoritative for `Project Number` (`D12`) and `Project Name` (`D10`).
+   - **Controlled Material Attributes**: `Materials Master` (`tblMaterials`) and `Fiber Assemblies` are authoritative for `Category`, `Manufacturer`, `MFG Part Number`, `UOM`, `Description`, and `Status`. `Project BOM` must derive these via `XLOOKUP` rather than redefining them manually.
+   - **Installed Cable Scope**: `Cable Running List` defines the required run counts, pathway ratings, fiber strand counts, cut lengths, and endpoint connectors that `Project BOM` must support for procurement.
+2. **Active Deliverable vs. Background Catalog Separation**:
+   - Always check whether a `Materials Master` defect (such as duplicate key shadowing) affects an `MB P/N` actually ordered on the current `Project BOM`. If it does, report it in **Section 4 (`Active Project Deliverable Findings`)** and cross-reference **Section 5 (`CAT-##`)**.
+   - Keep unreferenced catalog defects strictly in **Section 5 (`CAT-##`)** so background catalog debt never blocks or obscures a clean project deliverable.
+3. **Symptom Consolidation Rule**:
+   - Never emit separate findings for repetitive row-level occurrences of the same root cause. Consolidate them into one finding citing the exact row/run list or range (`e.g., CRL Rows X–Y / Runs M–N (K runs)`).
+
+---
+
+## 5. Tier 1 vs. Tier 2 On-Demand Standard Routing & Anti-Hallucination Safeguards
+
+To prevent unnecessary file reads during standard reviews while guaranteeing zero missed edge cases and zero fabricated findings:
+
+1. **Tier 1 Review Core (`5` Files — Always Loaded for Reviews)**:
+   - `README.md`, `Repository_Index.md`, `Standards/Review_Standards_v2.2.3.md`, `Workflows/Project_Review_Workflow_v2.2.3.md`, and `References/Review_Report_Template_v2.2.3.md`.
+2. **Deterministic Telemetry & Escalation Gate (`Scripts/inspect_nea_workbooks.py`)**:
+   - Executing `python3 Scripts/inspect_nea_workbooks.py <target_dir>` performs a 100% dynamic OpenXML inspection across all `.xlsx` files, computes the cryptographic `Live Package Verification Token` (`NEA-VRF-...`) and per-workbook `SHA256` fingerprints, and evaluates Section 6 (`Deterministic [TIER-2 ESCALATION] Gate`).
+   - When Section 6 reports `[NO TIER-2 ESCALATION REQUIRED]`, **do not open Tier 2 files** (`BOM_Standards`, `CRL_Standards`, `Material_Master_Standards`, `Project_Metadata_Standard`, `Formatting_Standards`, `Workbook_Types`, `NEA_Governance_Register`) and **do not run extra ad-hoc Python `.xlsx` scripts**—render the 6-section report directly from the verified telemetry and Section 3 citations above.
+   - Only open a Tier 2 file if `inspect_nea_workbooks.py` emits a `🚨 [TIER-2 ESCALATION REQUIRED]` flag or when executing a build/maintenance workflow.
+3. **Hard Fail-Closed Extraction Gate (`[EXTRACTION BLOCKED — REVIEW ABORTED]`) & Closed-World Evidence Binding**:
+   - **Never Generate a Report Without Live Telemetry**: If `inspect_nea_workbooks.py` (or direct `.xlsx` reading) fails, times out, or is denied permission, the agent is **strictly forbidden** from generating a 6-section report, opening Tier 2 `.md` or `.py` files to scrape clues, or inferring project data. It must **HALT IMMEDIATELY** on the next turn and output only the 5-line `[EXTRACTION BLOCKED — REVIEW ABORTED]` block specified in `Review_Report_Template`.
+   - **Closed-World Evidence Binding**: Every cell coordinate, part number, quantity, and metadata string in a Review Report must exist verbatim in the live telemetry output (or be marked `[UNVERIFIED — NOT IN TELEMETRY]`). Every report header must cite the live `NEA-VRF-...` token and workbook `SHA256` hashes.

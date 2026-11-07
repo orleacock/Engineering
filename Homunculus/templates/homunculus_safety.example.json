@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Declarative Multi-Compartment Data-Boundary & Remote Firewall Configuration for Homunculus (audit_data_boundary.py).",
+  "default_compartment": "public",
+  "enforce_posix_win_user_paths_in_public": true,
+  "compartments": {
+    "private": {
+      "description": "Private R&D / Local Workstation Umbrella (blocks credentials/keys and locks private git remote + author).",
+      "root_paths": [
+        "/path/to/private_engineering_umbrella"
+      ],
+      "expected_author_email": "developer@example.com",
+      "expected_remote_url": "git@github.com:example-user/private-rnd.git",
+      "push_locked": false,
+      "block_os_user_paths": false,
+      "block_affiliate_params": false,
+      "forbidden_tokens": [],
+      "extra_content_patterns": [],
+      "extra_filename_patterns": []
+    },
+    "public": {
+      "description": "Public / Open-Source Organization Repositories (blocks secrets, private paths, and internal project bleed).",
+      "root_paths": [
+        "/path/to/public_org_repos"
+      ],
+      "expected_author_email": "12345678+org-handle@users.noreply.github.com",
+      "expected_remote_url_template": "git@github.com:Example-Org/{repo_name}.git",
+      "push_locked": false,
+      "block_os_user_paths": true,
+      "block_affiliate_params": false,
+      "forbidden_tokens": [
+        "internal_codename_alpha",
+        "private_vault_name"
+      ],
+      "extra_content_patterns": [
+        {
+          "name": "internal_jira_or_client_tag",
+          "pattern": "\\bCLIENT-NDA-\\d+\\b"
+        }
+      ],
+      "extra_filename_patterns": []
+    },
+    "cleanroom": {
+      "description": "Clean-Room Commercial Release Package (strictest isolation: zero user paths, zero affiliate tags, zero non-template voice corpus).",
+      "root_paths": [
+        "/path/to/cleanroom_product_repo"
+      ],
+      "expected_author_email": "",
+      "expected_remote_url": "",
+      "push_locked": true,
+      "block_os_user_paths": true,
+      "block_affiliate_params": true,
+      "forbidden_tokens": [],
+      "extra_content_patterns": [],
+      "extra_filename_patterns": [
+        {
+          "name": "voice_corpus_export",
+          "pattern": "(^|/)corpus_inbox/(?!README\\.md$|\\.gitkeep$).+"
+        }
+      ]
+    }
+  }
+}

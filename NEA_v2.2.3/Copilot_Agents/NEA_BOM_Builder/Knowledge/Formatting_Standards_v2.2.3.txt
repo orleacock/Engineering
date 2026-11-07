@@ -1,0 +1,71 @@
+# Workbook Formatting & Structural Integrity Standards
+
+Version: 2.2.3
+Status: Current
+Document ID: NEA-STD-002
+Logical Name: Formatting_Standards
+Owner: NetCom Technical Services
+
+## Purpose
+
+This Standard defines the structural, formula-preservation, layout, and unit-summary formatting rules governing NetCom Engineering Assistant (NEA) workbooks. Functional workbook integrity always takes precedence over cosmetic styling.
+
+Current approved artifact versions are governed by `Repository_Index.md`.
+
+---
+
+## 1. Controlled Workbook & Worksheet Structure Lock
+
+NEA workbooks contain functional structures whose exact names and coordinates are required for formula evaluation and data validation:
+
+| Workbook | Controlled Structural Elements (Never Rename or Repurpose) |
+| :--- | :--- |
+| **`BOM_Materials_Master_Template.xlsx`** | • Worksheet names: `Cover Sheet`, `Materials Master`, `Fiber Assemblies`, `Cable Harness`, `Project BOM`, `Lists`<br>• Official Excel Table: **`tblMaterials`** (`Materials Master!$A$3:$G$600`)<br>• Secondary optical catalog range: `'Fiber Assemblies'!$A$3:$H$1258`<br>• Tertiary harness variant catalog range: `'Cable Harness'!$A$3:$H$1258`<br>• Dynamic spill formula & Defined Name: **`BOMPartNumbers`** (`Lists!$H$1#`)<br>• Formula-protected BOM range: `Project BOM!$A$7:$J$155` *(Must remain a standard worksheet range to support intentional blank grouping rows; never convert `Project BOM` into an Excel ListObject Table per `GOV-007`)* |
+| **`Cable_Running_List_Template.xlsx`** | • Worksheet names: `Cover Sheet`, `Cable Running List`, `Reference Lists`<br>• 16-column CRL header schema in `Cable Running List!$A$2:$P$2`<br>• Controlled validation lists in `Reference Lists!$A$1:$D$12` |
+| **`Project_Cover_Sheet_Template.xlsx`** | • Worksheet names: `Cover Sheet`, `Reference Lists` |
+
+---
+
+## 2. Formula Preservation & OpenXML Shared-Formula Rules
+
+1. **Never Overwrite Formula-Controlled Columns on `Project BOM`**:
+   - **Engineer-Editable Columns**: Only **Column `B` (`MB P/N`)**, **Column `C` (`Qty`)**, and **Column `J` (`Notes`)** may be edited during project BOM work.
+   - **Formula-Locked Columns**: **Column `A` (`Line`)** and **Columns `D:I` (`Category`, `Manufacturer`, `MFG Part Number`, `UOM`, `Description`, `Status`)** contain prebuilt formulas across `Rows 8–167`.
+   - Typing static values over `Columns D:I` (or deleting formulas from unused blank rows in `Rows 8–167`) is a release-blocking **`Action Required` (`AR-##`)** defect.
+   - If a lookup returns `"Not found"`, blank, or an unexpected attribute, fix the `MB P/N` in `Column B` or remediate the catalog record in `Materials Master` / `Fiber Assemblies`—never type over `Columns D:I`.
+2. **OpenXML Shared Formula Inspection Rule**:
+   - In Excel `.xlsx` XML (`xl/worksheets/sheet*.xml`), formula ranges such as `Project BOM` Column `A` (`A11:A167`) use OpenXML shared formulas where the master cell contains `<f t="shared" ref="A11:A167" si="1">IF(B11="","",ROW()-7)</f>` and follower cells contain `<f t="shared" si="1"/>` (with `f.text == None`).
+   - Any XML inspection script checking for overwritten formulas must verify `cell.find('main:f') is not None` rather than `bool(f.text)`.
+3. **Cover Sheet Formula Links**:
+   - Preserve dynamic header-link formulas in `Project BOM!B2, E2, H2` and Revision History cells `Cover Sheet!B30:C30`.
+
+---
+
+## 3. Row Spacing & Visual Grouping Rules
+
+Engineers routinely leave blank rows between material categories on `Project BOM` or between rooms/systems on `Cable Running List` to improve visual readability:
+
+| Blank Row / Run Spacing Condition | Governed Classification (`Review_Standards`) |
+| :--- | :--- |
+| **Blank gap of `<= 5` consecutive rows/runs** *(with formulas intact in `Project BOM` Columns `A` & `D:I`)* | **No Finding** *(Valid visual grouping convention)* |
+| **Blank gap of `> 5` consecutive rows/runs** | **`Advisory` (`ADV-##`)** *(Single consolidated note to confirm rows were not accidentally deleted)* |
+
+---
+
+## 4. Unit-Aware Summary Formatting (`GOV-002`)
+
+1. **Prohibition of Undifferentiated Mixed-UOM Sums**:
+   - Quantities with incompatible Units of Measure (`FT`, `EA`, `KT`, `BX`, `M`, `RL`, `PK`) shall never be added together and presented as a meaningful engineering or procurement quantity.
+   - The legacy template formula in `Project BOM!G4` (`=SUM(C8:C167)`) sums mixed UOMs and shall be flagged as a non-blocking **`Advisory` (`ADV-##`)** item (tracked for template redesign under `GOV-002`).
+2. **Required Unit-Aware Takeoff Metrics**:
+   - Engineering reviews and BOM summaries shall present quantities separated by unit and functional category:
+     - **Total Line Items** (`=COUNTIF(B8:B167,"<>")`)
+     - **Bulk Copper & Fiber Cable Footage (`FT`)**
+     - **Discrete Connectivity, Hardware & Assemblies (`EA`, `KT`, `BX`)**
+
+---
+
+## 5. Typography & Visual Presentation Defaults
+
+- **Font & Sizing**: Default worksheet text uses `Calibri 11pt` (with larger bold headers on Cover Sheets and section banners).
+- **Formatting Restraint**: Do not reformat functional templates solely for cosmetic preferences (`Review_Standards`). Flag formatting issues only when they impair readability, printing, formula operation, or engineering interpretation.
