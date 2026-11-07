@@ -253,12 +253,12 @@ Repository: Homunculus | HEAD SHA: 87eee6ffc0fa | Tree Hash: ce2e098ff2e6
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-07`
-- **Checkpoint Provenance**: `HEAD SHA: 87eee6ffc0fa` | `Tree Hash: ce2e098ff2e6` | `Worktree: clean` | `Last Verification: VRF-9558a2136173, VRF-46b66d6b3f13, SBX-20261107_114357-f7c6405e, SBX-20261107_115321-71b82997, SBX-20261107_115840-d0c27973`
+- **Checkpoint Provenance**: `HEAD SHA: 87eee6ffc0fa` | `Tree Hash: ce2e098ff2e6` | `Worktree: clean` | `Last Verification: VRF-9558a2136173, VRF-46b66d6b3f13, VRF-d8146caa462f, SBX-20261107_115321-71b82997, SBX-20261107_115840-d0c27973`
 - **Where We Stopped (Verified State & Context)**:
-  Committed Clean-Room Homunculus (87eee6f, 97/97 parity) and Parent Engineering repo after 2-Tier Single-Source Rule Diet (AGENTS.md 21,880 B <= 22,500 B), symlink/prefer_copy/zip homunculus_paths resolution, Compare-Light 14/14 PARITY_OK, and LL-027
+  Completed 2-Tier Single-Source Rule Diet (AGENTS.md 21,880 B <= 22,500 B), 97/97 Clean-Room promotion (87eee6f), LL-027, and Old vs. Current System Performance Scorecard (VRF-d8146caa462f)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run old-vs-current system comparison performance benchmark scorecard
+  1. Discuss & design on-call internal telemetry/bloat-drift pulse tool (parent workstation + shipping inside Homunculus alongside skill-architect / audit_skill_hygiene.py)
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks
