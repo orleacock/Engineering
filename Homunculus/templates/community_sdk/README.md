@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧩 Homunculus Community Extension SDK (`MIT License`)
+# 🧩 Homunculus Community Extension SDK (`Apache-2.0`)
 
 **Build & Share Custom Drop-In Add-Ons, Domain Skills, and Visual Studio Color Palettes**
 
@@ -10,9 +10,9 @@
 
 ---
 
-## 1. Overview & Open-Source SDK License (`Model C — Part II`)
+## 1. Overview & Open-Source License (`Apache-2.0`)
 
-While the **Homunculus Core Engine** (`rules/`, `skills/`, `adapters/`, `scripts/`) is distributed via the **Alchemical-3D Discord Store** under the Source-Available Commercial Seat License ([`LICENSE.md`](../../LICENSE.md) Part I), all files inside `templates/community_sdk/` are released under the **permissive `MIT License` ([`LICENSE.md`](../../LICENSE.md) Part II)**.
+Both the **Homunculus Core Engine** (`rules/`, `skills/`, `adapters/`, `scripts/`) and all starter templates inside `templates/community_sdk/` are open-source and released under the permissive **`Apache-2.0` License ([`LICENSE.md`](../../LICENSE.md))** with zero cost to entry.
 
 That means you are 100% free to use the starter templates in this directory to build, publish, share, or sell your own custom:
 1. **Drop-In Side-Loaded Add-Ons (`addons/<your-addon>/SKILL.md`)** for specialized engineering domains (e.g., RF layout checks, PLC ladder logic verification, FEA report templates, CNC post-processor rules).

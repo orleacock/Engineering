@@ -51,13 +51,13 @@
       ]
     },
     "cleanroom": {
-      "description": "Compartment B2: Homunculus Commercial Clean-Room",
+      "description": "Compartment B2: Homunculus Open-Source Clean-Room (Apache-2.0)",
       "root_paths": [
         "/home/orin/Projects/Alchemical3D/Homunculus"
       ],
       "expected_author_email": "109475365+Orin-Alchemical-3D@users.noreply.github.com",
-      "expected_remote_url": "",
-      "push_locked": true,
+      "expected_remote_url": "git@github-alchemical:Alchemical-3D/Homunculus.git",
+      "push_locked": false,
       "block_os_user_paths": true,
       "block_affiliate_params": true,
       "extra_filename_patterns": [

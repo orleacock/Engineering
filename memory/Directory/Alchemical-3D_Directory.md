@@ -371,7 +371,7 @@ last_synced: "2026-11-07"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 79e74e4c8511` | `Tree: f73cd4360aed`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 460d26f3da0d` | `Tree: 100f78bf71f4`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -412,10 +412,10 @@ last_synced: "2026-11-07"
 │   ├── Capabilities_and_Architecture_Guide.md
 │   ├── Commands_and_Prompts_Reference.md
 │   ├── Developer_Data_Safety_Guidelines.md
-│   ├── Discord_Store_Release_Guide.md
 │   ├── FAQ.md
 │   ├── Memory_Setup_README.md
-│   └── Quick_Start_and_Setup_Guide.md
+│   ├── Quick_Start_and_Setup_Guide.md
+│   └── Release_and_Community_Guide.md
 ├── hooks/
 │   └── hooks.json
 ├── rules/

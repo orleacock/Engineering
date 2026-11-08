@@ -139,9 +139,9 @@ A common reason engineering teams abandon AI frameworks is deployment friction: 
 - **Single Cross-OS Archive (`1. Linux -> 2. macOS -> 3. Windows`) with Dual Deployment:**
   - **Track 1 — Automated Installer (`install.sh` / `install.ps1`):** One-command adapter wiring for developer workstations where local permissions allow.
   - **Track 2 — Zero-Install "Drop-In & Point" Mode (`Locked-Down Corporate IT Safe`):** Pure Python standard-library and Markdown architecture (`HOMUNCULUS_START_HERE.md`) that runs by simply unzipping the folder into a workspace—requiring **zero** admin privileges, **zero** script installation, **zero** symlinks, and **zero** `pip` dependencies.
-- **`Model C` Hybrid Licensing (`Paid Discord Store Core + Public Companion SDK`):**
-  - **Paid Core Archive (`Source-Available Commercial Seat License`):** Ships 100% readable, editable Python and Markdown source code via the Alchemical-3D Discord Store, permitting unlimited personal, day-job, and client commercial engineering work (unlike `CC BY-NC` licenses that block professional use) while protecting the core engine against resale or public mirroring.
-  - **Public Companion SDK (`MIT` / `Apache-2.0`):** Open schemas, diagram blueprints, and extension templates on GitHub so the community can build and share custom add-ons freely.
+- **Open-Source `Apache-2.0` Licensing (`Zero Cost to Entry` + `Ko-fi` & Consulting):**
+  - **Open-Source Core & SDK (`Apache-2.0`):** Ships 100% readable, editable Python and Markdown source code on GitHub with zero cost to entry, permitting unlimited personal, day-job, and client commercial engineering work (unlike `CC BY-NC` licenses that block corporate/day-job adoption) while requiring `Alchemical-3D` copyright attribution on redistribution and providing explicit patent grant protection.
+  - **Voluntary Support (`Ko-fi`) & Commercial Services:** Supported by voluntary community contributions at `https://ko-fi.com/alchemical3d` alongside 1-on-1 workspace setup consulting, custom domain skill engineering, and live team workshops (`we@alchemical3d.net`).
 - **Hands-On Workshops & Team Enablement:**
   - Structured live workshops walking engineering teams and technical creators through setting up Dual-Mode Memory, building project state ledgers, running parallel subagent swarms, and eliminating hallucinated specs from their documentation and takeoff pipelines.
 - **Custom Consulting & Enterprise Onboarding:**

@@ -1,8 +1,8 @@
 <div align="center">
 
-# ❓ Homunculus Buyer & User FAQ
+# ❓ Homunculus User FAQ
 
-**Answers on Ease of Use, OS Support, Project Memory, Custom Themes, Licensing & Discord Support**
+**Answers on Ease of Use, OS Support, Project Memory, Custom Themes, Open-Source Licensing & Discord Support**
 
 [**🏠 Main Cover Page**](../README.md) • [**🚀 Quick-Start Guide**](Quick_Start_and_Setup_Guide.md) • [**🧠 Capabilities Overview**](Capabilities_and_Architecture_Guide.md) • [**🗂️ Memory Guide**](Memory_Setup_README.md) • [**📟 Prompts & Command Deck**](Commands_and_Prompts_Reference.md) • [**🛡️ Data Safety**](Developer_Data_Safety_Guidelines.md)
 
@@ -17,7 +17,7 @@
 3. [Project Memory, Obsidian & Picking Up After Breaks](#3-project-memory-obsidian--picking-up-after-breaks)
 4. [Fact-Checking, Brainstorm Quarantine & Data Privacy](#4-fact-checking-brainstorm-quarantine--data-privacy)
 5. [Custom Brand Colors & Optional Voice Matching](#5-custom-brand-colors--optional-voice-matching)
-6. [Purchasing, Discord Buyer Role, Licensing & Support](#6-purchasing-discord-buyer-role-licensing--support)
+6. [Open-Source Licensing, Community Support, Ko-fi & Consulting](#6-open-source-licensing-community-support-ko-fi--consulting)
 7. [Common Status Messages & Troubleshooting](#7-common-status-messages--troubleshooting)
 
 ---
@@ -96,18 +96,19 @@ Your own projects are never locked to our theme: Homunculus includes neutral dar
 
 ---
 
-## 6. Purchasing, Discord Buyer Role, Licensing & Support
+## 6. Open-Source Licensing, Community Support, Ko-fi & Consulting
 
 ### Q6.1: Where do I download Homunculus, get support, or share feedback?
-- **Download**: Homunculus is available exclusively through the **Alchemical-3D Discord Store** ([Join the Alchemical-3D Discord](https://discord.gg/aE49DW2xXe)).
-- **Automatic Discord Buyer Role**: Purchasing through Discord automatically unlocks your **Homunculus Buyer Role**, giving you access to private support (`#homunculus-support`), release downloads (`#homunculus-releases`), and development (`#homunculus-dev`) channels.
-- **Offering Feedback & Reporting Issues (`Discord` or `GitHub Issues`)**: We love hearing how Homunculus is working in your projects! You can share feedback, suggest new features, or report issues either in the **[Alchemical-3D Discord](https://discord.gg/aE49DW2xXe)** or directly via this repository's **[GitHub Issue Tracker](https://github.com/Alchemical-3D/Homunculus/issues)**.
+- **Download (`Free & Open Source`)**: Clone `https://github.com/Alchemical-3D/Homunculus.git` or download the latest release archive (`Homunculus-v1.0.0.zip`) from [**GitHub Releases**](https://github.com/Alchemical-3D/Homunculus/releases) with zero cost to entry.
+- **Open Community Discord**: Join the [**Alchemical-3D Discord**](https://discord.gg/aE49DW2xXe) for open access to support (`#homunculus-support`), release announcements (`#homunculus-releases`), and development (`#homunculus-dev`) channels.
+- **Offering Feedback & Reporting Issues (`Discord` or `GitHub Issues`)**: We love hearing how Homunculus is working in your projects! Share feedback, suggest new features, or report issues either in the **[Alchemical-3D Discord](https://discord.gg/aE49DW2xXe)** or directly via this repository's **[GitHub Issue Tracker](https://github.com/Alchemical-3D/Homunculus/issues)**.
+- **Supporting Ongoing Development (`Ko-fi`)**: If Homunculus saves you time or prevents rework and you would like to support the project, consider [leaving a tip on Ko-fi](https://ko-fi.com/alchemical3d).
 
 ### Q6.2: Can I use Homunculus for commercial, employer, or paid client work?
-**Yes.** Under the **Homunculus Hybrid License (`Model C` — see [`LICENSE.md`](../LICENSE.md))**:
-- You have full rights to use and customize Homunculus across unlimited personal, employer, commercial, and client projects.
+**Yes.** Under the open-source **Apache License, Version 2.0 (`Apache-2.0` — see [`LICENSE.md`](../LICENSE.md))**:
+- You have full rights to use, modify, and customize Homunculus across unlimited personal, academic, employer, commercial, and client projects with zero cost to entry.
 - **100% Output Ownership**: Every code file, document, diagram, and deliverable you create with Homunculus belongs 100% to you (or your client/employer) with zero royalties.
-- **Simple Fair-Use Rule**: You may not resell or publicly redistribute the paid Homunculus Core Archive itself. Starter templates in [`templates/community_sdk/`](../templates/community_sdk/README.md) are `MIT`-licensed so you can freely share custom add-ons and color themes.
+- **Simple Attribution Condition**: If you redistribute Homunculus or a modified fork of Homunculus (`rules/`, `skills/`, `adapters/`, `scripts/`, `templates/`), preserve the original `Alchemical-3D` copyright notice and [`LICENSE.md`](../LICENSE.md).
 
 ### Q6.3: Do you offer consulting, custom workspace deployment, or workshops for teams and larger organizations?
 **Yes.** If you would like hands-on assistance setting up and deploying Homunculus across your workspace, building custom domain skills and templates for your workflow, or hosting live workshops for your engineering or development team, we offer dedicated consulting and training services.

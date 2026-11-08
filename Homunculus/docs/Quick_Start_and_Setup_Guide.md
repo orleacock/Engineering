@@ -10,18 +10,18 @@
 
 ---
 
-## 1. Getting Homunculus & Unlocking Discord Support
+## 1. Getting Homunculus, Community Support & Consulting
 
-1. **Download via the Alchemical-3D Discord Store**:
-   Purchase and download the **Homunculus Core Archive (`Homunculus-v1.0.0.zip`)** from the official [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe) store.
-2. **Automatic Discord Buyer Role Unlock**:
-   Your Discord purchase automatically assigns your account the **Homunculus Buyer Role**, unlocking private access to:
+1. **Clone or Download from GitHub (`Free & Open Source — Apache-2.0`)**:
+   Clone `https://github.com/Alchemical-3D/Homunculus.git` or download the latest **`Homunculus-v1.0.0.zip`** release archive from [**GitHub Releases**](https://github.com/Alchemical-3D/Homunculus/releases).
+2. **Join the Open Alchemical-3D Discord Community**:
+   Hop into the official [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe) for open access to:
    - **`#homunculus-support`**: Direct setup help, workflow advice, and troubleshooting.
-   - **`#homunculus-releases`** & **`#homunculus-dev`**: Release downloads, updates, and community blueprints.
+   - **`#homunculus-releases`** & **`#homunculus-dev`**: Release announcements, updates, and community blueprints.
 3. **Share Feedback & Report Issues (`Discord` or `GitHub Issue Tracker`)**:
    We actively welcome your feedback, workflow ideas, and bug reports! Share your thoughts directly in the [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe) (`#homunculus-support` / `#homunculus-dev`) or open a ticket anytime in the [**GitHub Issue Tracker**](https://github.com/Alchemical-3D/Homunculus/issues).
-4. **Optional Consulting & Team Workshops**:
-   Want hands-on help deploying Homunculus across your workspace or hosting a live workshop for your organization? Reach out at [we@alchemical3d.net](mailto:we@alchemical3d.net) or connect in the [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe).
+4. **Support on Ko-fi & Optional Consulting / Team Workshops**:
+   Homunculus is open-source with zero cost to entry. If you'd like to support ongoing development, you can [leave a tip on Ko-fi](https://ko-fi.com/alchemical3d)—and if you want hands-on help deploying Homunculus across your workspace or hosting a live workshop for your organization, reach out at [we@alchemical3d.net](mailto:we@alchemical3d.net) or in the [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe).
 
 ---
 

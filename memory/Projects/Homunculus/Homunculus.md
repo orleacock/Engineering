@@ -5,10 +5,10 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v1.0.0 Release Candidate"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "79e74e4c8511"
-tree_hash: "ce2e098ff2e6"
-checkpoint_head_sha: "79e74e4c8511"
-checkpoint_tree_hash: "ce2e098ff2e6"
+repo_head_sha: "460d26f3da0d"
+tree_hash: "d7e9b1f0c628"
+checkpoint_head_sha: "460d26f3da0d"
+checkpoint_tree_hash: "d7e9b1f0c628"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-07"
@@ -36,9 +36,9 @@ Part of the [`README.md`](../../README.md)
 ## 🔒 Concept & Design Philosophy ("Why")
 - **Core Identity & Domain-General Engineering Mission (`Truth > Comfort`):** `Homunculus` is a portable, **AI-agnostic engineering framework** carrying hardened lessons learned, dual-mode project memory, deterministic claim/math fact-checking, token-lean subagent orchestration, and publication-grade visual documentation tooling into a ready-to-ship package. It is engineered for **all day-to-day engineering and design disciplines** (software, mechanical, electrical/structured cabling, firmware, and systems—not restricted to maker-space projects) under the foundational mandate of **Truth and Accuracy over comfort**.
 - **Governing 4-Tier Priority Law (`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`):** Feature selection and runtime architecture strictly prioritize deterministic accuracy first, token/context efficiency second, multi-compartment data safety third, and execution speed fourth—achieving speed *through* first-pass verified accuracy and cross-OS zero-install portability rather than trading away truth. Modules requiring user corpus setup time (`addons/author-voice-cadence/`) ship as dormant **Zero-Install Drop-In Add-Ons** under `Homunculus/addons/` so the core `skills/` tree works on Day 0.
-- **Commercial Versioned Release & `Model C` Hybrid Licensing (`Discord Store` + Public SDK):** Sold on a **per-version basis** with an **optional donation above and beyond** via Discord's integrated store feature initially (expanding later). Uses **`Model C` Hybrid Licensing**:
-  - **Paid Core Archive (`Source-Available Commercial Seat License`):** Ships 100% readable, editable Python + Markdown source code permitting unlimited personal and commercial/employer/client engineering work while legally prohibiting resale, public mirroring, or competing redistribution of `Homunculus`.
-  - **Public Companion SDK / Blueprint Repo (`MIT` / `Apache-2.0`):** Publishes open JSON schemas, community Visual Studio palettes/blueprints, and extension templates so adopters can improve and share add-ons publicly without exposing the paid core engine.
+- **Open-Source Release (`Apache-2.0` — Zero Cost to Entry) + Voluntary Support (`Ko-fi`) & Commercial Consulting:** Released as an **open-source project (`Apache-2.0`)** on GitHub (`https://github.com/Alchemical-3D/Homunculus`) with **zero cost to entry** so engineers, developers, and enterprise teams can adopt and audit the full framework immediately:
+  - **Open-Source Core & Extension SDK (`Apache-2.0`):** Ships 100% readable, editable Python + Markdown source code permitting unlimited personal, open-source, commercial, employer, and client engineering work with mandatory `Alchemical-3D` attribution on redistribution (`LICENSE.md`) and explicit patent grant protection.
+  - **Sustainability & Services (`Ko-fi` + Consulting & Workshops):** Paired with voluntary community support via [**Ko-fi (`ko-fi.com/alchemical3d`)**](https://ko-fi.com/alchemical3d) and commercial **1-on-1 Workspace Setup Consulting, Custom Domain Skill Engineering, and Live Team Workshops** (`we@alchemical3d.net` / Alchemical-3D Discord).
 - **Dual-Mode Memory (`Headless` vs. `Obsidian` + `Standalone Zero-Vault Cold-Start`):**
   - **Standalone Zero-Vault & Zero-History Doctrine:** `Homunculus` is engineered to operate 100% standalone when deployed on an external workstation **without** any access to our `memory/` Vault, our project names (`Pneuma`, `Alembic`, `NEA`), or our prior conversation history. Every rule, skill, and CLI oracle operates directly on any arbitrary repository (`--repo <path>`), dynamically discovers project entities (`verify_claims.py`) and CAD stems (`inspect_hardware_ecosystem.py`) without hardcoded project lists, and can bootstrap a fresh project or standalone memory folder on demand (`sync_memory.py --init-memory` / `--init-project <Name> --repo-path <Path>`).
   - **Path A — Headless Memory (`CLI / Pure Markdown / SharePoint-Safe`):** Runs structured Markdown dossiers, single-writer task queues, `AUTO-TREE` snapshots, and `[TBD]` quarantine without requiring Obsidian—skipping Obsidian-only UI surfaces (`.obsidian/graph.json`, `.base` views, `> **Active Task Queue**: Tracked in `...` *(Single-Writer Task Umbrella)*.` GUI dependencies).
@@ -56,16 +56,16 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (`Phases 1–4E`, `teach-me`, `Directory/` freshness spine, and `LL-027` 2-tier single-source rule diet complete across **`97` clean-room files** at `100%` byte-for-byte parity with `/home/orin/Projects/Engineering/Homunculus`; verified via `SBX-20261107_115321-71b82997` `Compare-Light` `14/14` `PARITY_OK` and `SBX-20261107_115840-d0c27973` `Controls: 9/9 passed`, `+faults: 3/3 caught`, `29/29` unit tests OK, `0` portability/boundary/hygiene defects)
-- **GitHub Remote:** `https://github.com/Alchemical-3D/Homunculus` *(Model C Hybrid: Paid Discord Store Core + Public Companion SDK; git remote locked at `NONE` during clean-room build)*
-- **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Model C` Hybrid), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Discord_Store_Release_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
-- **Clean-Room Module Directories (`97` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md` `7,303` B, `data-and-credential-safety.md` `5,605` B, `verifiable-accuracy.md` `7,740` B — `2,609` w / `~3,522` tok/turn total), `skills/` (`9` core skills: `skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`, `teach-me`), `addons/` (`addons/author-voice-cadence` Drop-In add-on), `adapters/` (`agents_md/AGENTS.md` `21,880` B, `antigravity/`, `claude_code/CLAUDE.md` `22,547` B, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/`), `scripts/` (`homunculus_paths.py`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py` — `29/29` tests OK)
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (`Phases 1–4E`, `teach-me`, `Directory/` freshness spine, `LL-027` 2-tier single-source rule diet, and `LL-028` `Pairing D` AST navigation maps + unified AST kernel complete across **`97` clean-room files** at `100%` byte-for-byte parity with `/home/orin/Projects/Engineering/Homunculus`; verified via `SBX-20261107_164747-0996f501` `Controls: 6/6 passed`, `+faults: 2/2 caught`, `30/30` unit tests OK, `0` portability/boundary/hygiene defects)
+- **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
+- **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
+- **Clean-Room Module Directories (`97` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md` `7,303` B, `data-and-credential-safety.md` `5,605` B, `verifiable-accuracy.md` `7,740` B — `2,609` w / `~3,522` tok/turn total), `skills/` (`9` core skills: `skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`, `teach-me`), `addons/` (`addons/author-voice-cadence` Drop-In add-on), `adapters/` (`agents_md/AGENTS.md` `21,880` B, `antigravity/`, `claude_code/CLAUDE.md` `22,547` B, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/`), `scripts/` (`homunculus_paths.py`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py` — `30/30` tests OK)
 - **CAD & Firmware Directories:** _None (Pure Software / AI Skill & Tooling Suite)_
 - **Standards Applied:** [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `Author_Voice_and_Cadence`, `Image_and_Style_Rules`, `Subagent_and_Memory_Architecture`, `Alchemical3D_Color_Template`, [`Homunculus_Talking_Points`](Homunculus_Talking_Points.md), [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md), `Homunculus_Construction_and_Migration_Manual`
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
+Repository: Homunculus | HEAD SHA: 460d26f3da0d | Tree Hash: d7e9b1f0c628
   .gitignore
   HOMUNCULUS_START_HERE.md
   LICENSE.md
@@ -104,10 +104,10 @@ Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
   docs/Capabilities_and_Architecture_Guide.md
   docs/Commands_and_Prompts_Reference.md
   docs/Developer_Data_Safety_Guidelines.md
-  docs/Discord_Store_Release_Guide.md
   docs/FAQ.md
   docs/Memory_Setup_README.md
   docs/Quick_Start_and_Setup_Guide.md
+  docs/Release_and_Community_Guide.md
   hooks/
   hooks/hooks.json
   rules/
@@ -208,7 +208,7 @@ Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
 
 ## ⚠️ Paramount Architectural & Decontamination Hazards
 - **Zero Personalization / Entity Leakage Invariant:** Never copy `/home/orin` filesystem paths, `orleacock` personal account handles, independent enterprise data (`NetCom` / `NEA`), personal Discord archives (`corpus_inbox/`), personal stylometric tables, or vendor affiliate parameters (`?affp=6182`, `dt_id=Alchemical3D`) into `/home/orin/Projects/Alchemical3D/Homunculus`.
-- **License Boundary Invariant (`Model C` Hybrid):** Never apply `CC BY-NC-SA 4.0` (which blocks professional engineers from commercial/day-job use) or unrestricted OSI open-source licenses (`MIT`/`Apache`/`GPL`, which permit immediate third-party resale) to the Core Engine—enforce the **Source-Available Commercial Seat License** on the paid Discord Store Core archive and limit `MIT`/`Apache-2.0` strictly to the public companion extension/blueprint SDK.
+- **License Boundary Invariant (`Apache-2.0` Open-Source + Attribution):** Maintain the permissive OSI **`Apache-2.0` License** (`LICENSE.md`) across the entire `Homunculus` repository (`rules/`, `skills/`, `adapters/`, `scripts/`, `templates/`, `docs/`) so individual engineers and enterprise teams can adopt `Homunculus` with zero cost to entry (driving Ko-fi support and commercial consulting/workshop engagements) while legally requiring `Alchemical-3D` copyright attribution on any redistribution.
 - **No Silent Degradation of Bound Files:** Never drop always-on rule guardrails (`co-engineering-partner`, `verifiable-accuracy`) or safety gates (`verify_claims.py` `SHA-256` receipts, copy-on-write sandbox containment) merely to simplify packaging—engineer explicit rule, recommended-rule, or adapter bindings per target client.
 
 ## 📐 Verified Specs & Key Content (Locked `v1.0` Product Matrix)
@@ -240,7 +240,7 @@ Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
 
 ## 🔗 Companion Projects & Kinematic / System Links
 - [`Brand`](../../Projects/Brand/Brand.md) — Supplies official Alchemical-3D vector marks (`Alchemical-3D-Badge-Gradient-PRIMARY-Alchemical-3D-Logo-Gradient-PRIMARY-Transparent-Background.svg`) and Dark Slate palette tokens (`Alchemical3D_Color_Template`).
-- [`Maker-Tools`](../../Projects/Maker-Tools/Maker-Tools.md) & [`Alchemical_Web_Docs`](../../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) — Ecosystem companion portals (`we@alchemical3d.net`, `https://discord.gg/aE49DW2xXe`) connecting Discord Store releases and public SDK documentation.
+- [`Maker-Tools`](../../Projects/Maker-Tools/Maker-Tools.md) & [`Alchemical_Web_Docs`](../../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) — Ecosystem companion portals (`we@alchemical3d.net`, `https://discord.gg/aE49DW2xXe`, `https://ko-fi.com/alchemical3d`) connecting open-source GitHub releases, community Discord channels, and consulting services.
 - **Bidirectional R&D & Lessons-Learned Loop (``<legacy_builder_workspace>`` $\leftrightarrow$ [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) $\leftrightarrow$ `Homunculus`):** Co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are dogfooded on the parent workstation (``<legacy_builder_workspace>``) first with findings logged in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md), then ported into `Homunculus`; conversely, newly engineered `Homunculus` advancements (declarative `homunculus_safety.json` boundary scanner, cross-OS/drop-in patterns, M365/Cowork adapters, and Priority 2 Visual Studio upgrades) are built and sandbox-validated in `Homunculus` first, then backported into ``<legacy_builder_workspace>`` via `Orin_Workstation_Tasks.md`.
 
 ## 🔍 Provenance Status & Open [TBD] / [CONFLICT] Ledger
@@ -253,14 +253,12 @@ Repository: Homunculus | HEAD SHA: 79e74e4c8511 | Tree Hash: ce2e098ff2e6
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-07`
-- **Checkpoint Provenance**: `HEAD SHA: 79e74e4c8511` | `Tree Hash: ce2e098ff2e6` | `Worktree: clean` | `Last Verification: SBX-20261107_164747-0996f501 (30/30 unit tests OK, 6/6 controls, 2/2 +faults caught, 97/97 clean-room parity, Clean-Room commit 79e74e4)`
+- **Checkpoint Provenance**: `HEAD SHA: 460d26f3da0d` | `Tree Hash: d7e9b1f0c628` | `Worktree: clean` | `Last Verification: VRF-b61dc832857d / VRF-6a1a9afebf29 / SBX-20261107_164747-0996f501 (30/30 unit tests OK, 97/97 clean-room parity, Clean-Room commit & push 460d26f)`
 - **Where We Stopped (Verified State & Context)**:
-  Completed 5-part Script/Skill Matrix audit, AST-verified in-script Developer & AI Navigation Maps across all 20 scripts (261 symbols), Pairing D Full-Spectrum Synthesis (Single-Pass Unified AST Kernel, Dual-Surface _Software.md line anchors, In-Process/Shared-SourceIndex verify_claims fast-path), and D-01..D-09 doc/installer parity.
+  Transitioned Homunculus to Apache-2.0 open-source license (zero cost to entry + Ko-fi & consulting), repurposed docs/Release_and_Community_Guide.md, and pushed Clean-Room repository to git@github-alchemical:Alchemical-3D/Homunculus.git (460d26f).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Review queued [SKILL-ARCHITECT TELEMETRY PULSE] discussion item when ready
-  2. Push to remote when confirmed
-- **Open Discussion / Alignment Questions**: Evaluate internal on-call telemetry pulse design for skill-architect.
+  1. Review queued [SKILL-ARCHITECT TELEMETRY PULSE] discussion item when ready\n2. Continue Phase 5 or ecosystem development
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

@@ -115,6 +115,6 @@ Homunculus includes **Skill Architect**, a two-mode assistant for building and m
 
 <div align="center">
 
-**Next Step:** See how easy it is to run in the [**🚀 Quick-Start Guide**](Quick_Start_and_Setup_Guide.md), browse copy-pasteable prompts in the [**📟 Prompts & Command Deck**](Commands_and_Prompts_Reference.md), or read the [**❓ Buyer & User FAQ**](FAQ.md).
+**Next Step:** See how easy it is to run in the [**🚀 Quick-Start Guide**](Quick_Start_and_Setup_Guide.md), browse copy-pasteable prompts in the [**📟 Prompts & Command Deck**](Commands_and_Prompts_Reference.md), or read the [**❓ User FAQ**](FAQ.md).
 
 </div>

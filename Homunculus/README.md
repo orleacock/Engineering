@@ -6,13 +6,13 @@
 
 **The Drop-In Upgrade for AI Coding & Engineering Assistants — Automatic Project Memory, Fact-Checking, Skill Hygiene & Session Continuity**
 
-[![Version](https://img.shields.io/badge/Release-v1.0.0-FF3985.svg?labelColor=1E1E24)](#how-to-get-homunculus--unlock-discord-support)
+[![Version](https://img.shields.io/badge/Release-v1.0.0-FF3985.svg?labelColor=1E1E24)](#how-to-get-homunculus--join-the-community)
 [![Ecosystem](https://img.shields.io/badge/Ecosystem-Alchemical--3D-C90448.svg?labelColor=1E1E24)](https://github.com/Alchemical-3D)
 [![OS Support](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-595959.svg?labelColor=1E1E24)](docs/Quick_Start_and_Setup_Guide.md)
 [![Setup](https://img.shields.io/badge/Setup-Zero--Install%20Drop--In-38BDF8.svg?labelColor=1E1E24)](docs/Quick_Start_and_Setup_Guide.md)
-[![License](https://img.shields.io/badge/License-Model%20C%20Hybrid-808080.svg?labelColor=1E1E24)](LICENSE.md)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-808080.svg?labelColor=1E1E24)](LICENSE.md)
 
-[**🚀 Quick-Start Guide**](docs/Quick_Start_and_Setup_Guide.md) • [**🧠 Capabilities Overview**](docs/Capabilities_and_Architecture_Guide.md) • [**🗂️ Project Memory Guide**](docs/Memory_Setup_README.md) • [**📟 Prompts & Command Deck**](docs/Commands_and_Prompts_Reference.md) • [**🛡️ Data Safety**](docs/Developer_Data_Safety_Guidelines.md) • [**❓ Buyer & User FAQ**](docs/FAQ.md)
+[**🚀 Quick-Start Guide**](docs/Quick_Start_and_Setup_Guide.md) • [**🧠 Capabilities Overview**](docs/Capabilities_and_Architecture_Guide.md) • [**🗂️ Project Memory Guide**](docs/Memory_Setup_README.md) • [**📟 Prompts & Command Deck**](docs/Commands_and_Prompts_Reference.md) • [**🛡️ Data Safety**](docs/Developer_Data_Safety_Guidelines.md) • [**❓ User FAQ**](docs/FAQ.md)
 
 </div>
 
@@ -114,20 +114,20 @@ This GitHub repository is the complete online manual for Homunculus. Browse the 
 | **[3. Prompts, Commands & Arguments Deck](docs/Commands_and_Prompts_Reference.md)** | Copy-pasteable **Plain-English Chat Prompts** for everyday use, plus the complete reference table of terminal commands and arguments for power users. |
 | **[4. Project Memory & Session Handoff Guide](docs/Memory_Setup_README.md)** | How to organize single or multi-project workspaces, switch between standard Markdown and Obsidian, use Quarantine notes, and pick up projects after long breaks. |
 | **[5. Data Safety & Privacy Guide](docs/Developer_Data_Safety_Guidelines.md)** | How Homunculus keeps credentials out of AI chat logs and prevents accidental cross-project or personal path leaks before you commit code. |
-| **[6. Buyer & User FAQ](docs/FAQ.md)** | Straight answers to common questions before and after buying: ease of use, OS & work-laptop support, custom colors, commercial licensing, and Discord support. |
-| **[7. Community Extension SDK (`MIT`)](templates/community_sdk/README.md)** | Starter templates for creating your own custom Drop-In Add-Ons and brand color palettes. |
-| **[8. Discord Store & Support Guide](docs/Discord_Store_Release_Guide.md)** | How purchasing on the Discord Store unlocks your download and private Discord support channels, plus how to use the GitHub Issue Tracker. |
+| **[6. User FAQ](docs/FAQ.md)** | Straight answers to common questions: ease of use, OS & work-laptop support, custom colors, open-source `Apache-2.0` licensing, and community Discord support. |
+| **[7. Community Extension SDK (`Apache-2.0`)](templates/community_sdk/README.md)** | Starter templates for creating your own custom Drop-In Add-Ons and brand color palettes. |
+| **[8. Release, Community & Support Guide](docs/Release_and_Community_Guide.md)** | How open-source GitHub releases, community Discord channels, Ko-fi support, consulting, and the 4-Gate Maintainer Checklist work together. |
 
 ---
 
-## 🛒 How to Get Homunculus & Unlock Discord Support
+## 📦 How to Get Homunculus & Join the Community
 
-Homunculus is delivered as a **100% readable, locally customizable source package** (`Model C` Hybrid License — see [`LICENSE.md`](LICENSE.md)) with full commercial and employer usage rights and zero recurring subscriptions or cloud lock-in:
+Homunculus is **free and open-source with zero cost to entry** (`Apache-2.0` License — see [`LICENSE.md`](LICENSE.md)), giving you 100% readable, locally customizable source code, full personal and commercial usage rights, and zero recurring subscriptions or cloud lock-in:
 
-1. **Purchase & Download via the Alchemical-3D Discord Store**:
-   - Join the official [**Alchemical-3D Discord**](https://discord.gg/aE49DW2xXe) and visit the **Discord Store** to get the **Homunculus Core Archive (`Homunculus-v1.0.0.zip`)**.
-2. **Automatic Discord Buyer Role Unlock**:
-   - Purchasing through Discord automatically unlocks your **Homunculus Buyer Role**, giving you direct access to private **Support (`#homunculus-support`)**, **Releases (`#homunculus-releases`)**, and **Development (`#homunculus-dev`)** channels.
+1. **Clone or Download from GitHub (`Free & Open Source`)**:
+   - Clone this repository directly (`git clone https://github.com/Alchemical-3D/Homunculus.git`) or download the latest release archive (`Homunculus-v1.0.0.zip`) from [**GitHub Releases**](https://github.com/Alchemical-3D/Homunculus/releases).
+2. **Join the Open Alchemical-3D Discord Community**:
+   - Join the official [**Alchemical-3D Discord**](https://discord.gg/aE49DW2xXe) to jump into our open **Support (`#homunculus-support`)**, **Releases (`#homunculus-releases`)**, and **Development (`#homunculus-dev`)** channels.
 3. **Public GitHub Manual & Issue Tracker**:
    - Use this GitHub repository anytime as your online user manual and open tickets in the [**GitHub Issue Tracker**](https://github.com/Alchemical-3D/Homunculus/issues) for bug reports, documentation questions, or feature requests.
 
@@ -137,7 +137,7 @@ Homunculus is delivered as a **100% readable, locally customizable source packag
 
 Homunculus is actively shaped by real-world engineering workflows, and **we want your feedback!** Whether you have a suggestion for a new workflow, feedback on how a tool behaved in your editor, a documentation improvement, or a bug report, you have two direct ways to share it:
 
-- **💬 In the [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe)**: Jump into our community channels—or use the buyer-unlocked **`#homunculus-support`** and **`#homunculus-dev`** channels—to share feedback, discuss ideas, and chat directly with us.
+- **💬 In the [Alchemical-3D Discord](https://discord.gg/aE49DW2xXe)**: Jump into our open **`#homunculus-support`** and **`#homunculus-dev`** community channels to share feedback, discuss ideas, and chat directly with us.
 - **🐛 On GitHub via the [Issue Tracker](https://github.com/Alchemical-3D/Homunculus/issues)**: Open an issue anytime on this repository to submit structured bug reports, feature requests, client adapter suggestions, or manual feedback.
 
 ---
@@ -155,9 +155,9 @@ Need hands-on help tailoring and rolling out Homunculus for your workflow or org
 
 ***
 
-> ☕ **Want to Support Alchemical-3D Above & Beyond?**
+> ☕ **Support Open-Source Development on Ko-fi**
 >
-> If you feel like supporting Alchemical-3D and the ongoing development of our tools and open ecosystem above and beyond your purchase copy, feel free to [visit our Ko-fi](https://ko-fi.com/alchemical3d)!
+> Homunculus is open-source and free for the community with zero cost to entry. If Homunculus has saved you time, prevented rework, or leveled up your workflow and you want to support ongoing development, consider [leaving a tip on Ko-fi](https://ko-fi.com/alchemical3d)!
 >
 > [![Ko-Fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/alchemical3d)
 
