@@ -466,6 +466,243 @@ class TestTeachMe(unittest.TestCase):
             self.assertEqual(tel["py_snoop_cmds"], 2)
             self.assertEqual(tel["ls_find_probes"], 1)
 
+    def test_complexity_router_depth_gate_tier_badge_and_3d_token_safety(self) -> None:
+        """Verify Solutions 1, 2, and 3 (--classify-complexity, --require-depth, --model-tier badge) + 2D/3D token safety."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tdir = Path(tmp)
+            repo_a = tdir / "Alchemical3D" / "A3DP_Gantry_Assembly"
+            repo_b = tdir / "Alchemical3D" / "Homunculus"
+            repo_a.mkdir(parents=True)
+            repo_b.mkdir(parents=True)
+            (repo_a / ".git").mkdir()
+            (repo_b / ".git").mkdir()
+
+            lic_a = repo_a / "LICENSE"
+            lic_a.write_text(
+                "The GNU General Public License is a free, copyleft license for software and other kinds of works.\n",
+                encoding="utf-8",
+            )
+            lic_b = repo_b / "LICENSE.md"
+            lic_b.write_text(
+                "# Apache License, Version 2.0 (`Apache-2.0`)\n"
+                "Copyright (c) 2026 Alchemical-3D\n"
+                "Homunculus is released under `Apache-2.0`.\n",
+                encoding="utf-8",
+            )
+
+            # Solution 1: Single-doc conceptual query routes to 'flash' / 'sonnet' (and clamps banned 'flash_lite')
+            proc_std = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--classify-complexity",
+                    "--subject",
+                    "Apache 2.0 License",
+                    "--impact-on",
+                    "Open Source Distribution",
+                    "--domain",
+                    "software",
+                    "--sources",
+                    str(lic_b),
+                    "--model-tier",
+                    "flash_lite",
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_std.returncode, 0, proc_std.stderr)
+            cls_std = json.loads(proc_std.stdout)
+            self.assertEqual(cls_std["complexity_tier"], "standard")
+            self.assertEqual(cls_std["antigravity_model"], "flash")
+            self.assertEqual(cls_std["claude_model"], "sonnet")
+            self.assertEqual(cls_std["rail_badge"], "TIER: FLASH // FAST")
+            self.assertIn("CLAMPED_BANNED_LITE_TO_FLASH_FLOOR", cls_std["triggers"])
+
+            # Solution 1b: Coupled physics / cross-repo query routes to 'pro' / 'opus'
+            proc_deep = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--classify-complexity",
+                    "--subject",
+                    "Stepper Inductance & Supply Voltage Torque Roll-Off",
+                    "--impact-on",
+                    "High-Speed Gantry Kinematics vs Resonance",
+                    "--domain",
+                    "electrical",
+                    "--sources",
+                    str(lic_a),
+                    str(lic_b),
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_deep.returncode, 0, proc_deep.stderr)
+            cls_deep = json.loads(proc_deep.stdout)
+            self.assertEqual(cls_deep["complexity_tier"], "deep")
+            self.assertEqual(cls_deep["antigravity_model"], "pro")
+            self.assertEqual(cls_deep["claude_model"], "opus")
+            self.assertEqual(cls_deep["rail_badge"], "TIER: PRO // DEEP")
+
+            # Solution 1c: Subject-only pneumatic/durometer/hardware query (without --sources) also routes to 'pro' / 'opus'
+            proc_pneuma = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--classify-complexity",
+                    "--subject",
+                    "Dual-Pump Pneumatic Architecture, BOM Fastener/Valve Specs & TPU Shore Hardness",
+                    "--impact-on",
+                    "Alchemical-3D Pneuma_Remote_Air & Homunculus Apache-2.0 Distribution",
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_pneuma.returncode, 0, proc_pneuma.stderr)
+            cls_pneuma = json.loads(proc_pneuma.stdout)
+            self.assertEqual(cls_pneuma["complexity_tier"], "deep")
+            self.assertEqual(cls_pneuma["antigravity_model"], "pro")
+            self.assertEqual(cls_pneuma["rail_badge"], "TIER: PRO // DEEP")
+
+            # Solution 2: Shallow brief or banned lite tier or dropped seed source fails --require-depth
+            shallow_brief = tdir / "shallow.md"
+            shallow_brief.write_text(
+                "---\n"
+                'title: "GPL v3"\n'
+                'subject: "GPL v3"\n'
+                'impact_on: "Alchemical-3D"\n'
+                'domain: "software"\n'
+                'project: "A3DP_Gantry_Assembly"\n'
+                'entity: "Alchemical-3D"\n'
+                'type: "study-brief"\n'
+                'status: "UNPROMOTED_STUDY_BRIEF"\n'
+                "consumed_by_memory: false\n"
+                'vrf_receipt: "UNVERIFIED"\n'
+                'created_at: "2026-11-08"\n'
+                "---\n\n"
+                "# 🧠 Engineering Brief+: GPL v3 → Alchemical-3D\n\n"
+                "<!-- FIRST-PRINCIPLES-THEORY:START -->\n"
+                "## 1. Core Mental Model\n"
+                "- Short summary.\n"
+                "## 2. Relational Impact Vector\n"
+                "- Short impact.\n"
+                "<!-- FIRST-PRINCIPLES-THEORY:END -->\n\n"
+                "## 3. Active Engineering Context Overlaps\n"
+                f"- [VERIFIED FACT] The GNU General Public License is a free, copyleft license for software and other kinds of works (Source: `{lic_a}#L1-L1`).\n"
+                "  Anchor:\n"
+                "  ```text\n"
+                "  The GNU General Public License is a free, copyleft license for software and other kinds of works.\n"
+                "  ```\n\n"
+                "## 4. Actionable Engineering Guardrails\n"
+                "1. Retain license notices.\n",
+                encoding="utf-8",
+            )
+            proc_shallow = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--verify",
+                    str(shallow_brief),
+                    "--require-depth",
+                    "--model-tier",
+                    "flash_lite",
+                    "--sources",
+                    str(lic_a),
+                    str(lic_b),
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc_shallow.returncode, 0)
+            sh_data = json.loads(proc_shallow.stdout)
+            err_blob = "\n".join(sh_data["structural_errors"])
+            self.assertIn("BANNED_LITE_MODEL_TIER", err_blob)
+            self.assertIn("SHALLOW_THEORY_SYNTHESIS", err_blob)
+            self.assertIn("INCOMPLETE_MENTAL_MODEL_PILLARS", err_blob)
+            self.assertIn("MISSING_TRADEOFF_ENVELOPE_TABLE", err_blob)
+            self.assertIn("UNCITED_SEED_SOURCE", err_blob)
+
+            # Solution 3 + 2D/3D non-collision: Deep brief with both sources, Alchemical-3D in headings/prose, and --model-tier pro passes
+            deep_brief = tdir / "deep.md"
+            deep_brief.write_text(
+                "---\n"
+                'title: "GPL v3 — Impact on Alchemical-3D"\n'
+                'subject: "GPL v3"\n'
+                'impact_on: "Alchemical-3D"\n'
+                'domain: "mechanical"\n'
+                'project: "A3DP_Gantry_Assembly"\n'
+                'entity: "Alchemical-3D"\n'
+                'type: "study-brief"\n'
+                'status: "UNPROMOTED_STUDY_BRIEF"\n'
+                "consumed_by_memory: false\n"
+                'vrf_receipt: "UNVERIFIED"\n'
+                'created_at: "2026-11-08"\n'
+                "---\n\n"
+                "# 🧠 Engineering Brief+: GPL v3 → Alchemical-3D 3D CAD Releases\n\n"
+                "> [!NOTE]\n"
+                "> - **Domain**: mechanical | **Project Context**: A3DP_Gantry_Assembly (entity: Alchemical-3D)\n"
+                "> - **Verification Receipt**: UNVERIFIED | **Source Hashes**: PENDING\n\n"
+                "<!-- FIRST-PRINCIPLES-THEORY:START -->\n"
+                "## 1. Core Mental Model\n"
+                "- **First-Principles Mechanism**: Strong reciprocal copyleft uses copyright law to guarantee that any redistributed derivative of a covered work carries the same freedoms downstream across all recipients.\n"
+                "- **Governing Scaling / System Law**: Derivative linkage propagates copyleft across combined works, whereas independent outputs generated by a tool remain separate.\n"
+                "- **Key Boundary Condition**: One-way license compatibility permits merging permissive code into copyleft assemblies, never the reverse.\n\n"
+                "## 2. Relational Impact Vector\n"
+                "- **Causal Coupling Chain**: **GPL v3** -> *(Reciprocal source disclosure)* -> **Alchemical-3D**.\n"
+                "| Parameter Shift | Primary Effect | Secondary Bottleneck | Failure Mode |\n"
+                "| :--- | :--- | :--- | :--- |\n"
+                "| **Increase** | Stronger community sharing | Commercial integration friction | License incompatibility |\n"
+                "| **Decrease** | Permissive adoption | Proprietary forks | Missing attribution |\n"
+                "<!-- FIRST-PRINCIPLES-THEORY:END -->\n\n"
+                "## 3. Active Engineering Context Overlaps\n"
+                "### Overlap Example 1: Copyleft in A3DP_Gantry_Assembly\n"
+                f"- [VERIFIED FACT] The GNU General Public License is a free, copyleft license for software and other kinds of works (Source: `{lic_a}#L1-L1`).\n"
+                "  Anchor:\n"
+                "  ```text\n"
+                "  The GNU General Public License is a free, copyleft license for software and other kinds of works.\n"
+                "  ```\n"
+                "### Overlap Example 2: Permissive Licensing in Homunculus\n"
+                f"- [VERIFIED FACT] Homunculus is released under `Apache-2.0` by Alchemical-3D (Source: `{lic_b}#L2-L3`).\n"
+                "  Anchor:\n"
+                "  ```text\n"
+                "  Copyright (c) 2026 Alchemical-3D\n"
+                "  Homunculus is released under `Apache-2.0`.\n"
+                "  ```\n\n"
+                "## 4. Actionable Engineering Guardrails\n"
+                "1. Preserve Alchemical-3D license headers across 2D and 3D engineering deliverables.\n",
+                encoding="utf-8",
+            )
+            proc_ok = subprocess.run(
+                [
+                    sys.executable,
+                    str(TEACH_BRIEF),
+                    "--verify",
+                    str(deep_brief),
+                    "--briefs-root",
+                    str(tdir),
+                    "--require-depth",
+                    "--model-tier",
+                    "pro",
+                    "--sources",
+                    str(lic_a),
+                    str(lic_b),
+                    "--json",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_ok.returncode, 0, proc_ok.stdout + proc_ok.stderr)
+            self.assertFalse((tdir / "README.md").exists())
+            ok_data = json.loads(proc_ok.stdout)
+            self.assertEqual(ok_data["status"], "PASS")
+            self.assertIn("[DOMAIN: MECHANICAL] ━━ [TIER: PRO // DEEP] ━━┓", ok_data["chat_rail_top"])
+            self.assertEqual(len(ok_data["chat_rail_top"]), len(ok_data["chat_rail_bottom"]))
+            self.assertLessEqual(len(ok_data["chat_rail_top"]), 80)
+
 
 if __name__ == "__main__":
     unittest.main()

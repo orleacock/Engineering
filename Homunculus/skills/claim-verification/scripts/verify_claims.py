@@ -32,20 +32,20 @@ Exit codes:
   Callees       : `homunculus_paths.py` (`ensure_directory_fresh` pre-audit guard)
   CLI Flags     : --target, --draft, --sources, --dump-whitelist, --fail-on-tbd, --strict-provenance, --require-anchors, --require-git-clean-sources, --memory-root, --project-dir, --entity, --allow-lessons-source, --transcript, --skip-freshness-check, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def normalize_counted_noun (#L378-L394)        | def canonicalize_unit (#L397-L420)
-    - def parse_num (#L423-L424)                     | def strip_non_claim_regions (#L427-L490)
-    - def normalize_fastener (#L493-L497)            | def normalize_designator (#L500-L501)
-    - def normalize_source_relpath (#L542-L554)      | def _blank_preserving_newlines (#L571-L572)
-    - def quarantine_unverified_source_zones (#L575-L605) | class GitWorktreeCache (#L608-L686)
-    - def inspect_source_provenance (#L689-L772)     | def _is_sibling_derivative_of_target (#L779-L792)
-    - def _is_lessons_learned_source (#L795-L815)    | def collect_source_files (#L818-L896)
-    - def map_qualifier_group (#L899-L904)           | class SourceFileInfo (#L907-L1088)
-    - def _canonicalize_entity_token (#L1130-L1140)  | def detect_entities_in_text (#L1143-L1165)
-    - def detect_entity_in_text (#L1168-L1174)       | class SourceIndex (#L1177-L1619)
-    - def _safe_eval_arith_with_dim (#L1622-L1718)   | def verify_calc_marker (#L1721-L1808)
-    - def attest_subagent_transcript (#L1811-L2011)  | def audit_target (#L2014-L2797)
-    - def format_whitelist_summary (#L2800-L2818)    | def verify_target_inprocess (#L2821-L2845)
-    - def verify_multiple_targets_inprocess (#L2848-L2879) | def main (#L2882-L3091)
+    - def normalize_counted_noun (#L378-L394)        | def canonicalize_unit (#L397-L424)
+    - def parse_num (#L427-L428)                     | def strip_non_claim_regions (#L431-L494)
+    - def normalize_fastener (#L497-L501)            | def normalize_designator (#L504-L505)
+    - def normalize_source_relpath (#L546-L558)      | def _blank_preserving_newlines (#L575-L576)
+    - def quarantine_unverified_source_zones (#L579-L609) | class GitWorktreeCache (#L612-L690)
+    - def inspect_source_provenance (#L693-L776)     | def _is_sibling_derivative_of_target (#L783-L796)
+    - def _is_lessons_learned_source (#L799-L819)    | def collect_source_files (#L822-L900)
+    - def map_qualifier_group (#L903-L908)           | class SourceFileInfo (#L911-L1102)
+    - def _canonicalize_entity_token (#L1144-L1154)  | def detect_entities_in_text (#L1157-L1179)
+    - def detect_entity_in_text (#L1182-L1188)       | class SourceIndex (#L1191-L1633)
+    - def _safe_eval_arith_with_dim (#L1636-L1732)   | def verify_calc_marker (#L1735-L1822)
+    - def attest_subagent_transcript (#L1825-L2025)  | def audit_target (#L2028-L2832)
+    - def format_whitelist_summary (#L2835-L2853)    | def verify_target_inprocess (#L2856-L2880)
+    - def verify_multiple_targets_inprocess (#L2883-L2914) | def main (#L2917-L3126)
 === END NAVIGATION MAP ===
 """
 
@@ -405,6 +405,10 @@ def canonicalize_unit(raw_u: str, sep: str) -> Optional[str]:
     # Distinguish lowercase 'w' (words in stylometrics, e.g. '19.0w' / '19.0 w') vs. uppercase 'W' (Watts)
     if raw_u == "w":
         return "words"
+    # Block attached uppercase 'D' (e.g., '2D', '3D', 'Alchemical-3D') from matching 'd' (days);
+    # Shore D durometer ('60D', '75D') is matched separately by SHORE_RE.
+    if not sep and raw_u.strip() == "D":
+        return None
     if sep:
         # Spaced number + unit: block "2 in", "1 a", "3 m" lowercase prose collisions
         if u_low in AMBIGUOUS_LOWER_SPACED_UNITS and raw_u not in CASE_SENSITIVE_SPACED_OK:
@@ -520,7 +524,7 @@ QUARANTINE_HEADING_RE = re.compile(
 HEADING_LEVEL_RE = re.compile(r"^(#{1,6})\s+")
 VRF_RECEIPT_RE = re.compile(r"\bVRF-[0-9a-f]{12}\b", re.IGNORECASE)
 WARNING_CONTEXT_RE = re.compile(
-    r"(?:>\s*\[!(?:WARNING|CAUTION|DANGER)\]|\b(?:NEVER|DO\s+NOT|PROHIBITED|DEPRECATED|OBSOLETE|HAZARD)\b)",
+    r"(?:>\s*\[!(?:WARNING|CAUTION|DANGER)\]|\b(?:NEVER|DO\s+NOT(?!\s+(?:pertain|need|require|include|have|apply|affect|exist|appear)\b)|PROHIBITED|DEPRECATED|OBSOLETE|HAZARD)\b)",
     re.IGNORECASE,
 )
 WARNING_ACK_RE = re.compile(
@@ -974,6 +978,16 @@ class SourceFileInfo:
         is_code = ext in CODE_SOURCE_EXTENSIONS
         c_st = max(1, start_line - 5)
         c_en = min(self.line_count, end_line + 5)
+        # Clamp upward expansion at Markdown section heading boundaries so adjacent sections do not bleed warnings
+        for up_idx in range(start_line - 2, c_st - 2, -1):
+            if 0 <= up_idx < self.line_count and HEADING_LEVEL_RE.match(self.lines[up_idx].strip()):
+                c_st = up_idx + 2
+                break
+        # Clamp downward expansion at the next Markdown section heading
+        for dn_idx in range(end_line, c_en):
+            if 0 <= dn_idx < self.line_count and HEADING_LEVEL_RE.match(self.lines[dn_idx].strip()):
+                c_en = dn_idx
+                break
         for idx in range(c_st - 1, c_en):
             ln = self.lines[idx]
             if is_code:
@@ -2086,8 +2100,16 @@ def audit_target(
                             })
 
     # 2. Anchor Hunk Verification pass & Local Claim-to-Anchor Token Binding
+    is_study_brief = bool(
+        re.search(
+            r"^(?:type:\s*study-brief|status:\s*['\"]?(?:UNPROMOTED_STUDY_BRIEF|PROMOTED_ENGINEERING_BRIEF)['\"]?)\b",
+            target_text[:600],
+            re.IGNORECASE | re.MULTILINE,
+        )
+    )
+    anchor_hunk_entities: Dict[int, Set[str]] = {}
     anchor_re = re.compile(
-        r"(?:(?:Source:\s*|[\(\[])(?P<path>[A-Za-z0-9_./-]+(?:\.[A-Za-z0-9]+)?)(?:#L|:)(?P<start>\d+)(?:[-–—](?:L)?(?P<end>\d+))?[\)\]]?)"
+        r"(?:(?:Source:\s*`?|[\(\[]`?)(?P<path>[A-Za-z0-9_./-]+(?:\.[A-Za-z0-9]+)?)(?:#L|:)(?P<start>\d+)(?:[-–—](?:L)?(?P<end>\d+))?`?[\)\]]?)"
         r"[^\n]*\n\s*Anchor:\s*\n\s*```[^\n]*\n(?P<hunk>.*?\n)\s*```",
         re.DOTALL | re.IGNORECASE,
     )
@@ -2121,7 +2143,21 @@ def audit_target(
                 break
         if in_quarantine:
             continue
-        warn_err = info.check_warning_context(c_st, c_en, c_hunk + " " + target_text[am.start():am.end()])
+        preceding_text = target_text[: am.start()]
+        pre_lines = preceding_text.splitlines()
+        claim_lines = []
+        for l in reversed(pre_lines):
+            l_str = l.strip()
+            if not l_str:
+                if claim_lines:
+                    break
+                continue
+            claim_lines.append(l_str)
+            if l_str.startswith("- ") or l_str.startswith("* ") or re.match(r"^\d+\.", l_str):
+                break
+        claim_lines.reverse()
+        claim_text = " ".join(claim_lines)
+        warn_err = info.check_warning_context(c_st, c_en, claim_text + " " + c_hunk + " " + target_text[am.start():am.end()])
         if warn_err:
             unbacked.append({"line": anc_line_no, "type": "WARNING_CONTEXT_CITATION", "claim": f"Anchor `{c_path}#L{c_st}-L{c_en}`: {warn_err}"})
             continue
@@ -2131,20 +2167,6 @@ def audit_target(
         if norm_disk != norm_hunk:
             unbacked.append({"line": anc_line_no, "type": "DOCTORED_ANCHOR_MISMATCH", "claim": f"Anchor hunk does not match actual disk slice in `{c_path}#L{c_st}-L{c_en}`"})
         else:
-            preceding_text = target_text[: am.start()]
-            pre_lines = preceding_text.splitlines()
-            claim_lines = []
-            for l in reversed(pre_lines):
-                l_str = l.strip()
-                if not l_str:
-                    if claim_lines:
-                        break
-                    continue
-                claim_lines.append(l_str)
-                if l_str.startswith("- ") or l_str.startswith("* ") or re.match(r"^\d+\.", l_str):
-                    break
-            claim_lines.reverse()
-            claim_text = " ".join(claim_lines)
 
             claim_fasteners = [m.group(1) for m in METRIC_FASTENER_RE.finditer(claim_text)]
             claim_designators = []
@@ -2166,13 +2188,19 @@ def audit_target(
                     or "#L" in lit
                     or re.search(r"\.[a-zA-Z0-9]{1,5}$", lit)
                     or lit.startswith("[TBD")
+                    or re.match(
+                        r"^\[(?:VERIFIED FACT|CAD TELEMETRY|CLI TELEMETRY|CONTEXT ANALOGY|SPATIAL / DFM ADVISORY|CONFLICT)\]$",
+                        lit,
+                        re.IGNORECASE,
+                    )
                     or lit.startswith("http")
                     or not re.search(r"[A-Za-z0-9]", lit)
                 ):
                     continue
                 claim_backticks.append(lit)
 
-            disk_slice_text = " ".join(disk_slice) + " " + os.path.basename(c_path)
+            bound_scope_lines = info.lines if is_study_brief else disk_slice
+            disk_slice_text = " ".join(bound_scope_lines) + " " + os.path.basename(c_path)
             disk_slice_low = disk_slice_text.lower()
             unbound_tokens = []
 
@@ -2205,7 +2233,10 @@ def audit_target(
 
             for btok in claim_backticks:
                 btok_low = btok.lower().strip("`'\"")
-                pat_b = rf"(?<![a-z0-9_]){re.escape(btok_low)}(?![a-z0-9_])"
+                if re.match(r"^\d+x?$", btok_low):
+                    pat_b = rf"(?<![a-z0-9_]){re.escape(btok_low.rstrip('x'))}x?(?![a-z0-9_])"
+                else:
+                    pat_b = rf"(?<![a-z0-9_]){re.escape(btok_low)}(?![a-z0-9_])"
                 if not re.search(pat_b, disk_slice_low):
                     unbound_tokens.append(f"`{btok}`")
 
@@ -2217,17 +2248,16 @@ def audit_target(
                 })
             else:
                 supported.append({"line": anc_line_no, "type": "VERIFIED_ANCHOR_HUNK", "claim": f"`{c_path}#L{c_st}-L{c_en}`"})
+                if info.entity != "*":
+                    hunk_start_ln = target_text[: am.start("hunk")].count("\n") + 1
+                    hunk_end_ln = target_text[: am.end("hunk")].count("\n") + 1
+                    for h_ln in range(hunk_start_ln, hunk_end_ln + 1):
+                        anchor_hunk_entities[h_ln] = {info.entity}
 
     current_heading_entities: Optional[Set[str]] = None
+    current_heading_level: int = 0
     in_evidence_packet = False
     in_theory_zone = False
-    is_study_brief = bool(
-        re.search(
-            r"^(?:type:\s*study-brief|status:\s*['\"]?(?:UNPROMOTED_STUDY_BRIEF|PROMOTED_ENGINEERING_BRIEF)['\"]?)\b",
-            target_text[:600],
-            re.IGNORECASE | re.MULTILINE,
-        )
-    )
     idx_known_entities: Set[str] = (
         set(idx.entity_num_units.keys())
         | set(idx.entity_fasteners.keys())
@@ -2303,11 +2333,14 @@ def audit_target(
 
         hm = HEADING_LEVEL_RE.match(ln.strip())
         if hm:
+            h_lvl = len(hm.group(1))
             h_ents = detect_entities_in_text(ln, idx_known_entities, extra_aliases=idx.dynamic_aliases)
             if h_ents:
                 current_heading_entities = h_ents
-            elif len(hm.group(1)) <= 2:
+                current_heading_level = h_lvl
+            elif h_lvl <= current_heading_level or h_lvl <= 2:
                 current_heading_entities = None
+                current_heading_level = 0
 
         line_entities = detect_entities_in_text(ln, idx_known_entities, extra_aliases=idx.dynamic_aliases)
         if is_standard_doc and not in_evidence_packet:
@@ -2315,6 +2348,8 @@ def audit_target(
         else:
             if line_entities:
                 active_entities = line_entities
+            elif line_no in anchor_hunk_entities:
+                active_entities = anchor_hunk_entities[line_no]
             elif current_heading_entities:
                 active_entities = current_heading_entities
             elif default_active_entities:

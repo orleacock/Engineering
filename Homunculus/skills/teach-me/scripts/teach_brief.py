@@ -25,18 +25,19 @@ structured cabling/RF, and software systems) inside the non-consumed
   Owning Module : `teach-me` (`skills/teach-me/SKILL.md`)
   Callers       : Throw-away `teach-me` subagents, `test_teach_me.py`, `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`resolve_workspace_config`, `ensure_directory_fresh`), `verify_claims.py` (`--json` subprocess)
-  CLI Flags     : --workspace, --memory-root, --briefs-root, --init-brief, --subject, --impact-on, --slug, --domain, --project, --entity, --out, --rename-clean, --verify, --auto-slug, --sources, --fail-on-tbd, --strict-provenance, --list, --promote, --target, --json
+  CLI Flags     : --workspace, --memory-root, --briefs-root, --init-brief, --subject, --impact-on, --slug, --domain, --project, --entity, --out, --rename-clean, --verify, --auto-slug, --require-depth, --model-tier, --classify-complexity, --sources, --fail-on-tbd, --strict-provenance, --list, --promote, --target, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _strip_parentheticals (#L139-L143)         | def _normalize_engineering_symbols (#L146-L155)
-    - def _tokenize_for_slug (#L158-L178)            | def _dedupe_project_tokens (#L181-L198)
-    - def _pack_tokens (#L201-L229)                  | def build_brief_slug (#L232-L268)
-    - def build_concise_phrase (#L271-L291)          | def format_brief_display_name (#L294-L304)
-    - def build_chat_rails (#L307-L337)              | def build_chat_card_template (#L340-L366)
-    - def resolve_roots (#L369-L392)                 | def ensure_briefs_root_readme (#L395-L399)
-    - def _extract_frontmatter_meta (#L402-L405)     | def init_brief (#L408-L509)
-    - def verify_brief_structure (#L512-L580)        | def verify_and_stamp_brief (#L583-L746)
-    - def rename_brief_clean (#L749-L779)            | def list_briefs (#L782-L808)
-    - def promote_brief (#L811-L901)                 | def main (#L904-L1131)
+    - def _strip_parentheticals (#L140-L144)         | def _normalize_engineering_symbols (#L147-L156)
+    - def _tokenize_for_slug (#L159-L179)            | def _dedupe_project_tokens (#L182-L199)
+    - def _pack_tokens (#L202-L230)                  | def build_brief_slug (#L233-L269)
+    - def build_concise_phrase (#L272-L292)          | def format_brief_display_name (#L295-L305)
+    - def format_model_tier_badge (#L330-L341)       | def classify_query_complexity (#L344-L407)
+    - def build_chat_rails (#L410-L441)              | def build_chat_card_template (#L444-L472)
+    - def resolve_roots (#L475-L498)                 | def ensure_briefs_root_readme (#L501-L505)
+    - def _extract_frontmatter_meta (#L508-L511)     | def init_brief (#L514-L615)
+    - def verify_brief_structure (#L618-L736)        | def verify_and_stamp_brief (#L739-L914)
+    - def rename_brief_clean (#L917-L947)            | def list_briefs (#L950-L976)
+    - def promote_brief (#L979-L1069)                | def main (#L1072-L1337)
 === END NAVIGATION MAP ===
 """
 
@@ -304,16 +305,119 @@ def format_brief_display_name(brief_path: Path, briefs_root: Path | None = None)
     return resolved.name
 
 
+DEEP_COMPLEXITY_KEYWORD_RE = re.compile(
+    r"\b(?:torque|inductance|resonance|shaper|buckling|pressure|flow|current|voltage|power|"
+    r"thermal|dissipation|impedance|pid|kinematics|deflection|stress|strain|preload|backlash|"
+    r"frequency|attenuation|derivation|derive|calculate|equation|formula|euler|capstan|"
+    r"reynolds|bernoulli|ohm|kirchhoff|acceleration|deceleration|jerk|stiffness|compliance|"
+    r"viscosity|shear|bending|moment|toleranc(?:e|es)|clearance|interference|"
+    r"pneumatic|vacuum|hardness|durometer|damping|solenoid|elastomer|modulus)\b|\[calc:",
+    re.IGNORECASE,
+)
+
+DEEP_TRADE_OFF_RE = re.compile(
+    r"\b(?:vs\.?|versus|trade-?offs?|conflicts?|failure\s+modes?|root\s+causes?|"
+    r"why\s+does|compare|comparison|interaction|coupling|coupled|bottlenecks?)\b",
+    re.IGNORECASE,
+)
+
+DEEP_TELEMETRY_SOURCE_RE = re.compile(
+    r"(?:_(?:hardware|software)\.md$|(?:^|/)bom\.md$|\.(?:step|stp|stl|cfg|py|rs|c|cpp|h|hpp)$)",
+    re.IGNORECASE,
+)
+
+
+def format_model_tier_badge(model_tier: str = "", default_mode: str = "ISOLATED SUBAGENT") -> str:
+    """Map an explicit model tier ('flash'/'sonnet'/'pro'/'opus') to a <=19-char header badge."""
+    raw = (model_tier or "").strip().lower().strip("[]'\" ")
+    if not raw:
+        return (default_mode or "ISOLATED SUBAGENT").strip().upper()
+    if raw in ("pro", "opus", "deep", "tier3", "tier_3"):
+        return "TIER: PRO // DEEP"
+    if raw in ("flash", "sonnet", "fast", "standard", "tier2", "tier_2"):
+        return "TIER: FLASH // FAST"
+    if raw in ("flash_lite", "flash-lite", "haiku", "lite", "tier1", "tier_1"):
+        return "TIER: LITE (BANNED)"
+    return raw.upper()
+
+
+def classify_query_complexity(
+    subject: str,
+    impact_on: str = "",
+    domain: str = "hybrid",
+    sources: list[str] | None = None,
+    query_text: str = "",
+    model_override: str = "",
+) -> dict[str, Any]:
+    """Deterministically route `/teach-me` queries between Tier 2 (`flash`/`sonnet`) and Tier 3 (`pro`/`opus`).
+
+    Enforces `1. Accuracy & Truth > 2. Efficiency > 3. Data Safety > 4. Speed`:
+      - `'flash_lite'` / `'haiku'` is strictly banned for `Brief+` synthesis.
+      - Any coupled physics/math (`[CALC]`), CAD/firmware/AST telemetry source, or cross-repo/trade-off
+        analysis automatically routes to `'pro'` / `'opus'` (`TIER: PRO // DEEP`).
+    """
+    combined_text = " ".join(p for p in (subject, impact_on, query_text) if p).strip()
+    triggers: list[str] = []
+    score = 0
+
+    # Trigger 1: Coupled physics, kinematics, or [CALC] dimensional math
+    if DEEP_COMPLEXITY_KEYWORD_RE.search(combined_text):
+        score += 2
+        triggers.append("TRIGGER_1_COUPLED_PHYSICS_OR_CALC_MATH")
+    elif (domain or "").strip().lower() in ("mechanical", "electrical", "firmware", "cabling"):
+        score += 1
+        triggers.append(f"DOMAIN_HARDWARE_FLOOR({domain.strip().lower()})")
+
+    # Trigger 2: CAD geometry, Klipper/firmware .cfg, or _Hardware.md / _Software.md AST telemetry sources
+    src_list = [str(s).strip() for s in (sources or []) if str(s).strip()]
+    if any(DEEP_TELEMETRY_SOURCE_RE.search(s.replace("\\", "/")) for s in src_list):
+        score += 2
+        triggers.append("TRIGGER_2_CAD_FIRMWARE_OR_AST_TELEMETRY")
+
+    # Trigger 3: Cross-repository sources (>= 2 distinct parent dirs) or multi-system trade-off/conflict query
+    src_dirs = {str(Path(s.replace("\\", "/")).expanduser().resolve().parent) for s in src_list}
+    if len(src_dirs) >= 2:
+        score += 2
+        triggers.append("TRIGGER_3_CROSS_REPO_SOURCES")
+    elif DEEP_TRADE_OFF_RE.search(combined_text) or len(src_list) >= 3:
+        score += 1
+        triggers.append("TRIGGER_3_TRADE_OFF_OR_MULTI_SOURCE")
+
+    # Trigger 4: Explicit inline tag or --model-tier override (clamped at 'flash'/'sonnet' minimum floor)
+    ov_raw = (model_override or "").strip().lower().strip("[]'\" ")
+    if re.search(r"\[deep\]", combined_text, re.IGNORECASE) or ov_raw in ("pro", "opus", "deep"):
+        score = max(score, 2)
+        triggers.append("TRIGGER_4_EXPLICIT_DEEP_OVERRIDE")
+    elif ov_raw in ("flash_lite", "flash-lite", "haiku", "lite") or re.search(r"\[lite\]", combined_text, re.IGNORECASE):
+        triggers.append("CLAMPED_BANNED_LITE_TO_FLASH_FLOOR")
+
+    is_deep = score >= 2 and ov_raw not in ("flash", "sonnet", "fast", "standard")
+    complexity_tier = "deep" if is_deep else "standard"
+    ag_model = "pro" if is_deep else "flash"
+    cl_model = "opus" if is_deep else "sonnet"
+    badge = format_model_tier_badge(ag_model)
+
+    return {
+        "complexity_tier": complexity_tier,
+        "antigravity_model": ag_model,
+        "claude_model": cl_model,
+        "rail_badge": badge,
+        "score": score,
+        "triggers": triggers or ["BASELINE_STANDARD_CONCEPTUAL_FLOOR"],
+    }
+
+
 def build_chat_rails(
     domain: str = "hybrid",
     vrf_token: str = "UNVERIFIED",
     status: str = "UNPROMOTED_STUDY_BRIEF",
     execution_mode: str = "ISOLATED SUBAGENT",
+    model_tier: str = "",
     min_width: int = 78,
 ) -> tuple[str, str]:
     """Build pixel-aligned solid-line top and bottom inline-backtick rails (Option 1 + Option 4)."""
     dom_label = (domain or "hybrid").strip().upper()
-    mode_label = (execution_mode or "ISOLATED SUBAGENT").strip().upper()
+    mode_label = format_model_tier_badge(model_tier, default_mode=execution_mode)
     vrf_label = (vrf_token or "UNVERIFIED").strip()
     promoted = status.strip().upper() == "PROMOTED_ENGINEERING_BRIEF"
 
@@ -344,6 +448,7 @@ def build_chat_card_template(
     vrf_token: str = "UNVERIFIED",
     status: str = "UNPROMOTED_STUDY_BRIEF",
     execution_mode: str = "ISOLATED SUBAGENT",
+    model_tier: str = "",
 ) -> str:
     """Build the Option 1 (`▸` / `↳` clickable layout) + Option 4 (`┏━━` / `┗━━` solid rails) chat card."""
     resolved = brief_path.expanduser().resolve()
@@ -354,6 +459,7 @@ def build_chat_card_template(
         vrf_token=vrf_token,
         status=status,
         execution_mode=execution_mode,
+        model_tier=model_tier,
     )
     return (
         f"{top_rail}\n\n"
@@ -509,9 +615,22 @@ created_at: "{today}"
     return target_p
 
 
-def verify_brief_structure(text: str, brief_path: Path) -> list[str]:
-    """Validate `Brief+` structural invariants and anti-evasion boundaries."""
+def verify_brief_structure(
+    text: str,
+    brief_path: Path,
+    require_depth: bool = False,
+    sources: list[str] | None = None,
+    model_tier: str = "",
+) -> list[str]:
+    """Validate `Brief+` structural invariants, synthesis depth, and anti-evasion boundaries."""
     errors: list[str] = []
+    fm_meta = _extract_frontmatter_meta(text)
+    effective_tier = (model_tier or fm_meta.get("model_tier", "")).strip().lower().strip("[]'\" ")
+    if effective_tier in ("flash_lite", "flash-lite", "haiku", "lite", "tier1", "tier_1"):
+        errors.append(
+            f"BANNED_LITE_MODEL_TIER: Model tier '{effective_tier}' is banned for Brief+ synthesis; use 'flash'/'sonnet' (Standard) or 'pro'/'opus' (Deep)."
+        )
+
     if not text.startswith("---\n"):
         errors.append("MISSING_FRONTMATTER: Brief+ must start with YAML frontmatter (`---`).")
     else:
@@ -555,6 +674,22 @@ def verify_brief_structure(text: str, brief_path: Path) -> list[str]:
                 errors.append(
                     "THEORY_ZONE_EVASION_BLOCKED: `## 4. Actionable Engineering Guardrails` is inside `FIRST-PRINCIPLES-THEORY`."
                 )
+            if require_depth and s_m.end() < e_m.start():
+                theory_body = text[s_m.end() : e_m.start()]
+                theory_words = re.findall(r"[A-Za-z0-9_]+", theory_body)
+                if len(theory_words) < 60:
+                    errors.append(
+                        f"SHALLOW_THEORY_SYNTHESIS: Sections 1–2 contain only {len(theory_words)} words (minimum 60 words required for first-principles synthesis)."
+                    )
+                for req_pillar in ("First-Principles Mechanism", "Governing Scaling", "Key Boundary Condition"):
+                    if req_pillar.lower() not in theory_body.lower():
+                        errors.append(
+                            f"INCOMPLETE_MENTAL_MODEL_PILLARS: Section 1 is missing `{req_pillar}` bullet."
+                        )
+                if "causal coupling chain" not in theory_body.lower() or not re.search(r"^\s*\|.*\|", theory_body, re.MULTILINE):
+                    errors.append(
+                        "MISSING_TRADEOFF_ENVELOPE_TABLE: Section 2 must include `Causal Coupling Chain` and a Markdown Trade-Off & Failure Envelope table."
+                    )
 
     # Check Section 3 has real overlap content and not unmodified scaffold text
     sec3_pos = text.find("## 3. Active Engineering Context Overlaps")
@@ -576,6 +711,27 @@ def verify_brief_structure(text: str, brief_path: Path) -> list[str]:
             errors.append(
                 "MISSING_CONTEXT_OVERLAP_EXAMPLE: Section 3 must contain at least 1 concrete overlap example (`[VERIFIED FACT]`, `[CAD TELEMETRY]`, `[CLI TELEMETRY]`, or `[CONTEXT ANALOGY]`)."
             )
+        if require_depth and sources and 1 <= len(sources) <= 3:
+            sec3_low = sec3_body.lower().replace("\\", "/")
+            for raw_src in sources:
+                src_p = Path(str(raw_src).replace("\\", "/")).expanduser().resolve()
+                if not src_p.is_file():
+                    continue
+                bname_low = src_p.name.lower()
+                parent_bname_low = f"{src_p.parent.name.lower()}/{bname_low}"
+                # Check if either the full/parent-qualified path or basename (when unique) is cited in Section 3
+                same_basename_cnt = sum(
+                    1 for s in sources if Path(str(s).replace("\\", "/")).name.lower() == bname_low
+                )
+                matched_src = (
+                    (parent_bname_low in sec3_low)
+                    if same_basename_cnt > 1
+                    else (bname_low in sec3_low or parent_bname_low in sec3_low)
+                )
+                if not matched_src:
+                    errors.append(
+                        f"UNCITED_SEED_SOURCE: Seed source `{src_p}` was not cited in Section 3 (`Active Engineering Context Overlaps`); ground every seeded `--sources` file rather than silently dropping it."
+                    )
 
     return errors
 
@@ -589,6 +745,8 @@ def verify_and_stamp_brief(
     briefs_root: Path | None = None,
     auto_slug: bool = False,
     slug_override: str = "",
+    require_depth: bool = False,
+    model_tier: str = "",
 ) -> dict[str, Any]:
     """Verify `Brief+` structure and claims via `verify_claims.py`, then stamp VRF receipt."""
     brief_path = brief_path.expanduser().resolve()
@@ -603,7 +761,8 @@ def verify_and_stamp_brief(
         resolved_root = briefs_root.expanduser().resolve()
         try:
             brief_path.relative_to(resolved_root)
-            ensure_briefs_root_readme(resolved_root)
+            if "study_briefs" in resolved_root.name.lower() or brief_path.parent != resolved_root:
+                ensure_briefs_root_readme(resolved_root)
         except ValueError:
             pass
 
@@ -613,7 +772,13 @@ def verify_and_stamp_brief(
             brief_path = Path(ren["new_path"]).resolve()
 
     text = brief_path.read_text(encoding="utf-8")
-    struct_errors = verify_brief_structure(text, brief_path)
+    struct_errors = verify_brief_structure(
+        text,
+        brief_path,
+        require_depth=require_depth,
+        sources=sources,
+        model_tier=model_tier,
+    )
     fm_meta = _extract_frontmatter_meta(text)
 
     verify_script = HOMUNCULUS_ROOT / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
@@ -715,11 +880,13 @@ def verify_and_stamp_brief(
 
     dom_val = fm_meta.get("domain", "hybrid") or "hybrid"
     status_val = fm_meta.get("status", "UNPROMOTED_STUDY_BRIEF") or "UNPROMOTED_STUDY_BRIEF"
+    eff_tier = (model_tier or fm_meta.get("model_tier", "")).strip()
     display_name = format_brief_display_name(brief_path, briefs_root)
     rail_top, rail_bot = build_chat_rails(
         domain=dom_val,
         vrf_token=vrf_token or "UNVERIFIED",
         status=status_val,
+        model_tier=eff_tier,
     )
     card_template = build_chat_card_template(
         brief_path=brief_path,
@@ -727,6 +894,7 @@ def verify_and_stamp_brief(
         domain=dom_val,
         vrf_token=vrf_token or "UNVERIFIED",
         status=status_val,
+        model_tier=eff_tier,
     )
 
     return {
@@ -949,10 +1117,25 @@ def main(argv: list[str] | None = None) -> int:
         help="Snap the target brief filename to clean whole-word YYYY-MM-DD_<Subject>_on_<Impact>.md during --verify.",
     )
     parser.add_argument(
+        "--require-depth",
+        action="store_true",
+        help="Enforce anti-shallow synthesis checks (all 3 mental-model pillars, trade-off table, >=60 theory words, and full --sources coverage).",
+    )
+    parser.add_argument(
+        "--model-tier",
+        default="",
+        help="Model tier used by the subagent ('flash'/'sonnet' or 'pro'/'opus') for header rail badge and anti-lite enforcement.",
+    )
+    parser.add_argument(
+        "--classify-complexity",
+        action="store_true",
+        help="Deterministically classify `/teach-me` query complexity and output required subagent model tier ('flash'/'sonnet' vs. 'pro'/'opus').",
+    )
+    parser.add_argument(
         "--sources",
         nargs="+",
         default=[],
-        help="Authoritative repo/memory source files or directories for --verify / --promote.",
+        help="Authoritative repo/memory source files or directories for --verify / --promote / --classify-complexity.",
     )
     parser.add_argument("--fail-on-tbd", action="store_true", help="Fail verification if open [TBD] markers remain.")
     parser.add_argument(
@@ -976,6 +1159,26 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true", help="Emit JSON output.")
 
     args = parser.parse_args(argv)
+    if args.classify_complexity:
+        res_cls = classify_query_complexity(
+            subject=args.subject.strip(),
+            impact_on=args.impact_on.strip(),
+            domain=args.domain,
+            sources=args.sources,
+            model_override=args.model_tier,
+        )
+        if args.json:
+            print(json.dumps(res_cls, indent=2))
+        else:
+            print(
+                f"[ROUTING] Complexity: {res_cls['complexity_tier'].upper()} | "
+                f"Antigravity: '{res_cls['antigravity_model']}' | "
+                f"Claude: '{res_cls['claude_model']}' | "
+                f"Badge: [{res_cls['rail_badge']}] | "
+                f"Triggers: {', '.join(res_cls['triggers'])}"
+            )
+        return 0
+
     mem_root, briefs_root = resolve_roots(
         workspace=args.workspace,
         memory_root_arg=args.memory_root,
@@ -1044,12 +1247,15 @@ def main(argv: list[str] | None = None) -> int:
             briefs_root=briefs_root,
             auto_slug=args.auto_slug,
             slug_override=args.slug.strip(),
+            require_depth=args.require_depth,
+            model_tier=args.model_tier.strip(),
         )
         if args.json:
             print(json.dumps(res, indent=2))
         else:
             print(
                 f"[{res['status']}] Brief+ Verification: {res['display_name']} | "
+                f"Path: {res['brief_path']} | "
                 f"Receipt: {res['vrf_token'] or 'NONE'} | "
                 f"Structural Errors: {len(res['structural_errors'])} | "
                 f"Unbacked Claims: {res['unbacked_count']}"
