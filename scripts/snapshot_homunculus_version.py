@@ -37,7 +37,7 @@ Responsibilities:
     - def stage_client_wiring (#L397-L436)           | def create_git_bundles (#L439-L481)
     - def build_restore_script (#L484-L698)          | def build_reconstruction_index (#L701-L761)
     - def compute_sha256sums (#L764-L776)            | def lock_deliverable_readonly (#L779-L801)
-    - def verify_existing_snapshot (#L804-L816)      | def main (#L819-L1119)
+    - def verify_existing_snapshot (#L804-L816)      | def main (#L819-L1121)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -905,7 +905,9 @@ def main(argv: list[str] | None = None) -> int:
         bench_summary: dict[str, Any] = {"run_id": "SKIPPED", "verdict": "SKIPPED"}
         bench_reused = False
         if not args.skip_benchmark:
-            history_jsonl = eng_dir / "memory" / "Projects" / "Homunculus" / "benchmark_history.jsonl"
+            history_jsonl = SCRIPT_DIR / "benchmark_history.jsonl"
+            if not history_jsonl.is_file():
+                history_jsonl = eng_dir / "memory" / "Projects" / "Homunculus" / "benchmark_history.jsonl"
             cached_rec = None if args.force_fresh_benchmark else find_verified_benchmark_receipt(history_jsonl, ver_status)
             scorecard_md = staging_dir / "BENCHMARK_SCORECARD.md"
             if cached_rec is not None:

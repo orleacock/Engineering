@@ -68,4 +68,4 @@ last_synced: "2026-11-10"
 
 | Test Suite / Gate | Command | Last Verified Result | Receipt / Anchor |
 | :--- | :--- | :--- | :--- |
-| Unit Test Suite (`49` tests across `7` suites) | `python3 -m unittest discover -s tests -v` | `PASS (49/49 tests OK)` | `SBX-20261110_143655-1ecf0fa7` |
+| Unit Test Suite (`52` tests across `7` suites) | `python3 -m unittest discover -s tests -v` | `PASS (52/52 tests OK)` | `SBX-20261110_162015-7ddf774e` |

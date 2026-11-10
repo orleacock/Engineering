@@ -192,7 +192,7 @@
       "abs_path": "/home/orin/Projects/Engineering/scripts/snapshot_homunculus_version.py",
       "disposed": true,
       "git_head_blob_sha256": "5905b1f055604a43",
-      "pre_edit_blob_sha256": "78cf7c419fcb2cbd",
+      "pre_edit_blob_sha256": "1422a44b26f2db47",
       "project": "Workstation_Operations",
       "script": "snapshot_homunculus_version.py",
       "script_rel_path": "snapshot_homunculus_version.py",

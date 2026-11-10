@@ -56,10 +56,10 @@ checkpoint_lessons_digest: "cab5a868a0349908"
 - **Last Session Timestamp**: `2026-11-10`
 - **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 386f254d0621` | `Worktree: untracked` | `Last Verification: SBX-20261110_162502-531b3a2c`
 - **Where We Stopped (Verified State & Context)**:
-  Pinned Homunculus v0.2.0 baseline, verified 0-block/0-advisory full-system-suite, and staged Engineering workstation commit
+  Completed v0.2.0 RAID deliverable (v0.2.0_2026-11-10_gemini_carbon_hardening), verified 625 Btrfs reflink-shared files, and verified benchmark_history.jsonl lookup
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Cut consolidated v0.2.0 RAID deliverable and await user confirmation before git push
+  1. Await explicit user confirmation before pushing Homunculus v0.2.0 and Engineering to remotes
 <!-- SESSION-HANDOFF:END -->
 
 ---
