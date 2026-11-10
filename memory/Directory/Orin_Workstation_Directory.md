@@ -3,8 +3,8 @@ title: "Orin_Workstation — Memory & Repository Directory Tree"
 entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "eb7fe5cfd53f"
-last_synced: "2026-11-09"
+tree_hash: "8ad39a1c231e"
+last_synced: "2026-11-10"
 ---
 
 # 🗂️ `Orin_Workstation` — Directory Lookup Map (`entity: Orin_Workstation`)
@@ -75,6 +75,7 @@ last_synced: "2026-11-09"
 │   ├── Project_Hardware.md
 │   ├── Project_Hub.md
 │   ├── Project_Lessons_Learned.md
+│   ├── Project_Playbooks.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
 │   ├── Stateful_Sprint_Planning_Template.md

@@ -40,15 +40,15 @@ Exit codes:
     - def normalize_designator (#L610-L611)          | def normalize_source_relpath (#L652-L664)
     - def _blank_preserving_newlines (#L681-L682)    | def quarantine_unverified_source_zones (#L685-L715)
     - class GitWorktreeCache (#L718-L796)            | def inspect_source_provenance (#L799-L882)
-    - def _is_sibling_derivative_of_target (#L889-L902) | def _is_lessons_learned_source (#L905-L929)
-    - def collect_source_files (#L932-L1010)         | def map_qualifier_group (#L1013-L1018)
-    - class SourceFileInfo (#L1021-L1243)            | def _canonicalize_entity_token (#L1285-L1295)
-    - def detect_entities_in_text (#L1298-L1320)     | def detect_entity_in_text (#L1323-L1329)
-    - class SourceIndex (#L1332-L1952)               | def _safe_eval_arith_with_dim (#L1955-L2051)
-    - def verify_calc_marker (#L2054-L2141)          | def attest_subagent_transcript (#L2144-L2356)
-    - def audit_target (#L2359-L3346)                | def format_whitelist_summary (#L3349-L3367)
-    - def verify_target_inprocess (#L3370-L3394)     | def verify_multiple_targets_inprocess (#L3397-L3428)
-    - def main (#L3431-L3661)
+    - def _is_sibling_derivative_of_target (#L889-L902) | def _is_lessons_learned_source (#L905-L930)
+    - def collect_source_files (#L933-L1011)         | def map_qualifier_group (#L1014-L1019)
+    - class SourceFileInfo (#L1022-L1244)            | def _canonicalize_entity_token (#L1286-L1296)
+    - def detect_entities_in_text (#L1299-L1321)     | def detect_entity_in_text (#L1324-L1330)
+    - class SourceIndex (#L1333-L1953)               | def _safe_eval_arith_with_dim (#L1956-L2052)
+    - def verify_calc_marker (#L2055-L2142)          | def attest_subagent_transcript (#L2145-L2357)
+    - def audit_target (#L2360-L3347)                | def format_whitelist_summary (#L3350-L3368)
+    - def verify_target_inprocess (#L3371-L3395)     | def verify_multiple_targets_inprocess (#L3398-L3429)
+    - def main (#L3432-L3662)
 === END NAVIGATION MAP ===
 """
 
@@ -911,7 +911,8 @@ def _is_lessons_learned_source(fp: str) -> bool:
     if (
         bname_low.endswith("_lessons_learned.md")
         or bname_low.endswith("_lessons_archive.md")
-        or bname_low == "lessons_learned_template.md"
+        or bname_low.endswith("_playbooks.md")
+        or bname_low in ("lessons_learned_template.md", "project_playbooks.md")
     ):
         return True
     if bname_low.endswith(".md") and os.path.isfile(fp):
@@ -1404,7 +1405,7 @@ class SourceIndex:
                         prefix_to_projects.setdefault(p_first, set()).add(info.entity)
             self._index_text(text, info.entity)
 
-        # Index LL-* / ADR-* IDs ONLY + Non-Authoritative Hint Index across excluded lesson files (plus sibling project lessons/quarantine)
+        # Index LL-* / ADR-* / PB-* IDs ONLY + Non-Authoritative Hint Index across excluded lesson/playbook files (plus sibling project lessons/quarantine)
         cand_lesson_files: Set[str] = set(self.excluded_lessons)
         scan_parent_dirs: Set[str] = set(self.source_dirs)
         for sf_p in list(source_files) + list(self.excluded_lessons):
@@ -1413,7 +1414,7 @@ class SourceIndex:
             if not os.path.isdir(sd):
                 continue
             for fn_cand in os.listdir(sd):
-                if fn_cand.lower().endswith(("_lessons_learned.md", "_lessons_archive.md")):
+                if fn_cand.lower().endswith(("_lessons_learned.md", "_lessons_archive.md", "_playbooks.md")):
                     cand_lesson_files.add(os.path.join(sd, fn_cand))
             for sub_nm in ("Archive", "Quarantine"):
                 sub_d = os.path.join(sd, sub_nm)
@@ -1429,7 +1430,7 @@ class SourceIndex:
             except OSError:
                 continue
             lbname = os.path.basename(lfp)
-            for mid in re.finditer(r"\b((?:LL|ADR)-(?:[A-Z0-9]+-)?\d+)\b", ltxt):
+            for mid in re.finditer(r"\b((?:LL|ADR|PB)-(?:[A-Z0-9]+-)?\d+)\b", ltxt):
                 id_low = mid.group(1).lower()
                 self.lesson_ids.add(id_low)
                 self.designators.add(normalize_designator(mid.group(1)))
@@ -1437,7 +1438,7 @@ class SourceIndex:
             cur_t5 = False
             for l_ln in ltxt.splitlines():
                 s_ll = l_ln.strip()
-                mh_ll = re.match(r"^###\s+`?((?:LL|ADR)-(?:[A-Z0-9]+-)?\d+)`?(.*)$", s_ll)
+                mh_ll = re.match(r"^###\s+`?((?:LL|ADR|PB)-(?:[A-Z0-9]+-)?\d+)`?(.*)$", s_ll)
                 if mh_ll:
                     cur_lid = mh_ll.group(1)
                     cur_t5 = "[TIER5]" in mh_ll.group(2)

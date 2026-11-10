@@ -1292,6 +1292,243 @@ class TestProjectMemory(unittest.TestCase):
             aud = sync_memory.audit_memory(mem_root)
             self.assertEqual(aud["violation_count"], 0, msg=str(aud["violations"]))
 
+    def test_option1_same_entity_sibling_recall_and_option2_activity_modifier(self) -> None:
+        """Option #1 (Same-Entity Sibling Inheritance, 0% Cross-Entity Bleed) & Option #2 (Renormalization + Activity Boost)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            mem_root = Path(tmp) / "memory"
+            repo_a = Path(tmp) / "Alch_Pump"
+            repo_b = Path(tmp) / "Alch_Head"
+            repo_c = Path(tmp) / "Beta_Cab"
+            for r in (repo_a, repo_b, repo_c):
+                r.mkdir(parents=True)
+                (r / "cfg.py").write_text("pass\n", encoding="utf-8")
+
+            sync_memory.init_memory_root(mem_root)
+            sync_memory.init_project(mem_root, "Alch_Pump", repo_a, "hardware", "Alchemical-3D", "public")
+            sync_memory.init_project(mem_root, "Alch_Head", repo_b, "hardware", "Alchemical-3D", "public")
+            sync_memory.init_project(mem_root, "Beta_Cab", repo_c, "hardware", "Client_Beta", "client")
+
+            # Add a TIER2 lesson on Alch_Pump and reinforce it (triggers Option #2B activity_mod > 1.0)
+            sync_memory.add_project_lesson(
+                mem_root,
+                "Alch_Pump",
+                lesson_id="LL-PMP-01",
+                symptom="Diaphragm pump shutdown_speed 1 blasted chamber during MCU fault",
+                root_cause="Defaulting part cooling pump to full speed on emergency stop",
+                guardrail="Set pump_cool shutdown_speed to 0 while keeping heater_fan at 1",
+                files=["cfg.py"],
+                tier="TIER2",
+            )
+            sync_memory.reinforce_project_lesson(
+                mem_root,
+                "Alch_Pump",
+                "LL-PMP-01",
+                files=["cfg.py"],
+                retired_bloat="Setting pump_warm shutdown_speed to 1",
+            )
+            # Add a TIER0 pinned law on Alch_Pump (must have 0% decay / activity_mod == 1.0)
+            sync_memory.add_project_lesson(
+                mem_root,
+                "Alch_Pump",
+                lesson_id="LL-PMP-02",
+                symptom="Speculative heuristic added without engineer confirmation",
+                root_cause="Guessing design intent from geometry",
+                guardrail="Halt and emit explicit TBD placeholder before coding heuristics",
+                files=["cfg.py"],
+                tier="TIER0",
+            )
+            # Add a lesson on Client_Beta (must NEVER bleed into Alchemical-3D)
+            sync_memory.add_project_lesson(
+                mem_root,
+                "Beta_Cab",
+                lesson_id="LL-BET-01",
+                symptom="Shielded Cat6A patch panel ground loop on rack busbar",
+                root_cause="Bonding both ends of drain wire to unisolated racks",
+                guardrail="Bond shielded patch panels exclusively at MDF main busbar",
+                files=["cfg.py"],
+                tier="TIER2",
+            )
+
+            # 1. Implicit same-ecosystem recall from Alch_Head inherits LL-PMP-01 from Alch_Pump
+            rec_head = sync_memory.recall_project_memory(
+                mem_root,
+                "Alch_Head",
+                query="diaphragm pump_cool shutdown_speed heater_fan emergency stop",
+            )
+            self.assertTrue(
+                any(m["project"] == "Alch_Pump" and m["id"] == "LL-PMP-01" and m["is_sibling"] for m in rec_head["top_matches"]),
+                msg=f"Expected Alch_Head to inherit LL-PMP-01 from Alch_Pump: {rec_head['top_matches']}",
+            )
+            pmp01 = next(m for m in rec_head["top_matches"] if m["id"] == "LL-PMP-01")
+            self.assertGreater(pmp01["activity_mod"], 1.0)
+            self.assertIn("[ECOSYSTEM SIBLING: Alch_Pump]", pmp01["capsule_1line"])
+
+            # 2. TIER0 immunity check (activity_mod == 1.0)
+            rec_t0 = sync_memory.recall_project_memory(
+                mem_root,
+                "Alch_Pump",
+                query="LL-PMP-02 speculative heuristic engineer confirmation",
+            )
+            pmp02 = next(m for m in rec_t0["top_matches"] if m["id"] == "LL-PMP-02")
+            self.assertEqual(pmp02["activity_mod"], 1.0)
+
+            # 3. Cross-entity firewall check: Alch_Head NEVER sees Beta_Cab, Beta_Cab NEVER sees Alch_Pump
+            rec_cross1 = sync_memory.recall_project_memory(
+                mem_root,
+                "Alch_Head",
+                query="Shielded Cat6A patch panel ground loop rack busbar Beta_Cab",
+            )
+            for m in rec_cross1["top_matches"]:
+                self.assertNotEqual(m.get("project"), "Beta_Cab")
+
+            rec_cross2 = sync_memory.recall_project_memory(
+                mem_root,
+                "Beta_Cab",
+                query="Alch_Pump diaphragm pump_cool shutdown_speed heater_fan",
+            )
+            for m in rec_cross2["top_matches"]:
+                self.assertNotIn(m.get("project"), ("Alch_Pump", "Alch_Head"))
+
+    def test_option5b_procedural_playbooks_and_option3_prewrite_deduplication(self) -> None:
+        """Option #5B (Dedicated Portable <Project>_Playbooks.md) & Option #3-Lite (Pre-Write Deduplication Gate)."""
+        vc_script = REPO_ROOT / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            mem_root = base / "memory"
+            repo_pneuma = base / "Pneuma_Air"
+            repo_alembic = base / "Alembic_Head"
+            repo_beta = base / "Beta_Switch"
+            for r in (repo_pneuma, repo_alembic, repo_beta):
+                r.mkdir(parents=True)
+                (r / "BOM.md").write_text("# BOM\n\n| Item | Qty |\n| :--- | :--- |\n| M3x8 SHCS | 4 |\n", encoding="utf-8")
+                (r / "Assembly_Guide.md").write_text("# Assembly Guide\n\nInstall 4 M3x8 SHCS fasteners.\n", encoding="utf-8")
+
+            sync_memory.init_memory_root(mem_root)
+            sync_memory.init_project(mem_root, "Pneuma_Air", repo_pneuma, "hardware", "Alchemical-3D", "public")
+            sync_memory.init_project(mem_root, "Alembic_Head", repo_alembic, "hardware", "Alchemical-3D", "public")
+            sync_memory.init_project(mem_root, "Beta_Switch", repo_beta, "hardware", "Client_Beta", "cleanroom")
+
+            pb_file = mem_root / "Projects" / "Pneuma_Air" / "Pneuma_Air_Playbooks.md"
+            self.assertTrue(pb_file.is_file())
+
+            # 1. Add a procedural playbook PB-ALCH-01 to Pneuma_Air_Playbooks.md
+            pb_add = sync_memory.add_project_playbook(
+                mem_root,
+                "Pneuma_Air",
+                playbook_id="PB-ALCH-01",
+                trigger="Hardware repository unification, CAD/firmware/BOM reconciliation, and dual-lesson reinforcement",
+                steps=(
+                    "1. Run inspect_hardware_ecosystem.py and audit_repo_docs.py on the target repository. "
+                    "2. Reconcile BOM.md and Assembly_Guide.md fastener tables against primary CAD/CFG telemetry. "
+                    "3. Run verify_claims.py across all authored Markdown docs and reinforce domain + Homunculus lessons."
+                ),
+                verification_gate="verify_claims.py exit 0 (VRF receipt) + audit_repo_docs.py 0 defects + sync_memory.py --audit PASS",
+                files=["BOM.md", "Assembly_Guide.md"],
+                tier="TIER2",
+            )
+            self.assertEqual(pb_add["status"], "PASS")
+            self.assertEqual(pb_add["playbook_id"], "PB-ALCH-01")
+
+            # 2. #3-Lite: Near-duplicate --add-playbook is blocked and redirected to --update-playbook
+            pb_dup = sync_memory.add_project_playbook(
+                mem_root,
+                "Pneuma_Air",
+                trigger="Hardware repository unification, CAD/firmware/BOM reconciliation, and dual-lesson reinforcement",
+                steps=(
+                    "1. Run inspect_hardware_ecosystem.py and audit_repo_docs.py on the target repository. "
+                    "2. Reconcile BOM.md and Assembly_Guide.md fastener tables against primary CAD/CFG telemetry. "
+                    "3. Run verify_claims.py across all authored Markdown docs and reinforce domain + Homunculus lessons."
+                ),
+                verification_gate="verify_claims.py exit 0 + audit_repo_docs.py 0 defects + sync_memory.py --audit PASS",
+                files=["BOM.md"],
+            )
+            self.assertEqual(pb_dup["status"], "FAIL")
+            self.assertEqual(pb_dup["code"], "NEAR_DUPLICATE_PLAYBOOK_DETECTED")
+            self.assertEqual(pb_dup["matched_playbook_id"], "PB-ALCH-01")
+
+            # 3. Updating PB-ALCH-01 in place via update_project_playbook succeeds without duplicating sections
+            pb_upd = sync_memory.update_project_playbook(
+                mem_root,
+                "Pneuma_Air",
+                playbook_id="PB-ALCH-01",
+                verification_gate="verify_claims.py exit 0 + audit_repo_docs.py 0 defects + pre-commit-gate Stage X/Y/Z PASS",
+                files=["BOM.md", "Assembly_Guide.md"],
+            )
+            self.assertEqual(pb_upd["status"], "PASS")
+            self.assertEqual(pb_upd["regression_near_misses"], 1)
+
+            # 4. #3-Lite: Near-duplicate --add-lesson is blocked and redirected to --reinforce-lesson
+            ll1 = sync_memory.add_project_lesson(
+                mem_root,
+                "Pneuma_Air",
+                lesson_id="LL-PNM-02",
+                symptom="Press-fit manifold barb leaks 140 kPa air under continuous thermal cycling",
+                root_cause="Uncaptured silicone tubing creeps off smooth printed resin barb",
+                guardrail="Use threaded M5 push-to-connect bulkhead fittings instead of printed barbs",
+                files=["BOM.md"],
+                tier="TIER2",
+            )
+            self.assertEqual(ll1["status"], "PASS")
+            ll_dup = sync_memory.add_project_lesson(
+                mem_root,
+                "Pneuma_Air",
+                symptom="Press-fit manifold barb leaks 140 kPa air under continuous thermal cycling",
+                root_cause="Uncaptured silicone tubing creeps off smooth printed resin barb",
+                guardrail="Use threaded M5 push-to-connect bulkhead fittings instead of printed barbs",
+                files=["BOM.md"],
+                tier="TIER2",
+            )
+            self.assertEqual(ll_dup["status"], "FAIL")
+            self.assertEqual(ll_dup["code"], "NEAR_DUPLICATE_LESSON_DETECTED")
+            self.assertEqual(ll_dup["matched_lesson_id"], "LL-PNM-02")
+
+            # 5. Same-ecosystem sibling recall (Option #1 + Option #5B): Alembic_Head inherits PB-ALCH-01 from Pneuma_Air
+            rec_alembic = sync_memory.recall_project_memory(
+                mem_root,
+                "Alembic_Head",
+                query="hardware repository unification CAD firmware BOM reconciliation workflow",
+            )
+            self.assertTrue(
+                any(m["id"] == "PB-ALCH-01" and m["project"] == "Pneuma_Air" and m["is_sibling"] for m in rec_alembic["top_matches"]),
+                msg=f"Expected Alembic_Head to inherit PB-ALCH-01: {rec_alembic['top_matches']}",
+            )
+            pb_cap = next(m for m in rec_alembic["top_matches"] if m["id"] == "PB-ALCH-01")["capsule_1line"]
+            self.assertIn("[ECOSYSTEM SIBLING: Pneuma_Air]", pb_cap)
+            self.assertIn("[PLAYBOOK]", pb_cap)
+            self.assertIn("[LEDGER_MEMORY_LINE]:", rec_alembic["content"])
+            self.assertIn("[SIBLING:Pneuma_Air] PB-ALCH-01", rec_alembic["ledger_memory_line"])
+
+            # 6. On-demand --playbook-id drill-down works from both Pneuma_Air and sibling Alembic_Head, but is blocked from Client_Beta
+            dd_alembic = sync_memory.query_lesson_by_id(mem_root, "Alembic_Head", "PB-ALCH-01")
+            self.assertEqual(dd_alembic["status"], "PASS")
+            self.assertIn("Ordered Execution Procedure:", dd_alembic["content"])
+            self.assertIn("pre-commit-gate Stage X/Y/Z PASS", dd_alembic["content"])
+
+            dd_beta = sync_memory.query_lesson_by_id(mem_root, "Beta_Switch", "PB-ALCH-01")
+            self.assertEqual(dd_beta["status"], "FAIL")
+
+            # 7. verify_claims.py excludes *_Playbooks.md as a quantitative truth source while whitelisting PB-* IDs
+            draft_pb = base / "draft_pb.md"
+            draft_pb.write_text("# Report\n\nExecuted workflow `PB-ALCH-01` using 4 M3x8 SHCS screws.\n", encoding="utf-8")
+            p_vc = subprocess.run(
+                [
+                    sys.executable,
+                    str(vc_script),
+                    "--target",
+                    str(draft_pb),
+                    "--sources",
+                    str(repo_pneuma / "BOM.md"),
+                    str(pb_file),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(p_vc.returncode, 0, msg=p_vc.stdout + p_vc.stderr)
+
+            aud = sync_memory.audit_memory(mem_root)
+            self.assertEqual(aud["violation_count"], 0, msg=str(aud["violations"]))
+
 
 if __name__ == "__main__":
     unittest.main()

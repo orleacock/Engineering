@@ -6,13 +6,13 @@ project_type: "software"
 status: "v1.0.0 Release Candidate"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
 repo_head_sha: "bfbe03a5a0b7"
-tree_hash: "ac1fa6e6afd2"
+tree_hash: "305105480e7e"
 checkpoint_head_sha: "bfbe03a5a0b7"
-checkpoint_tree_hash: "ac1fa6e6afd2"
-checkpoint_worktree: "clean"
+checkpoint_tree_hash: "305105480e7e"
+checkpoint_worktree: "dirty (10 files)"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-10"
-checkpoint_lessons_digest: "7aa9457998de2846"
+checkpoint_lessons_digest: "5ec8f514612cf654"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -67,7 +67,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: ac1fa6e6afd2
+Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: 305105480e7e
   .gitignore
   HOMUNCULUS_START_HERE.md
   LICENSE.md
@@ -199,6 +199,7 @@ Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: ac1fa6e6afd2
   templates/memory/Project_Hardware.md
   templates/memory/Project_Hub.md
   templates/memory/Project_Lessons_Learned.md
+  templates/memory/Project_Playbooks.md
   templates/memory/Project_Software.md
   templates/memory/Quarantine_Note.md
   templates/memory/Task_Umbrella.md
@@ -260,13 +261,13 @@ Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: ac1fa6e6afd2
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: bfbe03a5a0b7` | `Tree Hash: ac1fa6e6afd2` | `Worktree: clean` | `Last Verification: P1-P6_POSTFIX_100PCT_PASS`
+- **Checkpoint Provenance**: `HEAD SHA: bfbe03a5a0b7` | `Tree Hash: 305105480e7e` | `Worktree: dirty (10 files)` | `Last Verification: SBX-20261110_095541-5ba28fd8`
 - **Where We Stopped (Verified State & Context)**:
-  Promoted and committed Stateful Memory, Governance & Disaster-Recovery Portability remediations (P1-P6 100% PASS, 44/44 unit tests OK) to Clean-Room Alchemical3D/Homunculus at commit bfbe03a5a0b7.
+  Completed Path A (Options #1, #2A, #2B, #3-Lite, #5B) plus Compact 5-Line Project State Ledger (2b: ### ▪ Project State Ledger + deterministic [LEDGER_MEMORY_LINE] in sync_memory.py). Verified 46/46 unit tests OK and OS Dry-Run (+3 faults) sandbox SBX-20261110_095541-5ba28fd8.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Proceed through remaining Alchemical-3D repository unifications (Alembic_Toolhead, Pestle_Rotational_Bowden, Extras).
-- **Open Discussion / Alignment Questions**: Subjects 1.1, 1.2-D, 2 (Profile B + N1), 3.1-B, 3.2-A, 3.3-Unified-A, and Option 4D verified in P1-P6.
+  1. Optionally evaluate Option #4 (Explicit Cross-Reference Graph Edges in <Entity>_memory_index.json) in a future session.
+- **Open Discussion / Alignment Questions**: All Path A memory upgrades and the compact memory-transparent Project State Ledger are live, verified, and locked.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

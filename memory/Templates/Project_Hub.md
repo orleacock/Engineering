@@ -27,6 +27,7 @@ last_synced: "{{DATE}}"
 | :--- | :--- | :--- |
 | **Project Hub (`AUTO-TREE`)** | [`{{PROJECT}}.md`]({{PROJECT}}.md) | Canonical architecture overview, `SESSION-HANDOFF` kickstart state, `AUTO-TREE`, and Quarantine Zone. |
 {{TELEMETRY_ROWS}}| **Lessons Learned & ADRs** | [`{{PROJECT}}_Lessons_Learned.md`]({{PROJECT}}_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`{{PROJECT}}_Playbooks.md`]({{PROJECT}}_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates (BOMs, quotes, test cards, checklists). |
 | **Unverified Quarantine Folder** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes/vendor quotes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`{{ENTITY_SAFE}}_Tasks.md`](../../Tasks/{{ENTITY_SAFE}}_Tasks.md) | Single-writer task tracker for `{{ENTITY}}` (do not duplicate `- [ ]` checkboxes here). |

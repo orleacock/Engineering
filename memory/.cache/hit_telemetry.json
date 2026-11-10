@@ -13,6 +13,11 @@
         "2026-11-09"
       ],
       "regression_near_misses": 0
+    },
+    "LL-040": {
+      "drilldown_count": 0,
+      "drilldown_dates": [],
+      "regression_near_misses": 1
     }
   },
   "Pneuma_Remote_Air": {
@@ -25,6 +30,13 @@
       "drilldown_count": 0,
       "drilldown_dates": [],
       "regression_near_misses": 1
+    },
+    "PB-ALCH-01": {
+      "drilldown_count": 1,
+      "drilldown_dates": [
+        "2026-11-10"
+      ],
+      "regression_near_misses": 0
     }
   }
 }

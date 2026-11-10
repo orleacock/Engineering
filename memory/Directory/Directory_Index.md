@@ -1,8 +1,8 @@
 ---
 title: "Memory & Workspace Directory Index"
 type: "directory-index"
-tree_hash: "d25352502aaf"
-last_synced: "2026-11-09"
+tree_hash: "4847f6a85ae7"
+last_synced: "2026-11-10"
 ---
 
 # 🗂️ Engineering Memory — Directory Lookup Hub (`Directory/`)
@@ -58,6 +58,7 @@ last_synced: "2026-11-09"
 │   ├── Project_Hardware.md
 │   ├── Project_Hub.md
 │   ├── Project_Lessons_Learned.md
+│   ├── Project_Playbooks.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
 │   ├── Stateful_Sprint_Planning_Template.md

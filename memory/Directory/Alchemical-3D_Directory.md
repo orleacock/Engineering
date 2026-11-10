@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "b2091831e40d"
+tree_hash: "219df8d49867"
 last_synced: "2026-11-10"
 ---
 
@@ -80,6 +80,7 @@ last_synced: "2026-11-10"
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
 │   │   ├── Homunculus_Lessons_Learned.md
 │   │   ├── Homunculus_Memory_Weight_and_Scoring_Reference.md
+│   │   ├── Homunculus_Playbooks.md
 │   │   ├── Homunculus_Script_Skill_Interaction_Matrix.md
 │   │   ├── Homunculus_Software.md
 │   │   ├── Homunculus_Stateful_Memory_Deployment_Plan.md
@@ -113,7 +114,8 @@ last_synced: "2026-11-10"
 │       ├── Templates/
 │       ├── Pneuma_Remote_Air.md
 │       ├── Pneuma_Remote_Air_Hardware.md
-│       └── Pneuma_Remote_Air_Lessons_Learned.md
+│       ├── Pneuma_Remote_Air_Lessons_Learned.md
+│       └── Pneuma_Remote_Air_Playbooks.md
 ├── Standards_and_Specs/
 │   ├── Alchemical_Ecosystem_Links_and_Brand.md
 │   ├── Alchemical_Style_and_Voice_Guide.md
@@ -147,6 +149,7 @@ last_synced: "2026-11-10"
 │   ├── Project_Hardware.md
 │   ├── Project_Hub.md
 │   ├── Project_Lessons_Learned.md
+│   ├── Project_Playbooks.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
 │   ├── Stateful_Sprint_Planning_Template.md
@@ -386,7 +389,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bfbe03a5a0b7` | `Tree: c62533306f66`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bfbe03a5a0b7` | `Tree: 1d656b9cc6c7`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -519,6 +522,7 @@ last_synced: "2026-11-10"
 │   │   ├── Project_Hardware.md
 │   │   ├── Project_Hub.md
 │   │   ├── Project_Lessons_Learned.md
+│   │   ├── Project_Playbooks.md
 │   │   ├── Project_Software.md
 │   │   ├── Quarantine_Note.md
 │   │   └── Task_Umbrella.md

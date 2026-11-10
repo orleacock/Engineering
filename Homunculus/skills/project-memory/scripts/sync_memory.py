@@ -22,54 +22,57 @@ Key Architectural Guarantees:
   Callers       : `homunculus_paths.py` (`ensure_directory_fresh`), `pre-commit.sh`, `post-worktree-sync.sh`, `pre-commit-gate` (Stage X), `test_project_memory.py`, `test_claim_verification.py`
   Callees       : `homunculus_paths.py` (`parse_frontmatter_full`, `ensure_directory_fresh`), `inspect_hardware_ecosystem.py` (`--sync-manifest` subprocess)
   Contract      : `scripts/script_contracts.json` [`sync_memory.py`]
-  CLI Flags     : --memory-root, --vault, --init-memory, --init-vault, --mode, --convert-mode, --default-entity, --init-project, --project, --section, --invariants, --add-lesson, --reinforce-lesson, --lesson-disposition, --verify-checkpoints, --lesson-id, --symptom, --root-cause, --guardrail, --anchor, --subsystem, --must-keep, --retired-bloat, --repo-path, --type, --entity, --compartment, --sync-hardware, --sync-software, --sync-tree, --sync-trees, --check-stale, --save-handoff, --stopped-at, --receipt, --blockers, --next-steps, --discussion, --handoff-file, --kickstart, --create-project-template, --tasks, --recommend, --umbrella, --tbd-ledger, --sync-tasks, --sync-directory, --sync-visuals, --export-canvas, --canvas-out-dir, --tier, --set-tier, --reason, --user-confirmed, --compact-memory, --keep-tier2, --preflight, --recall, --files, --top-k, --include-tier5, --repair-memory, --lock-memory-rules, --unlock-memory-rules, --seal-governance, --rebind-station, --dry-run, --audit, --check, --json
+  CLI Flags     : --memory-root, --vault, --init-memory, --init-vault, --mode, --convert-mode, --default-entity, --init-project, --project, --section, --invariants, --add-lesson, --reinforce-lesson, --add-playbook, --update-playbook, --playbook-id, --title, --trigger, --steps, --verification-gate, --force-new, --lesson-disposition, --verify-checkpoints, --lesson-id, --symptom, --root-cause, --guardrail, --anchor, --subsystem, --must-keep, --retired-bloat, --repo-path, --type, --entity, --compartment, --sync-hardware, --sync-software, --sync-tree, --sync-trees, --check-stale, --save-handoff, --stopped-at, --receipt, --blockers, --next-steps, --discussion, --handoff-file, --kickstart, --create-project-template, --tasks, --recommend, --umbrella, --tbd-ledger, --sync-tasks, --sync-directory, --sync-visuals, --export-canvas, --canvas-out-dir, --tier, --set-tier, --reason, --user-confirmed, --compact-memory, --keep-tier2, --preflight, --recall, --files, --top-k, --include-tier5, --repair-memory, --lock-memory-rules, --unlock-memory-rules, --seal-governance, --rebind-station, --dry-run, --audit, --check, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def today_iso (#L125-L126)                     | def sanitize_entity_filename (#L129-L132)
-    - def parse_stdlib_frontmatter (#L135-L138)      | def update_frontmatter_fields (#L141-L169)
-    - def replace_marker_block (#L172-L183)          | def extract_marker_block (#L186-L195)
-    - def get_git_worktree_state (#L198-L217)        | def _sanitize_handoff_checkboxes (#L220-L240)
-    - def render_template (#L243-L261)               | def get_git_head_sha (#L264-L269)
-    - def build_repo_auto_tree (#L272-L308)          | def build_ascii_directory_tree (#L324-L421)
-    - def init_memory_root (#L424-L483)              | def _hex_to_obsidian_rgb (#L486-L487)
-    - def _detect_memory_mode (#L490-L499)           | def sync_obsidian_visual_brain (#L502-L817)
-    - def _write_obsidian_extras (#L820-L823)        | def convert_memory_mode (#L826-L848)
-    - def init_project (#L851-L982)                  | def resolve_project_repo_state (#L985-L1065)
-    - def _resolve_project_repo (#L1068-L1075)       | def rebind_station_paths (#L1078-L1176)
-    - def _extract_markdown_sections (#L1209-L1242)  | def _extract_project_tasks_from_umbrella (#L1245-L1271)
-    - def query_project_section (#L1274-L1410)       | def _detect_step_unit_scale (#L1416-L1436)
-    - def _parse_step_metrics (#L1445-L1478)         | def _parse_stl_metrics (#L1481-L1506)
-    - def _sync_clean_bom_into_hardware_note (#L1510-L1552) | def sync_hardware_telemetry (#L1555-L1699)
-    - def _inspect_python_module (#L1705-L1740)      | def sync_software_telemetry (#L1743-L1854)
-    - def sync_project_tree (#L1857-L1895)           | def sync_all_project_trees (#L1898-L1961)
-    - def check_project_staleness (#L1964-L1988)     | def save_session_handoff (#L1991-L2157)
-    - def _extract_compact_invariant_table (#L2160-L2183) | def query_subsystem_invariants (#L2186-L2307)
-    - def _norm_worktree_cat (#L2373-L2379)          | def _truncate_markdown_safe (#L2382-L2400)
-    - def _write_protected_archive (#L2403-L2422)    | def _resolve_preflight_receipts (#L2425-L2457)
-    - def _compute_lessons_digest (#L2460-L2486)     | def _compute_retired_tier5_hashes (#L2489-L2519)
-    - def _scrub_lesson_fluff (#L2522-L2532)         | def _extract_invariant_covered_ll_ids (#L2535-L2549)
-    - def _adjust_relative_links (#L2552-L2590)      | def _format_lesson_heading (#L2593-L2597)
-    - def _parse_lesson_sections (#L2600-L2676)      | def _render_lesson_file (#L2679-L2688)
-    - def _ensure_archive_file (#L2691-L2721)        | def _validate_and_format_lesson_anchor (#L2725-L2892)
-    - def add_project_lesson (#L2895-L3069)          | def reinforce_project_lesson (#L3073-L3165)
-    - def _sync_quick_lookup_table_tier (#L3168-L3186) | def _collect_protected_governance_files (#L3189-L3204)
-    - def _compute_invariant_row_hashes (#L3207-L3216) | def _compute_governance_state_snapshot (#L3219-L3244)
-    - def _compute_seal_root_digest (#L3247-L3261)   | def set_memory_rules_lock_state (#L3264-L3302)
-    - def _append_governance_audit_entry (#L3305-L3378) | def seal_memory_governance (#L3381-L3444)
-    - def verify_governance_seal (#L3447-L3644)      | def compact_project_lessons (#L3647-L3772)
-    - def set_lesson_tier (#L3775-L3968)             | def _stem_token (#L3982-L3997)
-    - def _strip_numeric_and_extract_ids (#L4009-L4025) | def _tokenize_for_bm25 (#L4028-L4057)
-    - def _char_ngrams (#L4060-L4081)                | def _cosine_sim (#L4084-L4099)
-    - def _extract_file_tokens (#L4102-L4109)        | def _build_1line_capsule (#L4112-L4136)
-    - def _load_hit_telemetry (#L4139-L4146)         | def _save_hit_telemetry (#L4149-L4153)
-    - def _evaluate_promotion_signals (#L4156-L4182) | def _parse_lessons_with_line_spans (#L4185-L4283)
-    - def build_memory_index (#L4286-L4519)          | def check_manual_memory_edits (#L4522-L4612)
-    - def repair_project_memory (#L4615-L4676)       | def query_lesson_by_id (#L4679-L4763)
-    - def recall_project_memory (#L4766-L5036)       | def preflight_script_edit (#L5039-L5139)
-    - def kickstart_project (#L5142-L5236)           | def create_project_template (#L5239-L5279)
-    - def sync_task_rollups (#L5282-L5313)           | def query_open_tasks (#L5316-L5433)
-    - def query_tbd_ledger (#L5439-L5584)            | def sync_root_project_index (#L5587-L5624)
-    - def _strip_last_synced_line (#L5627-L5629)     | def sync_directory_trees (#L5632-L5845)
-    - def audit_memory (#L5848-L6310)                | def main (#L6313-L7052)
+    - def today_iso (#L128-L129)                     | def sanitize_entity_filename (#L132-L135)
+    - def parse_stdlib_frontmatter (#L138-L141)      | def update_frontmatter_fields (#L144-L172)
+    - def replace_marker_block (#L175-L186)          | def extract_marker_block (#L189-L198)
+    - def get_git_worktree_state (#L201-L220)        | def _sanitize_handoff_checkboxes (#L223-L243)
+    - def render_template (#L246-L264)               | def get_git_head_sha (#L267-L272)
+    - def build_repo_auto_tree (#L275-L311)          | def build_ascii_directory_tree (#L327-L424)
+    - def init_memory_root (#L427-L486)              | def _hex_to_obsidian_rgb (#L489-L490)
+    - def _detect_memory_mode (#L493-L502)           | def sync_obsidian_visual_brain (#L505-L820)
+    - def _write_obsidian_extras (#L823-L826)        | def convert_memory_mode (#L829-L851)
+    - def init_project (#L854-L993)                  | def resolve_project_repo_state (#L996-L1076)
+    - def _resolve_project_repo (#L1079-L1086)       | def rebind_station_paths (#L1089-L1187)
+    - def _extract_markdown_sections (#L1221-L1254)  | def _extract_project_tasks_from_umbrella (#L1257-L1283)
+    - def query_project_section (#L1286-L1423)       | def _detect_step_unit_scale (#L1429-L1449)
+    - def _parse_step_metrics (#L1458-L1491)         | def _parse_stl_metrics (#L1494-L1519)
+    - def _sync_clean_bom_into_hardware_note (#L1523-L1565) | def sync_hardware_telemetry (#L1568-L1712)
+    - def _inspect_python_module (#L1718-L1753)      | def sync_software_telemetry (#L1756-L1867)
+    - def sync_project_tree (#L1870-L1908)           | def sync_all_project_trees (#L1911-L1974)
+    - def check_project_staleness (#L1977-L2001)     | def save_session_handoff (#L2004-L2170)
+    - def _extract_compact_invariant_table (#L2173-L2196) | def query_subsystem_invariants (#L2199-L2320)
+    - def _norm_worktree_cat (#L2396-L2402)          | def _truncate_markdown_safe (#L2405-L2423)
+    - def _write_protected_archive (#L2426-L2445)    | def _resolve_preflight_receipts (#L2448-L2480)
+    - def _compute_lessons_digest (#L2483-L2517)     | def _compute_retired_tier5_hashes (#L2520-L2550)
+    - def _scrub_lesson_fluff (#L2553-L2563)         | def _extract_invariant_covered_ll_ids (#L2566-L2580)
+    - def _adjust_relative_links (#L2583-L2621)      | def _format_lesson_heading (#L2624-L2628)
+    - def _parse_lesson_sections (#L2631-L2707)      | def _render_lesson_file (#L2710-L2719)
+    - def _ensure_archive_file (#L2722-L2752)        | def _validate_and_format_lesson_anchor (#L2756-L2923)
+    - def _ensure_playbooks_file (#L2926-L2957)      | def _check_near_duplicate_entry (#L2960-L2997)
+    - def add_project_lesson (#L3000-L3201)          | def reinforce_project_lesson (#L3205-L3297)
+    - def add_project_playbook (#L3300-L3431)        | def update_project_playbook (#L3434-L3555)
+    - def _sync_quick_lookup_table_tier (#L3558-L3576) | def _collect_protected_governance_files (#L3579-L3594)
+    - def _compute_invariant_row_hashes (#L3597-L3606) | def _compute_governance_state_snapshot (#L3609-L3634)
+    - def _compute_seal_root_digest (#L3637-L3651)   | def set_memory_rules_lock_state (#L3654-L3692)
+    - def _append_governance_audit_entry (#L3695-L3768) | def seal_memory_governance (#L3771-L3834)
+    - def verify_governance_seal (#L3837-L4034)      | def compact_project_lessons (#L4037-L4162)
+    - def set_lesson_tier (#L4165-L4358)             | def _stem_token (#L4372-L4387)
+    - def _strip_numeric_and_extract_ids (#L4399-L4415) | def _tokenize_for_bm25 (#L4418-L4447)
+    - def _char_ngrams (#L4450-L4471)                | def _cosine_sim (#L4474-L4489)
+    - def _extract_file_tokens (#L4492-L4499)        | def _build_1line_capsule (#L4502-L4544)
+    - def _load_hit_telemetry (#L4547-L4554)         | def _save_hit_telemetry (#L4557-L4561)
+    - def _compute_activity_modifier (#L4564-L4607)  | def _evaluate_promotion_signals (#L4610-L4636)
+    - def _parse_lessons_with_line_spans (#L4639-L4737) | def build_memory_index (#L4740-L4987)
+    - def check_manual_memory_edits (#L4990-L5085)   | def repair_project_memory (#L5088-L5160)
+    - def query_lesson_by_id (#L5163-L5275)          | def recall_project_memory (#L5278-L5708)
+    - def preflight_script_edit (#L5711-L5811)       | def kickstart_project (#L5814-L5908)
+    - def create_project_template (#L5911-L5951)     | def sync_task_rollups (#L5954-L5985)
+    - def query_open_tasks (#L5988-L6105)            | def query_tbd_ledger (#L6111-L6256)
+    - def sync_root_project_index (#L6259-L6296)     | def _strip_last_synced_line (#L6299-L6301)
+    - def sync_directory_trees (#L6304-L6517)        | def audit_memory (#L6520-L6982)
+    - def main (#L6985-L7825)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -938,6 +941,14 @@ def init_project(
         ll_path.write_text(render_template("Project_Lessons_Learned.md", ctx, memory_root), encoding="utf-8")
         created_files.append(str(ll_path))
 
+    pb_path = proj_dir / f"{project_name}_Playbooks.md"
+    if not pb_path.exists():
+        try:
+            pb_path.write_text(render_template("Project_Playbooks.md", ctx, memory_root), encoding="utf-8")
+            created_files.append(str(pb_path))
+        except FileNotFoundError:
+            pass
+
     quar_path = proj_dir / "Quarantine" / "Quarantine_README.md"
     if not quar_path.exists():
         quar_path.write_text(render_template("Quarantine_Note.md", ctx, memory_root), encoding="utf-8")
@@ -1187,6 +1198,7 @@ SECTION_QUERY_CHOICES = (
     "tbd",
     "tasks",
     "lessons",
+    "playbooks",
     "invariants",
     "handoff",
     "hardware",
@@ -1296,6 +1308,7 @@ def query_project_section(
         return query_subsystem_invariants(memory_root, canonical_proj, "", repo_override)
     companion_map = {
         "lessons": (proj_dir / f"{canonical_proj}_Lessons_Learned.md", "Project Lessons Learned"),
+        "playbooks": (proj_dir / f"{canonical_proj}_Playbooks.md", "Project Procedural Playbooks"),
         "hardware": (proj_dir / f"{canonical_proj}_Hardware.md", "Project Hardware Telemetry"),
         "software": (proj_dir / f"{canonical_proj}_Software.md", "Project Software Telemetry"),
     }
@@ -2325,7 +2338,16 @@ MEMORY_SCORING_CONFIG: dict[str, Any] = {
     "r_base_bm25_weight": 0.50,
     "r_base_ngram_weight": 0.30,
     "r_base_file_weight": 0.20,
+    "r_base_no_file_bm25_weight": 0.625,
+    "r_base_no_file_ngram_weight": 0.375,
     "r_base_floor": 0.08,
+    "sibling_project_weight": 0.65,
+    "sibling_explicit_project_weight": 0.90,
+    "sibling_r_base_floor": 0.22,
+    "activity_mod_floor": 0.85,
+    "activity_mod_ceiling": 1.25,
+    "activity_halflife_days": 30.0,
+    "near_duplicate_cosine_gate": 0.72,
     "tier0_top3_gate_sat": 0.45,
     "tier5_suppressed_gate_sat": 0.35,
     "numeric_query_weight": 0.0,
@@ -2338,6 +2360,7 @@ MEMORY_SCORING_CONFIG: dict[str, Any] = {
     "capsule_guardrail_chars": 280,
     "tier0_pinned_chars": 300,
     "lesson_field_max_words": (120, 120, 140),
+    "playbook_field_max_words": (100, 180, 120),
     "agents_md_max_words": 180,
     "agents_md_max_bytes": 2200,
     "lessons_active_max_lines": 420,
@@ -2353,10 +2376,10 @@ _FLUFF_CLAUSE_RE = re.compile(
 )
 
 LESSON_SEC_HEADING_RE = re.compile(
-    r"^###\s+(?:`?(LL-(?:[A-Z0-9]+-)?\d+)`?|(\d+\.\d+))(?:\s*\[(TIER[0-5])\])?\s*(?:[—–:-]\s*)?(.*)$"
+    r"^###\s+(?:`?((?:LL|PB)-(?:[A-Z0-9]+-)?\d+)`?|(\d+\.\d+))(?:\s*\[(TIER[0-5])\])?\s*(?:[—–:-]\s*)?(.*)$"
 )
 
-_LESSON_ID_WHOLE_RE = re.compile(r"\b((?:LL|ADR)-(?:[A-Z0-9]+-)?\d+)\b", re.IGNORECASE)
+_LESSON_ID_WHOLE_RE = re.compile(r"\b((?:LL|ADR|PB)-(?:[A-Z0-9]+-)?\d+)\b", re.IGNORECASE)
 _ISO_DATE_STRIP_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?)?\b")
 _DIGIT_INITIAL_MAGNITUDE_RE = re.compile(
     r"^[+-]?\d+(?:[.,]\d+)?(?:%|°[cfk]?|mm|cm|m|um|nm|in|ft|c|f|k|v|mv|kv|a|ma|ua|w|kw|mw|"
@@ -2458,10 +2481,11 @@ def _resolve_preflight_receipts(memory_root: Path, project_name: str, target_fil
 
 
 def _compute_lessons_digest(memory_root: Path, project_name: str) -> str:
-    """Compute digest of active TIER0-TIER4 lesson IDs + SUBSYSTEM-INVARIANTS + regression_near_misses (excludes TIER5)."""
+    """Compute digest of active TIER0-TIER4 lesson/playbook IDs + SUBSYSTEM-INVARIANTS + regression_near_misses (excludes TIER5)."""
     proj_dir = memory_root.resolve() / "Projects" / project_name
     ll_path = proj_dir / f"{project_name}_Lessons_Learned.md"
     arch_path = proj_dir / "Archive" / f"{project_name}_Lessons_Archive.md"
+    pb_path = proj_dir / f"{project_name}_Playbooks.md"
     active_ids: list[str] = []
     inv_hashes: list[str] = []
     if ll_path.is_file():
@@ -2477,6 +2501,13 @@ def _compute_lessons_digest(memory_root: Path, project_name: str) -> str:
         for s in asecs:
             if s["tier"] != "TIER5":
                 active_ids.append(f"{s['id']}:{s['tier']}")
+    if pb_path.is_file():
+        ptxt = pb_path.read_text(encoding="utf-8", errors="ignore")
+        _, psecs, _ = _parse_lesson_sections(ptxt, default_tier="TIER2")
+        for s in psecs:
+            if s["tier"] != "TIER5":
+                pb_body_sha = hashlib.sha256("\n".join(s["body_lines"]).encode("utf-8")).hexdigest()[:8]
+                active_ids.append(f"{s['id']}:{s['tier']}:{pb_body_sha}")
     hit_proj = _load_hit_telemetry(memory_root).get(project_name, {})
     near_miss_total = sum(int(v.get("regression_near_misses", 0)) for v in hit_proj.values() if isinstance(v, dict))
     payload = json.dumps(
@@ -2591,9 +2622,9 @@ def _adjust_relative_links(text: str, source_dir: Path, target_dir: Path) -> str
 
 
 def _format_lesson_heading(lid: str, tier: str, title: str) -> str:
-    r"""Render canonical `### \`LL-xxx\` [TIERx] — <Title>` heading."""
+    r"""Render canonical `### \`LL-xxx\` / \`PB-xxx\` [TIERx] — <Title>` heading."""
     clean_title = re.sub(r"\s*\[(TIER[0-5])\]\s*", " ", title).strip()
-    id_tok = f"`{lid}`" if lid.startswith("LL-") else lid
+    id_tok = f"`{lid}`" if lid.startswith(("LL-", "PB-")) else lid
     return f"### {id_tok} [{tier}] — {clean_title}" if clean_title else f"### {id_tok} [{tier}]"
 
 
@@ -2892,6 +2923,80 @@ def _validate_and_format_lesson_anchor(
     return out_anchor, verified_basenames
 
 
+def _ensure_playbooks_file(proj_dir: Path, fm: dict[str, Any], memory_root: Path) -> Path:
+    """Ensure `Projects/<Project>/<Project>_Playbooks.md` exists with valid `authoritative: false` frontmatter."""
+    proj_name = proj_dir.name
+    pb_path = proj_dir / f"{proj_name}_Playbooks.md"
+    if not pb_path.is_file():
+        ent = str(fm.get("entity", "Default_Entity")).strip() or "Default_Entity"
+        comp = str(fm.get("compartment", "private")).strip() or "private"
+        ctx = {
+            "PROJECT": proj_name,
+            "ENTITY": ent,
+            "COMPARTMENT": comp,
+            "DATE": today_iso(),
+        }
+        try:
+            pb_path.write_text(render_template("Project_Playbooks.md", ctx, memory_root), encoding="utf-8")
+        except FileNotFoundError:
+            pb_path.write_text(
+                "---\n"
+                f'project: "{proj_name}"\n'
+                f'entity: "{ent}"\n'
+                f'compartment: "{comp}"\n'
+                'note_type: "procedural_playbooks"\n'
+                "authoritative: false\n"
+                f'last_synced: "{today_iso()}"\n'
+                "---\n\n"
+                f"# {proj_name} — Procedural Engineering Playbooks (`PB-xx`)\n\n"
+                "## 1. Procedural Playbooks Ledger (`Trigger -> Ordered Procedure -> Verification Gate`)\n\n"
+                "| ID | Tier | Date | Trigger / Task Pattern | Verification Gate | Target Files / Anchor |\n"
+                "| :--- | :---: | :--- | :--- | :--- | :--- |\n",
+                encoding="utf-8",
+            )
+    return pb_path
+
+
+def _check_near_duplicate_entry(
+    candidate_text: str,
+    sections: list[dict[str, Any]],
+    threshold: float = 0.72,
+) -> tuple[dict[str, Any] | None, float]:
+    """
+    Option #3-Lite (Pre-Write Deduplication Gate):
+    Computes character n-gram cosine similarity between `candidate_text` and existing active (`TIER0`–`TIER4`)
+    sections (skipping initial onboarding stub `LL-01`), returning `(matched_sec, best_sim)` if `best_sim >= threshold`.
+    """
+    cand_ng = _char_ngrams(candidate_text)
+    if len(cand_ng) < 10:
+        return None, 0.0
+    best_sec: dict[str, Any] | None = None
+    best_sim = 0.0
+    for sec in sections:
+        if sec.get("tier") == "TIER5":
+            continue
+        title_s = str(sec.get("title", ""))
+        if "Initial Dual-Mode Memory Onboarding" in title_s:
+            continue
+        cleaned_body: list[str] = []
+        for bln in sec.get("body_lines", []):
+            raw_b = bln.strip()
+            if not raw_b or raw_b == "---":
+                continue
+            s_b = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", raw_b)
+            s_b = re.sub(r"\((?:\[`[^`]+`\]|`[^`]+`\s+\(\[)[\s\S]*\)\.?\s*$", "", s_b).strip()
+            if s_b:
+                cleaned_body.append(s_b)
+        sec_ng = _char_ngrams(" ".join(cleaned_body) or title_s)
+        sim = _cosine_sim(cand_ng, sec_ng)
+        if sim > best_sim:
+            best_sim = sim
+            best_sec = sec
+    if best_sec is not None and best_sim >= threshold:
+        return best_sec, best_sim
+    return None, best_sim
+
+
 def add_project_lesson(
     memory_root: Path,
     project_name: str,
@@ -2906,13 +3011,14 @@ def add_project_lesson(
     must_keep: str = "",
     retired_bloat: str = "",
     tier: str = "TIER2",
+    force_new: bool = False,
     repo_override: Path | None = None,
 ) -> dict[str, Any]:
     """
     Deterministic Lesson & Invariant Writer (`--add-lesson`):
-    Scrubs conversational fluff, appends a new root-cause post-mortem (`Symptom -> Root Cause -> Permanent Guardrail`)
-    tagged with `TIER0`–`TIER5` (default `TIER2`), optionally updates `SUBSYSTEM-INVARIANTS`, and enforces the
-    Full-Context Dev-Cycle Window (`<= 3 TIER0 + <= 7 TIER2`).
+    Scrubs conversational fluff, enforces `#3-Lite` near-duplicate consolidation (`Cosine >= 0.72` -> `--reinforce-lesson`),
+    appends a new root-cause post-mortem (`Symptom -> Root Cause -> Permanent Guardrail`) tagged with `TIER0`–`TIER5`
+    (default `TIER2`), optionally updates `SUBSYSTEM-INVARIANTS`, and enforces the Full-Context Dev-Cycle Window.
     """
     memory_root = memory_root.resolve()
     tier_norm = tier.strip().upper() if tier else "TIER2"
@@ -2940,6 +3046,32 @@ def add_project_lesson(
     archive_path = lessons_path.parent / "Archive" / f"{canonical_proj}_Lessons_Archive.md"
     archive_text = archive_path.read_text(encoding="utf-8") if archive_path.is_file() else ""
     timestamp = today_iso()
+
+    # Option #3-Lite: Pre-Write Deduplication Gate (prevents logging duplicate LL-xxx for the same root cause)
+    if not force_new:
+        _, main_secs_dedup, _ = _parse_lesson_sections(text, default_tier="TIER2")
+        _, arch_secs_dedup, _ = _parse_lesson_sections(archive_text, default_tier="TIER3") if archive_text else ("", [], "")
+        dedup_gate = float(MEMORY_SCORING_CONFIG.get("near_duplicate_cosine_gate", 0.72))
+        dup_sec, dup_sim = _check_near_duplicate_entry(
+            f"{clean_sym} {clean_rc} {clean_gr}",
+            main_secs_dedup + arch_secs_dedup,
+            threshold=dedup_gate,
+        )
+        if dup_sec is not None:
+            return {
+                "status": "FAIL",
+                "code": "NEAR_DUPLICATE_LESSON_DETECTED",
+                "project": canonical_proj,
+                "matched_lesson_id": dup_sec["id"],
+                "matched_tier": dup_sec["tier"],
+                "cosine_similarity": round(dup_sim, 3),
+                "detail": (
+                    f"Candidate lesson closely matches existing `{dup_sec['id']}` (`{dup_sec['tier']}`, "
+                    f"`cosine={dup_sim:.2f} >= {dedup_gate:.2f}`). Reinforce it in place via "
+                    f"`--reinforce-lesson {dup_sec['id']} --retired-bloat \"...\" --must-keep \"...\"` "
+                    "or pass `--force-new` if this is a genuinely distinct root cause."
+                ),
+            }
 
     # Auto-determine next Lesson ID across both main and archive files if not explicitly passed
     lid = lesson_id.strip()
@@ -3162,6 +3294,264 @@ def reinforce_project_lesson(
         "tier": matched["tier"],
         "regression_near_misses": h_entry["regression_near_misses"],
         "promotion_signals": promo_sigs,
+    }
+
+
+def add_project_playbook(
+    memory_root: Path,
+    project_name: str,
+    trigger: str,
+    steps: str,
+    verification_gate: str,
+    playbook_id: str = "",
+    title: str = "",
+    anchor: str = "",
+    files: list[str] | None = None,
+    receipt: str = "",
+    tier: str = "TIER2",
+    force_new: bool = False,
+    repo_override: Path | None = None,
+) -> dict[str, Any]:
+    """
+    Option #5B (`--add-playbook`):
+      - Writes a portable procedural workflow (`Trigger -> Ordered Execution Procedure -> Verification Gate`)
+        to `Projects/<Project>/<Project>_Playbooks.md` (`authoritative: false`, `0` Turn-1 token overhead).
+      - Enforces `#3-Lite` near-duplicate consolidation (`Cosine >= 0.72` -> `--update-playbook <PB-ID>`).
+      - Indexes the playbook as a 1-line `[PLAYBOOK]` radar capsule in `<Entity>_memory_index.json` so companion
+        projects in the same `entity:` ecosystem automatically inherit it via `Option #1`.
+    """
+    memory_root = memory_root.resolve()
+    tier_norm = tier.strip().upper() if tier else "TIER2"
+    if tier_norm not in VALID_MEMORY_TIERS:
+        raise ValueError(f"Invalid memory tier `{tier}` (must be one of {VALID_MEMORY_TIERS}).")
+
+    hub_path, mounted_repo, fm, _stage = resolve_project_repo_state(memory_root, project_name, repo_override)
+    canonical_proj = hub_path.stem
+    pb_path = _ensure_playbooks_file(hub_path.parent, fm, memory_root)
+
+    try:
+        anchor_val, verified_files = _validate_and_format_lesson_anchor(
+            memory_root, hub_path, mounted_repo, fm, files, anchor, receipt
+        )
+        max_w_trig, max_w_steps, max_w_gate = MEMORY_SCORING_CONFIG.get("playbook_field_max_words", (100, 180, 120))
+        clean_trig = _scrub_lesson_fluff(trigger, max_words=int(max_w_trig), field_name="trigger")
+        clean_steps = _scrub_lesson_fluff(steps, max_words=int(max_w_steps), field_name="steps")
+        clean_gate = _scrub_lesson_fluff(verification_gate, max_words=int(max_w_gate), field_name="verification-gate")
+    except ValueError as exc:
+        code_str = str(exc).split(":", 1)[0].strip() if ":" in str(exc) else "INVALID_PLAYBOOK_INPUT"
+        return {"status": "FAIL", "code": code_str, "project": canonical_proj, "detail": str(exc)}
+
+    text = pb_path.read_text(encoding="utf-8")
+    timestamp = today_iso()
+
+    if not force_new:
+        _, existing_pb_secs, _ = _parse_lesson_sections(text, default_tier="TIER2")
+        dedup_gate = float(MEMORY_SCORING_CONFIG.get("near_duplicate_cosine_gate", 0.72))
+        dup_pb, dup_sim = _check_near_duplicate_entry(
+            f"{clean_trig} {clean_steps} {clean_gate}",
+            existing_pb_secs,
+            threshold=dedup_gate,
+        )
+        if dup_pb is not None:
+            return {
+                "status": "FAIL",
+                "code": "NEAR_DUPLICATE_PLAYBOOK_DETECTED",
+                "project": canonical_proj,
+                "matched_playbook_id": dup_pb["id"],
+                "matched_tier": dup_pb["tier"],
+                "cosine_similarity": round(dup_sim, 3),
+                "detail": (
+                    f"Candidate playbook closely matches existing `{dup_pb['id']}` (`{dup_pb['tier']}`, "
+                    f"`cosine={dup_sim:.2f} >= {dedup_gate:.2f}`). Update it in place via "
+                    f"`--update-playbook {dup_pb['id']} --steps \"...\" --verification-gate \"...\"` "
+                    "or pass `--force-new` if this is a genuinely distinct workflow."
+                ),
+            }
+
+    pbid = playbook_id.strip().upper()
+    if pbid and not pbid.startswith("PB-"):
+        pbid = f"PB-{pbid}"
+    if not pbid:
+        existing_ids = re.findall(r"\b(PB-(?:[A-Z0-9]+-)?\d+)\b", text)
+        if existing_ids:
+            max_num = 0
+            prefix = "PB-"
+            width = 2
+            for eid in existing_ids:
+                m_id = re.match(r"^(PB-(?:[A-Z0-9]+-)?)(\d+)$", eid)
+                if m_id:
+                    cand_num = int(m_id.group(2))
+                    if cand_num >= max_num:
+                        max_num = cand_num
+                        prefix = m_id.group(1)
+                        width = max(width, len(m_id.group(2)))
+            pbid = f"{prefix}{max_num + 1:0{width}d}" if max_num > 0 else f"PB-{len(existing_ids) + 1:02d}"
+        else:
+            pbid = "PB-01"
+
+    lines = text.splitlines()
+    table_end_idx: int | None = None
+    for idx, ln in enumerate(lines):
+        s = ln.strip()
+        if s.startswith("|") and ("PB-" in s or "Trigger" in s or ":---" in s):
+            table_end_idx = idx + 1
+    if table_end_idx is not None and f"| `{pbid}`" not in text:
+        new_row = (
+            f"| `{pbid}` | `{tier_norm}` | `{timestamp}` | "
+            f"{_truncate_markdown_safe(clean_trig, 110)} | "
+            f"{_truncate_markdown_safe(clean_gate, 120)} | {anchor_val} |"
+        )
+        lines.insert(table_end_idx, new_row)
+        text = "\n".join(lines) + "\n"
+
+    heading_title = _truncate_markdown_safe(title.strip(), 110) if title.strip() else _truncate_markdown_safe(clean_trig, 110)
+    sec_block = (
+        f"\n### `{pbid}` [{tier_norm}] — {heading_title} (`{timestamp}`)\n"
+        f"- **Trigger / Task Pattern:** {clean_trig}\n"
+        f"- **Ordered Execution Procedure:** {clean_steps}\n"
+        f"- **Verification Gate:** {clean_gate} ({anchor_val}).\n"
+    )
+    text = update_frontmatter_fields(text.rstrip() + "\n" + sec_block, {"last_synced": timestamp})
+    pb_path.write_text(text, encoding="utf-8")
+
+    _resolve_preflight_receipts(memory_root, canonical_proj, verified_files or None)
+    try:
+        sync_directory_trees(memory_root)
+    except Exception:
+        pass
+
+    return {
+        "status": "PASS",
+        "project": canonical_proj,
+        "entity": str(fm.get("entity", "Default_Entity")),
+        "playbooks_file": str(pb_path),
+        "playbook_id": pbid,
+        "tier": tier_norm,
+        "last_synced": timestamp,
+    }
+
+
+def update_project_playbook(
+    memory_root: Path,
+    project_name: str,
+    playbook_id: str,
+    trigger: str = "",
+    steps: str = "",
+    verification_gate: str = "",
+    anchor: str = "",
+    files: list[str] | None = None,
+    receipt: str = "",
+    tier: str = "",
+    repo_override: Path | None = None,
+) -> dict[str, Any]:
+    """
+    Option #5B + #3-Lite (`--update-playbook <PB-ID>`):
+    Updates an existing `PB-xx` procedural playbook in `<Project>_Playbooks.md` in place without
+    duplicating sections, increments activity telemetry, and refreshes the entity memory index.
+    """
+    memory_root = memory_root.resolve()
+    hub_path, mounted_repo, fm, _stage = resolve_project_repo_state(memory_root, project_name, repo_override)
+    canonical_proj = hub_path.stem
+    pb_path = hub_path.parent / f"{canonical_proj}_Playbooks.md"
+    if not pb_path.is_file():
+        return {"status": "FAIL", "code": "PLAYBOOK_NOT_FOUND", "project": canonical_proj, "detail": f"Missing {pb_path.name}."}
+
+    pbid = playbook_id.strip().upper()
+    if pbid and not pbid.startswith("PB-"):
+        pbid = f"PB-{pbid}"
+
+    text = pb_path.read_text(encoding="utf-8")
+    prefix_t, pb_secs, suffix_t = _parse_lesson_sections(text, default_tier="TIER2")
+    matched = next((s for s in pb_secs if s["id"].upper() == pbid), None)
+    if matched is None:
+        return {
+            "status": "FAIL",
+            "code": "PLAYBOOK_NOT_FOUND",
+            "project": canonical_proj,
+            "playbook_id": pbid,
+            "detail": f"Playbook `{pbid}` not found in `{pb_path.name}`.",
+        }
+
+    cur_trig = ""
+    cur_steps = ""
+    cur_gate = ""
+    for bln in matched["body_lines"]:
+        sb = bln.strip()
+        if sb.startswith("- **Trigger"):
+            cur_trig = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", sb).strip()
+        elif sb.startswith("- **Ordered Execution"):
+            cur_steps = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", sb).strip()
+        elif sb.startswith("- **Verification Gate"):
+            cur_gate = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", sb).strip()
+            cur_gate = re.sub(r"\s*\(\[`?[^)]+\)\.?\s*$", "", cur_gate).strip()
+
+    try:
+        anchor_val, verified_files = _validate_and_format_lesson_anchor(
+            memory_root, hub_path, mounted_repo, fm, files, anchor, receipt
+        )
+        max_w_trig, max_w_steps, max_w_gate = MEMORY_SCORING_CONFIG.get("playbook_field_max_words", (100, 180, 120))
+        new_trig = _scrub_lesson_fluff(trigger, max_words=int(max_w_trig), field_name="trigger") if trigger.strip() else cur_trig
+        new_steps = _scrub_lesson_fluff(steps, max_words=int(max_w_steps), field_name="steps") if steps.strip() else cur_steps
+        new_gate = (
+            _scrub_lesson_fluff(verification_gate, max_words=int(max_w_gate), field_name="verification-gate")
+            if verification_gate.strip()
+            else cur_gate
+        )
+    except ValueError as exc:
+        code_str = str(exc).split(":", 1)[0].strip() if ":" in str(exc) else "INVALID_PLAYBOOK_INPUT"
+        return {"status": "FAIL", "code": code_str, "project": canonical_proj, "detail": str(exc)}
+
+    timestamp = today_iso()
+    new_tier = tier.strip().upper() if tier.strip() else matched["tier"]
+    if new_tier not in VALID_MEMORY_TIERS:
+        return {"status": "FAIL", "code": "INVALID_TIER", "project": canonical_proj, "detail": f"Invalid tier `{tier}`."}
+
+    matched["tier"] = new_tier
+    matched["title"] = f"{_truncate_markdown_safe(new_trig, 110)} (`{timestamp}`)"
+    matched["heading"] = _format_lesson_heading(matched["id"], new_tier, matched["title"])
+    matched["body_lines"] = [
+        f"- **Trigger / Task Pattern:** {new_trig}",
+        f"- **Ordered Execution Procedure:** {new_steps}",
+        f"- **Verification Gate:** {new_gate} ({anchor_val}).",
+    ]
+
+    # Update summary row in prefix_t
+    pbid_esc = re.escape(matched["id"])
+    row_re = re.compile(rf"^\|\s*(?:\*\*)?`?{pbid_esc}`?(?:\*\*)?\b")
+    upd_pref_lines: list[str] = []
+    for pln in prefix_t.splitlines():
+        if row_re.match(pln.strip()):
+            pln = (
+                f"| `{matched['id']}` | `{new_tier}` | `{timestamp}` | "
+                f"{_truncate_markdown_safe(new_trig, 110)} | "
+                f"{_truncate_markdown_safe(new_gate, 120)} | {anchor_val} |"
+            )
+        upd_pref_lines.append(pln)
+    new_prefix = "\n".join(upd_pref_lines) + "\n\n"
+
+    rendered = _render_lesson_file(new_prefix, pb_secs, suffix_t)
+    rendered = update_frontmatter_fields(rendered, {"last_synced": timestamp})
+    pb_path.write_text(rendered, encoding="utf-8")
+
+    hit_data = _load_hit_telemetry(memory_root)
+    proj_hits = hit_data.setdefault(canonical_proj, {})
+    h_entry = proj_hits.setdefault(matched["id"], {"drilldown_count": 0, "drilldown_dates": [], "regression_near_misses": 0})
+    h_entry["regression_near_misses"] = int(h_entry.get("regression_near_misses", 0)) + 1
+    _save_hit_telemetry(memory_root, hit_data)
+    _resolve_preflight_receipts(memory_root, canonical_proj, verified_files or None)
+    try:
+        sync_directory_trees(memory_root)
+    except Exception:
+        pass
+
+    return {
+        "status": "PASS",
+        "project": canonical_proj,
+        "playbook_id": matched["id"],
+        "tier": new_tier,
+        "playbooks_file": str(pb_path),
+        "regression_near_misses": h_entry["regression_near_misses"],
+        "last_synced": timestamp,
     }
 
 
@@ -4110,11 +4500,27 @@ def _extract_file_tokens(text: str) -> list[str]:
 
 
 def _build_1line_capsule(sec: dict[str, Any], max_chars: int = 360) -> str:
-    """Build a Guardrail-First 1-Line Radar Capsule (`Symptom <= 75c -> Guardrail <= 280c`, no date stamp — Profile B)."""
+    """Build a Guardrail-First 1-Line Radar Capsule (`Symptom <= 75c -> Guardrail <= 280c` or `[PLAYBOOK] Trigger -> Procedure | Gate`, no date stamp — Profile B)."""
     raw_title = re.sub(r"\(\s*`?\d{4}-\d{2}-\d{2}`?\s*\)\s*$", "", sec.get("title", "")).strip()
     title = re.sub(r"\s+", " ", raw_title).strip()
+    is_pb = str(sec.get("id", "")).upper().startswith("PB-")
     guardrail_snippet = ""
+    if is_pb:
+        proc_part = ""
+        gate_part = ""
+        for ln in sec.get("body_lines", []):
+            s = ln.strip()
+            if "Ordered Execution Procedure" in s:
+                proc_part = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", s).strip()
+            elif "Verification Gate" in s:
+                gate_part = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", s).strip()
+        if proc_part and gate_part:
+            guardrail_snippet = f"{proc_part} | Gate: {gate_part}"
+        else:
+            guardrail_snippet = proc_part or gate_part
     for ln in sec.get("body_lines", []):
+        if guardrail_snippet:
+            break
         s = ln.strip()
         if any(k in s for k in ("Verified Resolution", "Hardened Solution", "Permanent Guardrail", "Canonical Owner")):
             cleaned = re.sub(r"^-\s*\*\*[^*]+\*\*:?\s*", "", s)
@@ -4131,6 +4537,8 @@ def _build_1line_capsule(sec: dict[str, Any], max_chars: int = 360) -> str:
     title = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", title)
     guardrail_snippet = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", guardrail_snippet)
     sym_short = _truncate_markdown_safe(title, int(MEMORY_SCORING_CONFIG["capsule_symptom_chars"]))
+    if is_pb:
+        sym_short = f"[PLAYBOOK] {sym_short}"
     gr_short = _truncate_markdown_safe(guardrail_snippet, int(MEMORY_SCORING_CONFIG["capsule_guardrail_chars"]))
     combined = f"{sym_short} -> {gr_short}" if (sym_short and gr_short) else (gr_short or sym_short)
     return _truncate_markdown_safe(combined, max_chars)
@@ -4151,6 +4559,52 @@ def _save_hit_telemetry(memory_root: Path, data: dict[str, Any]) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_file = cache_dir / "hit_telemetry.json"
     cache_file.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _compute_activity_modifier(
+    tier: str,
+    title_or_location: str,
+    hit_entry: dict[str, Any],
+    ref_date_iso: str | None = None,
+) -> float:
+    """
+    Option #2B (Bounded Telemetry Activity Modifier for TIER2-TIER4):
+      - TIER0 and TIER1 are 100% exempt (returns 1.00; 0% decay on foundational laws & invariants).
+      - For TIER2-TIER4, combines recency (from last drilldown date or lesson heading date, 30d halflife,
+        neutral 1.00 when undated) with reinforcement telemetry (`regression_near_misses` and `drilldown_count`),
+        clamped strictly to `[0.85, 1.25]`.
+    """
+    if tier in ("TIER0", "TIER1"):
+        return 1.00
+    floor_v = float(MEMORY_SCORING_CONFIG.get("activity_mod_floor", 0.85))
+    ceil_v = float(MEMORY_SCORING_CONFIG.get("activity_mod_ceiling", 1.25))
+    halflife = float(MEMORY_SCORING_CONFIG.get("activity_halflife_days", 30.0))
+
+    near_misses = int(hit_entry.get("regression_near_misses", 0)) if isinstance(hit_entry, dict) else 0
+    drilldowns = int(hit_entry.get("drilldown_count", 0)) if isinstance(hit_entry, dict) else 0
+    dd_dates = hit_entry.get("drilldown_dates", []) if isinstance(hit_entry, dict) else []
+
+    candidate_dates: list[str] = []
+    if isinstance(dd_dates, list):
+        candidate_dates.extend(str(d) for d in dd_dates if re.match(r"^\d{4}-\d{2}-\d{2}$", str(d)))
+    m_dt = re.search(r"\b(\d{4}-\d{2}-\d{2})\b", title_or_location or "")
+    if m_dt:
+        candidate_dates.append(m_dt.group(1))
+
+    recency_base = 1.00
+    if candidate_dates:
+        latest_s = max(candidate_dates)
+        try:
+            ref_d = dt.date.fromisoformat(ref_date_iso or today_iso())
+            touch_d = dt.date.fromisoformat(latest_s)
+            delta_days = max(0, (ref_d - touch_d).days)
+            recency_base = 0.90 + 0.10 * math.exp(-float(delta_days) / max(1.0, halflife))
+        except ValueError:
+            recency_base = 1.00
+
+    reinforce_boost = 0.08 * math.log(1.0 + 2.0 * near_misses + 1.0 * drilldowns)
+    raw_mod = recency_base + reinforce_boost
+    return round(max(floor_v, min(ceil_v, raw_mod)), 3)
 
 
 def _evaluate_promotion_signals(
@@ -4349,12 +4803,17 @@ def build_memory_index(memory_root: Path, entity_filter: str | None = None) -> d
             # Record SHA-256 provenance for all memory files in this project
             ll_path = proj_dir / f"{proj}_Lessons_Learned.md"
             arch_path = proj_dir / "Archive" / f"{proj}_Lessons_Archive.md"
+            pb_path = proj_dir / f"{proj}_Playbooks.md"
             hw_path = proj_dir / f"{proj}_Hardware.md"
             sw_path = proj_dir / f"{proj}_Software.md"
-            for mfile in (hub, ll_path, arch_path, hw_path, sw_path):
+            for mfile in (hub, ll_path, arch_path, pb_path, hw_path, sw_path):
                 if mfile.is_file():
                     m_raw = mfile.read_text(encoding="utf-8", errors="ignore")
-                    _, m_secs, _ = _parse_lesson_sections(m_raw) if "Lessons_" in mfile.name else ("", [], "")
+                    _, m_secs, _ = (
+                        _parse_lesson_sections(m_raw)
+                        if ("Lessons_" in mfile.name or mfile.name.endswith("_Playbooks.md"))
+                        else ("", [], "")
+                    )
                     source_sha256_map[mfile.relative_to(memory_root).as_posix()] = {
                         "sha256": hashlib.sha256(m_raw.encode("utf-8")).hexdigest()[:16],
                         "lines": len(m_raw.splitlines()),
@@ -4391,6 +4850,7 @@ def build_memory_index(memory_root: Path, entity_filter: str | None = None) -> d
                 f"{proj}.md",
                 f"{proj}_Lessons_Learned.md",
                 f"{proj}_Lessons_Archive.md",
+                f"{proj}_Playbooks.md",
             }
             valid_repo_bnames: set[str] | None = None
             if mounted_repo_dir is not None and mounted_repo_dir.is_dir():
@@ -4418,7 +4878,15 @@ def build_memory_index(memory_root: Path, entity_filter: str | None = None) -> d
                 valid_file_basenames=valid_repo_bnames,
                 exclude_self_basenames=self_hub_names,
             )
-            all_lessons = lessons_main + lessons_arch
+            lessons_pb = _parse_lessons_with_line_spans(
+                pb_path,
+                memory_root,
+                default_tier="TIER2",
+                location_label="playbooks",
+                valid_file_basenames=valid_repo_bnames,
+                exclude_self_basenames=self_hub_names,
+            )
+            all_lessons = lessons_main + lessons_arch + lessons_pb
 
             proj_doc_freq: dict[str, int] = {}
             proj_doc_len = 0
@@ -4545,18 +5013,23 @@ def check_manual_memory_edits(
     proj_dir = hub_path.parent
     ll_path = proj_dir / f"{canonical_proj}_Lessons_Learned.md"
     arch_path = proj_dir / "Archive" / f"{canonical_proj}_Lessons_Archive.md"
+    pb_path = proj_dir / f"{canonical_proj}_Playbooks.md"
 
     drifted_files: list[dict[str, Any]] = []
     structural_impacts: list[str] = []
 
-    for mfile in (hub_path, ll_path, arch_path):
+    for mfile in (hub_path, ll_path, arch_path, pb_path):
         if not mfile.is_file():
             continue
         rel_p = mfile.relative_to(memory_root).as_posix()
         raw_txt = mfile.read_text(encoding="utf-8", errors="ignore")
         live_sha = hashlib.sha256(raw_txt.encode("utf-8")).hexdigest()[:16]
         live_lines = len(raw_txt.splitlines())
-        _, live_secs, _ = _parse_lesson_sections(raw_txt) if "Lessons_" in mfile.name else ("", [], "")
+        _, live_secs, _ = (
+            _parse_lesson_sections(raw_txt)
+            if ("Lessons_" in mfile.name or mfile.name.endswith("_Playbooks.md"))
+            else ("", [], "")
+        )
         rec = sha_map.get(rel_p)
         if rec and rec.get("sha256") != live_sha:
             line_delta = live_lines - int(rec.get("lines", live_lines))
@@ -4568,7 +5041,7 @@ def check_manual_memory_edits(
                 "line_delta": line_delta,
                 "section_delta": sec_delta,
             })
-            if "Lessons_" in mfile.name:
+            if "Lessons_" in mfile.name or mfile.name.endswith("_Playbooks.md"):
                 # Check actual `### LL-xxx` heading lines for missing explicit `[TIER0..5]` badges (never match table rows)
                 untagged: list[str] = []
                 in_fence_chk = False
@@ -4663,6 +5136,17 @@ def repair_project_memory(
                 _write_protected_archive(arch_path, norm_a)
                 repaired_actions.append(f"Normalized headings and relative links in `Archive/{arch_path.name}`.")
 
+    pb_path = hub_path.parent / f"{canonical_proj}_Playbooks.md"
+    if pb_path.is_file():
+        pb_txt = pb_path.read_text(encoding="utf-8")
+        pb_pref, pb_secs, pb_suf = _parse_lesson_sections(pb_txt, default_tier="TIER2")
+        if pb_secs:
+            norm_pb = _render_lesson_file(pb_pref, pb_secs, pb_suf)
+            if norm_pb != pb_txt:
+                norm_pb = update_frontmatter_fields(norm_pb, {"last_synced": today_iso()})
+                pb_path.write_text(norm_pb, encoding="utf-8")
+                repaired_actions.append(f"Normalized `[TIERx]` section headings in `{pb_path.name}`.")
+
     idx_res = build_memory_index(memory_root, entity_filter=ent)
     repaired_actions.append(f"Rebuilt `{ent}` hybrid memory index and decision router (`source_sha256_map` synced).")
     return {
@@ -4695,23 +5179,51 @@ def query_lesson_by_id(
     lid = lesson_id.strip()
     ll_path = hub_path.parent / f"{canonical_proj}_Lessons_Learned.md"
     arch_path = hub_path.parent / "Archive" / f"{canonical_proj}_Lessons_Archive.md"
+    pb_path = hub_path.parent / f"{canonical_proj}_Playbooks.md"
 
     all_entries = (
         _parse_lessons_with_line_spans(ll_path, memory_root, default_tier="TIER2", location_label="main")
         + _parse_lessons_with_line_spans(arch_path, memory_root, default_tier="TIER3", location_label="archive")
+        + _parse_lessons_with_line_spans(pb_path, memory_root, default_tier="TIER2", location_label="playbooks")
     )
     matched: dict[str, Any] | None = None
+    matched_proj = canonical_proj
     for entry in all_entries:
         if entry["id"].lower() == lid.lower():
             matched = entry
             break
+
+    # Option #1: If not in `canonical_proj`, search same-entity companion projects (`0%` cross-entity bleed)
+    if matched is None:
+        projects_dir = memory_root / "Projects"
+        if projects_dir.is_dir():
+            for sib_hub in sorted(projects_dir.glob("*/*.md")):
+                if sib_hub.stem != sib_hub.parent.name or sib_hub.stem == canonical_proj:
+                    continue
+                sib_fm, _ = parse_stdlib_frontmatter(sib_hub.read_text(encoding="utf-8", errors="ignore"))
+                sib_ent = str(sib_fm.get("entity", "Default_Entity")).strip() or "Default_Entity"
+                if sib_ent.lower() != ent.lower():
+                    continue
+                s_proj = sib_hub.stem
+                s_entries = (
+                    _parse_lessons_with_line_spans(sib_hub.parent / f"{s_proj}_Lessons_Learned.md", memory_root, default_tier="TIER2", location_label="main")
+                    + _parse_lessons_with_line_spans(sib_hub.parent / "Archive" / f"{s_proj}_Lessons_Archive.md", memory_root, default_tier="TIER3", location_label="archive")
+                    + _parse_lessons_with_line_spans(sib_hub.parent / f"{s_proj}_Playbooks.md", memory_root, default_tier="TIER2", location_label="playbooks")
+                )
+                for s_entry in s_entries:
+                    if s_entry["id"].lower() == lid.lower():
+                        matched = s_entry
+                        matched_proj = s_proj
+                        break
+                if matched is not None:
+                    break
 
     if matched is None:
         return {
             "status": "FAIL",
             "project": canonical_proj,
             "lesson_id": lid,
-            "header": f"=== [FAIL] Lesson `{lid}` not found in `{canonical_proj}` ===",
+            "header": f"=== [FAIL] Lesson/Playbook `{lid}` not found in `{canonical_proj}` (or `{ent}` ecosystem) ===",
             "content": "",
         }
 
@@ -4722,7 +5234,7 @@ def query_lesson_by_id(
 
     # Record explicit drill-down in .cache/hit_telemetry.json (Signal 1 of Issue 3C)
     hit_data = _load_hit_telemetry(memory_root)
-    proj_hits = hit_data.setdefault(canonical_proj, {})
+    proj_hits = hit_data.setdefault(matched_proj, {})
     h_entry = proj_hits.setdefault(
         matched["id"],
         {"drilldown_count": 0, "drilldown_dates": [], "regression_near_misses": 0},
@@ -4836,7 +5348,18 @@ def recall_project_memory(
         default=0.0,
     )
     max_bm25 = active_raw_max if active_raw_max > 0 else 1.0
-    hit_data = _load_hit_telemetry(memory_root).get(canonical_proj, {})
+    all_hit_telemetry = _load_hit_telemetry(memory_root)
+    hit_data = all_hit_telemetry.get(canonical_proj, {})
+
+    # Option #2A: Active-Signal Weight Renormalization when query specifies no filenames
+    if q_files:
+        w_bm25_eff = float(MEMORY_SCORING_CONFIG["r_base_bm25_weight"])
+        w_ngram_eff = float(MEMORY_SCORING_CONFIG["r_base_ngram_weight"])
+        w_file_eff = float(MEMORY_SCORING_CONFIG["r_base_file_weight"])
+    else:
+        w_bm25_eff = float(MEMORY_SCORING_CONFIG["r_base_no_file_bm25_weight"])
+        w_ngram_eff = float(MEMORY_SCORING_CONFIG["r_base_no_file_ngram_weight"])
+        w_file_eff = 0.0
 
     scored_lessons: list[dict[str, Any]] = []
     pinned_tier0_all: list[dict[str, Any]] = []
@@ -4876,22 +5399,24 @@ def recall_project_memory(
 
         is_exact_id = lid_str.lower() in explicit_ids_queried
         r_base = (
-            float(MEMORY_SCORING_CONFIG["r_base_bm25_weight"]) * bm25_component
-            + float(MEMORY_SCORING_CONFIG["r_base_ngram_weight"]) * cos_adj
-            + float(MEMORY_SCORING_CONFIG["r_base_file_weight"]) * overlap
+            w_bm25_eff * bm25_component
+            + w_ngram_eff * cos_adj
+            + w_file_eff * overlap
         )
         if is_exact_id:
             r_base = max(r_base, 0.95)
             bm25_sat = max(bm25_sat, 0.90)
 
-        effective_w = (1.0 + (w_tier - 1.0) * min(1.0, bm25_sat / 0.45)) if w_tier > 1.0 else w_tier
+        h_entry = hit_data.get(lid_str, {})
+        activity_mod = _compute_activity_modifier(l_tier, str(l_item.get("title", "")), h_entry)
+        base_eff_w = (1.0 + (w_tier - 1.0) * min(1.0, bm25_sat / 0.45)) if w_tier > 1.0 else w_tier
+        effective_w = base_eff_w * activity_mod
         if is_exact_id:
             effective_w = max(effective_w, 3.0)
         final_score = (r_base * effective_w) if r_base >= float(MEMORY_SCORING_CONFIG["r_base_floor"]) else 0.0
         if final_score <= 0.0:
             continue
 
-        h_entry = hit_data.get(lid_str, {})
         p_sigs = _evaluate_promotion_signals(l_tier, l_item.get("touched_files", []), h_entry)
         if p_sigs:
             promotion_alerts.append(
@@ -4901,9 +5426,12 @@ def recall_project_memory(
 
         rec_obj = {
             "id": lid_str,
+            "project": canonical_proj,
+            "is_sibling": False,
             "tier": l_tier,
             "r_base": round(r_base, 3),
             "bm25_sat": round(bm25_sat, 3),
+            "activity_mod": activity_mod,
             "w_tier": round(effective_w, 2),
             "score": round(final_score, 3),
             "exact_id_match": is_exact_id,
@@ -4918,8 +5446,128 @@ def recall_project_memory(
         else:
             scored_lessons.append(rec_obj)
 
+    # Option #1: Same-Entity (Same-Ecosystem) Cross-Project Radar Inheritance
+    # Strictly confined to `idx_data["projects"]` inside `<Entity_Safe>_memory_index.json` (0% cross-entity bleed).
+    sibling_candidates: list[dict[str, Any]] = []
+    q_low_raw = (query or "").lower()
+    sib_floor = float(MEMORY_SCORING_CONFIG.get("sibling_r_base_floor", 0.22))
+    all_ent_projects = idx_data.get("projects", {})
+    any_explicit_sibling = False
+    for sib_proj, sib_pdata in sorted(all_ent_projects.items()):
+        if sib_proj == canonical_proj:
+            continue
+        if str(sib_pdata.get("entity", ent)).strip().lower() != ent.lower():
+            continue
+        sib_lessons = sib_pdata.get("lessons", [])
+        if not sib_lessons:
+            continue
+        sib_tokens = [
+            t
+            for t in re.split(r"[^a-z0-9]+", sib_proj.lower())
+            if len(t) >= 4 and t not in ("remote", "assembly", "toolhead", "rotational", "bowden", "docs", "tools", "profile")
+        ]
+        is_explicit_sib = (sib_proj.lower() in q_low_raw) or any(
+            re.search(rf"\b{re.escape(st)}\b", q_low_raw) for st in sib_tokens
+        )
+        if is_explicit_sib:
+            any_explicit_sibling = True
+        sib_scale = float(
+            MEMORY_SCORING_CONFIG["sibling_explicit_project_weight"]
+            if is_explicit_sib
+            else MEMORY_SCORING_CONFIG["sibling_project_weight"]
+        )
+        sib_df = sib_pdata.get("proj_doc_freq") or ent_doc_freq
+        sib_ndocs = max(1, int(sib_pdata.get("proj_total_docs", len(sib_lessons) or 1)))
+        sib_avg_dl = float(sib_pdata.get("proj_avg_doc_len") or avg_dl) or 50.0
+        sib_hits = all_hit_telemetry.get(sib_proj, {})
+
+        sib_raw_bm25: list[float] = []
+        for s_item in sib_lessons:
+            sd_tf = s_item.get("bm25_tf", {})
+            sdl = sum(sd_tf.values()) or 1
+            s_score_b = 0.0
+            for q_tok, q_cnt in q_tf.items():
+                tf = sd_tf.get(q_tok, 0)
+                if tf <= 0:
+                    continue
+                df_p = sib_df.get(q_tok, 1)
+                df_e = ent_doc_freq.get(q_tok, 1)
+                idf_p = math.log(1.0 + (sib_ndocs - df_p + 0.5) / (df_p + 0.5))
+                idf_e = math.log(1.0 + (ent_total_docs - df_e + 0.5) / (df_e + 0.5))
+                idf = w_p_idf * idf_p + w_e_idf * idf_e
+                denom = tf + k1 * (1.0 - b + b * (sdl / sib_avg_dl))
+                s_score_b += idf * ((tf * (k1 + 1.0)) / denom) * min(3, q_cnt)
+            sib_raw_bm25.append(s_score_b)
+
+        sib_max_b = max(
+            (rb for li, rb in zip(sib_lessons, sib_raw_bm25) if li.get("tier") not in ("TIER4", "TIER5")),
+            default=0.0,
+        ) or 1.0
+
+        for s_item, s_raw_b in zip(sib_lessons, sib_raw_bm25):
+            s_tier = s_item.get("tier", "TIER3")
+            s_id = str(s_item.get("id", ""))
+            s_exact = s_id.lower() in explicit_ids_queried
+            if s_tier in ("TIER4", "TIER5") and not s_exact:
+                continue
+            s_sat = (s_raw_b / (s_raw_b + sat_k)) if s_raw_b > 0 else 0.0
+            s_norm = (s_raw_b / sib_max_b) if s_raw_b > 0 else 0.0
+            s_bm25_comp = 0.65 * s_sat + 0.35 * s_norm
+            s_cos = _cosine_sim(q_ngrams, s_item.get("char_ngrams", {}))
+            s_cos_adj = max(0.0, (s_cos - 0.22) / 0.78)
+            sd_files = set(s_item.get("touched_files", []))
+            if q_files and sd_files:
+                raw_ov = len(q_files & sd_files) / max(1, min(len(q_files), len(sd_files)))
+                b_pen = (1.0 / math.sqrt(len(sd_files) / 4.0)) if len(sd_files) > 4 else 1.0
+                s_ov = raw_ov * b_pen
+            else:
+                s_ov = 0.0
+            s_r_base = w_bm25_eff * s_bm25_comp + w_ngram_eff * s_cos_adj + w_file_eff * s_ov
+            if s_exact:
+                s_r_base = max(s_r_base, 0.95)
+                s_sat = max(s_sat, 0.90)
+            if s_r_base < sib_floor and not s_exact:
+                continue
+            if s_tier == "TIER0" and s_sat < float(MEMORY_SCORING_CONFIG["tier0_top3_gate_sat"]) and not s_exact:
+                continue
+            sw_tier = TIER_GRAVITY_WEIGHTS.get(s_tier, 1.0)
+            s_act = _compute_activity_modifier(s_tier, str(s_item.get("title", "")), sib_hits.get(s_id, {}))
+            s_base_eff_w = (1.0 + (sw_tier - 1.0) * min(1.0, s_sat / 0.45)) if sw_tier > 1.0 else sw_tier
+            s_eff_w = s_base_eff_w * s_act * sib_scale
+            if s_exact:
+                s_eff_w = max(s_eff_w, 3.0)
+            s_final = s_r_base * s_eff_w
+            sibling_candidates.append({
+                "id": s_id,
+                "project": sib_proj,
+                "is_sibling": True,
+                "explicit_sibling": is_explicit_sib,
+                "tier": s_tier,
+                "r_base": round(s_r_base, 3),
+                "bm25_sat": round(s_sat, 3),
+                "activity_mod": s_act,
+                "w_tier": round(s_eff_w, 2),
+                "score": round(s_final, 3),
+                "exact_id_match": s_exact,
+                "location": f"{s_item['file']}{s_item['line_range']}",
+                "touched_files": s_item.get("touched_files", []),
+                "capsule_1line": f"[ECOSYSTEM SIBLING: {sib_proj}] {s_item['capsule_1line']}",
+                "promotion_signals": [],
+            })
+
     scored_lessons.sort(key=lambda x: (1 if x.get("exact_id_match") else 0, x["score"], x["r_base"]), reverse=True)
-    top_matches = scored_lessons[: max(1, top_k)]
+    sibling_candidates.sort(key=lambda x: (1 if x.get("exact_id_match") else 0, x["score"], x["r_base"]), reverse=True)
+
+    eff_k = max(1, top_k)
+    if any_explicit_sibling or any(s.get("exact_id_match") for s in sibling_candidates):
+        combined_pool = scored_lessons + sibling_candidates
+        combined_pool.sort(key=lambda x: (1 if x.get("exact_id_match") else 0, x["score"], x["r_base"]), reverse=True)
+        top_matches = combined_pool[:eff_k]
+    else:
+        max_implicit_sib = max(1, eff_k - len(scored_lessons)) if len(scored_lessons) < eff_k else 1
+        combined_pool = scored_lessons + sibling_candidates[:max_implicit_sib]
+        combined_pool.sort(key=lambda x: (1 if x.get("exact_id_match") else 0, x["score"], x["r_base"]), reverse=True)
+        top_matches = combined_pool[:eff_k]
 
     # Match TIER1 Subsystem Invariants (with CamelCase/snake_case tokenized row matching)
     matched_invariants: list[dict[str, Any]] = []
@@ -4938,6 +5586,28 @@ def recall_project_memory(
             })
     matched_invariants.sort(key=lambda x: x["priority_score"], reverse=True)
     top_invariants = matched_invariants[:2]
+
+    top_match_ids_all = {m["id"] for m in top_matches}
+    extra_t0_all = [p for p in pinned_tier0_all if p["id"] not in top_match_ids_all][:2]
+    t0_ids_str = ",".join(p["id"] for p in extra_t0_all) if extra_t0_all else "none"
+    t1_sub_names = (
+        ", ".join(inv["subsystem"].split("(")[0].replace("`", "").strip(" *") for inv in top_invariants)
+        if top_invariants
+        else "none"
+    )
+    hit_parts: list[str] = []
+    for m_item in top_matches:
+        if m_item.get("is_sibling") and m_item.get("project"):
+            hit_parts.append(f"[SIBLING:{m_item['project']}] {m_item['id']}({m_item['score']:.2f})")
+        else:
+            hit_parts.append(f"{m_item['id']}({m_item['score']:.2f})")
+    hits_str = ", ".join(hit_parts) if hit_parts else "none"
+    supp_str = f"T5({len(suppressed_tier5_ids)})" if suppressed_tier5_ids else "0"
+    ledger_memory_line = (
+        f"`{canonical_proj}` (`--recall`) -> "
+        f"`T0`: `{t0_ids_str}` | `T1`: `{t1_sub_names}` | "
+        f"`Hits`: `{hits_str}` | `Suppressed`: `{supp_str}`"
+    )
 
     # Build Profile B <= 600-token <MEMORY_DECISION_PACKET> (omits redundant Decision_Profile #1-#3 echo)
     def _assemble_packet(r1_mk: int, r1_rb: int, r2_mk: int, r2_rb: int, cap_lim: int) -> str:
@@ -5000,6 +5670,7 @@ def recall_project_memory(
             for pa in promotion_alerts[:2]:
                 lines_p.append(f"    * {pa}")
 
+        lines_p.append(f"  [LEDGER_MEMORY_LINE]: {ledger_memory_line}")
         lines_p.append("</MEMORY_DECISION_PACKET>")
         return "\n".join(lines_p)
 
@@ -5030,6 +5701,7 @@ def recall_project_memory(
         "top_matches": top_matches,
         "suppressed_tier5_ids": suppressed_tier5_ids,
         "promotion_alerts": promotion_alerts,
+        "ledger_memory_line": ledger_memory_line,
         "packet_token_estimate": tok_est,
         "header": f"=== 🧠 Front-of-Decision Memory Recall [{canonical_proj}]: {len(top_matches)} Radar Capsule(s) ===",
         "content": packet_text,
@@ -6373,6 +7045,46 @@ def main(argv: list[str] | None = None) -> int:
         help="Reinforce an existing `TIER0`–`TIER4` lesson ID (`<LL-xxx>`) with a newly caught `--retired-bloat` / `--must-keep` variant (`Option 4D`).",
     )
     parser.add_argument(
+        "--add-playbook",
+        action="store_true",
+        help="Append a portable procedural workflow (`Trigger -> Ordered Procedure -> Verification Gate`) to `<Project>_Playbooks.md` (`Option 5B`).",
+    )
+    parser.add_argument(
+        "--update-playbook",
+        default="",
+        help="Update an existing `PB-xx` procedural playbook in `<Project>_Playbooks.md` in place (`Option 5B` + `#3-Lite`).",
+    )
+    parser.add_argument(
+        "--playbook-id",
+        default="",
+        help="Playbook ID (`PB-01`, `PB-ALCH-01`, etc.) for `--add-playbook` or on-demand full-context query.",
+    )
+    parser.add_argument(
+        "--title",
+        default="",
+        help="Optional title for `--add-playbook` (`PB-xx`).",
+    )
+    parser.add_argument(
+        "--trigger",
+        default="",
+        help="Trigger / task pattern for `--add-playbook` or `--update-playbook`.",
+    )
+    parser.add_argument(
+        "--steps",
+        default="",
+        help="Ordered multi-step execution procedure for `--add-playbook` or `--update-playbook`.",
+    )
+    parser.add_argument(
+        "--verification-gate",
+        default="",
+        help="Deterministic verification gate command/criteria for `--add-playbook` or `--update-playbook`.",
+    )
+    parser.add_argument(
+        "--force-new",
+        action="store_true",
+        help="Bypass the `#3-Lite` near-duplicate consolidation gate (`Cosine >= 0.72`) when adding a genuinely distinct lesson or playbook.",
+    )
+    parser.add_argument(
         "--lesson-disposition",
         default="",
         help="Explicit commit-delta lesson disposition for `--save-handoff` (e.g. `NONE:<verified cosmetic/doc reason>`).",
@@ -6727,6 +7439,7 @@ def main(argv: list[str] | None = None) -> int:
             must_keep=args.must_keep,
             retired_bloat=args.retired_bloat,
             tier=args.tier,
+            force_new=args.force_new,
             repo_override=repo_override,
         )
 
@@ -6744,6 +7457,46 @@ def main(argv: list[str] | None = None) -> int:
             retired_bloat=args.retired_bloat,
             files=reinf_files,
             receipt=args.receipt,
+            repo_override=repo_override,
+        )
+
+    if args.add_playbook:
+        if not target_proj:
+            print("[FAIL] --add-playbook requires --project <Project>.", file=sys.stderr)
+            return 2
+        pb_files = [f.strip() for f in args.files.split(",") if f.strip()] if args.files else []
+        results["add_playbook"] = add_project_playbook(
+            mem_root,
+            target_proj,
+            trigger=args.trigger,
+            steps=args.steps,
+            verification_gate=args.verification_gate,
+            playbook_id=args.playbook_id,
+            title=args.title,
+            anchor=args.anchor,
+            files=pb_files,
+            receipt=args.receipt,
+            tier=args.tier,
+            force_new=args.force_new,
+            repo_override=repo_override,
+        )
+
+    if args.update_playbook:
+        if not target_proj:
+            print("[FAIL] --update-playbook requires --project <Project>.", file=sys.stderr)
+            return 2
+        upb_files = [f.strip() for f in args.files.split(",") if f.strip()] if args.files else []
+        results["update_playbook"] = update_project_playbook(
+            mem_root,
+            target_proj,
+            playbook_id=args.update_playbook,
+            trigger=args.trigger,
+            steps=args.steps,
+            verification_gate=args.verification_gate,
+            anchor=args.anchor,
+            files=upb_files,
+            receipt=args.receipt,
+            tier=args.tier if "--tier" in (argv or sys.argv) else "",
             repo_override=repo_override,
         )
 
@@ -6841,14 +7594,17 @@ def main(argv: list[str] | None = None) -> int:
             repo_override=repo_override,
         )
 
-    if args.lesson_id and not args.add_lesson:
+    q_entry_id = args.lesson_id if (args.lesson_id and not args.add_lesson) else (
+        args.playbook_id if (args.playbook_id and not args.add_playbook and not args.update_playbook) else ""
+    )
+    if q_entry_id:
         if not target_proj:
-            print("[FAIL] --lesson-id requires --project <Project>.", file=sys.stderr)
+            print("[FAIL] --lesson-id / --playbook-id requires --project <Project>.", file=sys.stderr)
             return 2
         results["query_lesson"] = query_lesson_by_id(
             mem_root,
             target_proj,
-            lesson_id=args.lesson_id,
+            lesson_id=q_entry_id,
             repo_override=repo_override,
         )
 
@@ -6867,7 +7623,7 @@ def main(argv: list[str] | None = None) -> int:
         args.repair_memory,
         bool(args.preflight),
         args.recall is not None,
-        bool(args.lesson_id and not args.add_lesson),
+        bool(q_entry_id),
         args.init_project,
         args.sync_tree,
         args.sync_hardware,
@@ -6878,6 +7634,8 @@ def main(argv: list[str] | None = None) -> int:
         args.invariants is not None,
         args.add_lesson,
         bool(args.reinforce_lesson),
+        args.add_playbook,
+        bool(args.update_playbook),
         args.create_project_template,
         args.tbd_ledger,
     ))
@@ -6946,6 +7704,10 @@ def main(argv: list[str] | None = None) -> int:
         exit_code = 1
     if "reinforce_lesson" in results and results["reinforce_lesson"].get("status") != "PASS":
         exit_code = 1
+    if "add_playbook" in results and results["add_playbook"].get("status") != "PASS":
+        exit_code = 1
+    if "update_playbook" in results and results["update_playbook"].get("status") != "PASS":
+        exit_code = 1
     if "save_handoff" in results and results["save_handoff"].get("status") != "PASS":
         exit_code = 1
     if "set_tier" in results and results["set_tier"].get("status") != "PASS":
@@ -6990,10 +7752,21 @@ def main(argv: list[str] | None = None) -> int:
                 if val.get("content"):
                     print(val["content"])
             elif key == "add_lesson" and isinstance(val, dict):
-                print(
-                    f"[{val.get('status', 'OK')}] Added {val.get('lesson_id')} to {val.get('lessons_file')} "
-                    f"(subsystem_updated={val.get('subsystem_updated')})"
-                )
+                if val.get("status") != "PASS":
+                    print(f"[{val.get('status', 'FAIL')}] add_lesson ({val.get('code', 'ERROR')}): {val.get('detail', '')}")
+                else:
+                    print(
+                        f"[{val.get('status', 'OK')}] Added {val.get('lesson_id')} to {val.get('lessons_file')} "
+                        f"(subsystem_updated={val.get('subsystem_updated')})"
+                    )
+            elif key in ("add_playbook", "update_playbook") and isinstance(val, dict):
+                if val.get("status") != "PASS":
+                    print(f"[{val.get('status', 'FAIL')}] {key} ({val.get('code', 'ERROR')}): {val.get('detail', '')}")
+                else:
+                    print(
+                        f"[{val.get('status', 'OK')}] {key}: {val.get('playbook_id')} in {val.get('playbooks_file')} "
+                        f"(tier={val.get('tier')})"
+                    )
             elif key == "save_handoff" and isinstance(val, dict):
                 if val.get("status") != "PASS":
                     print(f"[{val.get('status', 'FAIL')}] save_handoff ({val.get('code', 'ERROR')}): {val.get('detail', '')}")

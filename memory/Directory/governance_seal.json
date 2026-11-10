@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-10",
-  "latest_audit_entry_sha256": "f31e07888942e00be245b7252674cb2c3253070764a62e557aeaf51e39c468ef",
+  "latest_audit_entry_sha256": "cf13a08803bda4f32014b8cab4997934df72f36704fd6e87ec3972b68411760e",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,7 +39,7 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "1bc1a33ee4ed043a4e151d804ae9871a3743305576bef7be727eb4455cd6b7ac",
+      "block_sha256": "497a4267cdd6eb4860593b439412e607b498323d829e73460240171e0cc10911",
       "row_hashes": [
         "0009a3acc57ac04a",
         "0b7b7078a43aa6d5",
@@ -52,9 +52,9 @@
         "5d2a4c93ec84ec18",
         "6eb68ed8c16241a4",
         "7604325b4c9413a8",
-        "7e38511489b90298",
         "83e72a45da3bc31c",
         "875c4dde36ed05b6",
+        "8b5f1fbecbd55df1",
         "97f1b0765b016359",
         "a3c758b26b32da36",
         "b15bf18b386f24f7",
@@ -159,5 +159,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "d199623941354fdd67f63ab6e89da3839245d1afdb0c3a1710b8221a47f6215f"
+  "seal_root_sha256": "9fd6dbcbf674a8a76d4344244627d2f4bcea0c71a657fe3a613336f379032235"
 }

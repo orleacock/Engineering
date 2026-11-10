@@ -61,28 +61,36 @@ Never use a monolithic parser for unrelated domains. Invoke the specific telemet
 1. **Quarantine Holding Zone (`## Quarantine Zone` & `Projects/<Project>/Quarantine/`)**:
    - Store all unverified scratch notes, preliminary vendor quotes, and unresolved `[TBD: ...]` items inside `<Project>.md`'s `<!-- QUARANTINE-ZONE:START -->` block or inside `Projects/<Project>/Quarantine/`, and query the workspace-wide open `[TBD]` / `[CONFLICT]` rollup anytime via `--tbd-ledger [--umbrella <Entity>]`.
    - Treat all quarantined content as `[QUARANTINED — DO NOT CITE AS FACT]`. Only promote an item out of Quarantine after verifying it via `verify_claims.py` (`claim-verification`) against primary source telemetry.
-2. **Lessons Learned, `TIER0`–`TIER5` Gravity & Sectional Rebuild Blueprints (`<Project>_Lessons_Learned.md`)**:
-   - Maintain two structured sections in every `<Project>_Lessons_Learned.md`:
-     1. **`Subsystem Rebuild & Invariant Matrix` (`<!-- SUBSYSTEM-INVARIANTS:START/END -->`)**: Lists `Must-Keep Invariants (Chesterton's Fence)` alongside `Retired Bloat / Anti-Patterns (Never Re-Add)` per module or assembly so sectional rebuilds and Pre-Mutation Advisories never re-introduce retired bugs or strip load-bearing guards. Before modifying any script or module, run `--preflight <script.py>` (which combines `scripts/script_contracts.json`, `SUBSYSTEM-INVARIANTS`, and Top-3 1-line radar capsules and records `.cache/preflight_state.json`), `--recall "<query>"` (`<= 600` tokens; `100%` non-numeric semantic & identifier recall), or `--invariants [<subsystem_query>]` (and never read `> 30` lines of `0444` `Archive/*_Lessons_Archive.md` directly—use `--lesson-id LL-xxx`):
+2. **Lessons Learned, Procedural Playbooks, `TIER0`–`TIER5` Gravity & Sectional Rebuild Blueprints (`<Project>_Lessons_Learned.md` & `<Project>_Playbooks.md`)**:
+   - Maintain two structured sections in `<Project>_Lessons_Learned.md` plus portable procedural workflows (`PB-xx`) in `<Project>_Playbooks.md` (`authoritative: false`):
+     1. **`Subsystem Rebuild & Invariant Matrix` (`<!-- SUBSYSTEM-INVARIANTS:START/END -->`)**: Lists `Must-Keep Invariants (Chesterton's Fence)` alongside `Retired Bloat / Anti-Patterns (Never Re-Add)` per module or assembly so sectional rebuilds and Pre-Mutation Advisories never re-introduce retired bugs or strip load-bearing guards. Before modifying any script or module, run `--preflight <script.py>` (which combines `scripts/script_contracts.json`, `SUBSYSTEM-INVARIANTS`, and Top-3 1-line radar capsules and records `.cache/preflight_state.json`), `--recall "<query>"` (`<= 600` tokens; `100%` non-numeric semantic & identifier recall across local and same-`entity:` sibling projects, with `0%` cross-entity bleed), or `--invariants [<subsystem_query>]` (and never read `> 30` lines of `0444` `Archive/*_Lessons_Archive.md` directly—use `--lesson-id LL-xxx` or `--playbook-id PB-xxx`):
         ```bash
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
           --memory-root <memory_root> --project <Project> --preflight <script.py>
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
           --memory-root <memory_root> --project <Project> --recall "<query>" [--top-k 3]
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
-          --memory-root <memory_root> --project <Project> --lesson-id LL-xxx
+          --memory-root <memory_root> --project <Project> --lesson-id LL-xxx [--playbook-id PB-xxx]
         ```
-     2. **Chronological Post-Mortem & ADR Ledger (`Symptom -> Root Cause -> Permanent Guardrail`)**: Record every root-cause post-mortem (`LL-xx`) and Architectural Decision Record (`ADR-xx`) immediately after sandbox or bug diagnosis via `--add-lesson [--tier TIER0..TIER5]` (which scrubs filler, appends additive `SUBSYSTEM-INVARIANTS` rows, and keeps `<= 3` `TIER0` + `<= 7` `TIER2` active full-context sections in `<Project>_Lessons_Learned.md` while graduating stabilized `TIER3`–`TIER5` narratives to `Archive/<Project>_Lessons_Archive.md` via `--compact-memory` or `--set-tier [--user-confirmed --reason "..."]`):
+     2. **Chronological Post-Mortem, ADR & Procedural Playbook Ledger (`LL-xx` / `ADR-xx` / `PB-xx`)**: Record every root-cause post-mortem (`LL-xx`) and Architectural Decision Record (`ADR-xx`) immediately after sandbox or bug diagnosis via `--add-lesson [--tier TIER0..TIER5]` (which checks `Cosine >= 0.72` pre-write deduplication before adding, scrubs filler, appends additive `SUBSYSTEM-INVARIANTS` rows, and keeps `<= 3` `TIER0` + `<= 7` `TIER2` active sections in `<Project>_Lessons_Learned.md` while graduating `TIER3`–`TIER5` narratives to `Archive/<Project>_Lessons_Archive.md`), and record repeatable multi-step workflows (`Trigger -> Ordered Execution Procedure -> Verification Gate`) in `<Project>_Playbooks.md` via `--add-playbook` / `--update-playbook`:
         ```bash
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
           --memory-root <memory_root> --project <Project> --add-lesson \
           --symptom "<Observed failure (<=120w)>" --root-cause "<Verified root cause (<=120w)>" \
           --guardrail "<Permanent invariant enforced (<=140w)>" --files "<repo_rel_file1>[,<file2>]" \
-          [--receipt "<VRF-... / SBX-...>"] [--tier TIER2] [--subsystem "<Module>" --must-keep "<Invariant>" --retired-bloat "<Anti-pattern>"]
+          [--receipt "<VRF-... / SBX-...>"] [--tier TIER2] [--force-new] [--subsystem "<Module>" --must-keep "<Invariant>" --retired-bloat "<Anti-pattern>"]
         # Reinforce an existing TIER0-TIER4 lesson when catching a recurring anti-pattern variant:
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
           --memory-root <memory_root> --project <Project> --reinforce-lesson <LL-xxx> \
           --files "<repo_rel_file>" --retired-bloat "<Newly blocked variant>" [--must-keep "<Updated invariant>"]
+        # Record or update a portable procedural playbook (PB-xx) in <Project>_Playbooks.md:
+        python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
+          --memory-root <memory_root> --project <Project> --add-playbook [--playbook-id PB-xxx] [--title "<Workflow>"] \
+          --trigger "<When to invoke (<=100w)>" --steps "<1. Step A -> 2. Step B (<=180w)>" \
+          --verification-gate "<Exit/pass criteria (<=120w)>" --files "<repo_rel_file1>[,<file2>]" [--tier TIER2] [--force-new]
+        python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
+          --memory-root <memory_root> --project <Project> --update-playbook <PB-xxx> \
+          [--steps "<Updated steps>"] [--verification-gate "<Updated gate>"] [--files "<files>"]
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
           --memory-root <memory_root> --project <Project> --compact-memory
         python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
@@ -114,7 +122,7 @@ Never use a monolithic parser for unrelated domains. Invoke the specific telemet
      --memory-root <memory_root> --project <Project> --kickstart
    ```
 3. **Targeted Dossier & Section Reader (`--project <Project> --section <Section>`)**:
-   - To fetch a specific section (`all`, `concept`, `inventory`, `specs`, `hazards`, `architecture`, `tbd`, `tasks`, `lessons`, `handoff`, `hardware`, `software`) with inline task transclusion in a single CLI call:
+   - To fetch a specific section (`all`, `concept`, `inventory`, `specs`, `hazards`, `architecture`, `tbd`, `tasks`, `lessons`, `playbooks`, `handoff`, `hardware`, `software`) with inline task transclusion in a single CLI call:
    ```bash
    python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
      --memory-root <memory_root> --project <Project> --section <Section>

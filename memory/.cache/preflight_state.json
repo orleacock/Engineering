@@ -40,21 +40,45 @@
       "script_rel_path": "sandbox_runner.py",
       "session_date": "2026-11-09"
     },
-    "sync_memory.py": {
+    "skills/claim-verification/scripts/verify_claims.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/scripts/verify_claims.py",
       "disposed": true,
-      "git_head_blob_sha256": "3a7083f523eb1762",
-      "pre_edit_blob_sha256": "3a7083f523eb1762",
+      "git_head_blob_sha256": "80e42f36d6911700",
+      "pre_edit_blob_sha256": "783e1c9a231dca6f",
+      "project": "Homunculus",
+      "script": "verify_claims.py",
+      "script_rel_path": "skills/claim-verification/scripts/verify_claims.py",
+      "session_date": "2026-11-10"
+    },
+    "skills/project-memory/scripts/sync_memory.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
+      "disposed": true,
+      "git_head_blob_sha256": "2ccf63c4450fad74",
+      "pre_edit_blob_sha256": "e1bd60c47206770f",
+      "project": "Homunculus",
       "script": "sync_memory.py",
-      "script_rel_path": "sync_memory.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "skills/project-memory/scripts/sync_memory.py",
+      "session_date": "2026-11-10"
+    },
+    "sync_memory.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
+      "disposed": true,
+      "git_head_blob_sha256": "2ccf63c4450fad74",
+      "pre_edit_blob_sha256": "e1bd60c47206770f",
+      "project": "Homunculus",
+      "script": "sync_memory.py",
+      "script_rel_path": "skills/project-memory/scripts/sync_memory.py",
+      "session_date": "2026-11-10"
     },
     "verify_claims.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/scripts/verify_claims.py",
       "disposed": true,
-      "git_head_blob_sha256": "9b6e76dbc2be26f5",
-      "pre_edit_blob_sha256": "9b6e76dbc2be26f5",
+      "git_head_blob_sha256": "80e42f36d6911700",
+      "pre_edit_blob_sha256": "783e1c9a231dca6f",
+      "project": "Homunculus",
       "script": "verify_claims.py",
-      "script_rel_path": "verify_claims.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "skills/claim-verification/scripts/verify_claims.py",
+      "session_date": "2026-11-10"
     }
   }
 }

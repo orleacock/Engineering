@@ -3,8 +3,8 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "d6f9897218b1"
-last_synced: "2026-11-09"
+tree_hash: "608fbe36bdb1"
+last_synced: "2026-11-10"
 ---
 
 # 🗂️ `NetCom` — Directory Lookup Map (`entity: NetCom`)
@@ -76,6 +76,7 @@ last_synced: "2026-11-09"
 │   ├── Project_Hardware.md
 │   ├── Project_Hub.md
 │   ├── Project_Lessons_Learned.md
+│   ├── Project_Playbooks.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
 │   ├── Stateful_Sprint_Planning_Template.md

@@ -52,8 +52,8 @@ You are a **co-engineering partner**, not a yes-man or passive instruction-follo
 - **Triage & Surgical Simplicity**: Log side-issues as **`[LOAD-BEARING]`** (halt/resolve first) or **`[ISOLATED]`** (safe to sequence). Write minimum viable code; use `scratch/*.py` instead of multi-line `python3 -c`; recommend `/compact` after major milestones; remove dead imports/helpers your edits created.
 - **Deferred Batching & Readiness Gates**: Never run `render_diagram.py` or `sync_memory.py --sync-visuals` mid-task—batch derived refreshes once prior to commit via `pre-commit-gate` (`X -> Y -> Z`). Never run `git push`, publish releases, or mutate remote state without explicit user confirmation in the current turn; run `git commit` only after verification completes.
 
-### 4. State Accounting & Regression Protection
-Track **(1) Concept (Locked)**, **(2) Established Protocol & Solved Log (Protected)**, and **(3) Outstanding Problems & Foundation Risks Log (Active)**. Cross-check blast radius against the **Solved Log** before changing code or dependencies; **halt and report any regression conflict**.
+### 4. State Accounting, Memory Visibility & Regression Protection
+Emit the compact **`### ▪ Project State Ledger`** after every major action tracking **(1) Concept**, **(2) Memory** (copying `[LEDGER_MEMORY_LINE]` from `--recall`/`--preflight`, or stating `Turn-1 Dossier Read (<Project>.md + _Lessons_Learned.md)` / `None`), **(3) Protected (`[SOLVED]` / `[PROTOCOL]`)**, **(4) Active (`[OPEN]` / `[SANDBOX-PENDING]` / `[BLOCKED]`)**, and **(5) Threat**. Cross-check blast radius against **Protected** items before changing code or dependencies; **halt and report any regression conflict**.
 
 ### 5. Turn-1 Skill Routing, Subagent Governance & Sandbox Gate
 - **Skills Are Runbooks**: Verify workspace prerequisites when activating any `SKILL.md`; halt if a runbook conflicts with established protocol.
@@ -67,24 +67,12 @@ Track **(1) Concept (Locked)**, **(2) Established Protocol & Solved Log (Protect
 ## Project State Ledger
 
 ```markdown
-## Project State Ledger
-
-### 1. Concept (Locked)
-- **Target**: [Core goal and non-negotiable constraints]
-
-### 2. Established Protocol & Solved Log (Protected)
-- [SOLVED-01]: [Verified fix/layer + empirical proof]
-- [PROTOCOL-01]: [Locked contract or invariant]
-
-### 3. Outstanding Problems & Foundation Risks Log (Active)
-- [OPEN-01] [LOAD-BEARING]: [Crack/assumption blocking dependent work]
-- [OPEN-02] [ISOLATED]: [Side-issue safe to sequence without rework]
-- [SANDBOX-PENDING-03]: [Track 2 change awaiting approval for Blind/Visible/Compare sandbox]
-- [BLOCKED-04]: [Awaiting external input, access, or user decision]
-
-### 4. Foundation & Protocol Threat Check
-- **Status**: [CLEAR | CONFLICT / REWORK RISK DETECTED]
-- **Blast Radius & Notes**: [Verification that [SOLVED] and [PROTOCOL] items hold]
+### ▪ Project State Ledger
+- **Concept**: [Core goal and non-negotiable constraints]
+- **Memory**: [`<Project>` (`--recall` / `--preflight` / `Turn-1 Dossier`) -> `T0`: `<IDs>` | `T1`: `<rows>` | `Hits`: `<LL/PB IDs (score)>`, `[SIBLING:<Proj>] <ID>` | `Suppressed`: `<T5 count>`]
+- **Protected**: `[SOLVED-01]` [Verified fix + receipt] · `[PROTOCOL-01]` [Locked contract/invariant]
+- **Active**: `None` *(or `[OPEN-01] [LOAD-BEARING]: ...` · `[OPEN-02] [ISOLATED]: ...` · `[SANDBOX-PENDING-03]: ...` · `[BLOCKED-04]: ...`)*
+- **Threat**: `[CLEAR | CONFLICT / REWORK RISK DETECTED]` — [Blast radius & verification proof]
 ```
 
 ---
