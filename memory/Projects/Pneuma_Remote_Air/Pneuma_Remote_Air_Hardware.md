@@ -3,17 +3,17 @@ project: "Pneuma_Remote_Air"
 parent_note: "Pneuma_Remote_Air"
 entity: "Alchemical-3D"
 compartment: "public"
-telemetry_domain: "hardware"
+telemetry_domain: hardware
 mode: "obsidian"
 local_path: "/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air"
-last_cad_sync: "2026-11-08"
-last_synced: "2026-11-08"
-latest_disk_mtime: "2026-10-14 20:41:18"
-inventory_sha256: "defcbbb78a4d97b2"
+last_cad_sync: 2026-11-10
+last_synced: 2026-11-10
+latest_disk_mtime: 2026-11-10 08:06:27
+inventory_sha256: 33b8abbd2777e8a8
 step_count: 12
 stl_count: 11
 firmware_count: 1
-parity_status: "DRIFT_DETECTED"
+parity_status: DRIFT_DETECTED
 ---
 
 # 📐 Hardware & CAD Telemetry Manifest: Pneuma_Remote_Air
@@ -37,17 +37,17 @@ Linked Parent Note: [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) | Hub: [`README.
 
 | STL File | Envelope `X × Y × Z (mm)` | Solid Volume (`cm³`) | Triangles | STEP Sync | Doc Ref |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| `Pneuma_201 - Extrusion_Mount_A.stl` | `19.00 × 29.00 × 77.40` | `12.00` | `5332` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 - Extrusion_Mount_B.stl` | `19.00 × 29.00 × 77.40` | `12.00` | `5252` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 - Logo_Detail.stl` | `3.40 × 25.00 × 25.00` | `0.84` | `3514` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 - Plug_Grommet_TPU.stl` | `5.60 × 15.00 × 15.00` | `0.37` | `4696` | `MATCH (<=0.2mm)` | `Unlisted` |
-| `Pneuma_201 - Pump_Mount.stl` | `22.00 × 41.40 × 55.03` | `7.41` | `7876` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 - TPU_Grommet.stl` | `6.40 × 14.98 × 15.00` | `0.50` | `5064` | `MATCH (<=0.2mm)` | `Unlisted` |
-| `Pneuma_201 - Table_Mount_TPU.stl` | `7.00 × 10.00 × 45.00` | `1.55` | `3804` | `MATCH (<=0.2mm)` | `Unlisted` |
-| `Pneuma_201 - Vacuum_Pump.stl` | `60.00 × 60.00 × 126.00` | `190.80` | `46448` | `DRIFT (delta 1.00mm)` | `Yes (Prose)` |
-| `Pneuma_201 parts - Front_Cover.stl` | `5.60 × 160.40 × 166.40` | `53.00` | `11340` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 parts - Main_Body.stl` | `72.00 × 160.40 × 166.40` | `136.03` | `23508` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
-| `Pneuma_201 parts - Rear_Cover.stl` | `7.00 × 160.40 × 166.40` | `60.87` | `14918` | `MATCH (<=0.2mm)` | `Yes (Prose)` |
+| `Pneuma_201 - Extrusion_Mount_A.stl` | `19.00 × 29.00 × 77.40` | `12.00` | `5332` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Extrusion_Mount_B.stl` | `19.00 × 29.00 × 77.40` | `12.00` | `5252` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Logo_Detail.stl` | `3.40 × 25.00 × 25.00` | `0.84` | `3514` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Plug_Grommet_TPU.stl` | `5.60 × 15.00 × 15.00` | `0.37` | `4696` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Pump_Mount.stl` | `22.00 × 41.40 × 55.03` | `7.41` | `7876` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - TPU_Grommet.stl` | `6.40 × 14.98 × 15.00` | `0.50` | `5064` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Table_Mount_TPU.stl` | `7.00 × 10.00 × 45.00` | `1.55` | `3804` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 - Vacuum_Pump.stl` | `60.00 × 60.00 × 126.00` | `190.80` | `46448` | `DRIFT (delta 1.00mm)` | `Yes` |
+| `Pneuma_201 parts - Front_Cover.stl` | `5.60 × 160.40 × 166.40` | `53.00` | `11340` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 parts - Main_Body.stl` | `72.00 × 160.40 × 166.40` | `136.03` | `23508` | `MATCH (<=0.2mm)` | `Yes` |
+| `Pneuma_201 parts - Rear_Cover.stl` | `7.00 × 160.40 × 166.40` | `60.87` | `14918` | `MATCH (<=0.2mm)` | `Yes` |
 
 ### STEP Outer Envelope & Closed Circular Surface Histogram
 
@@ -73,9 +73,9 @@ Linked Parent Note: [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) | Hub: [`README.
 ## 3. Firmware & Pinout Telemetry
 
 <!-- AUTO-HARDWARE-CFG:START -->
-| Config File | MCU Pins | Fan Definitions | G-Code Macros |
-| :--- | :--- | :--- | :--- |
-| `Pneuma_Control.cfg` | `PF7`, `PF9` | `pump_cool`, `pump_warm` | `PNEUMA_STATE`, `SET_PNEUMA_MODE`, `M106`, `M107` |
+| Config File | MCU Pins | Fan Definitions | G-Code Macros | Scalar Parameters |
+| :--- | :--- | :--- | :--- | :--- |
+| `Pneuma_Control.cfg` | `PF7`, `PF9` | `pump_cool`, `pump_warm` | `PNEUMA_STATE`, `SET_PNEUMA_MODE`, `M106`, `M107` | `[fan_generic pump_cool] pin=PF7`, `[fan_generic pump_cool] min_power=0.15`, `[fan_generic pump_cool] max_power=1.0`, `[fan_generic pump_cool] shutdown_speed=0`, `[fan_generic pump_warm] pin=PF9`, `[fan_generic pump_warm] min_power=0.15`, `[fan_generic pump_warm] max_power=1.0`, `[fan_generic pump_warm] shutdown_speed=0`, `[gcode_macro PNEUMA_STATE] description=Stores the current state of the Pneuma system`, `[gcode_macro PNEUMA_STATE] variable_mode="COOL"`, `[gcode_macro PNEUMA_STATE] variable_last_speed=0.0`, `[gcode_macro SET_PNEUMA_MODE] description=Set the active Pneuma pump mode (COOL, WARM, DUAL, OFF)`, `[gcode_macro M106] description=Override standard part cooling command to route to active Pneuma pump`, `[gcode_macro M107] description=Override standard part cooling off command` |
 <!-- AUTO-HARDWARE-CFG:END -->
 
 ## 4. Verified Fasteners, Inserts & BOM Schedule

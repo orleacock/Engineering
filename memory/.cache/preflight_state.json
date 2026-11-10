@@ -1,0 +1,60 @@
+{
+  "receipts": {
+    "audit_data_boundary.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "abb96084fa813cd1",
+      "pre_edit_blob_sha256": "abb96084fa813cd1",
+      "script": "audit_data_boundary.py",
+      "script_rel_path": "audit_data_boundary.py",
+      "session_date": "2026-11-09"
+    },
+    "git_pre_commit_boundary.sh": {
+      "disposed": true,
+      "git_head_blob_sha256": "5c7aad1e7af8b204",
+      "pre_edit_blob_sha256": "5c7aad1e7af8b204",
+      "script": "git_pre_commit_boundary.sh",
+      "script_rel_path": "git_pre_commit_boundary.sh",
+      "session_date": "2026-11-09"
+    },
+    "homunculus_paths.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "9299542aaf4e8e66",
+      "pre_edit_blob_sha256": "9299542aaf4e8e66",
+      "script": "homunculus_paths.py",
+      "script_rel_path": "homunculus_paths.py",
+      "session_date": "2026-11-09"
+    },
+    "inspect_hardware_ecosystem.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "47ec40b5f39230c7",
+      "pre_edit_blob_sha256": "47ec40b5f39230c7",
+      "script": "inspect_hardware_ecosystem.py",
+      "script_rel_path": "inspect_hardware_ecosystem.py",
+      "session_date": "2026-11-09"
+    },
+    "sandbox_runner.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "09b52be59a5e3a9e",
+      "pre_edit_blob_sha256": "09b52be59a5e3a9e",
+      "script": "sandbox_runner.py",
+      "script_rel_path": "sandbox_runner.py",
+      "session_date": "2026-11-09"
+    },
+    "sync_memory.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "3a7083f523eb1762",
+      "pre_edit_blob_sha256": "3a7083f523eb1762",
+      "script": "sync_memory.py",
+      "script_rel_path": "sync_memory.py",
+      "session_date": "2026-11-09"
+    },
+    "verify_claims.py": {
+      "disposed": true,
+      "git_head_blob_sha256": "9b6e76dbc2be26f5",
+      "pre_edit_blob_sha256": "9b6e76dbc2be26f5",
+      "script": "verify_claims.py",
+      "script_rel_path": "verify_claims.py",
+      "session_date": "2026-11-09"
+    }
+  }
+}

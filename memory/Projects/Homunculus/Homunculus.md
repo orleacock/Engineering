@@ -5,9 +5,9 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v1.0.0 Release Candidate"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "e91a3296da61"
+repo_head_sha: "bfbe03a5a0b7"
 tree_hash: "ac1fa6e6afd2"
-checkpoint_head_sha: "e91a3296da61"
+checkpoint_head_sha: "bfbe03a5a0b7"
 checkpoint_tree_hash: "ac1fa6e6afd2"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
@@ -67,7 +67,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: e91a3296da61 | Tree Hash: ac1fa6e6afd2
+Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: ac1fa6e6afd2
   .gitignore
   HOMUNCULUS_START_HERE.md
   LICENSE.md
@@ -260,13 +260,13 @@ Repository: Homunculus | HEAD SHA: e91a3296da61 | Tree Hash: ac1fa6e6afd2
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: e91a3296da61` | `Tree Hash: ac1fa6e6afd2` | `Worktree: dirty (46 files)` | `Last Verification: SBX-20261109_202707-75056003, P1-e5512c25`
+- **Checkpoint Provenance**: `HEAD SHA: bfbe03a5a0b7` | `Tree Hash: ac1fa6e6afd2` | `Worktree: clean` | `Last Verification: P1-P6_POSTFIX_100PCT_PASS`
 - **Where We Stopped (Verified State & Context)**:
-  Completed and verified Stateful Memory, Governance & Truth-Oracle Remediation (P1-P6 100% PASS; 44/44 unit tests OK).
+  Promoted and committed Stateful Memory, Governance & Disaster-Recovery Portability remediations (P1-P6 100% PASS, 44/44 unit tests OK) to Clean-Room Alchemical3D/Homunculus at commit bfbe03a5a0b7.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Execute P3 live pilot on Pneuma_Remote_Air repository rework
-  2. Discuss Skill-Architect Telemetry Pulse
+  1. Proceed through remaining Alchemical-3D repository unifications (Alembic_Toolhead, Pestle_Rotational_Bowden, Extras).
+- **Open Discussion / Alignment Questions**: Subjects 1.1, 1.2-D, 2 (Profile B + N1), 3.1-B, 3.2-A, 3.3-Unified-A, and Option 4D verified in P1-P6.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

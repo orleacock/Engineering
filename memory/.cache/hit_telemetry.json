@@ -1,0 +1,30 @@
+{
+  "Homunculus": {
+    "LL-027": {
+      "drilldown_count": 1,
+      "drilldown_dates": [
+        "2026-11-09"
+      ],
+      "regression_near_misses": 0
+    },
+    "LL-038": {
+      "drilldown_count": 1,
+      "drilldown_dates": [
+        "2026-11-09"
+      ],
+      "regression_near_misses": 0
+    }
+  },
+  "Pneuma_Remote_Air": {
+    "LL-PNE-03": {
+      "drilldown_count": 0,
+      "drilldown_dates": [],
+      "regression_near_misses": 1
+    },
+    "LL-PNE-04": {
+      "drilldown_count": 0,
+      "drilldown_dates": [],
+      "regression_near_misses": 1
+    }
+  }
+}

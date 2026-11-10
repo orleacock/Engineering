@@ -5,13 +5,14 @@ compartment: "public"
 project_type: "hardware"
 status: "Active"
 local_path: "/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air"
-repo_head_sha: "02d872f4a741"
+repo_head_sha: "0702c9c1c541"
 tree_hash: "dc295b6ec1e5"
-checkpoint_head_sha: "02d872f4a741"
+checkpoint_head_sha: "0702c9c1c541"
 checkpoint_tree_hash: "dc295b6ec1e5"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
+checkpoint_lessons_digest: "23d19f2766961662"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -38,13 +39,13 @@ Part of the [`README.md`](../../README.md) • CAD & Firmware Telemetry: [`Pneum
 ## 📍 Repository & File Inventory
 - **Local Path:** `/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air`
 - **GitHub Remote:** `https://github.com/Alchemical-3D/Pneuma_Remote_Air`
-- **Living Documentation:** `README.md`, `BOM.md`, `Print_Settings.md` *(currently a placeholder stub)*, `Assembly_Guide.md`, `LICENSE.md`
+- **Living Documentation:** `README.md`, `BOM.md`, `Print_Settings.md`, `Assembly_Guide.md`, `LICENSE.md`
 - **CAD, Firmware & Image Directories:** `STL_Files/` (`11` STLs), `STEP_Files/` (`12` STEPs), `Firmware/` (`Pneuma_Control.cfg`), `Images/Assembly/` — Full telemetry in [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md)
 - **Standards Applied:** [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `Author_Voice_and_Cadence`, [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md), `Image_and_Style_Rules`, `Subagent_and_Memory_Architecture`
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Pneuma_Remote_Air | HEAD SHA: 02d872f4a741 | Tree Hash: dc295b6ec1e5
+Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: dc295b6ec1e5
   Assembly_Guide.md
   BOM.md
   LICENSE.md
@@ -102,11 +103,11 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 02d872f4a741 | Tree Hash: dc295b6ec1e5
 - **CAD Telemetry ([`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md)):** `12` STEP files | `11` STL meshes | `1` Klipper `Pneuma_Control.cfg` | Total closed-mesh geometric volume `475.37 cm³`.
   - Structural/Enclosure STLs: `Pneuma_201 parts - Main_Body.stl` (`72.00 × 160.40 × 166.40 mm`), `Pneuma_201 parts - Front_Cover.stl` (`5.60 × 160.40 × 166.40 mm`), `Pneuma_201 parts - Rear_Cover.stl` (`7.00 × 160.40 × 166.40 mm`), `Pneuma_201 - Extrusion_Mount_A.stl`, `Pneuma_201 - Extrusion_Mount_B.stl`, `Pneuma_201 - Pump_Mount.stl`, `Pneuma_201 - Logo_Detail.stl`, `Pneuma_201 - Vacuum_Pump.stl` (COTS reference mesh).
   - Vibration-Isolation Elastomer STLs: `Pneuma_201 - TPU_Grommet.stl`, `Pneuma_201 - Table_Mount_TPU.stl`, `Pneuma_201 - Plug_Grommet_TPU.stl`.
-- **Verified Klipper Firmware (`Firmware/Pneuma_Control.cfg:11-57`):**
-  - `[fan_generic pump_cool]`: `pin: PF7`, `min_power: 0.15`, `max_power: 1.0`, `shutdown_speed: 1`
-  - `[fan_generic pump_warm]`: `pin: PF9`, `min_power: 0.15`, `max_power: 1.0`, `shutdown_speed: 1`
+- **Verified COTS Pump & Harness Baseline (`BOM.md:14-61`):** `2` Vacuum Pumps (`> 10 L/min`, positive pressure `>= 70 kPa`, vacuum `<= -40 kPa`), `20AWG` High-Temp `FEP` Wire (`TC-FEP`), and `1` Each `5-PIN` Single Row Molex Micro-Fit 3.0 connector pair.
+- **Verified Klipper Firmware (`Firmware/Pneuma_Control.cfg:13-26`):**
+  - `[fan_generic pump_cool]`: `pin: PF7`, `min_power: 0.15`, `max_power: 1.0`, `shutdown_speed: 0` (de-energizes part-cooling pump on MCU fault; hotend heatsink `[heater_fan]` remains `shutdown_speed: 1` to prevent heat creep).
+  - `[fan_generic pump_warm]`: `pin: PF9`, `min_power: 0.15`, `max_power: 1.0`, `shutdown_speed: 0`
   - Macros: `PNEUMA_STATE`, `SET_PNEUMA_MODE` (`COOL`, `WARM`, `DUAL`, `OFF`), dynamic `M106` / `M107` overrides.
-- **Verified COTS Pump Baseline (`BOM.md:19-23`):** Flow rate `> 10 L/min`, positive pressure `>= 70 kPa`, vacuum `<= -40 kPa`.
 - **Structural Print Baseline (`Print_Settings.md:5-14`):** Enclosure in `ABS`/`ASA` or `PETG`; mounts in `ABS`/`ASA` | `0.20mm` layer height | `4` perimeters | `5` top/bottom layers | `40%` `Grid` or `Gyroid` infill *(strictly structural parts only; TPU settings unrecorded—see conflict ledger below)*.
 
 ## 🔗 Companion Projects & Kinematic / System Links
@@ -117,11 +118,11 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 02d872f4a741 | Tree Hash: dc295b6ec1e5
 > [!WARNING]
 > Figures inside this ledger are quarantined by `verify_claims.py` and are **not** treated as authorized source truth until resolved.
 
-- **Git & Provenance Baseline:** `main:clean` at commit `02d872f` (`audit_repo_docs.py`: `14` load-bearing inline-CSS/image-card errors, `20` isolated warnings; `Print_Settings.md:3` flagged `PLACEHOLDER_STUB_SOURCE`).
-- **`[TBD: CONFLICT — Dual-Pump (README.md / Pneuma_Control.cfg) vs Single-Pump Solenoid (BOM.md:13-14 / Assembly_Guide.md:57-60)]`:** `README.md` and `Pneuma_Control.cfg` implement dual pumps (`pump_cool` + `pump_warm`), while `BOM.md` and `Assembly_Guide.md` still document single-pump `1/8-NPT` solenoid plumbing.
-- **`[TBD: CONFLICT — BOM Fastener Table vs CAD Bore Histogram & Assembly Guide]`:** `BOM.md:38-40` lists only `(5) M3x5x4mm` heat-sets (for `Rear_Cover` / `Pump_Mount` with no mating `M3` screw row!), `(2) M3x10 SHCS`, and `(2) M3x8 SHCS`, whereas [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md) detects `Ø4.70mm`×2 + `Ø3.00mm`×16 on `Main_Body(1).step` and `Ø4.70mm`×6 + `Ø5.00mm`×5 + `Ø3.00mm`×8 on `Rear_Cover(1).step` (and `Assembly_Guide.md` Fig. 1 installs inserts in `Main_Body`).
-- **`[TBD: tpu_shore_hardness_and_slicer_parameters]`:** `Print_Settings.md` is a placeholder stub with zero TPU Shore hardness (`95A`/`85A`), perimeter, or infill specs for `TPU_Grommet.stl`, `Table_Mount_TPU.stl`, and `Plug_Grommet_TPU.stl` (never borrow `40%` ABS infill onto TPU).
-- **`[TBD: cots_vacuum_pump_mesh_drift]`:** `Pneuma_201 - Vacuum_Pump.stl` shows a `1.00mm` X-envelope delta vs. `.step` (`60.00 × 60.00 × 126.00 mm` vs. `59.00 × 59.47 × 126.00 mm` COTS reference model).
+- **Git & Provenance Baseline:** `main:clean` at commit `0702c9c` (`audit_repo_docs.py`: `0` load-bearing issues, `0` isolated warnings; `verify_claims.py`: `0` unbacked claims across `README.md` `VRF-01c5a7f61d28`, `BOM.md` `VRF-886f22bb9de0`, `Print_Settings.md` `VRF-ea4740d35e19`, `Assembly_Guide.md` `VRF-c35e0e00f877`).
+- **`[TBD: CONFLICT — BOM Fastener Table vs CAD Bore Histogram & Assembly Guide]`:** `BOM.md` keeps verified baseline rows (`5x M3x5x4mm` heat-sets, `2x M3x10 SHCS`, `2x M3x8 SHCS`, `2x M5x12 BHCS`, `2x M5 T-nuts`) and tags unconfirmed 2nd-pump heat-sets (`[TBD: total_m3x5x4mm_heatset_qty_for_dual_pump_and_cover]`), `Rear_Cover` M3 screws (`[TBD: rear_cover_m3_screw_qty_and_length]`), `Front_Cover` hardware (`[TBD: front_cover_fastener_spec_or_snap_fit_confirmation]`), and optional `Table_Mount_TPU` M3 screws (`[TBD: optional_table_mount_m3_screw_qty_and_length]`) pending physical bench count.
+- **`[TBD: tpu_shore_hardness_and_slicer_parameters]`:** `Print_Settings.md` splits structural `ABS`/`ASA`/`PETG` settings (`0.2mm`, `4` walls, `5` top/bottom, `40%` `Grid`/`Gyroid`) from vibration-isolation elastomers (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) with explicit `[TBD: tpu_shore_hardness_rating]`, `[TBD: tpu_layer_height_mm]`, `[TBD: tpu_wall_count]`, `[TBD: tpu_top_bottom_layers]`, and `[TBD: tpu_infill_percentage_and_pattern]` placeholders.
+- **`[TBD: optional_tube_adapter_stl_files]`:** `BOM.md` and `Assembly_Guide.md` document as-needed tube fittings vs. `TPU_Grommet.stl` pass-throughs and `Plug_Grommet_TPU.stl` blanking plugs while tagging optional printed tube-adapter STLs (`[TBD: optional_tube_adapter_stl_files]`) and COTS pneumatic fitting thread/push-to-connect specs (`[TBD: pneumatic_fitting_qty_and_thread_spec]`).
+- **`[TBD: cots_vacuum_pump_mesh_drift]`:** `Pneuma_201 - Vacuum_Pump.stl` shows a `1.00mm` X-envelope delta vs. `.step` (`60.00 × 60.00 × 126.00 mm` vs. `59.00 × 59.47 × 126.00 mm` COTS reference model) and is explicitly excluded from slicing in `BOM.md` and `Print_Settings.md`.
 
 ## 🎯 Active Tasks
 *(Transcluded live from `### Pneuma_Remote_Air` in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md))*
@@ -130,13 +131,13 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 02d872f4a741 | Tree Hash: dc295b6ec1e5
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-05`
-- **Checkpoint Provenance**: `HEAD SHA: 02d872f4a741` | `Tree Hash: dc295b6ec1e5` | `Worktree: ('clean', [])` | `Last Verification: Transplanted from verified Memory v2 baseline`
+- **Last Session Timestamp**: `2026-11-10`
+- **Checkpoint Provenance**: `HEAD SHA: 0702c9c1c541` | `Tree Hash: dc295b6ec1e5` | `Worktree: clean` | `Last Verification: VRF-01c5a7f61d28, VRF-886f22bb9de0, VRF-ea4740d35e19, VRF-c35e0e00f877`
 - **Where We Stopped (Verified State & Context)**:
-  - Transplanted `Pneuma_Remote_Air` dossier into native Homunculus Dual-Mode Memory (`entity: Alchemical-3D`, `compartment: public`, `project_type: hardware`). All verified specifications, hazards, and open `[TBD]` ledgers preserved verbatim.
-- **Active Project State Ledger & Blockers**:
-  - See `## 🔍 Provenance Status & Open [TBD] / [CONFLICT] Ledger` above and active tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md).
+  Completed P3 Pneuma_Remote_Air rework at commit 0702c9c: formatted 6 assembly PNG cards, stripped inline CSS, set fail-safe shutdown_speed: 0 on pump_cool/pump_warm, standardized Dual-Pump BOM & Assembly Guide, split Print_Settings.md structural vs TPU tables, and verified 0 unbacked claims.
+- **Active Project State Ledger & Blockers**: Open [TBD] physical fastener counts and TPU slicer parameters awaiting bench measurement.
 - **Next Session Kickstart & Discussion Points**:
-  1. Run `python3 skills/project-memory/scripts/sync_memory.py --project Pneuma_Remote_Air --kickstart` to verify repository provenance.
-  2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Pneuma_Remote_Air).
+  1. Physically count Rear_Cover, Front_Cover, 2nd Pump_Mount heatset, and optional Table_Mount_TPU fasteners on bench.
+  2. Measure and record TPU Shore hardness and slicer parameters in Print_Settings.md.
+- **Open Discussion / Alignment Questions**: A1: Dual-Pump standard (2 pumps, 0 solenoid valves; legacy 1/8-NPT note) | A2: Verified fasteners kept, unconfirmed rows tagged [TBD] | A3: As-needed tube fittings vs grommets/plugs + TPU slicer [TBD]s | A4: shutdown_speed: 0 on part-cooling pumps, 1 on hotend heatsink fans
 <!-- SESSION-HANDOFF:END -->

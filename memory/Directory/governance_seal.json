@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-10",
-  "latest_audit_entry_sha256": "6512eecad40f67ce74e021d645765236bf6475aacf3463c84aba7093ce92b000",
+  "latest_audit_entry_sha256": "f31e07888942e00be245b7252674cb2c3253070764a62e557aeaf51e39c468ef",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -95,9 +95,11 @@
       ]
     },
     "Pneuma_Remote_Air": {
-      "block_sha256": "62d0271eca0961b9f39e5c195ea535eeeb7a1a9ae93ccc4cf289f6a5d2c5a840",
+      "block_sha256": "bef827672abca9104b67b9f38b1932a1629640f44e0fb7d801feaec7f5e0f144",
       "row_hashes": [
         "0b3b013e36fbc773",
+        "1efebd028e5f8fd8",
+        "290f626dd91feb6d",
         "a0310a4a8d599bab",
         "c118b457bef10a35",
         "e00a8e23e616262e"
@@ -157,5 +159,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "7512eabec26f7dfe2d2890410cebb9f5c4f1a8e113cda0c5c10ac179600ab20d"
+  "seal_root_sha256": "d199623941354fdd67f63ab6e89da3839245d1afdb0c3a1710b8221a47f6215f"
 }

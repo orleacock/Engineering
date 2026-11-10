@@ -15,7 +15,7 @@ last_synced: "2026-11-10"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `16 / 28` Tasks Complete (`57.1%`) | Open: `12`
+**Progress Summary**: `18 / 28` Tasks Complete (`64.3%`) | Open: `10`
 <!-- AUTO-ROLLUP:END -->
 
 ---
@@ -52,9 +52,9 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 - [ ] **`[ISOLATED]` CAD-to-BOM Coverage & AI Transparency Footers:** Clarify/document the 4 `STEP_ONLY` parts (`Intake_6mmOD.step`, `Belt_Clamp_9mm.step`, `PC4-M10 Bowden Pass-Through.step`, `Pnuematic_Fitting_6mmOD.step`) + Dragon-MZE STL variants, append standard AI transparency footers to all 5 docs, run `verify_claims.py`, and commit clean working tree + 3 formatted hero PNGs.
 
 ### Pneuma_Remote_Air
-- [ ] **`[LOAD-BEARING]` Fix 14 Image & Inline-CSS Audit Issues:** Strip inline HTML `style="border-radius..."` attributes in `Assembly_Guide.md` and run `format_image.py` on unformatted assembly/showcase PNGs (`Heatset_Body.png`, `Heatset_Back.png`, `Pump_Mount.png`, `Pneuma_Explode.png`, `Pneuma_Complete_Ext.png`, `Pneuma_Complete_Table.png`).
-- [ ] **`[LOAD-BEARING]` Reconcile Dual-Pump vs. Legacy Solenoid Architecture & Fastener Counts:** Align `BOM.md` and `Assembly_Guide.md` (which still instruct legacy `1/8-NPT` solenoid valve plumbing and list only `4` total M3 screws) with the dual-pump architecture in `README.md` / `Firmware/Pneuma_Control.cfg` (`PF7` `pump_cool`, `PF9` `pump_warm`) and CAD bore counts in [`Pneuma_Remote_Air_Hardware`](../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md) (`Main_Body` `Ø4.70mm`×2 + `Ø3.00mm`×16; `Rear_Cover` `Ø4.70mm`×6 + `Ø5.00mm`×5).
-- [ ] **`[ISOLATED]` Replace Placeholder `Print_Settings.md` & Sync `Pneuma_201` Filenames:** Replace placeholder `Print_Settings.md` with verified ABS/ASA structural settings + TPU Shore hardness/slicer settings for the 3 unlisted TPU grommet STLs (`Plug_Grommet_TPU.stl`, `TPU_Grommet.stl`, `Table_Mount_TPU.stl`), verify `1.00mm` COTS `Vacuum_Pump` STEP/STL delta, update legacy Discord invite (`r97kK5B7B7` $\rightarrow$ `aE49DW2xXe`), fix typos, and add AI transparency footers.
+- [x] **[COMPLETED 2026-11-10] `[LOAD-BEARING]` Fix 14 Image & Inline-CSS Audit Issues (`0702c9c`):** Stripped all inline HTML `style="border-radius..."` attributes in `Assembly_Guide.md` and formatted all `6` assembly showcase PNGs (`Heatset_Body.png`, `Heatset_Back.png`, `Pump_Mount.png`, `Pneuma_Explode.png`, `Pneuma_Complete_Ext.png`, `Pneuma_Complete_Table.png`) via `format_image.py` (`20px` shadow margin, `#FFFFFF` interior; `audit_repo_docs.py`: `0` load-bearing, `0` isolated).
+- [x] **[COMPLETED 2026-11-10] `[LOAD-BEARING]` Reconcile Dual-Pump Architecture, Fail-Safe `shutdown_speed: 0` & Fastener `[TBD]` Tagging (`0702c9c`, `VRF-01c5a7f61d28`, `VRF-886f22bb9de0`, `VRF-ea4740d35e19`, `VRF-c35e0e00f877`):** Standardized `BOM.md` and `Assembly_Guide.md` on Dual-Pump (`2` Vacuum Pumps, `0` Solenoid Valves with Legacy `v1.x` note), updated `Firmware/Pneuma_Control.cfg` to `shutdown_speed: 0` on `pump_cool`/`pump_warm` (documenting that hotend heatsink `[heater_fan]` remains `shutdown_speed: 1`), replaced placeholder `Print_Settings.md` with split Structural (`ABS`/`ASA`/`PETG`) vs. Elastomer (`TPU` `[TBD]`) tables, synced `Pneuma_201` filenames, documented as-needed tube fittings vs. blanking plugs, updated Discord invite (`aE49DW2xXe`), fixed typos, and added AI transparency footers.
+- [ ] **`[ISOLATED]` Physical Bench Fastener Count & TPU Slicer Parameter Measurement (`Open [TBD]` Resolution):** Physically count and record exact fastener quantities/lengths for `Rear_Cover`, `Front_Cover`, 2nd `Pump_Mount` heat-sets, and optional `Table_Mount_TPU` screws in `BOM.md` / `Assembly_Guide.md`, and measure/record `TPU` Shore hardness and slicer parameters (`layer_height`, `walls`, `top/bottom`, `infill`) in `Print_Settings.md`.
 
 ### A3DP_Gantry_Assembly
 - [x] **[COMPLETED 2026-11-02] Repository Unification, 20 GitHub-Native Alert Conversions & Claim Verification (`VRF-6cd82426be23`):** Converted all `20` legacy blockquotes in `Assembly_Guide.md` to `> [!NOTE]`/`> [!WARNING]` alerts, fixed `README.md:52` typo, appended AI transparency footers across all `5` docs, and verified `145/145` claims (`0` issues).
