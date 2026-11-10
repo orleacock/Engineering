@@ -55,13 +55,14 @@ python3 <HOMUNCULUS_ROOT>/skills/engineering-sandbox/scripts/sandbox_runner.py \
   --keep-overlay
 ```
 
-### Gate 3 — Verify `SBX-<timestamp>-<hash>` Receipt & Zero Host Mutation
+### Gate 3 — Verify `SBX-<timestamp>-<hash>` Receipt, Zero Host Mutation & Post-Sandbox Lesson Logging
 Confirm the diagnostic summary reports:
 - `Status: PASS`
 - `Controls: N/N passed`
 - `+faults: M/M caught` (when validating a checker/validator)
 - `Live Host Mutations: 0`
 - Valid `SBX-<timestamp>-<8hex>` receipt and forensic bundle (`report.json`, `mutations.diff`, `stdout.log`, `stderr.log`).
+- **Mandatory Post-Sandbox Lesson & Invariant Sync**: Whenever a sandbox run, `+faults` probe, or `Compare-*` subagent autopsy uncovers a root-cause defect, false positive, or retired anti-pattern, record it immediately in `<memory_root>/Projects/<Project>/<Project>_Lessons_Learned.md` via `sync_memory.py --project <Project> --add-lesson` (updating `SUBSYSTEM-INVARIANTS` when a module invariant or retired bloat item changes) before promoting the task to `[SOLVED]`.
 
 ---
 

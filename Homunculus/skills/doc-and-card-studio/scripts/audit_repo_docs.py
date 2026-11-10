@@ -35,11 +35,12 @@ Checks:
   Owning Module : `doc-and-card-studio` (`skills/doc-and-card-studio/SKILL.md`)
   Callers       : `sandbox_runner.py` (`_audit_arm_deliverables`), `pre-commit-gate` (Stage Y), `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`ensure_directory_fresh`), `format_image.py` (`_inspect_png_stdlib`, `is_already_formatted`)
+  Contract      : `scripts/script_contracts.json` [`audit_repo_docs.py`]
   CLI Flags     : target, --files, --repo-type, --repo-root, --repo, --fail-on-tbd, --skip-image-check, --brand-config, --no-brand-config
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _open_image_lazy (#L68-L73)                | def load_brand_config (#L76-L135)
-    - def collect_repo_cad_files (#L213-L227)        | def audit_markdown_file (#L230-L555)
-    - def main (#L558-L735)
+    - def _open_image_lazy (#L69-L74)                | def load_brand_config (#L77-L136)
+    - def collect_repo_cad_files (#L214-L228)        | def audit_markdown_file (#L231-L570)
+    - def main (#L573-L750)
 === END NAVIGATION MAP ===
 """
 
@@ -424,11 +425,12 @@ def audit_markdown_file(
                     f"[ISOLATED] {loc}: Known typo `{m_typo.group(0)}` -> use `{replacement}`."
                 )
 
-        # 7b. Assembly Step Fastener Qualitative-Dodging Detection (verifiable-accuracy.md §3)
+        # 7b. Assembly Step Fastener Qualitative-Dodging Detection (verifiable-accuracy.md §3 — hardware repos only)
         stripped_line = line.strip()
         is_numbered_proc_line = bool(re.match(r"^\s*\d+[.)]\s+", line))
         if (
-            (in_assembly_step or (is_assembly_guide and is_numbered_proc_line))
+            repo_type == "hardware"
+            and (in_assembly_step or (is_assembly_guide and is_numbered_proc_line))
             and not in_alert
             and stripped_line
             and not stripped_line.startswith(("#", ">", "!", "*Fig", "_Fig", "|", "---", "***"))
@@ -541,13 +543,26 @@ def audit_markdown_file(
                 continue
             try:
                 im = _open_image_lazy(img_path)
+                dim_meta = ""
                 if im is not None:
+                    dim_meta = f" ({im.size[0]}x{im.size[1]} px, {im.mode})"
                     ok, reason = is_already_formatted(im, require_white_bg=True)
                 else:
                     ok, reason = _inspect_png_stdlib(img_path)
+                    try:
+                        with open(img_path, "rb") as f_png:
+                            hdr = f_png.read(26)
+                        if len(hdr) >= 26 and hdr[:8] == b"\x89PNG\r\n\x1a\n" and hdr[12:16] == b"IHDR":
+                            import struct as _st
+                            w_i, h_i = _st.unpack(">II", hdr[16:24])
+                            ctype = hdr[25]
+                            cmode = {0: "L", 2: "RGB", 3: "P", 4: "LA", 6: "RGBA"}.get(ctype, f"type{ctype}")
+                            dim_meta = f" ({w_i}x{h_i} px, {cmode})"
+                    except Exception:
+                        pass
                 if not ok:
                     errors.append(
-                        f"[LOAD-BEARING] {loc}: Image `{clean_img}` fails card spec ({reason}). Run `format_image.py`."
+                        f"[LOAD-BEARING] {loc}: Image `{clean_img}`{dim_meta} fails card spec ({reason}). Run `format_image.py`."
                     )
             except Exception as exc:
                 errors.append(f"[LOAD-BEARING] {loc}: Cannot open image `{clean_img}`: {exc}")
@@ -690,11 +705,7 @@ def main() -> int:
             print(f"Error: {t_item} does not exist.", file=sys.stderr)
             return 2
 
-    abs_target = os.path.abspath(target)
-    if os.path.basename(abs_target) != "Directory" and os.path.basename(os.path.dirname(abs_target)) != "Directory":
-        homunculus_paths.ensure_directory_fresh(workspace_dir=repo_root, homunculus_root=_HOM_ROOT)
-
-    cad_exact, cad_suffixes = collect_repo_cad_files(repo_root)
+    cad_exact, cad_suffixes = collect_repo_cad_files(repo_root) if repo_type == "hardware" else (set(), {})
     brand_cfg = load_brand_config(
         repo_root,
         explicit_path=args.brand_config,
@@ -732,6 +743,10 @@ def main() -> int:
     if not all_errors and not all_warnings:
         print("\n[PASS] All checks passed with zero issues.")
 
+    print(
+        f"\n[COVERAGE_RECEIPT] Audited {len(md_files)} Markdown file(s), all linked images (dimensions/alpha/padding), "
+        "CAD filenames, and brand links — do not re-run ad-hoc PIL/image or link-checking scripts."
+    )
     return 1 if all_errors else 0
 
 

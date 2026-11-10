@@ -36,6 +36,8 @@ last_synced: "{{DATE}}"
 
 ## 3. Verified Fasteners, Inserts & BOM Schedule
 
-| Sub-Assembly | Fastener / Component Spec | Verified Qty | Source Anchor (`path#Lstart-Lend`) | Notes |
+<!-- AUTO-HARDWARE-BOM:START -->
+| Sub-Assembly / Category | Fastener / Component Spec | Verified Qty | Source Anchor (`path#Lstart-Lend`) | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| `[TBD: sub_assembly]` | `[TBD: fastener_spec]` | `[TBD: qty]` | `[TBD: source_anchor]` | Populate from verified CAD/BOM sources only. |
+| *(No verified BOM.md table synced yet — run `--sync-hardware` once `BOM.md` is clean)* | — | — | — | — |
+<!-- AUTO-HARDWARE-BOM:END -->

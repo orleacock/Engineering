@@ -34,17 +34,18 @@ Deep Pass Stylometrics:
   Owning Module : `author-voice-cadence` (`addons/author-voice-cadence/SKILL.md` — Dormant Drop-In Add-On)
   Callers       : Optional `author-voice-cadence` workflow, `test_core_skills.py`, `test_adapters.py`
   Callees       : 100% standalone Python stdlib (zero core imports so add-on remains movable/deletable)
+  Contract      : `scripts/script_contracts.json` [`extract_voice_cadence.py`]
   CLI Flags     : --inbox, --scope, --author, --min-words, --stitch-minutes, --exemplars-per-cat, --output
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - class PostRecord (#L219-L238)                  | def parse_ts (#L241-L257)
-    - def clean_post_text (#L260-L264)               | def strip_code_for_prose_metrics (#L267-L270)
-    - def classify_channel_domain (#L273-L294)       | def tier_included_in_scope (#L297-L317)
-    - def stitch_channel_messages (#L320-L359)       | def load_discord_gdpr_package (#L362-L506)
-    - def load_standalone_file (#L509-L602)          | def compute_deep_stylometrics (#L605-L774)
-    - def extract_stratified_exemplars (#L777-L914)  | def _fmt_dist (#L917-L931)
-    - def _sent_band_pcts (#L934-L942)               | def _para_len_pcts (#L945-L953)
-    - def format_deep_report (#L956-L1281)           | def discover_and_load_inbox (#L1284-L1341)
-    - def main (#L1344-L1426)
+    - class PostRecord (#L220-L239)                  | def parse_ts (#L242-L258)
+    - def clean_post_text (#L261-L265)               | def strip_code_for_prose_metrics (#L268-L271)
+    - def classify_channel_domain (#L274-L295)       | def tier_included_in_scope (#L298-L318)
+    - def stitch_channel_messages (#L321-L360)       | def load_discord_gdpr_package (#L363-L507)
+    - def load_standalone_file (#L510-L603)          | def compute_deep_stylometrics (#L606-L775)
+    - def extract_stratified_exemplars (#L778-L915)  | def _fmt_dist (#L918-L932)
+    - def _sent_band_pcts (#L935-L943)               | def _para_len_pcts (#L946-L954)
+    - def format_deep_report (#L957-L1282)           | def discover_and_load_inbox (#L1285-L1342)
+    - def main (#L1345-L1427)
 === END NAVIGATION MAP ===
 """
 

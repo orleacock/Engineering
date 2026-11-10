@@ -1,62 +1,566 @@
 {
-	"nodes":[
-		{"id":"nd-root-readme","type":"file","file":"README.md","x":0,"y":-380,"width":520,"height":240,"color":"#FABD2F"},
-		{"id":"nd-projects-base","type":"file","file":"Projects/Projects_Directory.base","x":580,"y":-380,"width":480,"height":240,"color":"#8EC07C"},
-		{"id":"grp-entity-alchemical-3d","type":"group","label":"Entity Compartment: Alchemical-3D (10 Projects — Zero Cross-Entity Links)","x":-60,"y":-60,"width":2180,"height":1480,"color":"#FF3985"},
-		{"id":"nd-tasks-alchemical-3d","type":"file","file":"Tasks/Alchemical-3D_Tasks.md","x":-20,"y":-10,"width":340,"height":320,"color":"#FE8019"},
-		{"id":"nd-proj-a3dp_gantry_assembly","type":"file","file":"Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md","x":360,"y":-10,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-hw-a3dp_gantry_assembly","type":"file","file":"Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Hardware.md","x":360,"y":230,"width":380,"height":150,"color":"#8EC07C"},
-		{"id":"nd-proj-alchemical_web_docs","type":"file","file":"Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md","x":790,"y":-10,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-alchemical_web_docs","type":"file","file":"Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md","x":790,"y":230,"width":380,"height":150,"color":"#83A598"},
-		{"id":"nd-proj-alembic_toolhead","type":"file","file":"Projects/Alembic_Toolhead/Alembic_Toolhead.md","x":1220,"y":-10,"width":380,"height":220,"color":"#FE8019"},
-		{"id":"nd-hw-alembic_toolhead","type":"file","file":"Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md","x":1220,"y":230,"width":380,"height":150,"color":"#8EC07C"},
-		{"id":"nd-proj-brand","type":"file","file":"Projects/Brand/Brand.md","x":1650,"y":-10,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-brand","type":"file","file":"Projects/Brand/Brand_Software.md","x":1650,"y":230,"width":380,"height":150,"color":"#83A598"},
-		{"id":"nd-proj-extras","type":"file","file":"Projects/Extras/Extras.md","x":360,"y":430,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-hw-extras","type":"file","file":"Projects/Extras/Extras_Hardware.md","x":360,"y":670,"width":380,"height":150,"color":"#8EC07C"},
-		{"id":"nd-proj-homunculus","type":"file","file":"Projects/Homunculus/Homunculus.md","x":790,"y":430,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-homunculus","type":"file","file":"Projects/Homunculus/Homunculus_Software.md","x":790,"y":670,"width":380,"height":150,"color":"#83A598"},
-		{"id":"nd-proj-maker-tools","type":"file","file":"Projects/Maker-Tools/Maker-Tools.md","x":1220,"y":430,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-maker-tools","type":"file","file":"Projects/Maker-Tools/Maker-Tools_Software.md","x":1220,"y":670,"width":380,"height":150,"color":"#83A598"},
-		{"id":"nd-proj-organization_profile","type":"file","file":"Projects/Organization_Profile/Organization_Profile.md","x":1650,"y":430,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-organization_profile","type":"file","file":"Projects/Organization_Profile/Organization_Profile_Software.md","x":1650,"y":670,"width":380,"height":150,"color":"#83A598"},
-		{"id":"nd-proj-pestle_rotational_bowden","type":"file","file":"Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md","x":360,"y":870,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-hw-pestle_rotational_bowden","type":"file","file":"Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md","x":360,"y":1110,"width":380,"height":150,"color":"#8EC07C"},
-		{"id":"nd-proj-pneuma_remote_air","type":"file","file":"Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md","x":790,"y":870,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-hw-pneuma_remote_air","type":"file","file":"Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md","x":790,"y":1110,"width":380,"height":150,"color":"#8EC07C"},
-		{"id":"grp-entity-netcom","type":"group","label":"Entity Compartment: NetCom (1 Projects — Zero Cross-Entity Links)","x":-60,"y":1500,"width":860,"height":560,"color":"#03A6D9"},
-		{"id":"nd-tasks-netcom","type":"file","file":"Tasks/NetCom_Tasks.md","x":-20,"y":1550,"width":340,"height":320,"color":"#FE8019"},
-		{"id":"nd-proj-netcom_engineering_assistant","type":"file","file":"Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md","x":360,"y":1550,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-netcom_engineering_assistant","type":"file","file":"Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md","x":360,"y":1790,"width":380,"height":150,"color":"#83A598"},
-		{"id":"grp-entity-orin_workstation","type":"group","label":"Entity Compartment: Orin_Workstation (1 Projects — Zero Cross-Entity Links)","x":-60,"y":2140,"width":860,"height":560,"color":"#B8BB26"},
-		{"id":"nd-tasks-orin_workstation","type":"file","file":"Tasks/Orin_Workstation_Tasks.md","x":-20,"y":2190,"width":340,"height":320,"color":"#FE8019"},
-		{"id":"nd-proj-workstation_operations","type":"file","file":"Projects/Workstation_Operations/Workstation_Operations.md","x":360,"y":2190,"width":380,"height":220,"color":"#FABD2F"},
-		{"id":"nd-sw-workstation_operations","type":"file","file":"Projects/Workstation_Operations/Workstation_Operations_Software.md","x":360,"y":2430,"width":380,"height":150,"color":"#83A598"}
-	],
-	"edges":[
-		{"id":"ed-task-a3dp_gantry_assembly","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-a3dp_gantry_assembly","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-hw-a3dp_gantry_assembly","fromNode":"nd-hw-a3dp_gantry_assembly","fromSide":"top","toNode":"nd-proj-a3dp_gantry_assembly","toSide":"bottom","toEnd":"arrow","label":"CAD / CFG Telemetry","color":"#8EC07C"},
-		{"id":"ed-task-alchemical_web_docs","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-alchemical_web_docs","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-alchemical_web_docs","fromNode":"nd-sw-alchemical_web_docs","fromSide":"top","toNode":"nd-proj-alchemical_web_docs","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-alembic_toolhead","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-alembic_toolhead","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-hw-alembic_toolhead","fromNode":"nd-hw-alembic_toolhead","fromSide":"top","toNode":"nd-proj-alembic_toolhead","toSide":"bottom","toEnd":"arrow","label":"CAD / CFG Telemetry","color":"#8EC07C"},
-		{"id":"ed-task-brand","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-brand","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-brand","fromNode":"nd-sw-brand","fromSide":"top","toNode":"nd-proj-brand","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-extras","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-extras","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-hw-extras","fromNode":"nd-hw-extras","fromSide":"top","toNode":"nd-proj-extras","toSide":"bottom","toEnd":"arrow","label":"CAD / CFG Telemetry","color":"#8EC07C"},
-		{"id":"ed-task-homunculus","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-homunculus","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-homunculus","fromNode":"nd-sw-homunculus","fromSide":"top","toNode":"nd-proj-homunculus","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-maker-tools","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-maker-tools","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-maker-tools","fromNode":"nd-sw-maker-tools","fromSide":"top","toNode":"nd-proj-maker-tools","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-organization_profile","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-organization_profile","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-organization_profile","fromNode":"nd-sw-organization_profile","fromSide":"top","toNode":"nd-proj-organization_profile","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-pestle_rotational_bowden","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-pestle_rotational_bowden","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-hw-pestle_rotational_bowden","fromNode":"nd-hw-pestle_rotational_bowden","fromSide":"top","toNode":"nd-proj-pestle_rotational_bowden","toSide":"bottom","toEnd":"arrow","label":"CAD / CFG Telemetry","color":"#8EC07C"},
-		{"id":"ed-task-pneuma_remote_air","fromNode":"nd-tasks-alchemical-3d","fromSide":"right","toNode":"nd-proj-pneuma_remote_air","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-hw-pneuma_remote_air","fromNode":"nd-hw-pneuma_remote_air","fromSide":"top","toNode":"nd-proj-pneuma_remote_air","toSide":"bottom","toEnd":"arrow","label":"CAD / CFG Telemetry","color":"#8EC07C"},
-		{"id":"ed-task-netcom_engineering_assistant","fromNode":"nd-tasks-netcom","fromSide":"right","toNode":"nd-proj-netcom_engineering_assistant","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-netcom_engineering_assistant","fromNode":"nd-sw-netcom_engineering_assistant","fromSide":"top","toNode":"nd-proj-netcom_engineering_assistant","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"},
-		{"id":"ed-task-workstation_operations","fromNode":"nd-tasks-orin_workstation","fromSide":"right","toNode":"nd-proj-workstation_operations","toSide":"left","toEnd":"arrow","label":"Single-Writer Tasks","color":"#FE8019"},
-		{"id":"ed-sw-workstation_operations","fromNode":"nd-sw-workstation_operations","fromSide":"top","toNode":"nd-proj-workstation_operations","toSide":"bottom","toEnd":"arrow","label":"Software Telemetry","color":"#83A598"}
-	]
+  "nodes": [
+    {
+      "id": "nd-root-readme",
+      "type": "file",
+      "file": "README.md",
+      "x": 0,
+      "y": -380,
+      "width": 520,
+      "height": 240,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-projects-base",
+      "type": "file",
+      "file": "Projects/Projects_Directory.base",
+      "x": 580,
+      "y": -380,
+      "width": 480,
+      "height": 240,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "grp-entity-alchemical-3d",
+      "type": "group",
+      "label": "Entity Compartment: Alchemical-3D (10 Projects \u2014 Zero Cross-Entity Links)",
+      "x": -60,
+      "y": -60,
+      "width": 2180,
+      "height": 1480,
+      "color": "#FF3985"
+    },
+    {
+      "id": "nd-tasks-alchemical-3d",
+      "type": "file",
+      "file": "Tasks/Alchemical-3D_Tasks.md",
+      "x": -20,
+      "y": -10,
+      "width": 340,
+      "height": 320,
+      "color": "#FE8019"
+    },
+    {
+      "id": "nd-proj-a3dp_gantry_assembly",
+      "type": "file",
+      "file": "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md",
+      "x": 360,
+      "y": -10,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-hw-a3dp_gantry_assembly",
+      "type": "file",
+      "file": "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Hardware.md",
+      "x": 360,
+      "y": 230,
+      "width": 380,
+      "height": 150,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "nd-proj-alchemical_web_docs",
+      "type": "file",
+      "file": "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md",
+      "x": 790,
+      "y": -10,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-alchemical_web_docs",
+      "type": "file",
+      "file": "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md",
+      "x": 790,
+      "y": 230,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "nd-proj-alembic_toolhead",
+      "type": "file",
+      "file": "Projects/Alembic_Toolhead/Alembic_Toolhead.md",
+      "x": 1220,
+      "y": -10,
+      "width": 380,
+      "height": 220,
+      "color": "#FE8019"
+    },
+    {
+      "id": "nd-hw-alembic_toolhead",
+      "type": "file",
+      "file": "Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md",
+      "x": 1220,
+      "y": 230,
+      "width": 380,
+      "height": 150,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "nd-proj-brand",
+      "type": "file",
+      "file": "Projects/Brand/Brand.md",
+      "x": 1650,
+      "y": -10,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-brand",
+      "type": "file",
+      "file": "Projects/Brand/Brand_Software.md",
+      "x": 1650,
+      "y": 230,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "nd-proj-extras",
+      "type": "file",
+      "file": "Projects/Extras/Extras.md",
+      "x": 360,
+      "y": 430,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-hw-extras",
+      "type": "file",
+      "file": "Projects/Extras/Extras_Hardware.md",
+      "x": 360,
+      "y": 670,
+      "width": 380,
+      "height": 150,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "nd-proj-homunculus",
+      "type": "file",
+      "file": "Projects/Homunculus/Homunculus.md",
+      "x": 790,
+      "y": 430,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-homunculus",
+      "type": "file",
+      "file": "Projects/Homunculus/Homunculus_Software.md",
+      "x": 790,
+      "y": 670,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "nd-proj-maker-tools",
+      "type": "file",
+      "file": "Projects/Maker-Tools/Maker-Tools.md",
+      "x": 1220,
+      "y": 430,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-maker-tools",
+      "type": "file",
+      "file": "Projects/Maker-Tools/Maker-Tools_Software.md",
+      "x": 1220,
+      "y": 670,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "nd-proj-organization_profile",
+      "type": "file",
+      "file": "Projects/Organization_Profile/Organization_Profile.md",
+      "x": 1650,
+      "y": 430,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-organization_profile",
+      "type": "file",
+      "file": "Projects/Organization_Profile/Organization_Profile_Software.md",
+      "x": 1650,
+      "y": 670,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "nd-proj-pestle_rotational_bowden",
+      "type": "file",
+      "file": "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md",
+      "x": 360,
+      "y": 870,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-hw-pestle_rotational_bowden",
+      "type": "file",
+      "file": "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md",
+      "x": 360,
+      "y": 1110,
+      "width": 380,
+      "height": 150,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "nd-proj-pneuma_remote_air",
+      "type": "file",
+      "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md",
+      "x": 790,
+      "y": 870,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-hw-pneuma_remote_air",
+      "type": "file",
+      "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md",
+      "x": 790,
+      "y": 1110,
+      "width": 380,
+      "height": 150,
+      "color": "#8EC07C"
+    },
+    {
+      "id": "grp-entity-netcom",
+      "type": "group",
+      "label": "Entity Compartment: NetCom (1 Projects \u2014 Zero Cross-Entity Links)",
+      "x": -60,
+      "y": 1500,
+      "width": 860,
+      "height": 560,
+      "color": "#03A6D9"
+    },
+    {
+      "id": "nd-tasks-netcom",
+      "type": "file",
+      "file": "Tasks/NetCom_Tasks.md",
+      "x": -20,
+      "y": 1550,
+      "width": 340,
+      "height": 320,
+      "color": "#FE8019"
+    },
+    {
+      "id": "nd-proj-netcom_engineering_assistant",
+      "type": "file",
+      "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md",
+      "x": 360,
+      "y": 1550,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-netcom_engineering_assistant",
+      "type": "file",
+      "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md",
+      "x": 360,
+      "y": 1790,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    },
+    {
+      "id": "grp-entity-orin_workstation",
+      "type": "group",
+      "label": "Entity Compartment: Orin_Workstation (1 Projects \u2014 Zero Cross-Entity Links)",
+      "x": -60,
+      "y": 2140,
+      "width": 860,
+      "height": 560,
+      "color": "#B8BB26"
+    },
+    {
+      "id": "nd-tasks-orin_workstation",
+      "type": "file",
+      "file": "Tasks/Orin_Workstation_Tasks.md",
+      "x": -20,
+      "y": 2190,
+      "width": 340,
+      "height": 320,
+      "color": "#FE8019"
+    },
+    {
+      "id": "nd-proj-workstation_operations",
+      "type": "file",
+      "file": "Projects/Workstation_Operations/Workstation_Operations.md",
+      "x": 360,
+      "y": 2190,
+      "width": 380,
+      "height": 220,
+      "color": "#FABD2F"
+    },
+    {
+      "id": "nd-sw-workstation_operations",
+      "type": "file",
+      "file": "Projects/Workstation_Operations/Workstation_Operations_Software.md",
+      "x": 360,
+      "y": 2430,
+      "width": 380,
+      "height": 150,
+      "color": "#83A598"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed-task-a3dp_gantry_assembly",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-a3dp_gantry_assembly",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-hw-a3dp_gantry_assembly",
+      "fromNode": "nd-hw-a3dp_gantry_assembly",
+      "fromSide": "top",
+      "toNode": "nd-proj-a3dp_gantry_assembly",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "CAD / CFG Telemetry",
+      "color": "#8EC07C"
+    },
+    {
+      "id": "ed-task-alchemical_web_docs",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-alchemical_web_docs",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-alchemical_web_docs",
+      "fromNode": "nd-sw-alchemical_web_docs",
+      "fromSide": "top",
+      "toNode": "nd-proj-alchemical_web_docs",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-alembic_toolhead",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-alembic_toolhead",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-hw-alembic_toolhead",
+      "fromNode": "nd-hw-alembic_toolhead",
+      "fromSide": "top",
+      "toNode": "nd-proj-alembic_toolhead",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "CAD / CFG Telemetry",
+      "color": "#8EC07C"
+    },
+    {
+      "id": "ed-task-brand",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-brand",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-brand",
+      "fromNode": "nd-sw-brand",
+      "fromSide": "top",
+      "toNode": "nd-proj-brand",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-extras",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-extras",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-hw-extras",
+      "fromNode": "nd-hw-extras",
+      "fromSide": "top",
+      "toNode": "nd-proj-extras",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "CAD / CFG Telemetry",
+      "color": "#8EC07C"
+    },
+    {
+      "id": "ed-task-homunculus",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-homunculus",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-homunculus",
+      "fromNode": "nd-sw-homunculus",
+      "fromSide": "top",
+      "toNode": "nd-proj-homunculus",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-maker-tools",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-maker-tools",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-maker-tools",
+      "fromNode": "nd-sw-maker-tools",
+      "fromSide": "top",
+      "toNode": "nd-proj-maker-tools",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-organization_profile",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-organization_profile",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-organization_profile",
+      "fromNode": "nd-sw-organization_profile",
+      "fromSide": "top",
+      "toNode": "nd-proj-organization_profile",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-pestle_rotational_bowden",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-pestle_rotational_bowden",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-hw-pestle_rotational_bowden",
+      "fromNode": "nd-hw-pestle_rotational_bowden",
+      "fromSide": "top",
+      "toNode": "nd-proj-pestle_rotational_bowden",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "CAD / CFG Telemetry",
+      "color": "#8EC07C"
+    },
+    {
+      "id": "ed-task-pneuma_remote_air",
+      "fromNode": "nd-tasks-alchemical-3d",
+      "fromSide": "right",
+      "toNode": "nd-proj-pneuma_remote_air",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-hw-pneuma_remote_air",
+      "fromNode": "nd-hw-pneuma_remote_air",
+      "fromSide": "top",
+      "toNode": "nd-proj-pneuma_remote_air",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "CAD / CFG Telemetry",
+      "color": "#8EC07C"
+    },
+    {
+      "id": "ed-task-netcom_engineering_assistant",
+      "fromNode": "nd-tasks-netcom",
+      "fromSide": "right",
+      "toNode": "nd-proj-netcom_engineering_assistant",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-netcom_engineering_assistant",
+      "fromNode": "nd-sw-netcom_engineering_assistant",
+      "fromSide": "top",
+      "toNode": "nd-proj-netcom_engineering_assistant",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    },
+    {
+      "id": "ed-task-workstation_operations",
+      "fromNode": "nd-tasks-orin_workstation",
+      "fromSide": "right",
+      "toNode": "nd-proj-workstation_operations",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Single-Writer Tasks",
+      "color": "#FE8019"
+    },
+    {
+      "id": "ed-sw-workstation_operations",
+      "fromNode": "nd-sw-workstation_operations",
+      "fromSide": "top",
+      "toNode": "nd-proj-workstation_operations",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "Software Telemetry",
+      "color": "#83A598"
+    }
+  ]
 }

@@ -38,4 +38,4 @@ last_synced: "{{DATE}}"
 
 | Test Suite / Gate | Command | Last Verified Result | Receipt / Anchor |
 | :--- | :--- | :--- | :--- |
-| Unit Test Suite | `python3 -m unittest discover -s tests -v` | `[TBD: test_status]` | `[TBD: receipt_id]` |
+| *(No verified test receipt recorded yet)* | `python3 -m unittest discover -s tests -v` | — | — |

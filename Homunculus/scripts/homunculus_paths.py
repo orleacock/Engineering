@@ -11,18 +11,21 @@ in both Zero-Install "Drop-In & Point" mode and Optional Installer mode.
   Owning Module : Core Framework (`scripts/`)
   Callers       : All 12 core/skill Python scripts, `install.sh`, `install.ps1`, `post-worktree-sync.sh`, `test_foundation.py`, `test_project_memory.py`, `test_adapters.py`
   Callees       : Stdlib only; lazy-loads `sync_memory.py` inside `ensure_directory_fresh()`
-  CLI Flags     : --workspace, --homunculus-root, --memory-root, --init-config, --memory-mode, --memory-dir, --simulate-os, --check, --ensure-fresh, --map, --sync-maps, --quiet, --json
+  Contract      : `scripts/script_contracts.json` [`homunculus_paths.py`]
+  CLI Flags     : --workspace, --homunculus-root, --memory-root, --init-config, --memory-mode, --memory-dir, --simulate-os, --check, --ensure-fresh, --map, --sync-maps, --lock-core, --unlock-core, --quiet, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def parse_frontmatter_full (#L90-L141)         | def strip_yaml_frontmatter (#L144-L147)
-    - def decode_file_text (#L150-L171)              | def detect_os_tier (#L174-L207)
-    - def resolve_homunculus_root (#L210-L237)       | def _find_git_root (#L240-L245)
-    - def resolve_workspace_config (#L248-L334)      | def probe_runtime_capabilities (#L337-L365)
-    - def write_workspace_config (#L368-L406)        | def _resolve_tree_stamp_cache_dir (#L427-L442)
-    - def _resolve_memory_root_fast (#L445-L472)     | def _read_git_head_signature (#L475-L509)
-    - def read_git_head_sha (#L512-L530)             | def inspect_python_ast_and_map (#L540-L663)
-    - def _format_symbol_index_lines (#L666-L678)    | def sync_script_navigation_map (#L681-L728)
-    - def _compute_structural_stamp (#L731-L792)     | def _load_sync_memory_module (#L795-L808)
-    - def ensure_directory_fresh (#L811-L889)        | def main (#L892-L1049)
+    - def parse_frontmatter_full (#L93-L144)         | def strip_yaml_frontmatter (#L147-L150)
+    - def decode_file_text (#L153-L174)              | def detect_os_tier (#L177-L210)
+    - def resolve_homunculus_root (#L213-L240)       | def _find_git_root (#L243-L248)
+    - def resolve_workspace_config (#L251-L337)      | def probe_runtime_capabilities (#L340-L368)
+    - def write_workspace_config (#L371-L409)        | def _resolve_tree_stamp_cache_dir (#L430-L445)
+    - def _resolve_memory_root_fast (#L448-L475)     | def _read_git_head_signature (#L478-L512)
+    - def read_git_head_sha (#L515-L533)             | def inspect_python_ast_and_map (#L543-L666)
+    - def _format_symbol_index_lines (#L669-L681)    | def load_script_contract (#L684-L698)
+    - def record_preflight_receipt (#L701-L775)      | def sync_script_navigation_map (#L778-L835)
+    - def _compute_structural_stamp (#L838-L899)     | def _load_sync_memory_module (#L902-L915)
+    - def ensure_directory_fresh (#L918-L996)        | def set_core_lock_state (#L999-L1027)
+    - def main (#L1030-L1240)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -678,8 +681,102 @@ def _format_symbol_index_lines(symbols: list[dict[str, Any]]) -> list[str]:
     return rows
 
 
+def load_script_contract(fw_root: str | Path, script_path: str | Path) -> dict[str, Any]:
+    """Load the TIER1 clean-room script contract entry from `scripts/script_contracts.json` (Decision 4C)."""
+    root_p = Path(fw_root).resolve()
+    sp = Path(script_path)
+    contracts_file = root_p / "scripts" / "script_contracts.json"
+    if not contracts_file.is_file():
+        return {}
+    try:
+        data = json.loads(contracts_file.read_text(encoding="utf-8"))
+        scripts_map = data.get("scripts", {})
+        if sp.name in scripts_map:
+            return dict(scripts_map[sp.name])
+    except Exception:
+        return {}
+    return {}
+
+
+def record_preflight_receipt(
+    fw_root: str | Path,
+    script_path: str | Path,
+    memory_root: str | Path | None = None,
+    project_name: str = "",
+) -> dict[str, Any]:
+    """
+    Record a preflight receipt in `.cache/preflight_state.json` bound to `(script_rel_path, pre_edit_blob_sha256, session_date)` (Decision 4A).
+    """
+    root_p = Path(fw_root).resolve()
+    sp = Path(script_path).resolve()
+    try:
+        rel_p = sp.relative_to(root_p).as_posix()
+    except ValueError:
+        rel_p = sp.name
+
+    live_bytes = sp.read_bytes() if sp.is_file() else b""
+    live_sha = hashlib.sha256(live_bytes).hexdigest()[:16]
+    head_sha = live_sha
+    if (root_p / ".git").exists():
+        try:
+            proc = subprocess.run(
+                ["git", "-C", str(root_p), "show", f"HEAD:{rel_p}"],
+                capture_output=True,
+                timeout=2.0,
+                check=False,
+            )
+            if proc.returncode == 0 and proc.stdout:
+                head_sha = hashlib.sha256(proc.stdout).hexdigest()[:16]
+        except Exception:
+            pass
+
+    import datetime as _dt
+
+    session_date = _dt.date.today().isoformat()
+    receipt = {
+        "project": project_name,
+        "script": sp.name,
+        "script_rel_path": rel_p,
+        "abs_path": str(sp),
+        "pre_edit_blob_sha256": live_sha,
+        "git_head_blob_sha256": head_sha,
+        "session_date": session_date,
+        "disposed": False,
+    }
+
+    cache_dirs: list[Path] = []
+    if memory_root:
+        mem_p = Path(memory_root).expanduser().resolve()
+        if mem_p.is_dir():
+            cache_dirs.append(mem_p / ".cache")
+    else:
+        cache_dirs.extend([_resolve_tree_stamp_cache_dir(), root_p / ".cache"])
+        auto_mem = _resolve_memory_root_fast()
+        if auto_mem is not None and auto_mem.is_dir():
+            cache_dirs.append(auto_mem / ".cache")
+
+    for cdir in cache_dirs:
+        try:
+            cdir.mkdir(parents=True, exist_ok=True)
+            pfile = cdir / "preflight_state.json"
+            existing: dict[str, Any] = {}
+            if pfile.is_file():
+                try:
+                    existing = json.loads(pfile.read_text(encoding="utf-8"))
+                except Exception:
+                    existing = {}
+            receipts_map = existing.setdefault("receipts", {})
+            receipts_map[rel_p] = receipt
+            receipts_map[sp.name] = receipt
+            pfile.write_text(json.dumps(existing, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        except OSError:
+            pass
+
+    return receipt
+
+
 def sync_script_navigation_map(file_path: str | Path, write: bool = True) -> dict[str, Any]:
-    """Two-pass fixed-point auto-healer for `=== DEVELOPER & AI NAVIGATION MAP ===` headers (`Pairing A`)."""
+    """Two-pass fixed-point auto-healer for `=== DEVELOPER & AI NAVIGATION MAP ===` headers (`Pairing A` + `Decision 4C`)."""
     fpath = Path(file_path)
     try:
         orig_text = fpath.read_text(encoding="utf-8")
@@ -690,6 +787,7 @@ def sync_script_navigation_map(file_path: str | Path, write: bool = True) -> dic
         return {"file": str(fpath), "status": "NO_MAP_HEADER", "updated": False}
 
     cur_text = orig_text
+    contract_line = f"  Contract      : `scripts/script_contracts.json` [`{fpath.name}`]"
     for _pass in range(2):
         info = inspect_python_ast_and_map(fpath, source_text=cur_text)
         if info["syntax_error"] is not None:
@@ -702,13 +800,22 @@ def sync_script_navigation_map(file_path: str | Path, write: bool = True) -> dic
             body = match.group(2)
             footer = match.group(3)
             kept_meta: list[str] = []
+            has_contract = False
             for ln in body.splitlines():
                 if ln.strip().startswith("Symbol Index"):
                     break
-                if ln.strip().startswith("CLI Flags"):
+                if ln.strip().startswith("Contract"):
+                    kept_meta.append(contract_line)
+                    has_contract = True
+                elif ln.strip().startswith("CLI Flags"):
+                    if not has_contract:
+                        kept_meta.append(contract_line)
+                        has_contract = True
                     kept_meta.append(f"  CLI Flags     : {flags_line}")
                 else:
                     kept_meta.append(ln)
+            if not has_contract:
+                kept_meta.append(contract_line)
             kept_meta.append("  Symbol Index  (jump directly via read_file StartLine/EndLine):")
             kept_meta.extend(sym_lines)
             return header + "\n".join(kept_meta) + footer
@@ -889,6 +996,37 @@ def ensure_directory_fresh(
         return {"status": "SKIPPED_OS_ERROR", "synced": False, "reason": str(exc)}
 
 
+def set_core_lock_state(homunculus_root: str | Path, lock: bool) -> dict[str, Any]:
+    """Toggle physical OS read-only (0444/0555) vs writable (0644/0755) permissions across Homunculus core files."""
+    fw_root = resolve_homunculus_root(homunculus_root)
+    target_dirs = ("rules", "skills", "addons", "scripts")
+    touched = 0
+    errors: list[str] = []
+    for sub in target_dirs:
+        sdir = fw_root / sub
+        if not sdir.is_dir():
+            continue
+        for p in sorted(sdir.rglob("*")):
+            if not p.is_file() or "__pycache__" in p.parts:
+                continue
+            try:
+                is_exec = p.suffix in (".py", ".sh")
+                if lock:
+                    new_mode = 0o555 if is_exec else 0o444
+                else:
+                    new_mode = 0o755 if is_exec else 0o644
+                p.chmod(new_mode)
+                touched += 1
+            except OSError as exc:
+                errors.append(f"{p}: {exc}")
+    return {
+        "status": "LOCKED" if lock else "UNLOCKED",
+        "homunculus_root": str(fw_root),
+        "files_updated": touched,
+        "errors": errors,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Homunculus Cross-OS Workspace, Memory-Mode & Capability Resolver."
@@ -933,12 +1071,37 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Auto-heal in-script Developer & AI Navigation Map (#Lstart-Lend) headers across all Python scripts.",
     )
+    parser.add_argument(
+        "--lock-core",
+        action="store_true",
+        help="Set Homunculus core files (rules/, skills/, addons/, scripts/) to OS read-only (0444/0555).",
+    )
+    parser.add_argument(
+        "--unlock-core",
+        action="store_true",
+        help="Restore writable permissions (0644/0755) on Homunculus core files for intentional upgrades.",
+    )
     parser.add_argument("--quiet", action="store_true", help="Suppress stdout banner when running --ensure-fresh.")
     parser.add_argument("--json", action="store_true", help="Emit resolved configuration as JSON.")
     args = parser.parse_args(argv)
 
-    fw_root = resolve_homunculus_root(args.homunculus_root)
+    fw_root = (
+        Path(args.homunculus_root).expanduser().resolve()
+        if args.homunculus_root
+        else Path(__file__).resolve().parent.parent
+    )
     target_ws = Path(args.workspace).expanduser().resolve() if args.workspace else Path.cwd().resolve()
+
+    if args.lock_core or args.unlock_core:
+        lock_res = set_core_lock_state(fw_root, lock=bool(args.lock_core and not args.unlock_core))
+        if args.json:
+            print(json.dumps(lock_res, indent=2))
+        else:
+            print(
+                f"[{lock_res['status']}] Homunculus Core Protection | "
+                f"Files Updated: {lock_res['files_updated']} | Root: {lock_res['homunculus_root']}"
+            )
+        return 0 if not lock_res["errors"] else 1
 
     if args.sync_maps or args.map:
         py_files: list[Path] = []
@@ -970,7 +1133,13 @@ def main(argv: list[str] | None = None) -> int:
         if not matched:
             print(f"[FAIL] No Python script matching '{query}' found under {fw_root}", file=sys.stderr)
             return 1
-        out_maps = [inspect_python_ast_and_map(p) for p in matched]
+        out_maps: list[dict[str, Any]] = []
+        for p in matched:
+            m_info = inspect_python_ast_and_map(p)
+            if query.lower() != "all":
+                m_info["contract"] = load_script_contract(fw_root, p)
+                m_info["preflight_receipt"] = record_preflight_receipt(fw_root, p, args.memory_root)
+            out_maps.append(m_info)
         if args.json:
             print(json.dumps(out_maps[0] if len(out_maps) == 1 else out_maps, indent=2))
         else:
@@ -979,6 +1148,28 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"=== {rel_m} ({m['line_count']} lines | {len(m['symbols'])} symbols) ===")
                 if m["cli_flags"]:
                     print("  CLI Flags : " + ", ".join(m["cli_flags"]))
+                contract = m.get("contract") or {}
+                if contract:
+                    print("  [TIER1 Script Contract & Hub-Filtered 1-Hop Coupling (scripts/script_contracts.json)]:")
+                    for mk in contract.get("must_keep_invariants", []):
+                        print(f"    + Must-Keep : {mk}")
+                    for rb in contract.get("retired_anti_patterns", []):
+                        print(f"    - Never-Add : {rb}")
+                    c_1hop = contract.get("coupled_functional_1hop", [])
+                    c_data = contract.get("coupled_data_contracts", [])
+                    r_tests = contract.get("required_tests", [])
+                    if c_1hop:
+                        print("    * Coupled 1-Hop Scripts : " + ", ".join(c_1hop))
+                    if c_data:
+                        print("    * Shared Data Contracts : " + ", ".join(c_data))
+                    if r_tests:
+                        print("    * Required Test Suites  : " + ", ".join(r_tests))
+                pf_rec = m.get("preflight_receipt")
+                if pf_rec:
+                    print(
+                        f"  [PREFLIGHT_RECEIPT_RECORDED] {pf_rec['script_rel_path']} | "
+                        f"Blob SHA: {pf_rec['pre_edit_blob_sha256']} | Date: {pf_rec['session_date']}"
+                    )
                 for s in m["symbols"]:
                     print(f"  - {s['kind']} {s['name']} (#L{s['start_line']}-L{s['end_line']})")
         return 0

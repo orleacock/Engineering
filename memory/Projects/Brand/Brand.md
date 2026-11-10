@@ -9,7 +9,7 @@ repo_head_sha: "49354b32094e"
 tree_hash: "281551451964"
 checkpoint_head_sha: "49354b32094e"
 checkpoint_tree_hash: "281551451964"
-checkpoint_worktree: "('clean', [])"
+checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-06"
 ---

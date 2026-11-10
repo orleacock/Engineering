@@ -1,0 +1,161 @@
+{
+  "last_sealed": "2026-11-10",
+  "latest_audit_entry_sha256": "6512eecad40f67ce74e021d645765236bf6475aacf3463c84aba7093ce92b000",
+  "locked": true,
+  "project_invariants": {
+    "A3DP_Gantry_Assembly": {
+      "block_sha256": "5ae8eb3ba3cf05a73f98a79c676722c26fdb7de7875c91df6320fc3c64fd142f",
+      "row_hashes": [
+        "9f49fcb16e0f0710",
+        "c7e4e04ad1b89c4a"
+      ]
+    },
+    "Alchemical_Web_Docs": {
+      "block_sha256": "0d8520342a8af10a76588ece3299fbbcbe38b19175d4f3f61a6814a89a14a4a5",
+      "row_hashes": [
+        "4c44ba7e9e258f69",
+        "9030863af5b732fd"
+      ]
+    },
+    "Alembic_Toolhead": {
+      "block_sha256": "22f1c36ffac8258419344c6b168fc66644d73fdefcecfd5d5a6a4363d72a0d6b",
+      "row_hashes": [
+        "16cb7026669787a3",
+        "1f15c4fcd2a13b81",
+        "a4d996a79076f801"
+      ]
+    },
+    "Brand": {
+      "block_sha256": "fe5141e9b31299b8e2aa2a810f779d59c9475d22614fcfc92ee4ff4bb9de6376",
+      "row_hashes": [
+        "57cd989aef76e352",
+        "89eeb3b9e362b554"
+      ]
+    },
+    "Extras": {
+      "block_sha256": "2bf5135ac4da040b0447dfc24cbbc20ccd474e80eaab91e99f34c40949e44541",
+      "row_hashes": [
+        "caa3d9d06553b8a3"
+      ]
+    },
+    "Homunculus": {
+      "block_sha256": "1bc1a33ee4ed043a4e151d804ae9871a3743305576bef7be727eb4455cd6b7ac",
+      "row_hashes": [
+        "0009a3acc57ac04a",
+        "0b7b7078a43aa6d5",
+        "0cda5b90d504e7a5",
+        "103e61554e8847a1",
+        "220383e2175b2957",
+        "36ec1478a2527938",
+        "544877fecfa8bdad",
+        "5559d0716859d1ee",
+        "5d2a4c93ec84ec18",
+        "6eb68ed8c16241a4",
+        "7604325b4c9413a8",
+        "7e38511489b90298",
+        "83e72a45da3bc31c",
+        "875c4dde36ed05b6",
+        "97f1b0765b016359",
+        "a3c758b26b32da36",
+        "b15bf18b386f24f7",
+        "b7508766cd533a89",
+        "c80c356c9ecf90db",
+        "c89675f3d6b03d93",
+        "ccd2e817237aff4b",
+        "d7948870db84ec4b",
+        "daaadbe5adb2bee5",
+        "deefeed11218a58d"
+      ]
+    },
+    "Maker-Tools": {
+      "block_sha256": "8c983b8ae7357e7ee885e78f3bcc2c76f12f72f23e241f0120e49d1c2f1ef5aa",
+      "row_hashes": [
+        "26eeaacf5ea9a242",
+        "e13bef2c72912e57"
+      ]
+    },
+    "NetCom_Engineering_Assistant": {
+      "block_sha256": "1303eb94752b681855c4adf611205461aa2a0cc4e9fd3741ba844195783d2d87",
+      "row_hashes": [
+        "8ebb725b2538ff9d",
+        "e3d36fca88eb70b1"
+      ]
+    },
+    "Organization_Profile": {
+      "block_sha256": "91b79ccb5b7025da611278de70dce7254297ec360361f17778fd860058db19cb",
+      "row_hashes": [
+        "cda8777665a87f3d"
+      ]
+    },
+    "Pestle_Rotational_Bowden": {
+      "block_sha256": "24b5c1516f2af17828e227d83f425013a38fd6b91f479f812dc20d8cec58b059",
+      "row_hashes": [
+        "694a54db8fa49f22",
+        "94f93456fd2f0e74"
+      ]
+    },
+    "Pneuma_Remote_Air": {
+      "block_sha256": "62d0271eca0961b9f39e5c195ea535eeeb7a1a9ae93ccc4cf289f6a5d2c5a840",
+      "row_hashes": [
+        "0b3b013e36fbc773",
+        "a0310a4a8d599bab",
+        "c118b457bef10a35",
+        "e00a8e23e616262e"
+      ]
+    },
+    "Workstation_Operations": {
+      "block_sha256": "0a18b432d397211bc74554c2be233bd7885066fc0a077bc8c7ec97eb0770cac7",
+      "row_hashes": [
+        "12b8ce6378c4f5c3",
+        "5481634ec5c5f0b8",
+        "bf4e94d90b2952e8"
+      ]
+    }
+  },
+  "protected_files": {
+    "AGENTS.md": "71030c828f2499ac12763dcf7e568fabf86917d6b17eedfa271b5868965f7acb",
+    "Profile/Decision_Profile.md": "c0b2360302b4854a7f0e473517fdb1664b9ce3af3031eb56ec66e55a6efa19ac",
+    "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md": "572018467687b7d783fbd31383259d48d01e04a959db330bd22b6449899dae6f",
+    "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "6fc354159fd0996ff40d588f27fef1ab91c17f2ed4b5589abbb892637f317569",
+    "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "f93ffbe9f00db1ad6c759476ff24f6baf107380694dd62417476c3d468c573e6",
+    "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "32152f61c3a526969c2cb5365f1d495e7349a821c6e4f2dc7767389b3d9a6c64",
+    "Standards_and_Specs/Author_Voice_and_Cadence.md": "5cd0e8a6966b50cb470f9379d7c501983c514539084102c99072705085bcbe65",
+    "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "bb54f78b1e5d999bbb2a568d81800b72cc131972735d3e908e915734927079f8",
+    "Standards_and_Specs/Image_and_Style_Rules.md": "56381197fc78fccead17cbc4f8392ef1b87f88a95b95beedbcc7302290dcd77e",
+    "Standards_and_Specs/Standards_Index.md": "5a3dc187d7e6e7cb5346d4261100aeb99060736d6637ff17169b4c751e8f63c1",
+    "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "230414f93d3f8e08a8683fcfdacda80ebab070ec1b16b2416c0b7d39115e58dc",
+    "Standards_and_Specs/Workspace_Gmail_MCP_Standard.md": "7d84aa08ca4cfd8df98fd19a2504c9dd148f9e922fadc5dce5d47777cd87ae59"
+  },
+  "required_files": [
+    "AGENTS.md",
+    "Profile/Decision_Profile.md",
+    "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md",
+    "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md",
+    "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md",
+    "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md",
+    "Standards_and_Specs/Author_Voice_and_Cadence.md",
+    "Standards_and_Specs/Fasteners_and_Inserts.md",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md",
+    "Standards_and_Specs/Image_and_Style_Rules.md",
+    "Standards_and_Specs/Standards_Index.md",
+    "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md",
+    "Standards_and_Specs/Workspace_Gmail_MCP_Standard.md"
+  ],
+  "retired_tier5_hashes": {
+    "Homunculus": [
+      "82afbff5e8e290f428f7",
+      "9e9abdd16b9af56fb37c",
+      "abcaac114a0f74b2e866",
+      "afb5c76032bec37b7d7f",
+      "b4e2fbf9a5cbbd00eb40",
+      "db9ea3329ce384501b4a",
+      "f8a1d5dfc0c9b3bdcd1b"
+    ],
+    "Pneuma_Remote_Air": [
+      "b3aee92c757ab6cef173"
+    ]
+  },
+  "schema_version": "1.1",
+  "seal_root_sha256": "7512eabec26f7dfe2d2890410cebb9f5c4f1a8e113cda0c5c10ac179600ab20d"
+}

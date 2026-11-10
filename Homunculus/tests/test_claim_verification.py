@@ -18,7 +18,11 @@ import unittest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERIFY_CLAIMS = REPO_ROOT / "skills/claim-verification/scripts/verify_claims.py"
-INSPECT_HW = REPO_ROOT / "skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py"
+INSPECT_HW = (
+    REPO_ROOT / "skills/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py"
+    if (REPO_ROOT / "skills/hardware-cad-inspector").is_dir()
+    else REPO_ROOT / "addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py"
+)
 SYNC_MEMORY = REPO_ROOT / "skills/project-memory/scripts/sync_memory.py"
 
 
@@ -179,7 +183,7 @@ class TestClaimVerification(unittest.TestCase):
             hw_md = mem_root / "Projects/Actuator_Module/Actuator_Module_Hardware.md"
             hw_txt = hw_md.read_text(encoding="utf-8")
             hw_txt = hw_txt.replace(
-                "| `[TBD: sub_assembly]` | `[TBD: fastener_spec]` | `[TBD: qty]` | `[TBD: source_anchor]` | Populate from verified CAD/BOM sources only. |",
+                "| *(No verified BOM.md table synced yet — run `--sync-hardware` once `BOM.md` is clean)* | — | — | — | — |",
                 "| Housing | 6x M3x12 SHCS | 6 | `actuator.cfg#L1-L5` | Verified housing fastener schedule. |",
             )
             hw_md.write_text(hw_txt, encoding="utf-8")
@@ -385,6 +389,245 @@ class TestClaimVerification(unittest.TestCase):
                 "QUALIFIED_QUANTITY(PULLUP)",
             ):
                 self.assertIn(expected_tag, proc_bad_rig.stdout)
+
+            # Pillar 3 checks: URL number stripping, --dump-whitelist VRF suppression, backtick report tags, and preposition boundary
+            url_src = tdir / "url_source.md"
+            url_src.write_text(
+                "# Reference\n"
+                "- Issue tracker: https://github.com/example/repo/issues/142\n"
+                "- Travel stroke: 160 mm\n"
+                "- Nozzle orifice: 0.4 mm nozzle\n"
+                "- Brush wipers: 1 pair of silicone wipers\n",
+                encoding="utf-8",
+            )
+            proc_dump = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--dump-whitelist", "--sources", str(url_src)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_dump.returncode, 0)
+            self.assertNotIn("Receipt: VRF-", proc_dump.stdout)
+
+            url_poison_draft = tdir / "url_poison_draft.md"
+            url_poison_draft.write_text("# Draft\n- Bracket length: 142 mm\n", encoding="utf-8")
+            proc_url_poison = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(url_poison_draft), "--sources", str(url_src)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc_url_poison.returncode, 0, "Numbers inside URLs must not enter the numeric whitelist")
+
+            prep_good_draft = tdir / "prep_good_draft.md"
+            prep_good_draft.write_text(
+                "# Audit Report\n"
+                "- Finding `DEF-01` (`OPEN-02`, status `PASS`): `1 pair` of silicone wipers cleans the nozzle during high-speed travel across 160 mm.\n",
+                encoding="utf-8",
+            )
+            proc_prep_good = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(prep_good_draft), "--sources", str(url_src)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_prep_good.returncode, 0, proc_prep_good.stdout + proc_prep_good.stderr)
+
+            # Option 2A (LL-034) & Section 3 (LL-035) checks:
+            # 1. BOM table cell-pair indexing (SHCS -> screws, Heatset -> heat-sets/inserts), backticked `Ø12.00mm`×5
+            #    and cumulative Ø4.70mm×2 + Ø4.70mm×6 = 8 inserts, discontinuous L10,L25 line citations around an
+            #    intermediate warning at L17, multi-line '- **Location:**' audit citations, Homunculus tool basenames,
+            #    audit summary meta-counts ('20 isolated warnings'), and '0 matching files' absence phrasing.
+            bom_and_guide = tdir / "Assembly_Guide.md"
+            avg_lines = [f"Line {i}: Normal assembly prose." for i in range(1, 31)]
+            avg_lines[9] = "| M3x65mm SHCS | Long screw | 2 |"
+            avg_lines[10] = "| **[M3x5x4mm Heatsets](https://example.com/threaded-insert)** | Brass | 5 |"
+            avg_lines[11] = "- CAD Circular Surfaces: `Ø3.50mm`×4, `Ø12.00mm`×5, `Ø4.70mm`×2, `Ø4.70mm`×6"
+            avg_lines[16] = "> [!CAUTION]\n> NEVER over-torque polymer threads."
+            avg_lines[24] = "Step 4: Seat the housing cleanly."
+            bom_and_guide.write_text("\n".join(avg_lines) + "\n", encoding="utf-8")
+
+            opt2a_draft = tdir / "opt2a_draft.md"
+            opt2a_draft.write_text(
+                "# Audit Summary\n"
+                "- Ran `audit_repo_docs.py` and `format_image.py` (`0` errors, 20 isolated warnings, 0 matching files failed).\n"
+                "- BOM provides 2 screws (`M3x65mm`) and 5 inserts (`M3x5x4mm`), while CAD shows a bore of Ø3.50 mm (4 bores), 5 physical ports (`Ø12.00 mm`), and 8 insert pockets of Ø4.70 mm (`Assembly_Guide.md:10,11,25`).\n"
+                "- Note (`Assembly_Guide.md#L17`): includes a note cautioning the builder against over-torquing.\n"
+                "- **Location:** `Assembly_Guide.md:17`\n"
+                "- **Defect:** Legacy torque warning conflicts with updated assembly notes.\n",
+                encoding="utf-8",
+            )
+            proc_opt2a = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(opt2a_draft), "--sources", str(bom_and_guide)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_opt2a.returncode, 0, proc_opt2a.stdout + proc_opt2a.stderr)
+
+            # Directory-qualified broken paths (`skills/wrong_dir/audit_repo_docs.py`) must NOT be waved through by basename
+            bad_path_draft = tdir / "bad_script_path.md"
+            bad_path_draft.write_text("# Doc\n- Script path: `skills/wrong_dir/audit_repo_docs.py`.\n", encoding="utf-8")
+            proc_bad_path = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(bad_path_draft), "--sources", str(bom_and_guide)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc_bad_path.returncode, 0)
+            self.assertIn("skills/wrong_dir/audit_repo_docs.py", proc_bad_path.stdout)
+
+            # 2. Runtime Anti-Introspection Guard (`python3 -c "import verify_claims"`) must fail closed
+            proc_snoop = subprocess.run(
+                [
+                    sys.executable,
+                    "-c",
+                    f"import sys; sys.path.insert(0, {repr(str(VERIFY_CLAIMS.parent))}); import verify_claims",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc_snoop.returncode, 0)
+            self.assertIn("ANTI-SNOOP GATE", proc_snoop.stdout + proc_snoop.stderr)
+
+            # 3. Bracket-Interior Recommendation Smuggling (`[TBD_SPECULATIVE_GUESS]`) & `[Line Text]` Output
+            #    Tests both keyworded (`recommend 95A`) and keywordless (`(95A)`, `(245-260 °C)`, `(M3x12)`) smuggling!
+            for smuggle_line in (
+                "- TPU Hardness: `[TBD: TPU Shore hardness rating (recommend 95A for grommets and feet)]`\n",
+                "- TPU Hardness (keywordless): `[TBD: TPU Shore hardness (95A)]`\n",
+                "- Nozzle Temp (keywordless range): `[TBD: ASA nozzle temp (245–260 °C)]`\n",
+                "- Fastener (keywordless unbacked M3x12): `[TBD: Enclosure screw (M3x12)]`\n",
+            ):
+                tbd_smuggle_draft = tdir / "tbd_smuggle_draft.md"
+                tbd_smuggle_draft.write_text("# Slicer Matrix\n" + smuggle_line, encoding="utf-8")
+                proc_smuggle = subprocess.run(
+                    [sys.executable, str(VERIFY_CLAIMS), "--target", str(tbd_smuggle_draft), "--sources", str(bom_and_guide)],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(proc_smuggle.returncode, 0, f"Failed to block smuggled TBD: {smuggle_line}")
+                self.assertIn("TBD_SPECULATIVE_GUESS", proc_smuggle.stdout)
+                self.assertIn("[Line Text]:", proc_smuggle.stdout)
+
+            # 4. Option C5 Multi-Vector Red-Team Suite:
+            #    - Vector 1A/1E: Real git commits + English hex words ('acceded', 'defaced') + PNG IHDR pixel dims
+            #      + legitimate `[TBD: ...]` citing source-backed `24 V` -> PASS
+            #    - Vector 1B: Hallucinated git commit SHAs (`1a2b3c4`, `commit 9999999`, `revision #deadbeef`) -> FAIL (UNVERIFIED_GIT_COMMIT_SHA)
+            #    - Vector 1C/2A: Numeric bleed attack (using commit SHA or PNG width as mm/screws) + oversized PNG IHDR -> FAIL
+            #    - Vector 1D: Cross-entity git commit SHA smuggling (Alpha citing Beta's commit SHA) -> FAIL (CROSS_ENTITY_BORROWING)
+            #    - Vector 3A: Spoofed unittest/sys.argv[0], env-var spoofing, compile() filename spoofing, monkey-patched os.path,
+            #      external script, and exec() snoop attacks -> BLOCKED
+            git_repo = tdir / "git_hw_repo"
+            git_repo.mkdir()
+            (git_repo / "README.md").write_text("---\nentity: Client_Alpha\n---\n# Git Repo\n- Supply: 24 V\n", encoding="utf-8")
+            img_dir = git_repo / "Images"
+            img_dir.mkdir()
+            import struct as _st
+            # Valid 24-byte PNG header for 1532 x 882 px
+            (img_dir / "Card.png").write_bytes(
+                b"\x89PNG\r\n\x1a\n" + _st.pack(">I", 13) + b"IHDR" + _st.pack(">II", 1532, 882) + b"\x08\x06\x00\x00\x00"
+            )
+            # Corrupted/oversized PNG header (99999 x 99999 px > 32768 bound) must NOT be indexed
+            (img_dir / "Corrupt.png").write_bytes(
+                b"\x89PNG\r\n\x1a\n" + _st.pack(">I", 13) + b"IHDR" + _st.pack(">II", 99999, 99999) + b"\x08\x06\x00\x00\x00"
+            )
+            subprocess.run(["git", "-C", str(git_repo), "init", "-q"], check=True)
+            subprocess.run(["git", "-C", str(git_repo), "config", "user.email", "test@example.com"], check=True)
+            subprocess.run(["git", "-C", str(git_repo), "config", "user.name", "Test"], check=True)
+            subprocess.run(["git", "-C", str(git_repo), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(git_repo), "commit", "-q", "-m", "Initial commit"], check=True)
+            real_sha = subprocess.run(
+                ["git", "-C", str(git_repo), "rev-parse", "--short=7", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+
+            # Second git repo owned by Client_Beta to test cross-entity commit SHA smuggling
+            beta_repo = tdir / "beta_hw_repo"
+            beta_repo.mkdir()
+            (beta_repo / "README.md").write_text("---\nentity: Client_Beta\n---\n# Beta Repo\n- Supply: 48 V\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(beta_repo), "init", "-q"], check=True)
+            subprocess.run(["git", "-C", str(beta_repo), "config", "user.email", "beta@example.com"], check=True)
+            subprocess.run(["git", "-C", str(beta_repo), "config", "user.name", "Beta"], check=True)
+            subprocess.run(["git", "-C", str(beta_repo), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(beta_repo), "commit", "-q", "-m", "Beta commit"], check=True)
+            beta_sha = subprocess.run(
+                ["git", "-C", str(beta_repo), "rev-parse", "--short=7", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+
+            c5_good_draft = tdir / "c5_good_draft.md"
+            c5_good_draft.write_text(
+                f"---\nentity: Client_Alpha\n---\n"
+                f"# Provenance Audit\n"
+                f"- Verified commit `{real_sha}` (commit {real_sha}) where the git history acceded to the 24 V spec.\n"
+                f"- Current rating: `[TBD: Missing current rating for 24 V rail]`.\n"
+                f"- Image `Card.png` resolution is 1532 px by 882 px (`1532x882`).\n",
+                encoding="utf-8",
+            )
+            proc_c5_ok = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(c5_good_draft), "--sources", str(git_repo), str(beta_repo)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc_c5_ok.returncode, 0, proc_c5_ok.stdout + proc_c5_ok.stderr)
+
+            # Vector 1B, 1C, 1D, 2A: Fake commit SHAs + Cross-entity Beta SHA + PNG dimension bleed + oversized PNG
+            c5_bad_draft = tdir / "c5_bad_draft.md"
+            c5_bad_draft.write_text(
+                f"---\nentity: Client_Alpha\n---\n"
+                f"# Adversarial Draft\n"
+                f"- Hallucinated hex commit `1a2b3c4`, fake all-digit commit `9999999`, and revision #deadbeef.\n"
+                f"- Cross-entity commit SHA smuggled from Beta: `{beta_sha}`.\n"
+                f"- Bleed attack using PNG width as length: 1532 mm, fake image 1920 px, and corrupt header 99999 px.\n",
+                encoding="utf-8",
+            )
+            proc_c5_bad = subprocess.run(
+                [sys.executable, str(VERIFY_CLAIMS), "--target", str(c5_bad_draft), "--sources", str(git_repo), str(beta_repo)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc_c5_bad.returncode, 0)
+            self.assertIn("UNVERIFIED_GIT_COMMIT_SHA", proc_c5_bad.stdout)
+            self.assertIn("CROSS_ENTITY_BORROWING", proc_c5_bad.stdout)
+            self.assertIn("1532 mm", proc_c5_bad.stdout)
+            self.assertIn("1920 px", proc_c5_bad.stdout)
+            self.assertIn("99999 px", proc_c5_bad.stdout)
+
+            # Vector 3A: Spoofed unittest/sys.argv[0], env-var spoofing, compile() filename spoofing,
+            # monkey-patched os.path, external script, and exec() bypass attempts
+            fake_test_path = str(REPO_ROOT / "tests/test_claim_verification.py")
+            ext_snoop = tdir / "ext_snoop.py"
+            ext_snoop.write_text(
+                f"import os, sys, unittest\n"
+                f"os.environ['HOMUNCULUS_DIAGNOSTIC_MODE'] = '1'\n"
+                f"os.path.realpath = lambda p: {repr(fake_test_path)}\n"
+                f"os.path.abspath = lambda p: {repr(fake_test_path)}\n"
+                f"sys.path.insert(0, {repr(str(VERIFY_CLAIMS.parent))})\n"
+                f"exec(compile('import verify_claims', {repr(fake_test_path)}, 'exec'))\n",
+                encoding="utf-8",
+            )
+            for snoop_cmd in (
+                [
+                    sys.executable,
+                    "-c",
+                    f"import sys, unittest; sys.argv=['test.py']; sys.path.insert(0, {repr(str(VERIFY_CLAIMS.parent))}); import verify_claims",
+                ],
+                [
+                    sys.executable,
+                    "-c",
+                    f"import os, sys; os.environ['HOMUNCULUS_DIAGNOSTIC_MODE']='1'; sys.orig_argv=[]; "
+                    f"sys.path.insert(0, {repr(str(VERIFY_CLAIMS.parent))}); "
+                    f"exec(compile('import verify_claims', {repr(fake_test_path)}, 'exec'))",
+                ],
+                [sys.executable, str(ext_snoop)],
+                [
+                    sys.executable,
+                    "-c",
+                    f"exec(open({repr(str(VERIFY_CLAIMS))}).read())",
+                ],
+            ):
+                p_atk = subprocess.run(snoop_cmd, capture_output=True, text=True)
+                self.assertNotEqual(p_atk.returncode, 0, f"Snoop bypass succeeded for: {snoop_cmd}")
+                self.assertIn("ANTI-SNOOP GATE", p_atk.stdout + p_atk.stderr)
 
 
 if __name__ == "__main__":

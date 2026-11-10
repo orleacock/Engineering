@@ -17,17 +17,18 @@ Modes:
   Owning Module : `skill-architect` (`skills/skill-architect/SKILL.md`)
   Callers       : `pre-commit-gate` (Stage Z4), `sandbox_runner.py` (transcript telemetry), `test_adapters.py`
   Callees       : `homunculus_paths.py` (`parse_frontmatter_full`), `build_adapters.py` (dynamic `ADAPTER_STALE_DRIFT` probe)
+  Contract      : `scripts/script_contracts.json` [`audit_skill_hygiene.py`]
   CLI Flags     : --audit, --check-new, --target-skill, --root, --repo, --repo-root, --strict-structure, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_default_root (#L73-L79)            | def parse_frontmatter (#L82-L85)
-    - def strip_markdown_formatting (#L88-L91)       | def stem_token (#L94-L103)
-    - def tokenize_words (#L106-L121)                | def word_shingles (#L124-L129)
-    - def extract_blocks (#L132-L190)                | def _resolve_root_placeholder (#L193-L200)
-    - def check_local_links_and_scripts (#L203-L282) | def audit_script_stdlib_compliance (#L285-L357)
-    - def scan_turn_waste_and_accuracy_hazards (#L360-L492) | def load_rules (#L495-L524)
-    - def load_skills (#L527-L575)                   | def run_audit (#L578-L1095)
-    - def run_check_new (#L1098-L1209)               | def print_human_audit (#L1212-L1289)
-    - def main (#L1292-L1352)
+    - def resolve_default_root (#L75-L81)            | def parse_frontmatter (#L84-L87)
+    - def strip_markdown_formatting (#L90-L93)       | def stem_token (#L96-L105)
+    - def tokenize_words (#L108-L123)                | def word_shingles (#L126-L131)
+    - def extract_blocks (#L134-L192)                | def _resolve_root_placeholder (#L195-L202)
+    - def check_local_links_and_scripts (#L205-L284) | def audit_script_stdlib_compliance (#L287-L366)
+    - def scan_turn_waste_and_accuracy_hazards (#L369-L501) | def load_rules (#L504-L533)
+    - def load_skills (#L536-L584)                   | def run_audit (#L587-L1174)
+    - def run_check_new (#L1177-L1288)               | def print_human_audit (#L1291-L1384)
+    - def main (#L1387-L1447)
 === END NAVIGATION MAP ===
 """
 
@@ -38,6 +39,7 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -344,16 +346,23 @@ def audit_script_stdlib_compliance(py_script: Path, local_modules: set[str]) -> 
         })
 
     if ast_info["map_present"] and ast_info["map_mismatches"]:
-        first_mismatch = ast_info["map_mismatches"][0]
-        defects.append({
-            "category": "[LOAD-BEARING DEFECT]",
-            "code": "STALE_SCRIPT_NAVIGATION_MAP",
-            "location": f"{py_script}#L1-L50",
-            "summary": (
-                f"`{py_script.name}` navigation map `#Lstart-Lend` coordinates drifted from AST "
-                f"({first_mismatch}; run `python3 scripts/homunculus_paths.py --sync-maps` to heal)."
-            ),
-        })
+        can_auto_heal = os.access(py_script, os.W_OK) and not any(
+            "Removed symbol" in m or "#L999" in m for m in ast_info["map_mismatches"]
+        )
+        if can_auto_heal:
+            heal_res = homunculus_paths.sync_script_navigation_map(py_script, write=True)
+            ast_info["map_mismatches"] = heal_res.get("mismatches", [])
+        if ast_info["map_mismatches"]:
+            first_mismatch = ast_info["map_mismatches"][0]
+            defects.append({
+                "category": "[LOAD-BEARING DEFECT]",
+                "code": "STALE_SCRIPT_NAVIGATION_MAP",
+                "location": f"{py_script}#L1-L50",
+                "summary": (
+                    f"`{py_script.name}` navigation map `#Lstart-Lend` coordinates drifted from AST "
+                    f"({first_mismatch}; run `python3 scripts/homunculus_paths.py --sync-maps` to heal)."
+                ),
+            })
     return defects
 
 
@@ -1075,6 +1084,74 @@ def run_audit(
                     raw_cross_pairs.append(best_match)
     cross_skill_overlaps.extend(raw_cross_pairs)
 
+    core_engine_modified_files: list[str] = []
+    unpreflighted_core_scripts: list[str] = []
+    try:
+        git_proc = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain", "--", "rules", "skills", "addons", "scripts"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if git_proc.returncode == 0 and git_proc.stdout.strip():
+            for ln in git_proc.stdout.splitlines():
+                if len(ln) > 3:
+                    core_engine_modified_files.append(ln[3:].strip())
+    except Exception:
+        pass
+
+    if core_engine_modified_files:
+        import datetime as _dt
+        import hashlib as _hl
+
+        today_s = _dt.date.today().isoformat()
+        pf_receipts: dict[str, Any] = {}
+        cand_pf_files = [
+            root / ".cache" / "preflight_state.json",
+            homunculus_paths._resolve_tree_stamp_cache_dir() / "preflight_state.json",
+        ]
+        auto_mem = homunculus_paths._resolve_memory_root_fast()
+        if auto_mem is not None:
+            cand_pf_files.append(auto_mem / ".cache" / "preflight_state.json")
+        for pf_file in cand_pf_files:
+            if pf_file.is_file():
+                try:
+                    pf_data = json.loads(pf_file.read_text(encoding="utf-8"))
+                    pf_receipts.update(pf_data.get("receipts", {}))
+                except Exception:
+                    pass
+
+        for mod_rel in core_engine_modified_files:
+            if not mod_rel.endswith(".py"):
+                continue
+            mod_rel_clean = mod_rel.removeprefix("Homunculus/")
+            mod_abs = root / mod_rel_clean if (root / mod_rel_clean).is_file() else root / mod_rel
+            if not mod_abs.is_file():
+                continue
+            bname = os.path.basename(mod_rel_clean)
+            rec = pf_receipts.get(mod_rel_clean) or pf_receipts.get(mod_rel) or pf_receipts.get(bname)
+            if not rec or rec.get("session_date") != today_s:
+                unpreflighted_core_scripts.append(mod_rel)
+                continue
+            # Verify blob SHA matches either current file or git HEAD pre-edit blob
+            live_sha = _hl.sha256(mod_abs.read_bytes()).hexdigest()[:16]
+            head_sha = live_sha
+            try:
+                h_proc = subprocess.run(
+                    ["git", "-C", str(root), "show", f"HEAD:{mod_rel}"],
+                    capture_output=True,
+                    timeout=2.0,
+                    check=False,
+                )
+                if h_proc.returncode == 0 and h_proc.stdout:
+                    head_sha = _hl.sha256(h_proc.stdout).hexdigest()[:16]
+            except Exception:
+                pass
+            rec_pre = rec.get("pre_edit_blob_sha256", "")
+            rec_head = rec.get("git_head_blob_sha256", "")
+            if rec_pre not in (live_sha, head_sha) and rec_head != head_sha:
+                unpreflighted_core_scripts.append(mod_rel)
+
     return {
         "root": str(root),
         "rules_scanned": len(rules),
@@ -1090,6 +1167,8 @@ def run_audit(
         "core_rule_overlaps": core_rule_overlaps,
         "cross_skill_overlaps": cross_skill_overlaps,
         "orphan_candidates": orphan_candidates,
+        "core_engine_modified_files": core_engine_modified_files,
+        "unpreflighted_core_scripts": unpreflighted_core_scripts,
         "rule_summaries": rule_summaries,
         "skill_summaries": skill_summaries,
     }
@@ -1282,6 +1361,22 @@ def print_human_audit(report: dict[str, Any]) -> None:
             print(f"    Skill A: {item['location_a']}")
             print(f"    Skill B: {item['location_b']}")
             print(f"    Note: {item['rationale']}")
+
+    if report.get("core_engine_modified_files"):
+        mod_list = ", ".join(report["core_engine_modified_files"][:6])
+        more_cnt = max(0, len(report["core_engine_modified_files"]) - 6)
+        suffix = f" (+{more_cnt} more)" if more_cnt else ""
+        print(
+            f"\n[CORE_ENGINE_MODIFIED_WARNING] {len(report['core_engine_modified_files'])} core file(s) modified "
+            f"({mod_list}{suffix}) — verify Pre-Mutation Change Advisory Gate (Chesterton's Fence + Options/Repercussions) "
+            "and <Project>_Lessons_Learned.md (Subsystem Rebuild & Invariant Matrix + LL entry) were reviewed/updated."
+        )
+    if report.get("unpreflighted_core_scripts"):
+        for up_script in report["unpreflighted_core_scripts"]:
+            print(
+                f"  [!] [UNPREFLIGHTED_CORE_SCRIPT_EDIT] `{up_script}` modified without a preflight receipt in `.cache/preflight_state.json`. "
+                f"Run `python3 scripts/homunculus_paths.py --map {os.path.basename(up_script)}` or `sync_memory.py --preflight {os.path.basename(up_script)}`."
+            )
 
     if report["orphan_candidates"]:
         print("\n--- 6. Orphan Script Candidates (Confirm External Usage Before Touching) ---")

@@ -25,19 +25,21 @@ structured cabling/RF, and software systems) inside the non-consumed
   Owning Module : `teach-me` (`skills/teach-me/SKILL.md`)
   Callers       : Throw-away `teach-me` subagents, `test_teach_me.py`, `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`resolve_workspace_config`, `ensure_directory_fresh`), `verify_claims.py` (`--json` subprocess)
+  Contract      : `scripts/script_contracts.json` [`teach_brief.py`]
   CLI Flags     : --workspace, --memory-root, --briefs-root, --init-brief, --subject, --impact-on, --slug, --domain, --project, --entity, --out, --rename-clean, --verify, --auto-slug, --require-depth, --model-tier, --classify-complexity, --sources, --fail-on-tbd, --strict-provenance, --list, --promote, --target, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _strip_parentheticals (#L140-L144)         | def _normalize_engineering_symbols (#L147-L156)
-    - def _tokenize_for_slug (#L159-L179)            | def _dedupe_project_tokens (#L182-L199)
-    - def _pack_tokens (#L202-L230)                  | def build_brief_slug (#L233-L269)
-    - def build_concise_phrase (#L272-L292)          | def format_brief_display_name (#L295-L305)
-    - def format_model_tier_badge (#L330-L341)       | def classify_query_complexity (#L344-L407)
-    - def build_chat_rails (#L410-L441)              | def build_chat_card_template (#L444-L472)
-    - def resolve_roots (#L475-L498)                 | def ensure_briefs_root_readme (#L501-L505)
-    - def _extract_frontmatter_meta (#L508-L511)     | def init_brief (#L514-L615)
-    - def verify_brief_structure (#L618-L736)        | def verify_and_stamp_brief (#L739-L914)
-    - def rename_brief_clean (#L917-L947)            | def list_briefs (#L950-L976)
-    - def promote_brief (#L979-L1069)                | def main (#L1072-L1337)
+    - def _norm_slash_path (#L59-L85)                | def _enforce_anti_snoop_gate (#L93-L138)
+    - def _strip_parentheticals (#L223-L227)         | def _normalize_engineering_symbols (#L230-L239)
+    - def _tokenize_for_slug (#L242-L262)            | def _dedupe_project_tokens (#L265-L282)
+    - def _pack_tokens (#L285-L313)                  | def build_brief_slug (#L316-L352)
+    - def build_concise_phrase (#L355-L375)          | def format_brief_display_name (#L378-L388)
+    - def format_model_tier_badge (#L413-L424)       | def classify_query_complexity (#L427-L490)
+    - def build_chat_rails (#L493-L524)              | def build_chat_card_template (#L527-L555)
+    - def resolve_roots (#L558-L581)                 | def ensure_briefs_root_readme (#L584-L588)
+    - def _extract_frontmatter_meta (#L591-L594)     | def init_brief (#L597-L698)
+    - def verify_brief_structure (#L701-L819)        | def verify_and_stamp_brief (#L822-L997)
+    - def rename_brief_clean (#L1000-L1030)          | def list_briefs (#L1033-L1059)
+    - def promote_brief (#L1062-L1152)               | def main (#L1155-L1420)
 === END NAVIGATION MAP ===
 """
 
@@ -54,8 +56,89 @@ import subprocess
 import sys
 from typing import Any
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-HOMUNCULUS_ROOT = SCRIPT_DIR.parent.parent.parent
+def _norm_slash_path(p: str, resolve_links: bool = False) -> str:
+    s = p.replace("\\", "/")
+    if not s.startswith("/") and not (len(s) > 2 and s[1:3] == ":/"):
+        s = os.getcwd().replace("\\", "/").rstrip("/") + "/" + s
+    parts: list[str] = []
+    for seg in s.split("/"):
+        if seg in ("", "."):
+            continue
+        if seg == "..":
+            if parts:
+                parts.pop()
+            continue
+        parts.append(seg)
+        if resolve_links:
+            cur = ("/" if s.startswith("/") else "") + "/".join(parts)
+            for _ in range(16):
+                try:
+                    target = os.readlink(cur).replace("\\", "/")
+                except OSError:
+                    break
+                if target.startswith("/") or (len(target) > 2 and target[1:3] == ":/"):
+                    cur = _norm_slash_path(target, resolve_links=False)
+                else:
+                    parent = ("/" + "/".join(parts[:-1])) if len(parts) > 1 else "/"
+                    cur = _norm_slash_path(parent.rstrip("/") + "/" + target, resolve_links=False)
+                parts = [x for x in cur.split("/") if x]
+    return ("/" if s.startswith("/") else "") + "/".join(parts)
+
+
+_RAW_FILE = globals().get("__file__", "")
+SCRIPT_DIR = Path(_norm_slash_path(_RAW_FILE, resolve_links=True)).parent if _RAW_FILE else Path(".")
+HOMUNCULUS_ROOT = SCRIPT_DIR.parent.parent.parent if _RAW_FILE else Path(".")
+
+
+def _enforce_anti_snoop_gate(script_basename: str, hom_root: str) -> None:
+    orig_argv = getattr(sys, "orig_argv", [])
+    if any(a in ("-c", "-") for a in orig_argv[1:4]):
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Executing or importing {script_basename} via `python3 -c` / stdin "
+            f"is prohibited. Run `{script_basename}` directly via CLI."
+        )
+    argv0_base = (sys.argv[0] if sys.argv else "").replace("\\", "/").split("/")[-1]
+    if not _RAW_FILE or (__name__ == "__main__" and argv0_base != script_basename):
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Executing {script_basename} via exec()/runpy inside {argv0_base!r} "
+            f"is prohibited. Run `{script_basename}` directly via CLI."
+        )
+    if __name__ == "__main__":
+        return
+    hom_prefix = _norm_slash_path(hom_root).rstrip("/") + "/"
+    stdlib_dir = _norm_slash_path(os.path.dirname(os.__file__)).rstrip("/") + "/"
+    depth = 1
+    found_hom_caller = False
+    bad_frame = ""
+    while True:
+        try:
+            f = sys._getframe(depth)
+        except ValueError:
+            break
+        fn = f.f_code.co_filename.replace("\\", "/")
+        depth += 1
+        if "importlib" in fn or fn.startswith("<frozen") or fn.endswith("/" + script_basename):
+            continue
+        if fn.startswith("<"):
+            bad_frame = fn
+            break
+        abs_fn = _norm_slash_path(fn)
+        if abs_fn.startswith(hom_prefix):
+            found_hom_caller = True
+        elif abs_fn.startswith(stdlib_dir):
+            continue
+        else:
+            bad_frame = fn
+            break
+    if bad_frame or not found_hom_caller:
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Importing {script_basename} from ad-hoc/external scripts "
+            f"(caller={bad_frame or argv0_base!r}) to inspect source/regexes is prohibited. "
+            f"Run `{script_basename}` via CLI."
+        )
+
+
+_enforce_anti_snoop_gate("teach_brief.py", str(HOMUNCULUS_ROOT))
 for _p in (str(SCRIPT_DIR), str(HOMUNCULUS_ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

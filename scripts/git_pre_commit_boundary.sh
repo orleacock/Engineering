@@ -5,7 +5,7 @@
 # === DEVELOPER & AI NAVIGATION MAP ===
 #   Owning Module : Parent Workstation Pre-Commit Boundary, Memory & Matrix Parity Gate (`scripts/git_pre_commit_boundary.sh`)
 #   Callees       : `audit_data_boundary.py --staged`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
-#   Section Index : Repo Root (#L13-L20) | Python Discovery (#L22-L30) | Homunculus Root Probe (#L33-L67) | Boundary & Memory Gate (#L78-L89) | AST Matrix Parity (#L91-L203)
+#   Section Index : Repo Root (#L13-L20) | Python Discovery (#L22-L30) | Homunculus Root Probe (#L33-L67) | Boundary & Memory Gate (#L78-L89) | AST Matrix Parity (#L91-L218)
 # === END NAVIGATION MAP ===
 set -euo pipefail
 
@@ -115,16 +115,31 @@ for m in link_re.finditer(text):
         except ValueError:
             pass
 
-# 2. Parse Master Table rows (Section 1)
+# 2. Parse Master Table rows (Section 1 — supports both portable dual-bound anchors and legacy ../../../Homunculus links)
 sec1_match = re.search(r"## 1\. Master Script-to-Skill Cross-Reference Summary(.*?)(?:\n---\n|\n## 2\.)", text, re.S)
 master_rows = {}
 if not sec1_match:
     errors.append("MISSING_MASTER_TABLE: Section 1 Master Script-to-Skill table not found")
 else:
     for line in sec1_match.group(1).splitlines():
-        row_m6 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
-        row_m5 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", line.strip())
-        if row_m6 and ("#L" in row_m6.group(5) or "N/A" in row_m6.group(5)):
+        s_ln = line.strip()
+        row_p6 = re.match(
+            r"^\|\s*`([^`]+)`\s*\(\[`Homunculus(?:_Software|_Hardware)?\.md`\]\(Homunculus(?:_Software|_Hardware)?\.md\)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|",
+            s_ln,
+        )
+        row_m6 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|", s_ln)
+        row_m5 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", s_ln)
+        if row_p6 and ("#L" in row_p6.group(4) or "N/A" in row_p6.group(4)):
+            rel_p = row_p6.group(1).strip()
+            if not (hom_root / rel_p).exists():
+                errors.append(f"DEAD_MATRIX_SCRIPT_PATH: {rel_p} does not exist inside {hom_root}")
+            master_rows[rel_p] = {
+                "role": row_p6.group(2).strip(),
+                "owner": row_p6.group(3).strip().strip("`"),
+                "map_header": row_p6.group(4).strip(),
+                "callers": row_p6.group(5).strip(),
+            }
+        elif row_m6 and ("#L" in row_m6.group(5) or "N/A" in row_m6.group(5)):
             rel_p = row_m6.group(2).strip()
             master_rows[rel_p] = {
                 "role": row_m6.group(3).strip(),

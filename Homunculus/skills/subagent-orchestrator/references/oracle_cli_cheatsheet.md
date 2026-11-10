@@ -28,7 +28,7 @@ python3 <HOMUNCULUS_ROOT>/scripts/audit_data_boundary.py --repo <repo_dir> --com
   - `1` = FAIL (unbacked claim, doctored/unbound `#L` anchor, circular source, cross-entity leak, or missing file).
   - `2` = Unresolved `[TBD]` (`--fail-on-tbd`).
   - `3` = Suspect/forged provenance (`--strict-provenance`).
-- **Auto-exclusions**: Automatically excludes `--target`, sibling derivative `.svg`/`.html` renders sharing `(dirname, stem)` with `--target`, `<!-- QUARANTINE-ZONE -->` blocks, and historical post-mortem ledgers (`*_Lessons_Learned.md`, unless `--allow-lessons-source` is passed).
+- **Auto-exclusions & Non-Authoritative Hints**: Permanently excludes `--target`, sibling derivative `.svg`/`.html` renders sharing `(dirname, stem)` with `--target`, `Quarantine/`, `study_briefs/`, `<!-- QUARANTINE-ZONE -->`, `<!-- SESSION-HANDOFF -->`, and historical lesson ledgers (`*_Lessons_Learned.md` & `*_Lessons_Archive.md` — only `LL-*`/`ADR-*` IDs are whitelisted; unbacked specs matching active lessons emit `[USER_VERIFICATION_QUERY_REQUIRED]`, while retired `TIER5`/`Never Re-Add` specs emit `[RETIRED_SPEC_RESURRECTION_BLOCKED]`).
 
 ---
 
@@ -45,13 +45,21 @@ python3 <HOMUNCULUS_ROOT>/scripts/audit_data_boundary.py --repo <repo_dir> --com
 
 ## 4. Dual-Mode Project Memory & Visual-Brain Sync (`<HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py`)
 
-- **Targeted dossier & section reader**:
-  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> [--section {all,concept,root,inventory,specs,hazards,architecture,handoff,tbd,tasks,hardware,software,lessons}] [--json]`
+- **Targeted dossier, section & subsystem-invariant reader**:
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> [--section {all,concept,root,inventory,specs,hazards,architecture,handoff,tbd,tasks,hardware,software,invariants,lessons}] [--json]`
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --invariants [<subsystem_substring>] [--json]`
+- **Front-of-Decision preflight, semantic recall & on-demand drill-down (`<= 600` tok; `0` whole-archive reads)**:
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --preflight <script.py>`
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --recall "<semantic_query>" [--files "<f1,f2>"] [--top-k 3]`
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --lesson-id <LL-xxx>`
+- **Deterministic post-mortem & invariant logger (`--add-lesson` / `--reinforce-lesson`)**:
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --add-lesson --symptom "<Symptom>" --root-cause "<Root Cause>" --guardrail "<Guardrail>" --files "<repo_rel_file1>[,<file2>]" [--receipt "<VRF-...>"] [--subsystem "<Module>" --must-keep "<Invariant>" --retired-bloat "<Anti-Pattern>"]`
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --project <Project> --reinforce-lesson <LL-xxx> --files "<repo_rel_file>" --retired-bloat "<Variant>"`
 - **Open task & `[TBD]` / `[CONFLICT]` queries**:
   `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --tasks [--umbrella <Entity_or_all>] [--json]`
   `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --tbd-ledger [--umbrella <Entity>] [--project <Project>] [--json]`
-- **Read-only containment & structure audit**:
-  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --audit` (or `--check`)
+- **Read-only containment, telemetry freshness & checkpoint audit**:
+  `python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --memory-root <memory_root> --audit [--verify-checkpoints]` (or `--check`)
 - **Pre-commit Auto-Tree & Visual-Brain sync (Primary Thread only via `pre-commit-gate`)**:
   - `--sync-trees`: Updates `<!-- AUTO-TREE:START/END -->` across all indexed projects (`_write_if_changed` discipline).
   - `--sync-visuals [--export-canvas] [--canvas-out-dir <dir>]`: Syncs `AUTO-TREE` + `Projects/Projects_Directory.base` + `.obsidian/graph.json`, and writes entity-isolated `Diagrams/Project_Ecosystem_Map.canvas` when `--export-canvas` is passed.
@@ -59,13 +67,17 @@ python3 <HOMUNCULUS_ROOT>/scripts/audit_data_boundary.py --repo <repo_dir> --com
 
 ---
 
-## 5. Hardware CAD & Firmware Telemetry (`<HOMUNCULUS_ROOT>/skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py`)
+## 5. Hardware CAD & Firmware Envelope Telemetry (`hardware-cad-inspector` Optional Add-On — `inspect_hardware_ecosystem.py`)
 
+When the `hardware-cad-inspector` add-on is present (resolved from `<skills>` or `<HOMUNCULUS_ROOT>/addons/hardware-cad-inspector/`):
+- **Direct repository scan (read-only stdout + optional JSON)**:
+  `python3 <hardware_cad_inspector_dir>/inspect_hardware_ecosystem.py --repo <repo_dir> [--json-out <telemetry.json>] [--force-rescan]`
+  - Emits STL outer mesh envelopes (`X × Y × Z mm`), volumes (`cm³`), STEP-sync drift, closed `360°` circular surface diameters (`Ø mm`), and Klipper `.cfg` pins/fans/macros in 1 run (`[CAD STOP GATE]` — `0` follow-up `python3` STEP/STL loops allowed; bind fastener/mating intent strictly to `BOM.md` / `Assembly_Guide.md` or tag `[TBD]`).
 - **Subagent read-only cache check**:
-  `python3 <HOMUNCULUS_ROOT>/skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py --memory-root <memory_root> --project "<Project>" --check-cache` (or `--all --check-cache`).
+  `python3 <hardware_cad_inspector_dir>/inspect_hardware_ecosystem.py --memory-root <memory_root> --project "<Project>" --check-cache` (or `--all --check-cache`).
   - **Exit codes**: `0` = `CACHE_VALID`; `2` = `CACHE_STALE` (subagent reports `[CAD TELEMETRY: CACHE_STALE]`; **only Primary Thread** runs `--sync-manifest`).
 - **Primary Thread manifest sync**:
-  `python3 <HOMUNCULUS_ROOT>/skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py --memory-root <memory_root> --project "<Project>" --sync-manifest` (emits pure deterministic `X × Y × Z mm` envelopes, STL volumes, and `Ø (mm)` × count cylindrical surface histograms without speculative COTS labels).
+  `python3 <hardware_cad_inspector_dir>/inspect_hardware_ecosystem.py --memory-root <memory_root> --project "<Project>" --sync-manifest`
 
 ---
 

@@ -18,16 +18,17 @@ Linux Bubblewrap (`bwrap`) mount namespace where:
   Owning Module : `engineering-sandbox` (`skills/engineering-sandbox/SKILL.md`)
   Callers       : Track-2 verification workflow (`co-engineering-partner.md`), `pre-commit-gate`, `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`ensure_directory_fresh` Gate 0), `verify_claims.py` & `audit_repo_docs.py` (in `_audit_arm_deliverables`)
+  Contract      : `scripts/script_contracts.json` [`sandbox_runner.py`]
   CLI Flags     : --mode, --target-dir, --workspace, --writable-dir, --cwd, --spec, --faults, --cmd, --fault-case, --allow-noop-setup, --timeout, --report-dir, --keep-overlay, --keep-failed-cow, --blind-dir, --visible-dir, --blind-transcript, --visible-transcript, --compare-source, --repo-root, --prepare, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _resolve_default_cache_root (#L51-L62)     | def sha256_file (#L124-L132)
-    - def snapshot_tree_manifest (#L135-L158)        | def diff_manifests (#L161-L174)
-    - def build_unified_diff (#L177-L215)            | def clone_cow_directory (#L218-L252)
-    - def run_in_bwrap (#L255-L343)                  | def check_bwrap_available (#L346-L356)
-    - def _strip_json_arg (#L359-L365)               | def resolve_transcript_path (#L368-L395)
-    - def parse_transcript_telemetry (#L398-L515)    | def _resolve_overlay_path (#L518-L526)
-    - def _collect_md_files (#L529-L537)             | def _audit_arm_deliverables (#L540-L658)
-    - def evaluate_ab_comparison (#L661-L878)        | def main (#L881-L1633)
+    - def _resolve_default_cache_root (#L52-L63)     | def sha256_file (#L133-L141)
+    - def snapshot_tree_manifest (#L144-L167)        | def diff_manifests (#L170-L183)
+    - def build_unified_diff (#L186-L224)            | def clone_cow_directory (#L227-L261)
+    - def run_in_bwrap (#L264-L352)                  | def check_bwrap_available (#L355-L365)
+    - def _strip_json_arg (#L368-L374)               | def resolve_transcript_path (#L377-L404)
+    - def parse_transcript_telemetry (#L407-L541)    | def _resolve_overlay_path (#L544-L552)
+    - def _collect_md_files (#L555-L563)             | def _audit_arm_deliverables (#L566-L684)
+    - def evaluate_ab_comparison (#L687-L904)        | def main (#L907-L1659)
 === END NAVIGATION MAP ===
 """
 
@@ -100,7 +101,15 @@ ORACLE_EXEC_CMD_RE = re.compile(
 )
 SHELL_PY_SNOOP_RE = re.compile(
     r"(?:(?:^|[;&|]\s*)(?:sed|grep|rg|awk|cat|head|tail|nl)\b[^\n;|&]*?\b[A-Za-z0-9_./~-]+\.py\b"
-    r"|\bpython3?(?:\.\d+)?\s+-c\b[^\n]*?(?:open|read_text)\s*\([^\n)]*?\.py\b)"
+    r"|\bpython3?(?:\.\d+)?\s+-c\b[^\n]*?(?:(?:open|read_text|run_path|exec)\s*\([^\n)]*?\.py\b"
+    r"|\b(?:import|__import__|import_module)\s*\(?\s*['\"]?(?:" + "|".join(ORACLE_SCRIPT_NAMES) + r"|inspect_hardware_ecosystem)\b"
+    r"|\binspect\.(?:getsource|getsourcelines)\b))"
+)
+ADHOC_CAD_SNOOP_RE = re.compile(
+    r"(?:(?:^|[;&|]\s*)(?:sed|grep|rg|awk|cat|head|tail|nl|strings)\b[^\n;|&]*?\.(?:step|stp|stl|3mf|iges|fcstd)\b"
+    r"|\bpython3?(?:\.\d+)?\s+(?!-m\b)(?![^\n;|&]*?inspect_hardware_ecosystem\.py\b)[^\n]*?\.(?:step|stp|stl|3mf|iges|fcstd)\b"
+    r"|\b(?:CYLINDRICAL_SURFACE|ADVANCED_FACE|CARTESIAN_POINT)\b)",
+    re.IGNORECASE,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -409,9 +418,11 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
     ls_find_probes = 0
     verification_cmds = 0
     py_snoop_cmds = 0
+    adhoc_cad_snoop_cmds = 0
+    archive_raw_dump_cmds = 0
 
     def _record_tool_call(raw_name: str, raw_args: object) -> None:
-        nonlocal ls_find_probes, verification_cmds, py_snoop_cmds
+        nonlocal ls_find_probes, verification_cmds, py_snoop_cmds, adhoc_cad_snoop_cmds, archive_raw_dump_cmds
         tname = str(raw_name or "unknown").replace("default_api:", "")
         if tname.lower() == "bash":
             tname = "run_command"
@@ -432,6 +443,17 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
             )
             if p_str:
                 accessed_paths.append(p_str)
+            if p_str.lower().endswith((".step", ".stp", ".stl", ".3mf", ".iges", ".fcstd")):
+                adhoc_cad_snoop_cmds += 1
+            if p_str.lower().endswith("_lessons_archive.md"):
+                st_l = targs.get("StartLine")
+                en_l = targs.get("EndLine")
+                try:
+                    valid_win = (st_l is not None and en_l is not None and 0 <= (int(en_l) - int(st_l)) <= 30)
+                except (TypeError, ValueError):
+                    valid_win = False
+                if not valid_win:
+                    archive_raw_dump_cmds += 1
             if p_str.endswith("SKILL.md") and p_str not in skill_files_read:
                 skill_files_read.append(p_str)
             elif p_str.endswith(".py") and p_str not in py_oracles_read:
@@ -442,6 +464,8 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
                 accessed_paths.append(cmd_line)
             if LS_FIND_CMD_RE.search(cmd_line):
                 ls_find_probes += 1
+            if ADHOC_CAD_SNOOP_RE.search(cmd_line):
+                adhoc_cad_snoop_cmds += 1
             for m_sk in re.finditer(r"([A-Za-z0-9_./~-]+/SKILL\.md)\b", cmd_line):
                 sk_p = os.path.expanduser(m_sk.group(1))
                 if sk_p not in skill_files_read:
@@ -512,6 +536,8 @@ def parse_transcript_telemetry(transcript_path: str) -> Dict[str, object]:
         "ls_find_probes": ls_find_probes,
         "verification_cmds": verification_cmds,
         "py_snoop_cmds": py_snoop_cmds,
+        "adhoc_cad_snoop_cmds": adhoc_cad_snoop_cmds,
+        "archive_raw_dump_cmds": archive_raw_dump_cmds,
     }
 
 

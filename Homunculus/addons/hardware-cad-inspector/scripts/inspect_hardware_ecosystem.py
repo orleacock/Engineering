@@ -1,28 +1,33 @@
 #!/usr/bin/env python3
 """
-Homunculus Deterministic Hardware, CAD (STEP/STL), BOM & Firmware Inspector.
+Homunculus Deterministic Hardware CAD Envelope (STEP/STL) & Firmware (.cfg) Inspector.
+Part of optional add-on `hardware-cad-inspector` (`addons/hardware-cad-inspector/SKILL.md`).
 
-Designed for token-efficient execution by Vault-Native Subagents (`hardware-inspector`)
-and human upkeep. Parses ISO-10303-21 (.step/.stp) analytic B-Rep files, binary/ASCII
-(.stl) meshes via pure Python 3.10+ stdlib (struct/math), Klipper (.cfg) firmware files,
-and repository documentation to generate compact Obsidian Hardware Manifests without
-loading raw CAD into LLM context.
+Extracts base outer bounding-box envelopes (`X × Y × Z mm`), closed mesh volumes (`cm³`),
+STEP-to-STL outer envelope parity, closed 360° circular surface diameter histograms (`Ø mm`),
+and Klipper (`.cfg`) firmware pinouts in a single deterministic pass using 100% Python 3.10+
+standard library (`struct`/`math`/`re`).
+
+Enforces the CAD Epistemic Boundary: reports pure geometric measurements without injecting
+speculative mechanical role labels (`.F. bore`, `.T. pin/boss`, or COTS nouns) or 3D
+coordinate matrices that encourage multi-turn CAD reverse-engineering rabbit holes.
 
 === DEVELOPER & AI NAVIGATION MAP ===
-  Owning Module : `subagent-orchestrator` (`skills/subagent-orchestrator/SKILL.md`)
-  Callers       : `sync_memory.py` (`--sync-hardware`), `teach-me` subagents, `test_core_skills.py`, `test_claim_verification.py`
-  Callees       : `homunculus_paths.py` (`parse_frontmatter_full`, `ensure_directory_fresh`)
+  Owning Module : `hardware-cad-inspector` (`addons/hardware-cad-inspector/SKILL.md`)
+  Callers       : `sync_memory.py` (`--sync-hardware`), `subagent-orchestrator`, `teach-me`, `test_core_skills.py`, `test_claim_verification.py`
+  Callees       : `homunculus_paths.py` (`parse_frontmatter_full`)
+  Contract      : `scripts/script_contracts.json` [`inspect_hardware_ecosystem.py`]
   CLI Flags     : --vault, --memory-root, --project, --repo, --json-out, --all, --check-cache, --sync-manifest, --force-rescan
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def parse_frontmatter (#L91-L93)               | def normalize_part_stem (#L96-L105)
-    - def classify_bore_diameter (#L108-L129)        | def _vec_dot (#L132-L133)
-    - def _vec_cross (#L136-L143)                    | def _vec_norm (#L146-L147)
-    - def _bbox_from_points (#L150-L157)             | def detect_step_unit_scale (#L160-L182)
-    - def inspect_step_file (#L185-L333)             | def inspect_stl_file (#L336-L432)
-    - def inspect_cfg_file (#L435-L460)              | def scan_repo_hardware (#L463-L601)
-    - def _upsert_frontmatter_keys (#L604-L625)      | def _replace_html_marker_block (#L628-L635)
-    - def render_manifest_markdown (#L638-L823)      | def resolve_projects (#L826-L895)
-    - def main (#L898-L1096)
+    - def parse_frontmatter (#L112-L114)             | def normalize_part_stem (#L117-L126)
+    - def classify_bore_diameter (#L129-L150)        | def _vec_dot (#L153-L154)
+    - def _vec_cross (#L157-L164)                    | def _vec_norm (#L167-L168)
+    - def _bbox_from_points (#L171-L178)             | def detect_step_unit_scale (#L181-L200)
+    - def inspect_step_file (#L203-L406)             | def inspect_stl_file (#L409-L512)
+    - def inspect_cfg_file (#L515-L555)              | def scan_repo_hardware (#L558-L690)
+    - def _upsert_frontmatter_keys (#L693-L714)      | def _replace_html_marker_block (#L717-L724)
+    - def render_manifest_markdown (#L727-L920)      | def resolve_projects (#L923-L991)
+    - def main (#L994-L1254)
 === END NAVIGATION MAP ===
 """
 
@@ -65,11 +70,27 @@ AXIS2_RE = re.compile(
 CIRCLE_RE = re.compile(
     r"#(\d+)\s*=\s*CIRCLE\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*,\s*([-\d.Ee+]+)\s*\)"
 )
-EDGE_CURVE_RE = re.compile(
-    r"EDGE_CURVE\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*,\s*#(\d+)\s*,\s*#(\d+)\s*,\s*\.([TF])\."
+LINE_RE = re.compile(r"#(\d+)\s*=\s*LINE\s*\(")
+EDGE_CURVE_ID_RE = re.compile(
+    r"#(\d+)\s*=\s*EDGE_CURVE\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*,\s*#(\d+)\s*,\s*#(\d+)\s*,\s*\.([TF])\."
+)
+ORIENTED_EDGE_RE = re.compile(
+    r"#(\d+)\s*=\s*ORIENTED_EDGE\s*\(\s*'[^']*'\s*,\s*\*\s*,\s*\*\s*,\s*#(\d+)\s*,\s*\.[TF]\."
+)
+EDGE_LOOP_RE = re.compile(
+    r"#(\d+)\s*=\s*EDGE_LOOP\s*\(\s*'[^']*'\s*,\s*\(([^)]*)\)\s*\)"
+)
+FACE_BOUND_RE = re.compile(
+    r"#(\d+)\s*=\s*FACE_(?:OUTER_)?BOUND\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*,\s*\.[TF]\."
 )
 CYL_SURF_RE = re.compile(
     r"CYLINDRICAL_SURFACE\s*\(\s*'[^']*'\s*,\s*#\d+\s*,\s*([-\d.Ee+]+)\s*\)"
+)
+CYL_SURF_ID_RE = re.compile(
+    r"#(\d+)\s*=\s*CYLINDRICAL_SURFACE\s*\(\s*'[^']*'\s*,\s*#(\d+)\s*,\s*([-\d.Ee+]+)\s*\)"
+)
+ADV_FACE_RE = re.compile(
+    r"ADVANCED_FACE\s*\(\s*'[^']*'\s*,\s*\(([^)]*)\)\s*,\s*#(\d+)\s*,\s*\.([TF])\.\s*\)"
 )
 PRODUCT_RE = re.compile(r"PRODUCT\s*\(\s*'([^']*)'\s*,\s*'([^']*)'")
 FILE_NAME_RE = re.compile(
@@ -109,7 +130,7 @@ def classify_bore_diameter(diam_mm: float, include_metric_hint: bool = False) ->
     """
     By default (include_metric_hint=False), returns "" so STEP CYLINDRICAL_SURFACE
     histograms emit pure geometric diameters (`Ø6.00mm×4`) without injecting speculative
-    COTS component nouns (e.g., 'Magnet', 'Bearing', 'PC4-M10', 'Filament path') into
+    COTS component nouns or functional guesses (`bore`, `pin`, `magnet`, `bearing`) into
     `<Project>_Hardware.md` that could poison `verify_claims.py`'s closed-world truth oracle.
     """
     if not include_metric_hint:
@@ -167,9 +188,6 @@ def detect_step_unit_scale(text: str) -> Tuple[float, bool]:
             return (25.4, False)
         if ".METRE." in blk:
             return (1000.0, False)
-    # Heuristic fallback when LENGTH_UNIT is omitted: inspect raw coordinate spans.
-    # Meter-scaled STEP exports of mm-scale hardware have spans < 1.0 (e.g. 0.085 m = 85 mm),
-    # whereas millimeter-scaled STEP files without explicit LENGTH_UNIT have spans >= 1.0.
     raw_pts = [
         (float(m.group(2)), float(m.group(3)), float(m.group(4)))
         for m in CARTESIAN_PT_RE.finditer(text)
@@ -182,7 +200,7 @@ def detect_step_unit_scale(text: str) -> Tuple[float, bool]:
     return (1.0, True)
 
 
-def inspect_step_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]:
+def inspect_step_file(filepath: str, repo_prefix: str = "", repo_root: str = "") -> Dict[str, object]:
     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
         text = f.read()
 
@@ -237,14 +255,18 @@ def inspect_step_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]
     for crm in CIRCLE_RE.finditer(text):
         circles[crm.group(1)] = (crm.group(2), abs(float(crm.group(3))) * scale)
 
+    lines_set = {lm.group(1) for lm in LINE_RE.finditer(text)}
+    edge_curves: Dict[str, Tuple[str, str, str]] = {}
     coords: List[Tuple[float, float, float]] = list(verts.values())
-    for em in EDGE_CURVE_RE.finditer(text):
-        v1_id, v2_id, c_id, sense = (
+    for em in EDGE_CURVE_ID_RE.finditer(text):
+        ec_id, v1_id, v2_id, c_id, sense = (
             em.group(1),
             em.group(2),
             em.group(3),
             em.group(4),
+            em.group(5),
         )
+        edge_curves[ec_id] = (v1_id, v2_id, c_id)
         if c_id in circles and v1_id in verts and v2_id in verts:
             ax_id, r_mm = circles[c_id]
             if ax_id in axes:
@@ -296,28 +318,78 @@ def inspect_step_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]
     pts_use = coords if coords else all_coords
     bbox_mm = _bbox_from_points(pts_use)
 
-    # Extract cylindrical radii -> convert to diameter in mm
+    # Identify closed 360° cylindrical surfaces vs open partial-arc fillets/grooves when B-Rep topology is present
+    oriented_edges = {om.group(1): om.group(2) for om in ORIENTED_EDGE_RE.finditer(text)}
+    edge_loops = {
+        elm.group(1): re.findall(r"#(\d+)", elm.group(2))
+        for elm in EDGE_LOOP_RE.finditer(text)
+    }
+    face_bounds = {fbm.group(1): fbm.group(2) for fbm in FACE_BOUND_RE.finditer(text)}
+    surf_has_face: Dict[str, bool] = {}
+    surf_is_closed_cylinder: Dict[str, bool] = {}
+    for af_m in ADV_FACE_RE.finditer(text):
+        b_ids = re.findall(r"#(\d+)", af_m.group(1))
+        surf_id = af_m.group(2)
+        surf_has_face[surf_id] = True
+        full_circles = 0
+        line_edges = 0
+        for b_id in b_ids:
+            el_id = face_bounds.get(b_id)
+            for oe_id in edge_loops.get(el_id or "", []):
+                ec_id = oriented_edges.get(oe_id)
+                if ec_id in edge_curves:
+                    v1, v2, geom_id = edge_curves[ec_id]
+                    if geom_id in circles and v1 == v2:
+                        full_circles += 1
+                    elif geom_id in lines_set:
+                        line_edges += 1
+        if full_circles > 0 and line_edges == 0:
+            surf_is_closed_cylinder[surf_id] = True
+
     bore_counter: Counter = Counter()
-    for cyl_m in CYL_SURF_RE.finditer(text):
-        r_mm = abs(float(cyl_m.group(1))) * scale
+    for cyl_m in CYL_SURF_ID_RE.finditer(text):
+        surf_id, _ax_id, r_raw = cyl_m.group(1), cyl_m.group(2), cyl_m.group(3)
+        if surf_has_face.get(surf_id, False) and not surf_is_closed_cylinder.get(surf_id, False):
+            # Skip open partial-arc fillets, blends, and edge grooves
+            continue
+        r_mm = abs(float(r_raw)) * scale
         d_mm = round(r_mm * 2.0, 2)
-        if 1.5 <= d_mm <= 25.0:
+        if 1.5 <= d_mm <= 65.0:
             bore_counter[d_mm] += 1
-    if not bore_counter and circles:
+
+    if not bore_counter and not surf_has_face:
+        for cyl_m in CYL_SURF_RE.finditer(text):
+            r_mm = abs(float(cyl_m.group(1))) * scale
+            d_mm = round(r_mm * 2.0, 2)
+            if 1.5 <= d_mm <= 65.0:
+                bore_counter[d_mm] += 1
+    if not bore_counter and circles and not surf_has_face:
         for _, r_mm in circles.values():
             d_mm = round(r_mm * 2.0, 2)
-            if 1.5 <= d_mm <= 25.0:
+            if 1.5 <= d_mm <= 65.0:
                 bore_counter[d_mm] += 1
 
-    # Keep top 5 most frequent bores in hardware range
-    top_bores = [
-        (d, cnt, classify_bore_diameter(d))
-        for d, cnt in sorted(bore_counter.items(), key=lambda x: (-x[1], x[0]))[:5]
+    sorted_bores = sorted(bore_counter.items(), key=lambda x: (-x[1], x[0]))[:10]
+    top_bores = [(d, cnt, classify_bore_diameter(d)) for d, cnt in sorted_bores]
+    cylindrical_features = [
+        {
+            "diameter_mm": d,
+            "diameter": d,
+            "count": cnt,
+        }
+        for d, cnt in sorted_bores
     ]
 
+    rel_p = (
+        os.path.relpath(filepath, repo_root).replace(os.sep, "/")
+        if repo_root
+        else os.path.basename(filepath)
+    )
+    base_f = os.path.basename(filepath)
     return {
-        "file": os.path.basename(filepath),
-        "rel_path": filepath,
+        "file": base_f,
+        "filename": base_f,
+        "rel_path": rel_p,
         "stem": normalize_part_stem(filepath, repo_prefix=repo_prefix),
         "mtime": os.path.getmtime(filepath),
         "export_date": export_ts,
@@ -330,10 +402,11 @@ def inspect_step_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]
         ),
         "bbox_mm": bbox_mm,
         "top_bores": top_bores,
+        "cylindrical_features": cylindrical_features,
     }
 
 
-def inspect_stl_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]:
+def inspect_stl_file(filepath: str, repo_prefix: str = "", repo_root: str = "") -> Dict[str, object]:
     file_size = os.path.getsize(filepath)
     n_tris = 0
     min_x = min_y = min_z = float("inf")
@@ -384,7 +457,6 @@ def inspect_stl_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]:
                 parsed_binary = True
 
     if not parsed_binary:
-        # Fallback for ASCII STL
         verts: List[Tuple[float, float, float]] = []
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             for line in f:
@@ -421,18 +493,26 @@ def inspect_stl_file(filepath: str, repo_prefix: str = "") -> Dict[str, object]:
         bbox_mm = (0.0, 0.0, 0.0)
         vol_cm3 = 0.0
 
+    rel_p = (
+        os.path.relpath(filepath, repo_root).replace(os.sep, "/")
+        if repo_root
+        else os.path.basename(filepath)
+    )
+    base_f = os.path.basename(filepath)
     return {
-        "file": os.path.basename(filepath),
-        "rel_path": filepath,
+        "file": base_f,
+        "filename": base_f,
+        "rel_path": rel_p,
         "stem": normalize_part_stem(filepath, repo_prefix=repo_prefix),
         "mtime": os.path.getmtime(filepath),
         "triangles": n_tris,
         "bbox_mm": bbox_mm,
         "vol_cm3": vol_cm3,
+        "volume_cm3": vol_cm3,
     }
 
 
-def inspect_cfg_file(filepath: str) -> Dict[str, object]:
+def inspect_cfg_file(filepath: str, repo_root: str = "") -> Dict[str, object]:
     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
         text = f.read()
     sections = re.findall(r"^\[([^\]]+)\]", text, flags=re.MULTILINE)
@@ -449,14 +529,29 @@ def inspect_cfg_file(filepath: str) -> Dict[str, object]:
         for s in sections
         if s.lower().startswith("fan_generic ") and len(s.split(None, 1)) > 1
     ]
+    rel_p = (
+        os.path.relpath(filepath, repo_root).replace(os.sep, "/")
+        if repo_root
+        else os.path.basename(filepath)
+    )
+    base_f = os.path.basename(filepath)
     return {
-        "file": os.path.basename(filepath),
-        "rel_path": filepath,
+        "file": base_f,
+        "filename": base_f,
+        "rel_path": rel_p,
         "mtime": os.path.getmtime(filepath),
         "sections": sections,
         "pins": pins,
         "macros": macros,
         "fans": fans,
+        "scalars": [
+            f"[{sec_c}] {m_kv.group(1)}={m_kv.group(2).split('#')[0].strip()}"
+            for sec_c, blk_c in re.findall(r"^\[([^\]]+)\]\n((?:(?![^\n]*\[).*(?:\n|$))*)", text, flags=re.MULTILINE)
+            for ln_c in blk_c.splitlines()
+            if not ln_c.startswith((" ", "\t", "#"))
+            for m_kv in [re.match(r"^([a-zA-Z0-9_]+)\s*[:=]\s*(.+?)\s*$", ln_c)]
+            if m_kv and m_kv.group(1).lower() not in ("gcode",)
+        ],
     }
 
 
@@ -482,9 +577,6 @@ def scan_repo_hardware(repo_path: str, mtime_only: bool = False) -> Dict[str, ob
             elif low.endswith(".md"):
                 doc_files.append(full)
 
-    # Track CAD/Firmware mtime and inventory SHA-256 separately from Markdown doc mtime
-    # so doc edits never trigger expensive false-positive CAD B-Rep re-parses, while
-    # deleted older CAD/CFG files or renames are always caught deterministically.
     cad_tracked = sorted(step_files + stl_files + cfg_files)
     inv_entries: List[str] = []
     cad_mtimes: List[float] = []
@@ -526,11 +618,10 @@ def scan_repo_hardware(repo_path: str, mtime_only: bool = False) -> Dict[str, ob
     repo_base = os.path.basename(os.path.abspath(repo_path))
     repo_prefix = re.split(r"[_\-\s]+", repo_base)[0] if repo_base else ""
 
-    steps_data = [inspect_step_file(p, repo_prefix=repo_prefix) for p in step_files]
-    stls_data = [inspect_stl_file(p, repo_prefix=repo_prefix) for p in stl_files]
-    cfgs_data = [inspect_cfg_file(p) for p in cfg_files]
+    steps_data = [inspect_step_file(p, repo_prefix=repo_prefix, repo_root=repo_path) for p in step_files]
+    stls_data = [inspect_stl_file(p, repo_prefix=repo_prefix, repo_root=repo_path) for p in stl_files]
+    cfgs_data = [inspect_cfg_file(p, repo_root=repo_path) for p in cfg_files]
 
-    # Read markdown docs to check part & macro mentions
     docs_text = ""
     for dp in doc_files:
         with open(dp, "r", encoding="utf-8", errors="ignore") as f:
@@ -544,13 +635,11 @@ def scan_repo_hardware(repo_path: str, mtime_only: bool = False) -> Dict[str, ob
         str(s["stem"]): s for s in stls_data
     }
 
-    # Build lookup of internal PRODUCT body names inside multi-body assembly STEPs
     assembly_body_stems: set = set()
     for s in steps_data:
         if int(s.get("product_count", 0)) > 2:
             assembly_body_stems.update(s.get("product_stems", set()))
 
-    # Compare STEP <-> STL parity and bounding boxes
     for stl_item in stls_data:
         stem = str(stl_item["stem"])
         stem_spaced = stem.replace("_", " ")
@@ -682,9 +771,9 @@ def render_manifest_markdown(
             cad_lines.append("")
         cad_lines.extend(
             [
-                "### STEP Analytic Geometry & Cylindrical Surface Histogram",
+                "### STEP Outer Envelope & Closed Circular Surface Histogram",
                 "",
-                "| STEP File | Export Date | Envelope `X × Y × Z (mm)` | Detected Cylindrical Surfaces `Ø (mm)` × Count |",
+                "| STEP File | Export Date | Envelope `X × Y × Z (mm)` | Closed Circular Surfaces `Ø (mm)` × Count |",
                 "| :--- | :---: | :---: | :--- |",
             ]
         )
@@ -698,27 +787,36 @@ def render_manifest_markdown(
                     bore_strs.append(f"`Ø{d:.2f}mm`×{cnt}{tag}")
                 bore_col = ", ".join(bore_strs)
             else:
-                bore_col = "_No cylindrical bores in 1.5–25mm range_"
+                bore_col = "_No closed cylindrical surfaces in 1.5–65mm range_"
             cad_lines.append(
                 f"| `{st['file']}` | `{st['export_date']}` | `{bx:.2f} × {by:.2f} × {bz:.2f}` | {bore_col} |"
             )
     if not cad_lines:
         cad_lines.append("| `_none_` | `0 × 0 × 0` | `0.00` | `_No CAD files detected_` |")
 
+    cad_lines.extend(
+        [
+            "",
+            "> [!IMPORTANT]",
+            "> **`[CAD STOP GATE — ONE-PASS TELEMETRY COMPLETE]`**: Base outer bounding envelopes (`X × Y × Z mm`), mesh volumes (`cm³`), and closed circular diameters (`Ø mm`) are complete. Raw CAD geometry does NOT define fastener counts, hole functions (screw vs. dowel vs. vent vs. fillet), or part-to-part mating intent. Do NOT run follow-up Python/grep/sed loops on `.step` or `.stl` files; bind assembly claims strictly to `BOM.md` / `Assembly_Guide.md` or tag `[TBD: Confirm design intent with engineer]`.",
+        ]
+    )
+
     cfg_lines: List[str] = []
     if cfgs:
         cfg_lines.extend(
             [
-                "| Config File | MCU Pins | Fan Definitions | G-Code Macros |",
-                "| :--- | :--- | :--- | :--- |",
+                "| Config File | MCU Pins | Fan Definitions | G-Code Macros | Scalar Parameters |",
+                "| :--- | :--- | :--- | :--- | :--- |",
             ]
         )
         for c in cfgs:
             pins_s = ", ".join(f"`{p}`" for p in c["pins"]) or "_None_"  # type: ignore
             fans_s = ", ".join(f"`{f}`" for f in c["fans"]) or "_None_"  # type: ignore
             macs_s = ", ".join(f"`{m}`" for m in c["macros"]) or "_None_"  # type: ignore
+            scals_s = ", ".join(f"`{s}`" for s in c.get("scalars", [])[:24]) or "_None_"  # type: ignore
             cfg_lines.append(
-                f"| `{c['file']}` | {pins_s} | {fans_s} | {macs_s} |"
+                f"| `{c['file']}` | {pins_s} | {fans_s} | {macs_s} | {scals_s} |"
             )
     else:
         cfg_lines.append("| `_none_` | `_None_` | `_None_` | `_None_` |")
@@ -729,7 +827,6 @@ def render_manifest_markdown(
         and "<!-- AUTO-HARDWARE-CFG:START -->" in existing_text
         and "*(Rich STEP/STL B-Rep & Mass Telemetry preserved in Sections 2 & 3 above)*"
         not in existing_text
-        and "# 📐 Hardware & CAD Telemetry Manifest:" not in existing_text
     ):
         updated = _upsert_frontmatter_keys(
             existing_text,
@@ -875,7 +972,6 @@ def resolve_projects(
 
         results.append((proj, note_stem, local_path))
 
-    # Fallback for unindexed/new repositories or Standalone Zero-Vault Mode
     if not results and target_project:
         cand_dirs = [
             os.path.abspath(target_project),
@@ -897,7 +993,7 @@ def resolve_projects(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Inspect STEP/STL CAD geometry, Klipper firmware, and sync Project Memory Hardware Manifests."
+        description="Inspect STEP/STL outer CAD envelopes, Klipper firmware, and sync Project Memory Hardware Manifests."
     )
     parser.add_argument(
         "--vault",
@@ -945,17 +1041,31 @@ def main() -> int:
         help="Force full STEP/STL geometric re-parse even when inventory_sha256 cache is valid",
     )
     args = parser.parse_args()
-    if not args.check_cache:
-        homunculus_paths.ensure_directory_fresh(
-            workspace_dir=args.repo if args.repo else None,
-            homunculus_root=_HOM_ROOT,
-            memory_root_override=args.vault if os.path.isdir(os.path.join(args.vault, "Projects")) else None,
-        )
+    if args.vault == DEFAULT_VAULT and not os.path.isdir(os.path.join(args.vault, "Projects")):
+        cand_mem = os.path.join(str(_HOM_ROOT.parent), "memory")
+        if os.path.isdir(os.path.join(cand_mem, "Projects")):
+            if not args.repo:
+                args.vault = cand_mem
+            else:
+                abs_r = os.path.abspath(args.repo)
+                matched = [
+                    t for t in resolve_projects(cand_mem, args.project or abs_r)
+                    if os.path.abspath(t[2]) == abs_r
+                ]
+                if matched:
+                    args.vault = cand_mem
 
     if args.repo and os.path.isdir(os.path.abspath(args.repo)):
         abs_repo = os.path.abspath(args.repo)
-        p_name = args.project.strip() if args.project else (os.path.basename(abs_repo) or "Standalone_Repo")
-        targets = [(p_name, p_name, abs_repo)]
+        matched_proj = [
+            t for t in resolve_projects(args.vault, args.project or abs_repo)
+            if os.path.abspath(t[2]) == abs_repo
+        ] if os.path.isdir(os.path.join(args.vault, "Projects")) else []
+        if matched_proj:
+            targets = matched_proj
+        else:
+            p_name = args.project.strip() if args.project else (os.path.basename(abs_repo) or "Standalone_Repo")
+            targets = [(p_name, p_name, abs_repo)]
     else:
         target_query = args.project or args.repo
         if not target_query and not args.all:
@@ -970,7 +1080,6 @@ def main() -> int:
     json_records: List[Dict[str, object]] = []
 
     for proj, note_stem, local_path in targets:
-        # First perform an ultra-fast mtime-only scan (~1ms)
         fast_scan = scan_repo_hardware(local_path, mtime_only=True)
         has_hw = bool(fast_scan["steps"] or fast_scan["stls"] or fast_scan["cfgs"])
         manifest_name = f"{note_stem}_Hardware.md"
@@ -1041,6 +1150,27 @@ def main() -> int:
             f"[{status_tag}] {proj:<26} | STEPs: {len(fast_scan['steps']):<2} | STLs: {len(fast_scan['stls']):<2} | "
             f"CFGs: {len(fast_scan['cfgs']):<1} | CAD Disk: {fast_scan['latest_iso']} | Vault: {cached_mtime_str}"
         )
+        if os.path.exists(os.path.join(local_path, ".git")) and not args.check_cache:
+            try:
+                proc_st = subprocess.run(
+                    ["git", "-C", local_path, "status", "--short"],
+                    capture_output=True,
+                    text=True,
+                    timeout=2.0,
+                    check=False,
+                )
+                proc_lg = subprocess.run(
+                    ["git", "-C", local_path, "log", "-n", "3", "--oneline"],
+                    capture_output=True,
+                    text=True,
+                    timeout=2.0,
+                    check=False,
+                )
+                wt_state = "CLEAN" if (proc_st.returncode == 0 and not proc_st.stdout.strip()) else "DIRTY"
+                commits_str = " ; ".join(ln.strip() for ln in proc_lg.stdout.splitlines() if ln.strip()) or "none"
+                print(f"[GIT_PROVENANCE] Worktree: {wt_state} | Recent Commits: {commits_str}")
+            except Exception:
+                pass
 
         full_scan: Optional[Dict[str, object]] = None
         if args.sync_manifest:
@@ -1068,19 +1198,44 @@ def main() -> int:
                 except OSError:
                     pass
                 raise
-            print(f"  -> Synced Hardware Manifest: {manifest_path}")
+            print(f"  -> Synced Hardware Manifest: {manifest_path} [CAD STOP GATE — ONE-PASS TELEMETRY COMPLETE]")
         elif not args.check_cache:
-            if not is_stale and os.path.isfile(manifest_path) and not args.force_rescan and not args.json_out:
+            if not is_stale and os.path.isfile(manifest_path) and not args.force_rescan:
                 with open(manifest_path, "r", encoding="utf-8") as f:
-                    print(f.read(), end="")
+                    raw_out = f.read()
             else:
                 full_scan = scan_repo_hardware(local_path, mtime_only=False)
-                print(render_manifest_markdown(proj, note_stem, full_scan, existing_meta=m_meta))
+                raw_out = render_manifest_markdown(
+                    proj, note_stem, full_scan, existing_meta=m_meta, existing_text=existing_hw_text
+                )
+            if raw_out.startswith("---\n"):
+                parts = raw_out.split("\n---\n", 1)
+                if len(parts) == 2:
+                    raw_out = parts[1].lstrip("\n")
+            raw_out = re.sub(
+                r"^> \[!NOTE\]\n> \*\*Auto-Generated Deterministic Telemetry\*\*:[^\n]*\n\n?",
+                "",
+                raw_out,
+                flags=re.MULTILINE,
+            )
+            print(raw_out, end="" if raw_out.endswith("\n") else "\n")
+            print(
+                f"[COVERAGE_RECEIPT] Complete CAD/CFG/Git inventory printed above (Manifest: {manifest_path}) — "
+                "do not re-run find/ls/git-status on CAD or firmware directories."
+            )
 
         if args.json_out:
             if full_scan is None:
                 full_scan = scan_repo_hardware(local_path, mtime_only=False)
-            json_records.append({"project": proj, "note_stem": note_stem, **full_scan})
+            safe_repo_path = m_meta.get("local_path") or os.path.basename(os.path.abspath(local_path))
+            json_records.append(
+                {
+                    "project": proj,
+                    "note_stem": note_stem,
+                    **full_scan,
+                    "repo_path": safe_repo_path,
+                }
+            )
 
     if args.json_out:
         out_p = os.path.abspath(os.path.expanduser(args.json_out))
@@ -1088,6 +1243,9 @@ def main() -> int:
         payload = json_records[0] if len(json_records) == 1 else {"projects": json_records}
         with open(out_p, "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2)
+        print(
+            f"[JSON_OUT] {out_p} | Schema: steps[i].{{file,filename,bbox_mm,top_bores,cylindrical_features[{{diameter_mm,count}}]}}, stls[i].{{file,filename,bbox_mm,vol_cm3,volume_cm3,triangles,step_sync,doc_ref}}, cfgs[i].{{file,filename,pins,fans,macros}}"
+        )
 
     if args.check_cache and any_stale:
         return 2

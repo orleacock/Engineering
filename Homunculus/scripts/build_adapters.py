@@ -21,14 +21,15 @@ Also provisions:
   Owning Module : Core Framework (`scripts/`)
   Callers       : `install.sh`, `install.ps1`, `audit_skill_hygiene.py` (dynamic drift probe), `test_adapters.py`
   Callees       : `homunculus_paths.py` (`resolve_homunculus_root`, `ensure_directory_fresh`, co-bundled into `--prefer-copy` & `.zip`)
+  Contract      : `scripts/script_contracts.json` [`build_adapters.py`]
   CLI Flags     : --homunculus-root, --workspace, --client, --harness, --build-repo-adapters, --prefer-copy, --install-git-hooks, --package-cowork-zips, --global-agy-config-dir, --include-agents-md, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _strip_yaml_frontmatter (#L70-L72)         | def _load_ordered_rules (#L75-L88)
-    - def _discover_skills_and_addons (#L91-L111)    | def _compact_trigger_summary (#L114-L124)
-    - def _render_skill_index_markdown (#L127-L174)  | def render_agents_md (#L177-L202)
-    - def render_claude_md (#L205-L230)              | def render_cursor_mdc_files (#L233-L264)
-    - def build_reference_adapters_in_repo (#L267-L379) | def _link_or_copy (#L382-L403)
-    - def apply_workspace_adapters (#L406-L609)      | def main (#L612-L694)
+    - def _strip_yaml_frontmatter (#L71-L73)         | def _load_ordered_rules (#L76-L89)
+    - def _discover_skills_and_addons (#L92-L112)    | def _compact_trigger_summary (#L115-L125)
+    - def _render_skill_index_markdown (#L128-L175)  | def render_agents_md (#L178-L203)
+    - def render_claude_md (#L206-L231)              | def render_cursor_mdc_files (#L234-L265)
+    - def build_reference_adapters_in_repo (#L268-L380) | def _link_or_copy (#L383-L404)
+    - def apply_workspace_adapters (#L407-L610)      | def main (#L613-L695)
 === END NAVIGATION MAP ===
 """
 

@@ -64,6 +64,11 @@ See [`docs/Memory_Setup_README.md`](docs/Memory_Setup_README.md) for complete se
 | **Obsidian UI Files (`.base`, `graph.json`)** | **Skipped** (zero Obsidian dependency, Git/SharePoint clean) | **Synced** (`Visuals/Project_Portfolio.base`, `.obsidian/graph.json`) |
 | **Visual Studio (`skills/visual-studio/`)** | **ACTIVE** (`.svg`-default diagrams, opt-in `300 DPI` `--png`, showcase cards, opt-in `--export-canvas`) | **ACTIVE** (identical publication-grade customer/end-user diagram engine) |
 
+### Station Grounding, Detached-Cache Resilience & `TIER0`–`TIER5` Memory Gravity
+- **Generic Deliverable $\rightarrow$ Grounded Station Parent**: `Homunculus` ships `100%` generic (`0` author paths or relic history). Once you run `--init-memory` and `--init-project` on a deployment workstation, it binds to *that* workstation's real absolute paths (`local_path`), creates its local `Profile/Decision_Profile.md`, `memory/AGENTS.md`, and entity-partitioned `Directory/<Entity>_memory_index.json`, and evolves locally with your station.
+- **AI/CLI-Preferred Edit Law & `TIER0`–`TIER5` Gravity**: Memory files are AI/CLI-managed via `sync_memory.py` (`--add-lesson`, `--set-tier`, `--compact-memory`, `--save-handoff`, `--repair-memory`). Memories are tiered by importance from **`TIER0`** (Foundational Laws & User-Pinned Repeat Offenders—`0%` decay, immune to auto-demotion) and **`TIER1`** (`SUBSYSTEM-INVARIANTS` + `scripts/script_contracts.json`) through **`TIER2`** (Active Dev-Cycle Full Context), **`TIER3`–`TIER4`** (`Archive/`), and **`TIER5`** (Superseded/Excluded). Promote any recurring issue to `TIER0` anytime via `sync_memory.py --project <Project> --set-tier LL-xx TIER0`.
+- **Cross-Machine Migration & Cloud Detached-Cache Mode**: If you migrate your `memory/` folder to a new computer (`sync_memory.py --rebind-station /new/workspace/root`) or open it in a cloud/web workspace where source repositories are not cloned locally, `sync_memory.py` automatically runs in **Detached Cache Mode** (`worktree: "detached_cache"`), serving `TIER0`–`TIER2` invariants, `AUTO-TREE`, and cached telemetry without errors.
+
 ---
 
 ## 5. Modular Skills, Side-Loaded Add-Ons & Deterministic CLI Directory
@@ -77,7 +82,7 @@ Load a skill's `SKILL.md` only when relevant to the active task:
 - **Declarative Data-Boundary & Secret Scanner**: [`scripts/audit_data_boundary.py`](scripts/audit_data_boundary.py) (`templates/homunculus_safety.example.json`)
 - **Claim & Math Verification**: `skills/claim-verification/SKILL.md` (`skills/claim-verification/scripts/verify_claims.py`)
 - **Dual-Mode Project Memory & Templatizer**: `skills/project-memory/SKILL.md` (`skills/project-memory/scripts/sync_memory.py`)
-- **Subagent Orchestration & CAD/Config Oracles**: `skills/subagent-orchestrator/SKILL.md` (`skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py`)
+- **Subagent Orchestration & Swarm Tiering**: `skills/subagent-orchestrator/SKILL.md`
 - **Cross-OS Engineering Sandbox**: `skills/engineering-sandbox/SKILL.md` (`skills/engineering-sandbox/scripts/sandbox_runner.py`)
 - **Skill Architect & Hygiene Auditor**: `skills/skill-architect/SKILL.md` (`skills/skill-architect/scripts/audit_skill_hygiene.py`)
 - **Visual Studio (Engineering Diagrams)**: `skills/visual-studio/SKILL.md` (`skills/visual-studio/scripts/render_diagram.py`)
@@ -86,5 +91,6 @@ Load a skill's `SKILL.md` only when relevant to the active task:
 - **Pre-Commit Release Gate (`X -> Y -> Z`)**: `skills/pre-commit-gate/SKILL.md`
 
 ### Side-Loaded Add-Ons (`addons/` — Drop into `skills/` When Ready)
+- **Hardware CAD & Firmware Envelope Inspector**: [`addons/hardware-cad-inspector/SKILL.md`](addons/hardware-cad-inspector/SKILL.md) (`addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py` — drop into `skills/hardware-cad-inspector/` for one-pass STEP/STL outer dimensional envelopes, mesh volumes, STEP↔STL parity, and `.cfg` pinout telemetry while enforcing the CAD Epistemic Boundary).
 - **Author Voice & Cadence Calibration**: [`addons/author-voice-cadence/SKILL.md`](addons/author-voice-cadence/SKILL.md) (`addons/author-voice-cadence/scripts/extract_voice_cadence.py` — drop into `skills/author-voice-cadence/` once writing samples are placed in `./corpus_inbox/`).
 - **Gmail Workspace Assistant**: [`addons/gmail-workspace-assistant/SKILL.md`](addons/gmail-workspace-assistant/SKILL.md) (Drop into `skills/gmail-workspace-assistant/` for multi-account Gmail MCP triage, `visibility_radar` non-visible inbox auditing, `verified_send_as_aliases` draft staging, and attachment quarantine).

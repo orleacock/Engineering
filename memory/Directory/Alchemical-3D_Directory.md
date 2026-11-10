@@ -3,8 +3,8 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "c299b4b2e81f"
-last_synced: "2026-11-07"
+tree_hash: "b2091831e40d"
+last_synced: "2026-11-10"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -28,8 +28,12 @@ last_synced: "2026-11-07"
 │   ├── NEA_v2_Copilot_Execution_Flowchart.svg
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
+│   ├── Alchemical-3D_Decision_Router.md
 │   ├── Alchemical-3D_Directory.md
+│   ├── Alchemical-3D_memory_index.json
 │   └── Directory_Index.md
+├── Profile/
+│   └── Decision_Profile.md
 ├── Projects/
 │   ├── A3DP_Gantry_Assembly/
 │   │   ├── Quarantine/
@@ -67,14 +71,18 @@ last_synced: "2026-11-07"
 │   │   ├── Extras_Hardware.md
 │   │   └── Extras_Lessons_Learned.md
 │   ├── Homunculus/
+│   │   ├── Archive/
+│   │   │   └── Homunculus_Lessons_Archive.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Templates/
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
 │   │   ├── Homunculus_Lessons_Learned.md
+│   │   ├── Homunculus_Memory_Weight_and_Scoring_Reference.md
 │   │   ├── Homunculus_Script_Skill_Interaction_Matrix.md
 │   │   ├── Homunculus_Software.md
+│   │   ├── Homunculus_Stateful_Memory_Deployment_Plan.md
 │   │   └── Homunculus_Talking_Points.md
 │   ├── Maker-Tools/
 │   │   ├── Quarantine/
@@ -98,6 +106,8 @@ last_synced: "2026-11-07"
 │   │   ├── Pestle_Rotational_Bowden_Hardware.md
 │   │   └── Pestle_Rotational_Bowden_Lessons_Learned.md
 │   └── Pneuma_Remote_Air/
+│       ├── Archive/
+│       │   └── Pneuma_Remote_Air_Lessons_Archive.md
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
 │       ├── Templates/
@@ -111,6 +121,7 @@ last_synced: "2026-11-07"
 │   ├── Author_Voice_Cadence_Telemetry_Report.md
 │   ├── Author_Voice_Verbatim_Exemplars.md
 │   ├── Fasteners_and_Inserts.md
+│   ├── Governance_and_Constraint_Architecture.md
 │   ├── Image_and_Style_Rules.md
 │   ├── Standards_Index.md
 │   ├── Verifiable_Accuracy_and_Anti_Hallucination.md
@@ -129,6 +140,8 @@ last_synced: "2026-11-07"
 │   │   ├── Hardware_Pinout_and_Pneumatic_Blueprint.md
 │   │   ├── Layered_Architecture_Blueprint.md
 │   │   └── Spatial_Topology_Blueprint.md
+│   ├── AGENTS.md
+│   ├── Decision_Profile.md
 │   ├── Global_Standards_Index.md
 │   ├── Memory_Map_README.md
 │   ├── Project_Hardware.md
@@ -136,7 +149,9 @@ last_synced: "2026-11-07"
 │   ├── Project_Lessons_Learned.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
+│   ├── Stateful_Sprint_Planning_Template.md
 │   └── Task_Umbrella.md
+├── AGENTS.md
 └── README.md
 +------------------------------------------------------------+
 ```
@@ -371,7 +386,7 @@ last_synced: "2026-11-07"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 460d26f3da0d` | `Tree: 100f78bf71f4`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bfbe03a5a0b7` | `Tree: c62533306f66`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -400,13 +415,17 @@ last_synced: "2026-11-07"
 │       │   └── homunculus-verifiable-accuracy.mdc
 │       └── README.md
 ├── addons/
-│   └── author-voice-cadence/
-│       ├── corpus_inbox/
+│   ├── author-voice-cadence/
+│   │   ├── corpus_inbox/
+│   │   ├── scripts/
+│   │   │   └── extract_voice_cadence.py
+│   │   ├── templates/
+│   │   │   ├── Cadence_Report_Template.md
+│   │   │   └── Voice_Profile_Template.md
+│   │   └── SKILL.md
+│   └── hardware-cad-inspector/
 │       ├── scripts/
-│       │   └── extract_voice_cadence.py
-│       ├── templates/
-│       │   ├── Cadence_Report_Template.md
-│       │   └── Voice_Profile_Template.md
+│       │   └── inspect_hardware_ecosystem.py
 │       └── SKILL.md
 ├── docs/
 │   ├── Capabilities_and_Architecture_Guide.md
@@ -426,7 +445,8 @@ last_synced: "2026-11-07"
 │   ├── audit_data_boundary.py
 │   ├── audit_portability.py
 │   ├── build_adapters.py
-│   └── homunculus_paths.py
+│   ├── homunculus_paths.py
+│   └── script_contracts.json
 ├── skills/
 │   ├── claim-verification/
 │   │   ├── scripts/
@@ -459,8 +479,6 @@ last_synced: "2026-11-07"
 │   │   ├── references/
 │   │   │   ├── oracle_cli_cheatsheet.md
 │   │   │   └── orchestration_playbooks.md
-│   │   ├── scripts/
-│   │   │   └── inspect_hardware_ecosystem.py
 │   │   └── SKILL.md
 │   ├── teach-me/
 │   │   ├── references/
@@ -494,6 +512,8 @@ last_synced: "2026-11-07"
 │   │   ├── .cursorignore
 │   │   └── .geminiignore
 │   ├── memory/
+│   │   ├── AGENTS.md
+│   │   ├── Decision_Profile.md
 │   │   ├── Global_Standards_Index.md
 │   │   ├── Memory_Map_README.md
 │   │   ├── Project_Hardware.md

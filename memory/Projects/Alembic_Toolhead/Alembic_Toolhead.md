@@ -9,7 +9,7 @@ repo_head_sha: "3ff29ce51139"
 tree_hash: "71ea081ef196"
 checkpoint_head_sha: "3ff29ce51139"
 checkpoint_tree_hash: "71ea081ef196"
-checkpoint_worktree: "('dirty (8 files)', ['M ALPHA_&_DIRECTION.md', 'M Assembly_Guide.md', 'M BOM.md', 'M Images/full_images/alembic_angle_down.png', 'M Images/full_images/alembic_angle_up.png', 'M Images/full_images/alembic_face.png', 'M Print_Settings.md', 'M README.md'])"
+checkpoint_worktree: "dirty (8 files)"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-06"
 ---

@@ -17,11 +17,12 @@ bypass inspection. Requires ONLY Python 3.10+ standard library.
   Owning Module : Core Framework (`scripts/`)
   Callers       : `install.sh`, `install.ps1`, `pre-commit-gate` (Stage Z2), `test_foundation.py`, `test_data_safety.py`, `test_adapters.py`
   Callees       : `homunculus_paths.py` (`CLEANROOM_FORBIDDEN_SHA256`, `ALLOWED_PLACEHOLDER_USERS`, `RE_POSIX_HOME`, `RE_WIN_USERS`, `decode_file_text`)
+  Contract      : `scripts/script_contracts.json` [`audit_portability.py`]
   CLI Flags     : --repo, --root, --repo-root, --forbid-token, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def decode_file_text (#L73-L75)                | def _check_cleanroom_hashes (#L78-L91)
-    - def _audit_python_stdlib_only (#L94-L119)      | def audit_repository (#L122-L280)
-    - def main (#L283-L327)
+    - def decode_file_text (#L74-L76)                | def _check_cleanroom_hashes (#L79-L92)
+    - def _audit_python_stdlib_only (#L95-L120)      | def audit_repository (#L123-L281)
+    - def main (#L284-L328)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations

@@ -5,15 +5,15 @@ description: Use this skill whenever delegating parallel or context-heavy worklo
 
 # Subagent Swarm Orchestrator & Hardware Telemetry (`subagent-orchestrator`)
 
-This skill governs parallel subagent dispatch, harness-agnostic model tiering, Anchored Evidence Packets, and deterministic 3D CAD / firmware telemetry extraction ([`inspect_hardware_ecosystem.py`](scripts/inspect_hardware_ecosystem.py)) under **`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`**.
+This skill governs parallel subagent dispatch, harness-agnostic model tiering, Anchored Evidence Packets, and deterministic 3D CAD / firmware envelope delegation (`hardware-cad-inspector`) under **`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`**.
 
 ---
 
 ## 1. Pre-Flight Foundation Checks
 
-1. **Turn-1 Memory, `Directory/` & Telemetry Check**:
-   - Before spawning subagents across a project, read `<memory_root>/Projects/<Project>/<Project>.md` (`AUTO-TREE`), `<memory_root>/Directory/<Entity>_Directory.md`, `<Project>_Hardware.md`, and `<Project>_Software.md` on Turn 1.
-   - If uncommitted files were added, renamed, or deleted in the current session since the last `.py` CLI run, execute `python3 <HOMUNCULUS_ROOT>/scripts/homunculus_paths.py --ensure-fresh --quiet` before dispatching read-only `research` scouts. If the project is unindexed or `CACHE_STALE`, run `inspect_hardware_ecosystem.py --repo <repo_path>` and `sync_memory.py` so workers receive verified structural maps instead of running blind `find`/`ls`/`os.listdir` sweeps.
+1. **Turn-1 Memory, `Lessons_Learned`, `Directory/` & Telemetry Check**:
+   - Before spawning subagents across a project (or on Turn 1 inside a subagent), read `<memory_root>/Projects/<Project>/<Project>.md` (`AUTO-TREE`), `<Project>_Lessons_Learned.md` (`SUBSYSTEM-INVARIANTS`), `<memory_root>/Directory/<Entity>_Directory.md`, and `<Project>_Hardware.md` / `<Project>_Software.md` together in a single parallel `read_file` batch.
+   - If uncommitted files were added, renamed, or deleted in the current session since the last `.py` CLI run, execute `python3 <HOMUNCULUS_ROOT>/scripts/homunculus_paths.py --ensure-fresh --quiet` before dispatching read-only `research` scouts. If the project is unindexed or `CACHE_STALE`, run `sync_memory.py` (and optional `inspect_hardware_ecosystem.py --repo <repo_path>` when `hardware-cad-inspector` is present) so workers receive verified structural maps instead of running blind `find`/`ls`/`os.listdir` sweeps.
 2. **Partition Disjoint Shards (`2–4` Workers Max)**:
    - Assign each subagent `1–2` repositories or disjoint subsystem directories so workers never collide on files or duplicate reads.
    - Enforce **Single-Writer Memory**: subagents never mutate `<memory_root>/` directly; they return a structured `[MEMORY_DELTA]` block for the Primary Thread to reconcile.
@@ -30,16 +30,11 @@ This skill governs parallel subagent dispatch, harness-agnostic model tiering, A
 
 ## 2. Step-Level Verification Gates
 
-### Gate 1 — Deterministic CAD & Firmware Telemetry (`inspect_hardware_ecosystem.py`)
-Never read raw `.step` or `.stl` mesh files in LLM context to guess dimensions, bounding boxes, or fastener hole counts. Run the pure-stdlib geometry and config oracle:
-
-```bash
-# Inspect a single repository and emit JSON/Markdown telemetry + inventory_sha256 receipt
-python3 <HOMUNCULUS_ROOT>/skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py \
-  --repo /path/to/repo \
-  --memory-root ./memory \
-  --project <Project>
-```
+### Gate 1 — Deterministic CAD & Firmware Envelope Telemetry (`hardware-cad-inspector`) & Zero-Reconnaissance Discipline
+Never read raw `.step`, `.stp`, `.stl`, or `.3mf` files in LLM context or run ad-hoc `python3`/`grep`/`sed` loops to guess dimensions, bounding boxes, hole functions, or fastener counts (`ZERO_ADHOC_CAD_PARSING`), and never waste turns on `find`/`--help`/`python3 -c` reconnaissance:
+- **Direct Script & CLI Resolution (`0` `find` or `--help` Calls)**: Resolve oracle script paths directly from `<skills>` or `<HOMUNCULUS_ROOT>/addons/` (`<skill_or_addon_dir>/scripts/<script>.py`) and read [`references/oracle_cli_cheatsheet.md`](references/oracle_cli_cheatsheet.md) on Turn 1 instead of running `find / -name "*.py"` or `--help`.
+- **Single-Call STEP/STL Outer Envelope Telemetry (`0` Ad-Hoc `python3` CAD Loops)**: When the optional `hardware-cad-inspector` add-on is present, `inspect_hardware_ecosystem.py --repo /path/to/repo [--memory-root ./memory --project <Project>]` deterministically extracts STL outer envelopes (`X × Y × Z mm`), volumes (`cm³`), STEP-sync drift, closed `360°` circular surface diameters (`Ø mm`), and firmware `.cfg` pinouts in a single execution (`[CAD STOP GATE — ONE-PASS TELEMETRY COMPLETE]`). Design intent (fastener counts, hole functions, and part-to-part mating) belongs strictly to the engineer—bind functional hardware claims strictly to `BOM.md` and `Assembly_Guide.md`, or tag `[TBD: Confirm design intent with engineer]`.
+- **Batch All Source Reads in Parallel**: Read `README.md`, `BOM.md`, `Assembly_Guide.md`, `Print_Settings.md`, and firmware `.cfg` files in a single parallel `read_file` turn.
 
 ### Gate 2 — Emit 1-Line `[DISPATCH]` Banner & Require Anchored Evidence Packets
 Before invoking subagents, output a 1-line dispatch summary:
@@ -48,7 +43,7 @@ Before invoking subagents, output a 1-line dispatch summary:
 Every subagent prompt must require an **Anchored Evidence Packet** response containing:
 1. **Claim Tag**: `[VERIFIED FACT]`, `[CAD TELEMETRY]`, `[CLI TELEMETRY]`, `[SPATIAL / DFM ADVISORY]`, `[TBD: <var>]`, or `[CONFLICT]`.
 2. **Exact Citation**: `path/to/file#Lstart-Lend` plus a verbatim `1–3` line slice.
-3. **Provenance Receipt**: `git HEAD SHA`, `inventory_sha256`, or `VRF-<12hex>`.
+3. **Provenance Receipt**: `git HEAD SHA`, `inventory_sha256`, or `VRF-<12hex>` (whenever a subagent writes a `.md` technical report or spec, it must run `verify_claims.py --target <deliverable.md> --sources <repo_dir> [<telemetry_md_or_json>]` *after* `write_file` and achieve `Unbacked Claims: 0` before returning).
 4. **`[MEMORY_DELTA]`**: Proposed updates for `<memory_root>/Projects/<Project>/` (applied only by the Primary Thread after cross-shard verification).
 
 ### Gate 3 — Pre-Mutation Window Read by Primary Thread

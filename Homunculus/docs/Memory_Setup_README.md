@@ -79,6 +79,11 @@ Real projects often pause for days or weeks at a time. Instead of losing your pl
 ### E. Reusable Project Templates
 Whenever you create a recurring document layout for a project (such as a release checklist, customer quote sheet, or test card), your AI can save it in `Projects/<Project>/Templates/` so future drafts follow the exact same structure automatically.
 
+### F. Station Grounding, `TIER0`–`TIER5` Memory Gravity & Cloud Detached-Cache Mode
+- **Generic Deliverable $\rightarrow$ Grounded Station Parent**: `Homunculus` ships as a clean, generic package. Once initialized on your computer (`--init-memory` / `--init-project`), it binds to your machine's real absolute directory paths (`local_path`), builds your local `Profile/Decision_Profile.md` and `Directory/<Entity>_memory_index.json`, and evolves with your workstation.
+- **AI/CLI-Preferred Edits & `TIER0`–`TIER5` Importance Tiers**: Because memory entries synchronize across `SUBSYSTEM-INVARIANTS`, script contracts (`scripts/script_contracts.json`), and search indexes, let your AI update memory via `sync_memory.py` (if you edit a memory file by hand, `sync_memory.py` will detect the change, explain the downstream impact, and run `--repair-memory` with you). Lessons are organized into **`TIER0`** (User-Pinned Critical Guards, `0%` decay), **`TIER1`** (Subsystem Invariants), **`TIER2`** (Active Dev-Cycle Full-Context Window), **`TIER3`–`TIER4`** (Verified `Archive/` entries), and **`TIER5`** (Superseded/Retired). You can pin any recurring issue to the top of the decision hierarchy at any time by telling your AI: *"Promote `LL-012` to `TIER0`"* (`sync_memory.py --project <Project> --set-tier LL-012 TIER0`).
+- **Moving Computers or Hosting Online (`--rebind-station` & `Detached Cache Mode`)**: If you move your projects to a new computer, run `sync_memory.py --rebind-station /new/projects/root` to re-link your repository paths in one step. If you open your `memory/` folder in a cloud or web environment where your code/CAD repositories are not cloned locally, `sync_memory.py` automatically operates in **Detached Cache Mode** (`worktree: "detached_cache"`), serving your cached file trees, hardware/software summaries, and `TIER0`–`TIER2` invariants seamlessly.
+
 ---
 
 ## 4. Setting Up Project Memory (`Plain English` or `Terminal`)

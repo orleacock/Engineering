@@ -30,22 +30,25 @@ Exit codes:
   Owning Module : `claim-verification` (`skills/claim-verification/SKILL.md`)
   Callers       : `teach_brief.py` (`--verify`/`--promote`), `sandbox_runner.py` (A/B scoring), `pre-commit-gate` (Stage Z1), `test_claim_verification.py`, `test_teach_me.py`
   Callees       : `homunculus_paths.py` (`ensure_directory_fresh` pre-audit guard)
-  CLI Flags     : --target, --draft, --sources, --dump-whitelist, --fail-on-tbd, --strict-provenance, --require-anchors, --require-git-clean-sources, --memory-root, --project-dir, --entity, --allow-lessons-source, --transcript, --skip-freshness-check, --json
+  Contract      : `scripts/script_contracts.json` [`verify_claims.py`]
+  CLI Flags     : --target, --draft, --sources, --dump-whitelist, --fail-on-tbd, --strict-provenance, --require-anchors, --require-git-clean-sources, --memory-root, --project-dir, --entity, --transcript, --skip-freshness-check, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def normalize_counted_noun (#L378-L394)        | def canonicalize_unit (#L397-L424)
-    - def parse_num (#L427-L428)                     | def strip_non_claim_regions (#L431-L494)
-    - def normalize_fastener (#L497-L501)            | def normalize_designator (#L504-L505)
-    - def normalize_source_relpath (#L546-L558)      | def _blank_preserving_newlines (#L575-L576)
-    - def quarantine_unverified_source_zones (#L579-L609) | class GitWorktreeCache (#L612-L690)
-    - def inspect_source_provenance (#L693-L776)     | def _is_sibling_derivative_of_target (#L783-L796)
-    - def _is_lessons_learned_source (#L799-L819)    | def collect_source_files (#L822-L900)
-    - def map_qualifier_group (#L903-L908)           | class SourceFileInfo (#L911-L1102)
-    - def _canonicalize_entity_token (#L1144-L1154)  | def detect_entities_in_text (#L1157-L1179)
-    - def detect_entity_in_text (#L1182-L1188)       | class SourceIndex (#L1191-L1633)
-    - def _safe_eval_arith_with_dim (#L1636-L1732)   | def verify_calc_marker (#L1735-L1822)
-    - def attest_subagent_transcript (#L1825-L2025)  | def audit_target (#L2028-L2832)
-    - def format_whitelist_summary (#L2835-L2853)    | def verify_target_inprocess (#L2856-L2880)
-    - def verify_multiple_targets_inprocess (#L2883-L2914) | def main (#L2917-L3126)
+    - def _norm_slash_path (#L66-L92)                | def _enforce_anti_snoop_gate (#L100-L145)
+    - def _installed_homunculus_script_basenames (#L157-L170) | def normalize_counted_noun (#L482-L500)
+    - def canonicalize_unit (#L503-L530)             | def parse_num (#L533-L534)
+    - def strip_non_claim_regions (#L537-L600)       | def normalize_fastener (#L603-L607)
+    - def normalize_designator (#L610-L611)          | def normalize_source_relpath (#L652-L664)
+    - def _blank_preserving_newlines (#L681-L682)    | def quarantine_unverified_source_zones (#L685-L715)
+    - class GitWorktreeCache (#L718-L796)            | def inspect_source_provenance (#L799-L882)
+    - def _is_sibling_derivative_of_target (#L889-L902) | def _is_lessons_learned_source (#L905-L929)
+    - def collect_source_files (#L932-L1010)         | def map_qualifier_group (#L1013-L1018)
+    - class SourceFileInfo (#L1021-L1243)            | def _canonicalize_entity_token (#L1285-L1295)
+    - def detect_entities_in_text (#L1298-L1320)     | def detect_entity_in_text (#L1323-L1329)
+    - class SourceIndex (#L1332-L1952)               | def _safe_eval_arith_with_dim (#L1955-L2051)
+    - def verify_calc_marker (#L2054-L2141)          | def attest_subagent_transcript (#L2144-L2356)
+    - def audit_target (#L2359-L3346)                | def format_whitelist_summary (#L3349-L3367)
+    - def verify_target_inprocess (#L3370-L3394)     | def verify_multiple_targets_inprocess (#L3397-L3428)
+    - def main (#L3431-L3661)
 === END NAVIGATION MAP ===
 """
 
@@ -55,16 +58,116 @@ import hashlib
 import json
 import os
 import re
+import struct
 import subprocess
 import sys
 from typing import Dict, List, Optional, Set, Tuple
 
-_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-_HOM_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
+def _norm_slash_path(p: str, resolve_links: bool = False) -> str:
+    s = p.replace("\\", "/")
+    if not s.startswith("/") and not (len(s) > 2 and s[1:3] == ":/"):
+        s = os.getcwd().replace("\\", "/").rstrip("/") + "/" + s
+    parts: List[str] = []
+    for seg in s.split("/"):
+        if seg in ("", "."):
+            continue
+        if seg == "..":
+            if parts:
+                parts.pop()
+            continue
+        parts.append(seg)
+        if resolve_links:
+            cur = ("/" if s.startswith("/") else "") + "/".join(parts)
+            for _ in range(16):
+                try:
+                    target = os.readlink(cur).replace("\\", "/")
+                except OSError:
+                    break
+                if target.startswith("/") or (len(target) > 2 and target[1:3] == ":/"):
+                    cur = _norm_slash_path(target, resolve_links=False)
+                else:
+                    parent = ("/" + "/".join(parts[:-1])) if len(parts) > 1 else "/"
+                    cur = _norm_slash_path(parent.rstrip("/") + "/" + target, resolve_links=False)
+                parts = [x for x in cur.split("/") if x]
+    return ("/" if s.startswith("/") else "") + "/".join(parts)
+
+
+_RAW_FILE = globals().get("__file__", "")
+_SCRIPT_DIR = "/".join(_norm_slash_path(_RAW_FILE, resolve_links=True).split("/")[:-1]) if _RAW_FILE else ""
+_HOM_ROOT = "/".join(_SCRIPT_DIR.split("/")[:-3]) if _SCRIPT_DIR else ""
+
+
+def _enforce_anti_snoop_gate(script_basename: str, hom_root: str) -> None:
+    orig_argv = getattr(sys, "orig_argv", [])
+    if any(a in ("-c", "-") for a in orig_argv[1:4]):
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Executing or importing {script_basename} via `python3 -c` / stdin "
+            f"is prohibited. Run `{script_basename}` directly via CLI."
+        )
+    argv0_base = (sys.argv[0] if sys.argv else "").replace("\\", "/").split("/")[-1]
+    if not _RAW_FILE or (__name__ == "__main__" and argv0_base != script_basename):
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Executing {script_basename} via exec()/runpy inside {argv0_base!r} "
+            f"is prohibited. Run `{script_basename}` directly via CLI."
+        )
+    if __name__ == "__main__":
+        return
+    hom_prefix = _norm_slash_path(hom_root).rstrip("/") + "/"
+    stdlib_dir = _norm_slash_path(os.path.dirname(os.__file__)).rstrip("/") + "/"
+    depth = 1
+    found_hom_caller = False
+    bad_frame = ""
+    while True:
+        try:
+            f = sys._getframe(depth)
+        except ValueError:
+            break
+        fn = f.f_code.co_filename.replace("\\", "/")
+        depth += 1
+        if "importlib" in fn or fn.startswith("<frozen") or fn.endswith("/" + script_basename):
+            continue
+        if fn.startswith("<"):
+            bad_frame = fn
+            break
+        abs_fn = _norm_slash_path(fn)
+        if abs_fn.startswith(hom_prefix):
+            found_hom_caller = True
+        elif abs_fn.startswith(stdlib_dir):
+            continue
+        else:
+            bad_frame = fn
+            break
+    if bad_frame or not found_hom_caller:
+        raise SystemExit(
+            f"[ANTI-SNOOP GATE — BLOCKED] Importing {script_basename} from ad-hoc/external scripts "
+            f"(caller={bad_frame or argv0_base!r}) to inspect source/regexes is prohibited. "
+            f"Run `{script_basename}` via CLI and follow the [Fix Hint] on any flagged claim."
+        )
+
+
+_enforce_anti_snoop_gate("verify_claims.py", _HOM_ROOT)
 for _p in (_SCRIPT_DIR, os.path.join(_HOM_ROOT, "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import homunculus_paths  # noqa: E402
+
+_HOMUNCULUS_SCRIPT_BASENAMES_CACHE: Optional[frozenset[str]] = None
+
+
+def _installed_homunculus_script_basenames() -> frozenset[str]:
+    """Return lowercase basenames of currently installed Homunculus .py scripts (bare tool name check only)."""
+    global _HOMUNCULUS_SCRIPT_BASENAMES_CACHE
+    if _HOMUNCULUS_SCRIPT_BASENAMES_CACHE is None:
+        found: set[str] = set()
+        for sub in ("scripts", "skills", "addons"):
+            sub_dir = os.path.join(_HOM_ROOT, sub)
+            if os.path.isdir(sub_dir):
+                for _r, _dirs, files in os.walk(sub_dir):
+                    for fn in files:
+                        if fn.endswith(".py") and not fn.startswith("_"):
+                            found.add(fn.lower())
+        _HOMUNCULUS_SCRIPT_BASENAMES_CACHE = frozenset(found)
+    return _HOMUNCULUS_SCRIPT_BASENAMES_CACHE
 
 TEXT_EXTENSIONS = {
     ".md", ".txt", ".cfg", ".conf", ".ini", ".toml", ".yaml", ".yml",
@@ -150,6 +253,7 @@ UNIT_ALIASES: Dict[str, str] = {
     "bps": "bps", "kbps": "kbps", "mbps": "mbps", "gbps": "gbps",
     "kb": "kb", "mb": "mb", "gb": "gb",
     "ea": "ea", "kt": "kt", "bx": "bx", "rl": "rl", "pk": "pk",
+    "px": "px", "pixel": "px", "pixels": "px",
     "word": "words", "words": "words", "prose word": "words", "prose words": "words",
 }
 
@@ -157,7 +261,7 @@ UNIT_DIMENSIONS: Dict[str, str] = {
     # Length
     "mm": "length", "cm": "length", "m": "length", "km": "length",
     "in": "length", "ft": "length", "yd": "length", "mil": "length",
-    "um": "length", "nm_len": "length",
+    "um": "length", "nm_len": "length", "px": "length",
     # Volume
     "cm3": "volume", "mm3": "volume", "l": "volume", "ml": "volume",
     # Flow
@@ -308,8 +412,8 @@ SPELLED_QUICK_RE = re.compile(
 )
 
 REVERSE_QUALIFIED_RE = re.compile(
-    rf"\b({_ALL_QUALIFIER_SYNONYMS_PATTERN})\b[^.\n;|,]{{0,35}}?"
-    rf"(?<![A-Za-z0-9_.])([+-]?\d+(?:,\d{{3}})*(?:\.\d+)?)(\s*)({UNIT_REGEX_STR})(?![A-Za-z0-9_/])",
+    rf"\b({_ALL_QUALIFIER_SYNONYMS_PATTERN})\b(?!(?:[^.\n;|,()Øø⌀]{{0,25}}?\b(?:across|during|after|before|while|when|where|through|without|between|beyond|into|onto|toward|towards|vs|versus)\b))[^.\n;|,()Øø⌀]{{0,25}}?"
+    rf"(?<![A-Za-z0-9_.Øø⌀])([+-]?\d+(?:,\d{{3}})*(?:\.\d+)?)(\s*)({UNIT_REGEX_STR})(?![A-Za-z0-9_/])",
     re.IGNORECASE,
 )
 
@@ -357,9 +461,9 @@ COUNTED_NOUN_RE = re.compile(
     r"(skills?|rules?|oracles?|scripts?|subagents?|workers?|blueprints?|palettes?|archetypes?|umbrellas?|"
     r"dossiers?|manifests?|gates?|layers?|workbooks?|worksheets?|sheets?|columns?|rows?|categories|"
     r"workflows?|standards?|files?|repos?|repositories|parts?|fasteners?|screws?|bolts?|nuts?|"
-    r"inserts?|heat-sets?|bearings?|magnets?|pins?|ports?|channels?|pumps?|fans?|blowers?|motors?|"
+    r"inserts?|heat-?sets?|bearings?|magnets?|pins?|ports?|channels?|pumps?|fans?|blowers?|motors?|"
     r"extruders?|nozzles?|belts?|pulleys?|idlers?|cables?|strands?|fibers?|runs?|jacks?|panels?|"
-    r"racks?|drops?|posts?|messages?|commits?|checks?|errors?|warnings?|faults?|targets?|step|stl|"
+    r"racks?|drops?|posts?|step|stl|"
     r"washers?|spacers?|standoffs?|springs?|o-rings?|ferrules?|shims?|terminals?)\b",
     re.IGNORECASE,
 )
@@ -368,8 +472,8 @@ ALL_COUNTED_NOUN_STEM_RE = re.compile(
     r"part|state|domain|stage|phase|channel|way|point|skill|rule|oracle|script|subagent|worker|"
     r"blueprint|palette|archetype|umbrella|dossier|manifest|workbook|worksheet|categories|"
     r"category|workflow|standard|repo|repositories|repository|fastener|screw|bolt|nut|insert|"
-    r"heat-set|bearing|magnet|port|pump|fan|blower|motor|extruder|nozzle|belt|pulley|idler|"
-    r"cable|strand|fiber|run|jack|panel|rack|drop|message|commit|check|error|warning|fault|target|stl|"
+    r"heat-?set|bearing|magnet|port|pump|fan|blower|motor|extruder|nozzle|belt|pulley|idler|"
+    r"cable|strand|fiber|run|jack|panel|rack|drop|stl|"
     r"washer|spacer|standoff|spring|o-ring|ferrule|shim|terminal)s?\b",
     re.IGNORECASE,
 )
@@ -389,6 +493,8 @@ def normalize_counted_noun(raw_noun: str) -> str:
         return "sheet"
     if n in ("o-ring", "o-rings", "oring", "orings"):
         return "o-ring"
+    if n in ("heat-set", "heat-sets", "heatset", "heatsets", "insert", "inserts"):
+        return "insert"
     if n not in ("step", "stl", "pass") and n.endswith("s"):
         return n[:-1]
     return n
@@ -528,7 +634,7 @@ WARNING_CONTEXT_RE = re.compile(
     re.IGNORECASE,
 )
 WARNING_ACK_RE = re.compile(
-    r"\b(?:warning|caution|danger|hazard|never|avoid|do\s+not|don't|prohibit|deprecated|obsolete|kink|choke|damage|fail|crack|attack|craze|delaminat)\b",
+    r"\b(?:warn\w*|caution\w*|danger\w*|hazard\w*|never|avoid\w*|do\s+not|don't|prohibit\w*|deprecat\w*|obsolet\w*|kink\w*|chok\w*|damag\w*|fail\w*|crack\w*|attack\w*|craz\w*|delaminat\w*|contradict\w*|conflict\w*|desynchroniz\w*|mismatch\w*|defect\w*|issue\w*|error\w*|undercount\w*|non-canonical|strip\w*|legacy|critical)\b",
     re.IGNORECASE,
 )
 AUTO_TREE_ZONE_RE = re.compile(
@@ -802,7 +908,11 @@ def _is_lessons_learned_source(fp: str) -> bool:
     parts_low = [seg.lower() for seg in os.path.abspath(fp).split(os.sep)]
     if "quarantine" in parts_low or "study_briefs" in parts_low:
         return True
-    if bname_low.endswith("_lessons_learned.md") or bname_low == "lessons_learned_template.md":
+    if (
+        bname_low.endswith("_lessons_learned.md")
+        or bname_low.endswith("_lessons_archive.md")
+        or bname_low == "lessons_learned_template.md"
+    ):
         return True
     if bname_low.endswith(".md") and os.path.isfile(fp):
         try:
@@ -845,12 +955,12 @@ def collect_source_files(
         if os.path.isfile(p):
             rp = os.path.realpath(p)
             rp_parts_low = [seg.lower() for seg in rp.split(os.sep)]
-            if "quarantine" in rp_parts_low and not allow_lessons_source:
+            if "quarantine" in rp_parts_low:
                 raise ValueError(
                     f"QUARANTINE_SOURCE_REJECTED: Source file '{p}' resides inside a Quarantine/ "
                     f"directory and cannot be used as authoritative ground truth."
                 )
-            if "study_briefs" in rp_parts_low and not allow_lessons_source:
+            if "study_briefs" in rp_parts_low:
                 raise ValueError(
                     f"STUDY_BRIEF_SOURCE_REJECTED: Source file '{p}' resides inside an unpromoted study_briefs/ "
                     f"directory and cannot be used as authoritative ground truth until promoted to memory/."
@@ -978,18 +1088,48 @@ class SourceFileInfo:
         is_code = ext in CODE_SOURCE_EXTENSIONS
         c_st = max(1, start_line - 5)
         c_en = min(self.line_count, end_line + 5)
-        # Clamp upward expansion at Markdown section heading boundaries so adjacent sections do not bleed warnings
-        for up_idx in range(start_line - 2, c_st - 2, -1):
-            if 0 <= up_idx < self.line_count and HEADING_LEVEL_RE.match(self.lines[up_idx].strip()):
-                c_st = up_idx + 2
-                break
-        # Clamp downward expansion at the next Markdown section heading
+        # Clamp upward expansion at Markdown section headings or distinct GitHub alert block boundaries
+        for up_idx in range(start_line - 1, c_st - 2, -1):
+            if 0 <= up_idx < self.line_count:
+                s_up = self.lines[up_idx].strip()
+                if up_idx < start_line - 1 and HEADING_LEVEL_RE.match(s_up):
+                    c_st = up_idx + 2
+                    break
+                if re.match(r"^>\s*\[!(?:NOTE|TIP|IMPORTANT)\]", s_up, re.IGNORECASE):
+                    c_st = up_idx + 1
+                    break
+                if (
+                    up_idx < start_line - 1
+                    and not s_up
+                    and 0 <= start_line - 1 < self.line_count
+                    and self.lines[start_line - 1].lstrip().startswith(">")
+                ):
+                    c_st = up_idx + 2
+                    break
+        # Clamp downward expansion at the next Markdown section heading or distinct GitHub alert block
         for dn_idx in range(end_line, c_en):
-            if 0 <= dn_idx < self.line_count and HEADING_LEVEL_RE.match(self.lines[dn_idx].strip()):
-                c_en = dn_idx
-                break
+            if 0 <= dn_idx < self.line_count:
+                s_dn = self.lines[dn_idx].strip()
+                if HEADING_LEVEL_RE.match(s_dn) or re.match(
+                    r"^>\s*\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION|DANGER)\]", s_dn, re.IGNORECASE
+                ):
+                    c_en = dn_idx
+                    break
+                if (
+                    not s_dn
+                    and 0 <= end_line - 1 < self.line_count
+                    and self.lines[end_line - 1].lstrip().startswith(">")
+                ):
+                    c_en = dn_idx
+                    break
+        cited_in_blockquote = any(
+            0 <= i < self.line_count and self.lines[i].lstrip().startswith(">")
+            for i in range(start_line - 1, min(self.line_count, end_line))
+        )
         for idx in range(c_st - 1, c_en):
             ln = self.lines[idx]
+            if not cited_in_blockquote and not (start_line - 1 <= idx < end_line) and ln.lstrip().startswith(">"):
+                continue
             if is_code:
                 # In executable source code, inspect only comment annotations so regex/identifier literals don't false-trigger
                 m_cmt = re.search(r"(?:#|//|/\*)(.*)$", ln)
@@ -1014,10 +1154,11 @@ class SourceFileInfo:
             or "engineering_logs" in path_parts
             or "visuals" in path_parts
             or "tasks" in path_parts
+            or "directory" in path_parts
         ):
             return "*"
         if re.search(
-            r"^type:\s*(?:standard|moc-hub|task-umbrella|task-landing-pad|engineering-log|architecture-diagram|command-reference)\b",
+            r"^type:\s*['\"]?(?:standard|moc-hub|task-umbrella|task-landing-pad|engineering-log|architecture-diagram|command-reference|entity-directory|decision-router)\b",
             text[:500],
             re.IGNORECASE | re.MULTILINE,
         ):
@@ -1212,6 +1353,8 @@ class SourceIndex:
         self.entity_fasteners: Dict[str, Set[str]] = {}
         self.designators: Set[str] = set()
         self.entity_designators: Dict[str, Set[str]] = {}
+        self.git_full_shas: Set[str] = set()
+        self.entity_git_shas: Dict[str, Set[str]] = {}
         self.source_basenames: Set[str] = set()
         self.source_max_lines: Dict[str, int] = {}
         self.source_dirs: Set[str] = set()
@@ -1221,6 +1364,11 @@ class SourceIndex:
         self.entity_raw_blobs_nocomma: Dict[str, str] = {}
         self.dynamic_aliases: Dict[str, str] = {}
         self.ambiguous_umbrellas: Dict[str, Set[str]] = {}
+        self.lesson_ids: Set[str] = set()
+        self.nonauth_active_hints: Dict[Tuple[float, str], str] = {}
+        self.nonauth_active_fasteners: Dict[str, str] = {}
+        self.nonauth_tier5_hints: Dict[Tuple[float, str], str] = {}
+        self.nonauth_tier5_fasteners: Dict[str, str] = {}
 
         git_cache = GitWorktreeCache()
         cust_to_projects: Dict[str, Set[str]] = {}
@@ -1256,6 +1404,69 @@ class SourceIndex:
                         prefix_to_projects.setdefault(p_first, set()).add(info.entity)
             self._index_text(text, info.entity)
 
+        # Index LL-* / ADR-* IDs ONLY + Non-Authoritative Hint Index across excluded lesson files (plus sibling project lessons/quarantine)
+        cand_lesson_files: Set[str] = set(self.excluded_lessons)
+        scan_parent_dirs: Set[str] = set(self.source_dirs)
+        for sf_p in list(source_files) + list(self.excluded_lessons):
+            scan_parent_dirs.add(os.path.dirname(os.path.abspath(sf_p)))
+        for sd in sorted(scan_parent_dirs):
+            if not os.path.isdir(sd):
+                continue
+            for fn_cand in os.listdir(sd):
+                if fn_cand.lower().endswith(("_lessons_learned.md", "_lessons_archive.md")):
+                    cand_lesson_files.add(os.path.join(sd, fn_cand))
+            for sub_nm in ("Archive", "Quarantine"):
+                sub_d = os.path.join(sd, sub_nm)
+                if os.path.isdir(sub_d):
+                    for fn_cand in os.listdir(sub_d):
+                        if fn_cand.lower().endswith(".md"):
+                            cand_lesson_files.add(os.path.join(sub_d, fn_cand))
+        for lfp in sorted(cand_lesson_files):
+            if not os.path.isfile(lfp):
+                continue
+            try:
+                ltxt = open(lfp, "r", encoding="utf-8", errors="ignore").read()
+            except OSError:
+                continue
+            lbname = os.path.basename(lfp)
+            for mid in re.finditer(r"\b((?:LL|ADR)-(?:[A-Z0-9]+-)?\d+)\b", ltxt):
+                id_low = mid.group(1).lower()
+                self.lesson_ids.add(id_low)
+                self.designators.add(normalize_designator(mid.group(1)))
+            cur_lid = "Quarantine" if "quarantine" in lfp.lower() else "header"
+            cur_t5 = False
+            for l_ln in ltxt.splitlines():
+                s_ll = l_ln.strip()
+                mh_ll = re.match(r"^###\s+`?((?:LL|ADR)-(?:[A-Z0-9]+-)?\d+)`?(.*)$", s_ll)
+                if mh_ll:
+                    cur_lid = mh_ll.group(1)
+                    cur_t5 = "[TIER5]" in mh_ll.group(2)
+                    continue
+                is_never_row = s_ll.startswith("|") and ("Never Re-Add" not in s_ll) and ("Subsystem" not in s_ll) and len(s_ll.split("|")) >= 4
+                if is_never_row and "SUBSYSTEM-INVARIANTS" in ltxt:
+                    cells_ll = [c.strip() for c in s_ll.strip("|").split("|")]
+                    if len(cells_ll) >= 3 and not cells_ll[0].startswith(("`LL-", "**`LL-")):
+                        for m_qu in SINGLE_NUM_UNIT_RE.finditer(cells_ll[2]):
+                            u_c = canonicalize_unit(m_qu.group(3), m_qu.group(2))
+                            if u_c and u_c not in ("s", "ms", "b", "kb", "mb", "gb"):
+                                self.nonauth_tier5_hints[(round(parse_num(m_qu.group(1)), 6), u_c)] = f"{lbname}::SUBSYSTEM-INVARIANTS(Never-Re-Add)"
+                        for m_f in METRIC_FASTENER_RE.finditer(cells_ll[2]):
+                            self.nonauth_tier5_fasteners[normalize_fastener(m_f.group(0))] = f"{lbname}::SUBSYSTEM-INVARIANTS(Never-Re-Add)"
+                for m_f in METRIC_FASTENER_RE.finditer(s_ll):
+                    nf = normalize_fastener(m_f.group(0))
+                    if cur_t5:
+                        self.nonauth_tier5_fasteners[nf] = f"{lbname}::{cur_lid}[TIER5]"
+                    else:
+                        self.nonauth_active_fasteners.setdefault(nf, f"{lbname}::{cur_lid}")
+                for m_qu in SINGLE_NUM_UNIT_RE.finditer(s_ll):
+                    u_c = canonicalize_unit(m_qu.group(3), m_qu.group(2))
+                    if u_c and u_c not in ("s", "ms", "b", "kb", "mb", "gb"):
+                        key_qu = (round(parse_num(m_qu.group(1)), 6), u_c)
+                        if cur_t5:
+                            self.nonauth_tier5_hints[key_qu] = f"{lbname}::{cur_lid}[TIER5]"
+                        else:
+                            self.nonauth_active_hints.setdefault(key_qu, f"{lbname}::{cur_lid}")
+
         # Register customer_entity -> project_entity ONLY when unambiguous (1-to-1 across indexed sources).
         # Never alias an umbrella owner (e.g. Umbrella-Org) across multiple distinct projects (e.g. project_alpha vs project_beta).
         for cust_tok, proj_set in cust_to_projects.items():
@@ -1266,6 +1477,68 @@ class SourceIndex:
         for p_first, proj_set in prefix_to_projects.items():
             if len(proj_set) == 1 and p_first not in self.dynamic_aliases and p_first not in self.ambiguous_umbrellas:
                 self.dynamic_aliases[p_first] = next(iter(proj_set))
+
+        # Index live git commit SHAs (`C1`) and PNG image IHDR pixel dimensions (`C2`) across source directories
+        seen_git_roots: Set[str] = set()
+        seen_img_dirs: Set[str] = set()
+        for sd in sorted(self.source_dirs):
+            # Determine entity associated with this directory
+            sd_ent = "*"
+            for finfo in self.file_infos.values():
+                if os.path.dirname(finfo.abs_fp) == sd and finfo.entity != "*":
+                    sd_ent = finfo.entity
+                    break
+            cur_g = sd
+            while cur_g and cur_g != os.sep:
+                if os.path.exists(os.path.join(cur_g, ".git")):
+                    if cur_g not in seen_git_roots:
+                        seen_git_roots.add(cur_g)
+                        try:
+                            proc_g = subprocess.run(
+                                ["git", "-C", cur_g, "rev-list", "--all"],
+                                capture_output=True,
+                                text=True,
+                                timeout=2.0,
+                                check=False,
+                            )
+                            if proc_g.returncode == 0:
+                                for sha_ln in proc_g.stdout.splitlines():
+                                    s_clean = sha_ln.strip().lower()
+                                    if len(s_clean) == 40:
+                                        self.git_full_shas.add(s_clean)
+                                        self.entity_git_shas.setdefault(sd_ent, set()).add(s_clean)
+                        except Exception:
+                            pass
+                    for img_sub in ("Images", "images", "assets", "."):
+                        cand_img_dir = os.path.join(cur_g, img_sub) if img_sub != "." else cur_g
+                        if os.path.isdir(cand_img_dir) and cand_img_dir not in seen_img_dirs:
+                            seen_img_dirs.add(cand_img_dir)
+                            for root_i, dirs_i, files_i in os.walk(cand_img_dir):
+                                dirs_i[:] = [d for d in dirs_i if not d.startswith(".")]
+                                for fn_i in files_i:
+                                    if fn_i.lower().endswith(".png"):
+                                        fp_i = os.path.join(root_i, fn_i)
+                                        if os.path.islink(fp_i):
+                                            continue
+                                        try:
+                                            with open(fp_i, "rb") as f_png:
+                                                hdr = f_png.read(24)
+                                            if len(hdr) >= 24 and hdr[:8] == b"\x89PNG\r\n\x1a\n" and hdr[12:16] == b"IHDR":
+                                                w_px, h_px = struct.unpack(">II", hdr[16:24])
+                                                if 1 <= w_px <= 32768 and 1 <= h_px <= 32768:
+                                                    for px_v in (float(w_px), float(h_px)):
+                                                        self.num_units.add((px_v, "px"))
+                                                        self.entity_num_units.setdefault(sd_ent, set()).add((px_v, "px"))
+                                                    dim_tok = f"{w_px}x{h_px} px {w_px}×{h_px} px {w_px}x{h_px} {w_px}×{h_px}"
+                                                    self.raw_lower_chunks.append(dim_tok)
+                                                    self.entity_raw_chunks.setdefault(sd_ent, []).append(dim_tok)
+                                        except Exception:
+                                            pass
+                    break
+                parent_g = os.path.dirname(cur_g)
+                if parent_g == cur_g:
+                    break
+                cur_g = parent_g
 
         self.raw_blob = "\n".join(self.raw_lower_chunks)
         self.raw_blob_nocomma = re.sub(r"(?<=\d),(?=\d{3}\b)", "", self.raw_blob)
@@ -1288,8 +1561,29 @@ class SourceIndex:
         bname = os.path.basename(ref_low)
         return self.file_infos.get(bname)
 
+    def check_git_sha(self, token: str, entities: Optional[Set[str]] = None) -> Tuple[bool, Optional[str]]:
+        tok_low = re.sub(r"^head:", "", token.strip(), flags=re.IGNORECASE).lower()
+        if not (7 <= len(tok_low) <= 40 and all(c in "0123456789abcdef" for c in tok_low)):
+            return False, None
+        if not self.git_full_shas:
+            return False, None
+        matched_full = [s for s in self.git_full_shas if s.startswith(tok_low)]
+        if not matched_full:
+            return False, "UNVERIFIED_GIT_COMMIT_SHA"
+        if entities and self.entity_git_shas:
+            for ent in entities:
+                if any(s.startswith(tok_low) for s in self.entity_git_shas.get(ent, set())):
+                    return True, None
+            if any(s.startswith(tok_low) for s in self.entity_git_shas.get("*", set())):
+                return True, None
+            for other_ent, shas in sorted(self.entity_git_shas.items()):
+                if other_ent not in entities and any(s.startswith(tok_low) for s in shas):
+                    return False, f"CROSS_ENTITY_BORROWING(from={other_ent}, active={sorted(entities)[0]})"
+        return True, None
+
     def _index_text(self, text: str, entity: str) -> None:
         q_text = quarantine_unverified_source_zones(text)
+        q_text_no_urls = re.sub(r"https?://[^\s)\]>\"'`]+", " ", q_text, flags=re.IGNORECASE)
         low = q_text.lower()
         self.raw_lower_chunks.append(low)
         if entity not in self.entity_raw_chunks:
@@ -1304,7 +1598,8 @@ class SourceIndex:
             self.entity_designators[entity] = set()
             self.entity_numbers_all[entity] = set()
 
-        for raw_ln in q_text.splitlines():
+        dia_totals: Dict[float, float] = {}
+        for raw_ln in q_text_no_urls.splitlines():
             if not DIGIT_RE.search(raw_ln):
                 continue
             qual_scan_ln = re.sub(
@@ -1334,9 +1629,33 @@ class SourceIndex:
                                     self.qualified_num_units.add(pair_q)
                                     self.entity_qualified_num_units[entity].add(pair_q)
 
-            if ALL_COUNTED_NOUN_STEM_RE.search(raw_ln):
+            for m_dia in re.finditer(
+                r"`?[Øø⌀]\s*([+-]?\d+(?:,\d{3})*(?:\.\d+)?)\s*(mm|cm|in|m)`?(?:\s*[×x]\s*`?(\d+)`?)?",
+                raw_ln,
+                re.IGNORECASE,
+            ):
+                cu_d = canonicalize_unit(m_dia.group(2), "")
+                v_d = round(parse_num(m_dia.group(1)), 6)
+                if cu_d:
+                    for g_d in ("id", "od"):
+                        pair_qd = (v_d, cu_d, g_d)
+                        self.qualified_num_units.add(pair_qd)
+                        self.entity_qualified_num_units[entity].add(pair_qd)
+                if m_dia.group(3):
+                    c_d = round(parse_num(m_dia.group(3)), 6)
+                    dia_totals[v_d] = round(dia_totals.get(v_d, 0.0) + c_d, 6)
+                    for cnt_cand in (c_d, round(2.0 * c_d, 6), dia_totals[v_d]):
+                        for cn_d in ("bore", "port", "channel", "part", "insert", "screw", "fastener", "bolt"):
+                            pair_cd = (cnt_cand, cn_d)
+                            self.counted_entities.add(pair_cd)
+                            self.entity_counted_entities[entity].add(pair_cd)
+
+            has_fastener_row = bool(re.search(r"\b(?:shcs|bhcs|fhcs)\b", raw_ln, re.IGNORECASE))
+            if ALL_COUNTED_NOUN_STEM_RE.search(raw_ln) or has_fastener_row:
                 ln_unquoted = re.sub(r"`([+-]?\d[\d,.–—-]*)`", r"\1", raw_ln)
                 ln_nouns = {normalize_counted_noun(nm.group(0)) for nm in ALL_COUNTED_NOUN_STEM_RE.finditer(ln_unquoted)}
+                if has_fastener_row:
+                    ln_nouns.update(("screw", "bolt", "fastener"))
                 if ln_nouns:
                     for nm_num in re.finditer(
                         r"(?<![A-Za-z0-9_.#])(\d{1,3}(?:,\d{3})+|\d+)(?:[x×]\b|(?![A-Za-z0-9_.%]))",
@@ -1349,22 +1668,22 @@ class SourceIndex:
                             self.counted_entities.add(pair_c)
                             self.entity_counted_entities[entity].add(pair_c)
 
-        for m in METRIC_FASTENER_RE.finditer(q_text):
+        for m in METRIC_FASTENER_RE.finditer(q_text_no_urls):
             fastener = normalize_fastener(m.group(1))
             self.fasteners.add(fastener)
             self.entity_fasteners[entity].add(fastener)
 
-        for m in DESIGNATOR_RE.finditer(q_text):
+        for m in DESIGNATOR_RE.finditer(q_text_no_urls):
             desig = normalize_designator(m.group(1))
             self.designators.add(desig)
             self.entity_designators[entity].add(desig)
 
-        for m in SHORE_RE.finditer(q_text):
+        for m in SHORE_RE.finditer(q_text_no_urls):
             shore_tok = re.sub(r"^shore\s*", "", m.group(0).lower()).strip()
             self.designators.add(f"shore:{shore_tok}")
             self.entity_designators[entity].add(f"shore:{shore_tok}")
 
-        num_scan_text = re.sub(r"`([+-]?\d[\d,.–—-]*)`", r"\1", q_text)
+        num_scan_text = re.sub(r"`([+-]?\d[\d,.–—-]*)`", r"\1", q_text_no_urls)
 
         for m in RANGE_NUM_UNIT_RE.finditer(num_scan_text):
             n1, u1, n2, u2 = m.group(1), m.group(2), m.group(3), m.group(4)
@@ -1415,8 +1734,8 @@ class SourceIndex:
                 self.num_units.add(p)
                 self.entity_num_units[entity].add(p)
 
-        # Standalone numbers: mask dates and git commit SHAs to prevent date bleed into numbers_all
-        num_clean = DATE_SHA_MASK_RE.sub(" ", q_text)
+        # Standalone numbers: mask dates, URLs, and git commit SHAs to prevent date/URL bleed into numbers_all
+        num_clean = DATE_SHA_MASK_RE.sub(" ", q_text_no_urls)
         for m in re.finditer(r"(?<![A-Za-z0-9_.])([+-]?\d+(?:,\d{3})*(?:\.\d+)?)(?:[x×]\b|(?![A-Za-z0-9_.]))", num_clean, re.IGNORECASE):
             try:
                 num_v = round(parse_num(m.group(1)), 6)
@@ -1921,6 +2240,18 @@ def attest_subagent_transcript(transcript_path: str, target_text: str) -> List[s
                             or ""
                         ).strip('"\' ')
                         if raw_p:
+                            if raw_p.lower().endswith("_lessons_archive.md"):
+                                st_a = targs.get("StartLine")
+                                en_a = targs.get("EndLine")
+                                try:
+                                    ok_win = (st_a is not None and en_a is not None and 0 <= (int(en_a) - int(st_a)) <= 30)
+                                except (TypeError, ValueError):
+                                    ok_win = False
+                                if not ok_win:
+                                    errors.append(
+                                        f"ARCHIVE_RAW_DUMP_DETECTED: Unwindowed or >30-line read_file on '{os.path.basename(raw_p)}' "
+                                        "is prohibited; use `sync_memory.py --lesson-id <ID>`."
+                                    )
                             p = os.path.realpath(os.path.expanduser(raw_p))
                             total_lines = None
                             shown_start = 1
@@ -2311,21 +2642,37 @@ def audit_target(
                 raw_def_ent = cand
                 break
 
+    def _is_speculative_tbd(tbd_text: str, ent_scope: Optional[Set[str]]) -> bool:
+        if re.search(r"\bCONFLICT\b", tbd_text, re.IGNORECASE) or INERT_META_TBD_RE.match(tbd_text):
+            return False
+        if re.search(
+            r"\b(?:recommend\w*|typically|usually|suggest\w*|advis\w*|standard\s+is|ideally|default\s+to|approx\w*|around\s+\d|e\.g\.\s*\d|likely|probabl\w*|assum\w*|estimat\w*|nominal\w*)\b",
+            tbd_text,
+            re.IGNORECASE,
+        ):
+            return True
+        for m_s in SHORE_RE.finditer(tbd_text):
+            if not idx.has_shore(m_s.group(0)):
+                return True
+        for m_f in METRIC_FASTENER_RE.finditer(tbd_text):
+            if not idx.has_fastener(m_f.group(1), entities=ent_scope)[0]:
+                return True
+        for m_r in RANGE_NUM_UNIT_RE.finditer(tbd_text):
+            n1, u1, n2, u2 = m_r.group(1), m_r.group(2), m_r.group(3), m_r.group(4)
+            cu2 = canonicalize_unit(u2, " ")
+            cu1 = canonicalize_unit(u1, " ") if u1 else cu2
+            if (cu1 and not idx.has_num_unit(parse_num(n1), cu1, entities=ent_scope)[0]) or (
+                cu2 and not idx.has_num_unit(parse_num(n2), cu2, entities=ent_scope)[0]
+            ):
+                return True
+        for m_u in SINGLE_NUM_UNIT_RE.finditer(tbd_text):
+            cu = canonicalize_unit(m_u.group(3), m_u.group(2))
+            if cu and not idx.has_num_unit(parse_num(m_u.group(1)), cu, entities=ent_scope)[0]:
+                return True
+        return False
+
     for line_no, ln, tbds in cleaned_lines:
         line_sup_start = len(supported)
-        for t in tbds:
-            tbd_offenders.append({"line": line_no, "marker": t})
-        if not ln.strip():
-            continue
-
-        if is_study_brief:
-            if re.search(r"<!--\s*FIRST-PRINCIPLES-THEORY:START\s*-->", ln, re.IGNORECASE):
-                in_theory_zone = True
-                continue
-            if re.search(r"<!--\s*FIRST-PRINCIPLES-THEORY:END\s*-->", ln, re.IGNORECASE):
-                in_theory_zone = False
-                continue
-
         if "=== Subagent Evidence Packet" in ln:
             in_evidence_packet = True
         elif ln.strip().startswith("==="):
@@ -2357,6 +2704,27 @@ def audit_target(
             else:
                 active_entities = None
         active_ent = sorted(active_entities)[0] if active_entities else None
+
+        for t in tbds:
+            tbd_offenders.append({"line": line_no, "marker": t})
+            if _is_speculative_tbd(t, active_entities):
+                unbacked.append(
+                    {
+                        "line": line_no,
+                        "type": "TBD_SPECULATIVE_GUESS",
+                        "claim": t,
+                    }
+                )
+        if not ln.strip():
+            continue
+
+        if is_study_brief:
+            if re.search(r"<!--\s*FIRST-PRINCIPLES-THEORY:START\s*-->", ln, re.IGNORECASE):
+                in_theory_zone = True
+                continue
+            if re.search(r"<!--\s*FIRST-PRINCIPLES-THEORY:END\s*-->", ln, re.IGNORECASE):
+                in_theory_zone = False
+                continue
 
         # Polarity / Safety Inversion Check
         has_loctite = bool(re.search(r"\b(loctite(?:\s+\d+[a-z]*)?|threadlocker)\b", ln, re.I))
@@ -2440,12 +2808,22 @@ def audit_target(
                 id_backtick_spans.append(m.span())
                 continue
 
-            # Backticked bare counts (`578x`, `437`, `73,893`)
+            # Backticked bare counts (`578x`, `437`, `73,893`) or all-digit git commit SHAs (`2706629`)
             m_cnt = re.match(r"^([+-]?\d+(?:,\d{3})*(?:\.\d+)?)x?$", lit, re.IGNORECASE)
             if m_cnt:
                 id_backtick_spans.append(m.span())
                 cval = round(parse_num(m_cnt.group(1)), 6)
-                ok_cnt = (cval in idx.numbers_all) or (cval in derived_numbers)
+                ok_cnt = (cval == 0.0) or (cval in idx.numbers_all) or (cval in derived_numbers)
+                if not ok_cnt and idx.git_full_shas and re.match(r"^\d{7,40}$", lit):
+                    ok_sha, err_sha = idx.check_git_sha(lit, entities=active_entities)
+                    if ok_sha:
+                        supported.append({"line": line_no, "type": "GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                        continue
+                    elif (err_sha and err_sha.startswith("CROSS_ENTITY_BORROWING")) or re.search(
+                        r"\b(?:commit|sha|git|revision|head)\b", ln, re.IGNORECASE
+                    ):
+                        unbacked.append({"line": line_no, "type": err_sha or "UNVERIFIED_GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                        continue
                 rec_cnt = {"line": line_no, "type": "NUMERIC_COUNT", "claim": f"`{lit}`"}
                 (supported if ok_cnt else unbacked).append(rec_cnt)
                 continue
@@ -2497,42 +2875,60 @@ def audit_target(
                         or idx.has_backtick_literal(lit, entities=active_entities)[0]
                     )
                     if ok_cit and line_spec:
-                        m_rng = re.match(r"^L?(\d+)(?:[-–—]L?(\d+))?$", line_spec, re.IGNORECASE)
-                        if m_rng:
-                            st_ln = int(m_rng.group(1))
-                            en_ln = int(m_rng.group(2)) if m_rng.group(2) else st_ln
-                            if st_ln > en_ln:
-                                ok_cit = False
-                                id_backtick_spans.append(m.span())
-                                unbacked.append({"line": line_no, "type": "INVERTED_LINE_RANGE", "claim": f"`{lit}` (start {st_ln} > end {en_ln})"})
+                        spans: List[Tuple[int, int]] = []
+                        inverted_err = False
+                        for seg_raw in line_spec.split(","):
+                            seg_s = seg_raw.strip()
+                            if not seg_s:
                                 continue
-                        else:
-                            cited_lns = [int(n) for n in re.findall(r"\d+", line_spec)]
-                            st_ln = min(cited_lns) if cited_lns else 1
-                            en_ln = max(cited_lns) if cited_lns else 1
+                            m_seg = re.match(r"^L?(\d+)(?:[-–—]L?(\d+))?$", seg_s, re.IGNORECASE)
+                            if m_seg:
+                                s_i = int(m_seg.group(1))
+                                e_i = int(m_seg.group(2)) if m_seg.group(2) else s_i
+                                if s_i > e_i:
+                                    inverted_err = True
+                                    ok_cit = False
+                                    id_backtick_spans.append(m.span())
+                                    unbacked.append({"line": line_no, "type": "INVERTED_LINE_RANGE", "claim": f"`{lit}` (start {s_i} > end {e_i})"})
+                                    break
+                                spans.append((s_i, e_i))
+                            else:
+                                nums_s = [int(n) for n in re.findall(r"\d+", seg_s)]
+                                if nums_s:
+                                    spans.append((min(nums_s), max(nums_s)))
+                        if inverted_err:
+                            continue
+                        if not spans:
+                            spans = [(1, 1)]
 
                         info = idx.get_file_info(cited_rel) or idx.get_file_info(bname_low)
                         if not info:
                             ok_cit, _ = idx.has_backtick_literal(lit, entities=active_entities)
                         else:
-                            if st_ln < 1 or en_ln > info.line_count:
-                                ok_cit = False
-                            elif info.frontmatter_range and (
-                                (st_ln >= info.frontmatter_range[0] and st_ln <= info.frontmatter_range[1])
-                                or (en_ln >= info.frontmatter_range[0] and en_ln <= info.frontmatter_range[1])
-                            ):
-                                ok_cit = False
-                                id_backtick_spans.append(m.span())
-                                unbacked.append({
-                                    "line": line_no,
-                                    "type": "FRONTMATTER_CITATION_BLOCKED",
-                                    "claim": f"`{lit}` (lines {st_ln}..{en_ln} fall within YAML frontmatter {info.frontmatter_range[0]}..{info.frontmatter_range[1]})",
-                                })
-                                continue
-                            else:
+                            fm_blocked = False
+                            q_blocked = False
+                            warn_blocked = False
+                            for st_ln, en_ln in spans:
+                                if st_ln < 1 or en_ln > info.line_count:
+                                    ok_cit = False
+                                    break
+                                if info.frontmatter_range and (
+                                    (st_ln >= info.frontmatter_range[0] and st_ln <= info.frontmatter_range[1])
+                                    or (en_ln >= info.frontmatter_range[0] and en_ln <= info.frontmatter_range[1])
+                                ):
+                                    ok_cit = False
+                                    fm_blocked = True
+                                    id_backtick_spans.append(m.span())
+                                    unbacked.append({
+                                        "line": line_no,
+                                        "type": "FRONTMATTER_CITATION_BLOCKED",
+                                        "claim": f"`{lit}` (lines {st_ln}..{en_ln} fall within YAML frontmatter {info.frontmatter_range[0]}..{info.frontmatter_range[1]})",
+                                    })
+                                    break
                                 for q_st, q_en, q_title in info.quarantined_ranges:
                                     if not (en_ln < q_st or st_ln > q_en):
                                         ok_cit = False
+                                        q_blocked = True
                                         id_backtick_spans.append(m.span())
                                         unbacked.append({
                                             "line": line_no,
@@ -2540,18 +2936,24 @@ def audit_target(
                                             "claim": f"`{lit}` (lines {st_ln}..{en_ln} fall within quarantined ledger '{q_title}')",
                                         })
                                         break
-                                if not ok_cit:
-                                    continue
-                                warn_err = info.check_warning_context(st_ln, en_ln, ln)
+                                if q_blocked:
+                                    break
+                                claim_ctx_window = " ".join(
+                                    cl[1] for cl in cleaned_lines[max(0, line_no - 3) : min(len(cleaned_lines), line_no + 2)]
+                                )
+                                warn_err = info.check_warning_context(st_ln, en_ln, claim_ctx_window)
                                 if warn_err:
                                     ok_cit = False
+                                    warn_blocked = True
                                     id_backtick_spans.append(m.span())
                                     unbacked.append({
                                         "line": line_no,
                                         "type": "WARNING_CONTEXT_CITATION",
                                         "claim": f"`{lit}`: {warn_err}",
                                     })
-                                    continue
+                                    break
+                            if fm_blocked or q_blocked or warn_blocked:
+                                continue
 
                     if ok_cit:
                         id_backtick_spans.append(m.span())
@@ -2580,20 +2982,91 @@ def audit_target(
                 (supported if ok_fp else unbacked).append(rec_fp)
                 continue
 
+            if " " not in lit and idx.git_full_shas and re.match(r"^(?:HEAD:)?[0-9a-f]{7,40}$", lit, re.IGNORECASE):
+                ok_sha_pre, err_sha_pre = idx.check_git_sha(lit, entities=active_entities)
+                has_git_ctx_pre = lit.lower().startswith("head:") or bool(
+                    re.search(r"\b(?:commit|sha|git|revision|head)\b", ln, re.IGNORECASE)
+                )
+                if ok_sha_pre:
+                    id_backtick_spans.append(m.span())
+                    supported.append({"line": line_no, "type": "GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                    continue
+                if (err_sha_pre and err_sha_pre.startswith("CROSS_ENTITY_BORROWING")) or has_git_ctx_pre:
+                    id_backtick_spans.append(m.span())
+                    unbacked.append({"line": line_no, "type": err_sha_pre or "UNVERIFIED_GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                    continue
+
             if re.match(r"^[<>≤≥~≈±Øø⌀]?\s*\d", lit) and (SINGLE_NUM_UNIT_RE.search(lit) or RANGE_NUM_UNIT_RE.search(lit)):
                 unquoted_chars[m.start()] = " "
                 unquoted_chars[m.end() - 1] = " "
                 continue
 
-            id_backtick_spans.append(m.span())
+            # Exempt report/finding/section labels (`DEF-01`, `OPEN-02`, `PASS`), bare installed Homunculus oracle basenames, and unquote multi-word prose backticks
+            if re.match(
+                r"^(?:(?:DEF|FINDING|ISSUE|CRIT|WARN|ERR|OPEN|SOLVED|PROTOCOL|CHECK|GATE|STEP|STAGE|PHASE|ROUND|TIER|MODE|PART|ITEM|SEC|ROW|COL)[-_\s]?\d+[A-Za-z]?|PASS|FAIL|WARN|BLOCKED|SYNCED|CLEAN|OK|YES|NO|NONE|N/A|TBD|CONFLICT|DRIFT_DETECTED|CACHE_VALID|CACHE_STALE|IN_ASSEMBLY_STEP|STL_ONLY)$",
+                lit,
+                re.IGNORECASE,
+            ) or ("/" not in lit and "\\" not in lit and lit.lower() in _installed_homunculus_script_basenames()):
+                id_backtick_spans.append(m.span())
+                continue
+
+            if " " in lit:
+                unquoted_chars[m.start()] = " "
+                unquoted_chars[m.end() - 1] = " "
+                continue
+
             ok, err_code = idx.has_backtick_literal(lit, entities=active_entities)
-            rec = {"line": line_no, "type": err_code or "LITERAL_ID", "claim": f"`{lit}`"}
-            (supported if ok else unbacked).append(rec)
+            if ok:
+                id_backtick_spans.append(m.span())
+                supported.append({"line": line_no, "type": "LITERAL_ID", "claim": f"`{lit}`"})
+                continue
+            if err_code and err_code.startswith("CROSS_ENTITY_BORROWING"):
+                id_backtick_spans.append(m.span())
+                unbacked.append({"line": line_no, "type": err_code, "claim": f"`{lit}`"})
+                continue
+            if idx.git_full_shas and re.match(r"^(?:HEAD:)?[0-9a-f]{7,40}$", lit, re.IGNORECASE):
+                ok_sha, err_sha = idx.check_git_sha(lit, entities=active_entities)
+                has_git_ctx = lit.lower().startswith("head:") or bool(
+                    re.search(r"\b(?:commit|sha|git|revision|head)\b", ln, re.IGNORECASE)
+                )
+                if ok_sha:
+                    id_backtick_spans.append(m.span())
+                    supported.append({"line": line_no, "type": "GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                    continue
+                elif (err_sha and err_sha.startswith("CROSS_ENTITY_BORROWING")) or has_git_ctx:
+                    id_backtick_spans.append(m.span())
+                    unbacked.append({"line": line_no, "type": err_sha or "UNVERIFIED_GIT_COMMIT_SHA", "claim": f"`{lit}`"})
+                    continue
+            if re.match(r"^!?[Pp][A-Za-z]\d+$", lit) or re.search(r"\.(?:stl|step|stp|3mf|cfg|py|sh|ps1|json|yaml|yml|toml|xlsx|csv)$", lit, re.IGNORECASE):
+                id_backtick_spans.append(m.span())
+                unbacked.append({"line": line_no, "type": err_code or "LITERAL_ID", "claim": f"`{lit}`"})
+                continue
+            unquoted_chars[m.start()] = " "
+            unquoted_chars[m.end() - 1] = " "
+            continue
 
         for st, en in id_backtick_spans:
             for i in range(st, en):
                 unquoted_chars[i] = " "
         prose_ln = "".join(unquoted_chars)
+
+        # 1b. Unbackticked Git Commit Citations (`commit 2706629`, `commit 1a2b3c4`, `SHA deadbeef0`, `revision #1a2b3c4`)
+        if idx.git_full_shas and re.search(r"\b(?:commit|sha|revision|hash|rev)\s+#?[0-9a-f]{7,40}\b", prose_ln, re.IGNORECASE):
+            sha_spans: List[Tuple[int, int]] = []
+            for m_cs in re.finditer(r"\b(?:commit|sha|revision|hash|rev)\s+#?([0-9a-f]{7,40})\b", prose_ln, re.IGNORECASE):
+                sha_tok = m_cs.group(1)
+                sha_spans.append(m_cs.span(1))
+                ok_cs, err_cs = idx.check_git_sha(sha_tok, entities=active_entities)
+                if ok_cs:
+                    supported.append({"line": line_no, "type": "GIT_COMMIT_SHA", "claim": sha_tok})
+                else:
+                    unbacked.append({"line": line_no, "type": err_cs or "UNVERIFIED_GIT_COMMIT_SHA", "claim": sha_tok})
+            if sha_spans:
+                chars_s = list(prose_ln)
+                for st_s, en_s in sha_spans:
+                    for i_s in range(st_s, en_s):
+                        chars_s[i_s] = " "
+                prose_ln = "".join(chars_s)
 
         # 2. Metric Fasteners (M3x5x4mm, M3x8mm, M5x12)
         fastener_spans: List[Tuple[int, int]] = []
@@ -2759,6 +3232,8 @@ def audit_target(
                 continue
             hyph_spans.append(m.span())
             cval = round(parse_num(m.group(1)), 6)
+            if cval == 0.0:
+                continue
             cnoun = normalize_counted_noun(m.group(2))
             ok_hc, err_hc = idx.has_counted_entity(cval, cnoun, entities=active_entities)
             if not ok_hc and (cval in derived_numbers) and not err_hc:
@@ -2779,6 +3254,8 @@ def audit_target(
             if any(w in COUNT_MODIFIER_STOPWORDS for w in mods):
                 continue
             cval = round(parse_num(m.group(1)), 6)
+            if cval == 0.0:
+                continue
             cnoun = normalize_counted_noun(m.group(3))
             ok_cn, err_cn = idx.has_counted_entity(cval, cnoun, entities=active_entities)
             if not ok_cn and (cval in derived_numbers) and not err_cn:
@@ -2814,6 +3291,43 @@ def audit_target(
                         ),
                     }
                 )
+
+    filtered_unbacked: List[Dict[str, object]] = []
+    for ub in unbacked:
+        utype = str(ub.get("type", ""))
+        uclaim = str(ub.get("claim", "")).strip("`'\" ")
+        if utype == "LITERAL_ID" and uclaim.lower() in idx.lesson_ids:
+            supported.append(ub)
+            continue
+        if utype in ("QUANTITY_UNIT", "FASTENER_SPEC") or utype.startswith("QUALIFIED_QUANTITY"):
+            mf_u = METRIC_FASTENER_RE.search(uclaim)
+            mqu_u = SINGLE_NUM_UNIT_RE.search(uclaim)
+            t5_src = ""
+            act_src = ""
+            if mf_u:
+                nfu = normalize_fastener(mf_u.group(0))
+                t5_src = idx.nonauth_tier5_fasteners.get(nfu, "")
+                act_src = idx.nonauth_active_fasteners.get(nfu, "")
+            elif mqu_u:
+                uc_u = canonicalize_unit(mqu_u.group(3), mqu_u.group(2))
+                if uc_u and uc_u not in ("s", "ms", "b", "kb", "mb", "gb"):
+                    k_u = (round(parse_num(mqu_u.group(1)), 6), uc_u)
+                    t5_src = idx.nonauth_tier5_hints.get(k_u, "")
+                    act_src = idx.nonauth_active_hints.get(k_u, "")
+            if t5_src:
+                ub["nonauth_gate"] = "RETIRED_SPEC_RESURRECTION_BLOCKED"
+                ub["nonauth_source"] = t5_src
+            elif act_src:
+                ub["nonauth_gate"] = "USER_VERIFICATION_QUERY_REQUIRED"
+                ub["nonauth_source"] = act_src
+        filtered_unbacked.append(ub)
+    unbacked = filtered_unbacked
+
+    raw_target_lines = target_text.splitlines()
+    for ub in unbacked:
+        lno = int(ub.get("line", 0))
+        if 1 <= lno <= len(raw_target_lines) and "line_text" not in ub:
+            ub["line_text"] = raw_target_lines[lno - 1].strip()
 
     return {
         "vrf_token": idx.vrf_token,
@@ -2963,11 +3477,6 @@ def main() -> int:
         help="Optional explicit entity or project context to enforce against --sources (e.g., Client_Alpha or Actuator_Module).",
     )
     parser.add_argument(
-        "--allow-lessons-source",
-        action="store_true",
-        help="Opt-in override allowing *_Lessons_Learned.md files to be indexed as quantitative sources (auto-excluded by default so failed historical attempts never whitelist false specs).",
-    )
-    parser.add_argument(
         "--transcript",
         help="Optional subagent transcript.jsonl to attest oracle execution and detect read truncations.",
     )
@@ -2981,7 +3490,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     if args.memory_root:
-        os.environ["HOMUNCULUS_MEMORY_ROOT"] = str(Path(args.memory_root.replace("\\", "/")).expanduser().resolve())
+        os.environ["HOMUNCULUS_MEMORY_ROOT"] = os.path.abspath(os.path.expanduser(args.memory_root.replace("\\", "/")))
 
     if not args.dump_whitelist and not args.target:
         parser.error("the following arguments are required: --target (unless --dump-whitelist is passed)")
@@ -3004,7 +3513,7 @@ def main() -> int:
         source_files, excluded_circular, excluded_lessons = collect_source_files(
             args.sources,
             args.target if args.target else None,
-            allow_lessons_source=bool(args.allow_lessons_source),
+            allow_lessons_source=False,
         )
         if not source_files:
             print("[EXTRACTION BLOCKED — ABORTED] Zero readable non-circular source files found.", file=sys.stderr)
@@ -3024,7 +3533,7 @@ def main() -> int:
         if args.json:
             print(json.dumps(wl, indent=2))
         else:
-            print(f"=== Pre-Draft Verified Whitelist | Receipt: {wl['vrf_token']} | Sources: {wl['sources_checked']} ===")
+            print(f"=== Pre-Draft Verified Whitelist (Run with --target After Drafting for VRF Receipt) | Sources: {wl['sources_checked']} ===")
             ent_str = ", ".join(f"{e['file']}[entity={e['entity']}]" for e in wl["source_entities"][:12])
             if len(wl["source_entities"]) > 12:
                 ent_str += f", +{len(wl['source_entities']) - 12} more"
@@ -3047,8 +3556,6 @@ def main() -> int:
             return 3
         return 0
     t_dir = os.path.dirname(os.path.abspath(args.target)) if (args.target and args.target != "-") else None
-    if not args.skip_freshness_check and t_dir and os.path.basename(t_dir) != "Directory":
-        homunculus_paths.ensure_directory_fresh(workspace_dir=t_dir, homunculus_root=_HOM_ROOT)
     def_ent = args.entity or (os.path.basename(os.path.normpath(args.project_dir)) if args.project_dir else "")
     report = audit_target(target_text, idx, target_dir=t_dir, default_entity=def_ent)
 
@@ -3104,7 +3611,35 @@ def main() -> int:
         if report["unbacked_claims"]:
             print("\n[!] UNBACKED CLAIMS (Must bind to source, replace with [TBD: ...], or remove):")
             for item in report["unbacked_claims"]:
-                print(f"  - Line {item['line']} [{item['type']}]: {item['claim']}")
+                itype = str(item["type"])
+                if itype.startswith("QUALIFIED_QUANTITY"):
+                    hint = "Source has this number without this specific component qualifier—use neutral geometry/prose or tag [TBD: Confirm component spec]."
+                elif itype.startswith(("COUNTED_ENTITY", "COUNTED_MODIFIER")):
+                    hint = "Count+noun pair not found in --sources; align with exact BOM/source row count or tag [TBD: <missing_count>]."
+                elif itype == "WARNING_CONTEXT_CITATION":
+                    hint = "Cited source lines contain a hazard/warning alert; include 'warning', 'caution', 'never', or 'avoid' in the citing sentence."
+                elif itype.startswith("CROSS_ENTITY_BORROWING"):
+                    hint = "Claim references another entity/project's source; remove cross-entity reference or attribute project explicitly."
+                elif itype == "TBD_SPECULATIVE_GUESS":
+                    hint = "Never smuggle recommendations or pretraining guesses ('recommend', 'typically', etc.) inside [TBD: ...]; write only the missing variable name (e.g., [TBD: <missing_spec>])."
+                else:
+                    hint = "Verify exact literal/number in --sources, or replace unverified figure with [TBD: <missing_spec>]."
+                ltxt = str(item.get("line_text", ""))
+                if len(ltxt) > 160:
+                    ltxt = ltxt[:157] + "..."
+                line_ctx = f"\n    [Line Text]: {ltxt}" if ltxt else ""
+                nag = item.get("nonauth_gate", "")
+                nas = item.get("nonauth_source", "")
+                if nag == "RETIRED_SPEC_RESURRECTION_BLOCKED":
+                    hint = f"[RETIRED_SPEC_RESURRECTION_BLOCKED] Matches retired TIER5/Never-Re-Add record ({nas}) — DO NOT USE; bind to active spec or remove."
+                elif nag == "USER_VERIFICATION_QUERY_REQUIRED":
+                    hint = f"[USER_VERIFICATION_QUERY_REQUIRED] Found only in non-authoritative memory ({nas}), not primary specs — ask user to verify & promote to _Hardware.md/BOM.md, or tag [TBD: ...]."
+                print(f"  - Line {item['line']} [{itype}]: {item['claim']}{line_ctx}\n    [Fix Hint]: {hint}")
+            print(
+                "\n[2-PASS CEILING]: Using the exact [Line Text] above (do NOT re-read the target file), resolve or replace all "
+                "flagged claims with [TBD: <variable_name>] in ONE turn (batch multiple edit_file calls in parallel), then run "
+                "verify_claims.py once more. Never inspect verify_claims.py source/regexes."
+            )
 
         if report["tbd_offenders"]:
             print("\n[?] OPEN [TBD] OFFENDERS (Tracked explicitly for user resolution):")

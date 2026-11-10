@@ -279,10 +279,14 @@ class TestAdapters(unittest.TestCase):
             self.assertFalse((ws_copy / ".agents" / "skills" / "sample-addon").exists())
 
             # Verify audit_skill_hygiene.py blocks non-functional milestone names, missing triggers, case-variant Agent.md, and >24KB rules
+            (fw_copy / "scripts").chmod(0o755)
             bad_script = fw_copy / "scripts" / "phase_3b.py"
             bad_script.write_text("x = 1\n", encoding="utf-8")
             (fw_copy / "Agent.md").write_text("# Wrong case\n", encoding="utf-8")
-            (fw_copy / "rules" / "co-engineering-partner.md").write_text(
+            (fw_copy / "rules").chmod(0o755)
+            rule_target = fw_copy / "rules" / "co-engineering-partner.md"
+            rule_target.chmod(0o644)
+            rule_target.write_text(
                 "# Missing trigger frontmatter\n" + ("x " * 12_500) + "\n",
                 encoding="utf-8",
             )

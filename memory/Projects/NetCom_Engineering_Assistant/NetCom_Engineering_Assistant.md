@@ -9,7 +9,7 @@ repo_head_sha: "UNTRACKED"
 tree_hash: "3ce4939d8bf7"
 checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "3ce4939d8bf7"
-checkpoint_worktree: "('untracked', [])"
+checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/NetCom_Tasks.md"
 last_synced: "2026-11-06"
 ---

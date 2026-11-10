@@ -23,15 +23,16 @@ Applies and verifies the canonical Homunculus documentation image style:
   Owning Module : `doc-and-card-studio` (`skills/doc-and-card-studio/SKILL.md`)
   Callers       : `audit_repo_docs.py` (imports PNG helpers), `render_diagram.py` (`--github-card`), `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`ensure_directory_fresh`), lazy optional `PIL`/`numpy` with stdlib PNG fallback
+  Contract      : `scripts/script_contracts.json` [`format_image.py`]
   CLI Flags     : inputs, -o, --output, --combine, --no-divider, --inspect, --bg-color, --no-whiten-bg, --inner-padding, --force-inner-padding, --card-size, --margin, --radius, --border-width, --border-color, --force
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _load_imaging_libs (#L55-L72)              | def _inspect_png_stdlib (#L75-L87)
-    - def parse_rgba (#L100-L105)                    | def _corner_sample_coords (#L108-L113)
-    - def has_studio_grey_background (#L116-L137)    | def is_full_bleed_part_crop (#L140-L161)
-    - def is_already_formatted (#L164-L222)          | def strip_existing_card_margin (#L225-L261)
-    - def whiten_studio_background (#L264-L361)      | def _prepare_card_content (#L364-L408)
-    - def render_card_with_shadow (#L411-L467)       | def format_single_image (#L470-L516)
-    - def format_combined_pair (#L519-L571)          | def main (#L574-L736)
+    - def _load_imaging_libs (#L56-L73)              | def _inspect_png_stdlib (#L76-L88)
+    - def parse_rgba (#L101-L106)                    | def _corner_sample_coords (#L109-L114)
+    - def has_studio_grey_background (#L117-L138)    | def is_full_bleed_part_crop (#L141-L162)
+    - def is_already_formatted (#L165-L223)          | def strip_existing_card_margin (#L226-L262)
+    - def whiten_studio_background (#L265-L362)      | def _prepare_card_content (#L365-L409)
+    - def render_card_with_shadow (#L412-L468)       | def format_single_image (#L471-L517)
+    - def format_combined_pair (#L520-L572)          | def main (#L575-L730)
 === END NAVIGATION MAP ===
 """
 
@@ -697,9 +698,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             border_color=args.border_color,
             whiten_bg=not args.no_whiten_bg,
         )
-        homunculus_paths.ensure_directory_fresh(
-            workspace_dir=os.path.dirname(os.path.abspath(args.output)), homunculus_root=_HOM_ROOT
-        )
         return 0
 
     for p in expanded_inputs:
@@ -728,10 +726,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             force_inner_padding=args.force_inner_padding,
             force=args.force,
         )
-
-    if expanded_inputs:
-        probe_out = os.path.dirname(os.path.abspath(args.output if args.output else expanded_inputs[0]))
-        homunculus_paths.ensure_directory_fresh(workspace_dir=probe_out, homunculus_root=_HOM_ROOT)
 
     return 0
 

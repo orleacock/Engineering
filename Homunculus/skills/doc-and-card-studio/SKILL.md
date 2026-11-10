@@ -11,7 +11,8 @@ This skill governs repository documentation structure, Markdown alert hygiene, r
 
 ## 1. Pre-Flight Foundation Checks
 
-1. **Modular Documentation Architecture**:
+1. **Modular Documentation Architecture & Parallel Turn-1 Read Batching**:
+   - Batch all repository and memory file reads (`README.md`, `BOM.md`, `Assembly_Guide.md`, `Print_Settings.md`, `.cfg`, plus `<Project>.md`, `<Project>_Hardware.md`, and `<Project>_Lessons_Learned.md`) in **1–2 parallel `read_file` turns (`4–8` files/turn)**—never serialize reads one file per turn.
    - Keep top-level `README.md` focused on project overview, quick-start navigation, and verified capability highlights while linking cleanly to modular sub-documents (`BOM.md`, `Assembly_Guide.md`, `Print_Settings.md`, `ALPHA_&_DIRECTION.md`, or `docs/*.md`).
    - Read [`references/doc_templates.md`](references/doc_templates.md) **before** drafting `README.md`, `BOM.md`, `Print_Settings.md`, or `Assembly_Guide.md` (never scan unrelated sibling project repositories for style templates). Retain every canonical parameter row in the template (e.g., `Nozzle Diameter`, `Layer Height`, `Extrusion Width`, `Wall Perimeters`, `Top / Bottom Solid Layers`, `Infill`, and `Supports`, split into Rigid vs. Elastomer/`TPU` columns when flexible parts exist) instead of dropping unrecorded rows.
    - Inspect `<memory_root>/Standards_and_Specs/Standards_Index.md` and any workspace `.homunculus_brand.json` to load organization-specific style guides, canonical link tables, and disclosure rules on demand without hardcoding vendor or brand URLs inside the skill.

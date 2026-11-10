@@ -3,8 +3,8 @@ title: "Orin_Workstation — Memory & Repository Directory Tree"
 entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "568daa9d1fe6"
-last_synced: "2026-11-07"
+tree_hash: "eb7fe5cfd53f"
+last_synced: "2026-11-09"
 ---
 
 # 🗂️ `Orin_Workstation` — Directory Lookup Map (`entity: Orin_Workstation`)
@@ -29,7 +29,11 @@ last_synced: "2026-11-07"
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
 │   ├── Directory_Index.md
-│   └── Orin_Workstation_Directory.md
+│   ├── Orin_Workstation_Decision_Router.md
+│   ├── Orin_Workstation_Directory.md
+│   └── Orin_Workstation_memory_index.json
+├── Profile/
+│   └── Decision_Profile.md
 ├── Projects/
 │   └── Workstation_Operations/
 │       ├── Quarantine/
@@ -45,6 +49,7 @@ last_synced: "2026-11-07"
 │   ├── Author_Voice_Cadence_Telemetry_Report.md
 │   ├── Author_Voice_Verbatim_Exemplars.md
 │   ├── Fasteners_and_Inserts.md
+│   ├── Governance_and_Constraint_Architecture.md
 │   ├── Image_and_Style_Rules.md
 │   ├── Standards_Index.md
 │   ├── Verifiable_Accuracy_and_Anti_Hallucination.md
@@ -63,6 +68,8 @@ last_synced: "2026-11-07"
 │   │   ├── Hardware_Pinout_and_Pneumatic_Blueprint.md
 │   │   ├── Layered_Architecture_Blueprint.md
 │   │   └── Spatial_Topology_Blueprint.md
+│   ├── AGENTS.md
+│   ├── Decision_Profile.md
 │   ├── Global_Standards_Index.md
 │   ├── Memory_Map_README.md
 │   ├── Project_Hardware.md
@@ -70,7 +77,9 @@ last_synced: "2026-11-07"
 │   ├── Project_Lessons_Learned.md
 │   ├── Project_Software.md
 │   ├── Quarantine_Note.md
+│   ├── Stateful_Sprint_Planning_Template.md
 │   └── Task_Umbrella.md
+├── AGENTS.md
 └── README.md
 +------------------------------------------------------------+
 ```

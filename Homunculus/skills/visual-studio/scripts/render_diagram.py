@@ -18,19 +18,20 @@ Supports optional --github-card post-processing via format_image.py.
   Owning Module : `visual-studio` (`skills/visual-studio/SKILL.md`)
   Callers       : `pre-commit-gate` (Stage Y `--strict`), `test_core_skills.py`
   Callees       : `homunculus_paths.py` (`resolve_workspace_config`, `ensure_directory_fresh`), `format_image.py` (`--github-card` subprocess)
+  Contract      : `scripts/script_contracts.json` [`render_diagram.py`]
   CLI Flags     : --list-palettes, --list-blueprints, --memory-root, --spec, --blueprint, --palette, --out-dir, --basename, -o, --output, --png, --preview-png, --github-card, --svg-only, --strict
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _resolve_active_memory_root (#L63-L84)     | def esc (#L162-L163)
-    - def extract_frontmatter_aliases (#L166-L179)   | def apply_palette_defaults (#L182-L195)
-    - def normalize_key (#L198-L199)                 | def discover_palettes (#L202-L273)
-    - def discover_blueprints (#L276-L312)           | def load_spec (#L315-L324)
-    - def _best_header_text (#L327-L336)             | def strip_inline_markup (#L339-L340)
-    - def render_inline_markup (#L343-L352)          | def resolve_style_colors (#L355-L389)
-    - class DiagramBuilder (#L392-L626)              | def render_layered_architecture (#L629-L790)
-    - def render_column_dataflow (#L793-L944)        | def render_hardware_pinout_pneumatic (#L947-L1178)
-    - def render_comparison_matrix (#L1181-L1314)    | def _rect_port (#L1317-L1330)
-    - def _segment_hits_rect (#L1333-L1358)          | def render_spatial_topology (#L1361-L1594)
-    - def convert_svg_to_png (#L1597-L1620)          | def main (#L1623-L1785)
+    - def _resolve_active_memory_root (#L64-L85)     | def esc (#L163-L164)
+    - def extract_frontmatter_aliases (#L167-L180)   | def apply_palette_defaults (#L183-L196)
+    - def normalize_key (#L199-L200)                 | def discover_palettes (#L203-L274)
+    - def discover_blueprints (#L277-L313)           | def load_spec (#L316-L325)
+    - def _best_header_text (#L328-L337)             | def strip_inline_markup (#L340-L341)
+    - def render_inline_markup (#L344-L353)          | def resolve_style_colors (#L356-L390)
+    - class DiagramBuilder (#L393-L627)              | def render_layered_architecture (#L630-L791)
+    - def render_column_dataflow (#L794-L945)        | def render_hardware_pinout_pneumatic (#L948-L1179)
+    - def render_comparison_matrix (#L1182-L1315)    | def _rect_port (#L1318-L1331)
+    - def _segment_hits_rect (#L1334-L1359)          | def render_spatial_topology (#L1362-L1595)
+    - def convert_svg_to_png (#L1598-L1621)          | def main (#L1624-L1783)
 === END NAVIGATION MAP ===
 """
 
@@ -1763,9 +1764,6 @@ def main() -> int:
         png_label = "SKIPPED (SVG-only default; pass --png or --github-card for raster export)"
     else:
         png_label = str(png_path) if png_ok else "SKIPPED (no rasterizer)"
-
-    if not gate_failed:
-        homunculus_paths.ensure_directory_fresh(workspace_dir=svg_path.parent, homunculus_root=_HOM_ROOT)
 
     print(
         f"Rendered [{archetype}] with palette [{palette.get('palette_id')}]:\n"

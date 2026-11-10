@@ -22,8 +22,10 @@ This skill orchestrates the deferred end-of-task verification sequence (**`X -> 
 
 ## 2. Step-Level Verification Gates (`X -> Y -> Z` Sequence)
 
-### Stage X — Synchronize Project Memory, `Directory/` Lookup Trees & Session Handoff (`project-memory`)
-When a project memory root (`./memory` or `./vault`) is active, refresh the changed project's structural `AUTO-TREE`, `<memory_root>/Directory/` (`Directory_Index.md` + entity-isolated `<Entity>_Directory.md` box trees), hardware/software telemetry, `SESSION-HANDOFF` stopping checkpoint, and cross-entity isolation audit:
+### Stage X — Synchronize Project Memory, `Lessons_Learned`, `Directory/` Lookup Trees & Session Handoff (`project-memory`)
+When a project memory root (`./memory` or `./vault`) is active:
+1. **Mandatory `Lessons_Learned` Update Check**: If the session uncovered any root-cause bug, validator/sandbox finding, retired heuristic, or architectural decision, record it in `<memory_root>/Projects/<Project>/<Project>_Lessons_Learned.md` (`Symptom -> Root Cause -> Permanent Guardrail` + `Subsystem Rebuild & Invariant Matrix`) before closing the task.
+2. Refresh the changed project's structural `AUTO-TREE`, `<memory_root>/Directory/` (`Directory_Index.md` + entity-isolated `<Entity>_Directory.md` box trees), hardware/software telemetry, `SESSION-HANDOFF` stopping checkpoint, and cross-entity isolation audit:
 
 ```bash
 python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
@@ -33,8 +35,10 @@ python3 <HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py \
   --stopped-at "<Milestone completed and verified>" \
   --receipt "<VRF-... / SBX-...>" \
   --next-steps "<Next session kickstart steps>" \
+  [--lesson-disposition "NONE:<verified non-defect reason>"] \
   --sync-visuals \
-  --audit
+  --audit \
+  --verify-checkpoints
 ```
 
 ### Stage Y — Batch-Render On-Demand Diagrams & Image Cards (`visual-studio` / `doc-and-card-studio`)

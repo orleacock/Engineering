@@ -93,13 +93,15 @@ Your AI runs `sync_memory.py` automatically when managing project notes, or you 
 | `--section <SECTION>` | `all` | Prints a targeted section (`all`, `concept`, `inventory`, `specs`, `hazards`, `architecture`, `tbd`, `tasks`, `lessons`, `handoff`, `hardware`, `software`) with inline task transclusion. |
 | `--sync-software` / `--sync-hardware` | `False` | Refreshes the project's software or hardware summary tables from your repo files. |
 | `--sync-tree` / `--sync-trees` / `--check-stale` | `False` | Updates one project's file map (`--sync-tree --project <P>`), batch-updates all projects (`--sync-trees`), or checks for repo changes (`--check-stale`). |
-| `--save-handoff` | `False` | Saves your stopping point, blockers, and next-session discussion points (`--stopped-at`, `--next-steps`, `--discussion`, or `--handoff-file`). |
+| `--preflight <SCRIPT>` / `--recall "<QUERY>"` | `None` | Prints a `<= 600`-token front-of-decision memory & contract packet before editing code (`--lesson-id <ID>` pulls full lesson details). |
+| `--add-lesson` / `--reinforce-lesson <ID>` | `False` | Logs a verified root-cause post-mortem (`--files "<repo_rel_path>"`) or reinforces an existing lesson invariant (`--retired-bloat` / `--must-keep`). |
+| `--save-handoff` | `False` | Saves your stopping point, blockers, commit-lesson disposition (`--lesson-disposition`), and next-session discussion points (`--stopped-at`, `--next-steps`, `--discussion`, or `--handoff-file`). |
 | `--kickstart` | `False` | Loads your saved stopping point and checks if any repository files changed while you were away. |
 | `--create-project-template <NAME>` | `None` | Saves a reusable document template inside `Projects/<Project>/Templates/`. |
 | `--tasks` / `--umbrella <FILTER>` | `False` | Lists all open `- [ ]` tasks across `Tasks/*.md` (or filtered to a specific client/domain umbrella). |
 | `--tbd-ledger` | `False` | Scans all `Projects/<P>/<P>.md` hubs and prints a consolidated ledger of open `[TBD: ...]` and `[CONFLICT]` items. |
 | `--sync-visuals` / `--export-canvas` | `False` | Refreshes `README.md` project index, task rollups, Obsidian `.base`/`graph.json` views, and optional `.canvas` topology map (`--canvas-out-dir`). |
-| `--audit` *(or `--check`)* | `False` | Checks all memory notes for broken links or accidental cross-client references. |
+| `--audit` *(or `--check`)* | `False` | Checks all memory notes for broken links, `0444` governance seal integrity, telemetry freshness, and cross-client isolation (`--verify-checkpoints` enforces strict commit parity). |
 
 ```bash
 # 1. Initialize project memory and onboard a project:
@@ -137,8 +139,8 @@ python3 Homunculus/skills/claim-verification/scripts/verify_claims.py \
   --target ./README.md \
   --sources ./src ./memory/Projects/My_Project/My_Project.md
 
-# 2. Inspect 3D CAD (.step/.stl) and firmware (.cfg) files in a hardware repository:
-python3 Homunculus/skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py \
+# 2. Inspect 3D CAD (.step/.stl) outer envelopes and firmware (.cfg) files in a hardware repository:
+python3 Homunculus/addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py \
   --repo ./hardware_repo --memory-root ./memory --sync-manifest
 
 # 3. Test a command safely inside an isolated sandbox:

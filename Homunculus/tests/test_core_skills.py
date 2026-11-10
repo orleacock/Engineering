@@ -26,7 +26,11 @@ import zlib
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERIFY_CLAIMS = REPO_ROOT / "skills/claim-verification/scripts/verify_claims.py"
-INSPECT_HW = REPO_ROOT / "skills/subagent-orchestrator/scripts/inspect_hardware_ecosystem.py"
+INSPECT_HW = (
+    REPO_ROOT / "skills/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py"
+    if (REPO_ROOT / "skills/hardware-cad-inspector").is_dir()
+    else REPO_ROOT / "addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py"
+)
 SANDBOX_RUNNER = REPO_ROOT / "skills/engineering-sandbox/scripts/sandbox_runner.py"
 RENDER_DIAGRAM = REPO_ROOT / "skills/visual-studio/scripts/render_diagram.py"
 FORMAT_IMAGE = REPO_ROOT / "skills/doc-and-card-studio/scripts/format_image.py"
@@ -59,7 +63,6 @@ class TestCoreSkills(unittest.TestCase):
             REPO_ROOT / "skills/subagent-orchestrator/SKILL.md",
             REPO_ROOT / "skills/subagent-orchestrator/references/oracle_cli_cheatsheet.md",
             REPO_ROOT / "skills/subagent-orchestrator/references/orchestration_playbooks.md",
-            INSPECT_HW,
             REPO_ROOT / "skills/engineering-sandbox/SKILL.md",
             REPO_ROOT / "skills/engineering-sandbox/references/frame_playbooks.md",
             SANDBOX_RUNNER,
@@ -80,6 +83,11 @@ class TestCoreSkills(unittest.TestCase):
             REPO_ROOT / "skills/teach-me/references/brief_authoring_playbook.md",
             TEACH_BRIEF,
         ]
+        if (REPO_ROOT / "addons" / "hardware-cad-inspector").is_dir():
+            expected.extend([
+                REPO_ROOT / "addons/hardware-cad-inspector/SKILL.md",
+                INSPECT_HW,
+            ])
         if (REPO_ROOT / "addons" / "author-voice-cadence").is_dir():
             expected.extend([
                 REPO_ROOT / "addons/author-voice-cadence/SKILL.md",
@@ -103,6 +111,7 @@ class TestCoreSkills(unittest.TestCase):
                     root_mod = node.module.split(".")[0]
                     self.assertNotIn(root_mod, ("PIL", "numpy", "yaml"), f"Forbidden from-import {root_mod} in {script_path.name}")
 
+    @unittest.skipUnless(INSPECT_HW.is_file(), "Optional hardware-cad-inspector add-on is not installed")
     def test_inspect_hardware_ecosystem_stl_and_cfg(self) -> None:
         """Tests inspect_hardware_ecosystem.py on a synthetic ASCII STL, firmware .cfg, --json-out, and --sync-manifest entity preservation."""
         with tempfile.TemporaryDirectory() as tmp:
@@ -175,6 +184,7 @@ class TestCoreSkills(unittest.TestCase):
             )
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertTrue(json_out.is_file())
+            self.assertIn("[CAD STOP GATE — ONE-PASS TELEMETRY COMPLETE]", proc.stdout)
             hw_md = (proj_dir / "Sample_Hardware_Repo_Hardware.md").read_text(encoding="utf-8")
             self.assertIn("Client_Beta", hw_md)
             self.assertIn("<!-- AUTO-HARDWARE-CAD:START -->", hw_md)
@@ -182,6 +192,8 @@ class TestCoreSkills(unittest.TestCase):
             self.assertIn("[a]_sample_bracket-mze.stl", hw_md)
             self.assertIn("MATCH (<=0.2mm)", hw_md)
             self.assertIn("`Ø6.00mm`×1", hw_md)
+            self.assertNotIn(".F. bore", hw_md)
+            self.assertNotIn(".T. pin/boss", hw_md)
             self.assertNotIn("Project_Alphatic", hw_md)
             self.assertNotIn("Magnet", hw_md)
             self.assertIn("control.cfg", hw_md)

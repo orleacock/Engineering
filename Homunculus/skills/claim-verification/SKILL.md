@@ -21,13 +21,15 @@ This skill provides the operational CLI workflow, diagnostic code reference, and
 
 ## 2. Step-Level Verification Gates (`verify_claims.py` CLI)
 
-### Gate 1 — Standard Post-Draft Claim Audit
-Run [`verify_claims.py`](scripts/verify_claims.py) against the authored or updated deliverable and its primary source files:
+### Gate 1 — Mandatory Post-Draft Claim Audit (`--dump-whitelist` Is Never a Substitute & Max `2-Pass` Ceiling)
+Running `--dump-whitelist` before drafting is a pre-draft aid only—it **never** substitutes for post-draft verification. After calling `write_file` or `edit_file` on **any** technical deliverable (including audit reports, specifications, BOMs, or manuals), you **must** execute [`verify_claims.py`](scripts/verify_claims.py) with `--target <deliverable.md>` against the primary source files (including `<Project>_Hardware.md` so CAD dimensions and `Ø` diameters are in scope) and resolve all `Unbacked Claims` (`Unbacked Claims: 0`) before finishing:
+- **Zero Unbacked "Recommended" Pretraining Ranges (Inside or Below `[TBD]`)**: When a source file (e.g., `Print_Settings.md`) is a placeholder stub or omits parameters (such as TPU Shore hardness `95A`/`85A`, nozzle/bed temperatures, or speeds), **never** add "Recommended" / "typically" pretraining values either inside or below `[TBD: ...]` (`[TBD_SPECULATIVE_GUESS]`), and never copy `ABS/ASA` settings onto `TPU`—emit explicit `[TBD: <specific_missing_variable>]` variable names only.
+- **Hard `2-Pass` Verification Ceiling, `[Line Text]` Parallel Edits & Zero Validator Introspection**: Run `verify_claims.py --target` at most **twice** (`Pass 1` $\rightarrow$ use the printed `[Line Text]` and `[Fix Hint]` directly without calling `read_file` on the target draft, and batch all `edit_file` replacements in parallel in **one single turn** $\rightarrow$ `Pass 2`). **Never** inspect `verify_claims.py` via `read_file`, shell `grep`/`sed`, or `python3 -c "import verify_claims; inspect.getsource(...)"` to reverse-engineer validator regexes (`[ANTI-SNOOP GATE]`).
 
 ```bash
 python3 <HOMUNCULUS_ROOT>/skills/claim-verification/scripts/verify_claims.py \
   --target <deliverable.md> \
-  --sources <source_1> <source_2> \
+  --sources <repo_dir_or_files> [<cad_telemetry_md_or_json>] \
   --project-dir <memory_root>/Projects/<Project>
 ```
 

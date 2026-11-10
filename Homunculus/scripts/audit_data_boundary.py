@@ -25,21 +25,22 @@ Modes:
   Owning Module : Core Framework (`scripts/`)
   Callers       : `pre-commit.sh`, `pre-push.sh`, `git_pre_commit_boundary.sh`, `pre-commit-gate` (Stage Z3), `test_data_safety.py`, `test_adapters.py`
   Callees       : `homunculus_paths.py` (`CLEANROOM_FORBIDDEN_SHA256`, `ALLOWED_PLACEHOLDER_USERS`, `RE_POSIX_HOME`, `RE_WIN_USERS`)
-  CLI Flags     : --repo, --config, --compartment, --staged, --push-stdin, --remote-name, --remote-url, --worktree, --all-in-root
+  Contract      : `scripts/script_contracts.json` [`audit_data_boundary.py`]
+  CLI Flags     : repo_pos, --repo, --config, --compartment, --staged, --push-stdin, --remote-name, --remote-url, --worktree, --all-in-root
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - class BoundaryPolicy (#L110-L124)              | def _reset_policy (#L130-L132)
-    - def load_boundary_config (#L135-L234)          | def classify_compartment (#L237-L264)
-    - def active_filename_rules (#L267-L273)         | def active_content_rules (#L276-L280)
-    - def _should_block_os_user_paths (#L283-L286)   | def _should_block_affiliate_params (#L289-L292)
-    - def _active_forbidden_hashes (#L295-L301)      | def redact_snippet (#L304-L314)
-    - def scan_filenames (#L317-L325)                | def detect_text_encoding (#L328-L354)
-    - def decode_candidate_text_bytes (#L357-L367)   | def scan_raw_bytes_complete (#L370-L406)
-    - def check_symlink_escape (#L409-L417)          | def scan_git_tree_entries (#L420-L466)
-    - def _find_forbidden_hash_token (#L469-L482)    | def scan_text_lines (#L485-L532)
-    - def parse_unified_diff_added_lines (#L535-L559) | def scan_git_binary_flagged_blobs (#L562-L579)
-    - def audit_staged (#L582-L605)                  | def verify_remote_and_author_for_push (#L608-L659)
-    - def audit_push_stdin (#L662-L727)              | def audit_worktree (#L730-L766)
-    - def main (#L769-L831)
+    - class BoundaryPolicy (#L111-L125)              | def _reset_policy (#L131-L133)
+    - def load_boundary_config (#L136-L235)          | def classify_compartment (#L238-L265)
+    - def active_filename_rules (#L268-L274)         | def active_content_rules (#L277-L281)
+    - def _should_block_os_user_paths (#L284-L287)   | def _should_block_affiliate_params (#L290-L293)
+    - def _active_forbidden_hashes (#L296-L302)      | def redact_snippet (#L305-L315)
+    - def scan_filenames (#L318-L326)                | def detect_text_encoding (#L329-L355)
+    - def decode_candidate_text_bytes (#L358-L368)   | def scan_raw_bytes_complete (#L371-L407)
+    - def check_symlink_escape (#L410-L418)          | def scan_git_tree_entries (#L421-L467)
+    - def _find_forbidden_hash_token (#L470-L483)    | def scan_text_lines (#L486-L533)
+    - def parse_unified_diff_added_lines (#L536-L560) | def scan_git_binary_flagged_blobs (#L563-L580)
+    - def audit_staged (#L583-L606)                  | def verify_remote_and_author_for_push (#L609-L660)
+    - def audit_push_stdin (#L663-L728)              | def audit_worktree (#L731-L767)
+    - def main (#L770-L836)
 === END NAVIGATION MAP ===
 """
 
@@ -770,6 +771,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Homunculus Declarative Data-Boundary, Decontamination & Credential Safety Scanner"
     )
+    parser.add_argument("repo_pos", nargs="?", default=None, help="Optional positional repository directory")
     parser.add_argument("--repo", help="Target repository directory")
     parser.add_argument("--config", help="Optional JSON boundary configuration file (homunculus_safety.json)")
     parser.add_argument("--compartment", help="Explicit compartment override (e.g. private, public, cleanroom, homunculus)")
@@ -781,7 +783,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--all-in-root", help="Audit all git repositories under the specified parent directory")
     args = parser.parse_args(argv)
 
-    target_repo = Path(args.repo).expanduser().resolve() if args.repo else (
+    raw_repo_arg = args.repo or args.repo_pos
+    target_repo = Path(raw_repo_arg).expanduser().resolve() if raw_repo_arg else (
         Path(args.all_in_root).expanduser().resolve() if args.all_in_root else None
     )
     load_boundary_config(args.config, repo_root=target_repo)
@@ -816,6 +819,8 @@ def main(argv: list[str] | None = None) -> int:
         findings = audit_push_stdin(target_repo, compartment, args.remote_name, args.remote_url, sys.stdin)
     elif args.worktree:
         findings = audit_worktree(target_repo, compartment)
+        if not findings:
+            print(f"[PASS] BOUNDARY_CLEAN | repo={target_repo.name} | compartment={compartment}")
     else:
         parser.error("Specify one of --staged, --push-stdin, --worktree, or --all-in-root.")
 

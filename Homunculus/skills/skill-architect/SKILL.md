@@ -40,6 +40,11 @@ Before creating a new skill, packaging a side-loaded add-on, or auditing existin
      ```bash
      python3 <HOMUNCULUS_ROOT>/skills/skill-architect/scripts/audit_skill_hygiene.py --audit --strict-structure
      ```
+4. **Pre-Mutation Change Advisory Gate, Sectional Rebuild Blueprint & Ask-Before-Heuristics Law (`Option 1C`)**:
+   - **Oracles Measure Structure, Never Human Intent**: Never add script heuristics or regexes to guess undocumented domain specifications—emit `[TBD: <missing_spec>]` or ask the user via `ask_question`.
+   - **Sectional Rebuild & Anti-Bloat Graveyard Check (`<Project>_Lessons_Learned.md`)**: Before modifying, de-bloating, or sectionally rebuilding any script, rule, or skill, read `<memory_root>/Projects/<Project>/<Project>_Lessons_Learned.md` (`Subsystem Rebuild & Invariant Matrix`) to ensure every `[MUST-KEEP INVARIANT (Chesterton's Fence)]` is preserved and zero `[RETIRED BLOAT & ANTI-PATTERNS]` are re-implemented.
+   - **Pre-Mutation Advisory**: Before modifying any `Homunculus` core file (`rules/`, `skills/`, `addons/`, `scripts/`), halt and present: **(1) Chesterton's Fence** (why current code exists), **(2) Options Matrix** (`Ask User / [TBD]` vs. `Workspace .json Config` vs. `Core Code Edit`), and **(3) Benefits vs. Repercussions** (turn/token impact and false-positive blast radius).
+   - **Opt-In OS Read-Only Core Lock**: Users can physically lock core files against unapproved agent mutations via `python3 <HOMUNCULUS_ROOT>/scripts/homunculus_paths.py --lock-core` (`0444` read-only) and unlock via `--unlock-core`.
 
 ---
 

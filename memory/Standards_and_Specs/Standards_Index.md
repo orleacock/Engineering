@@ -11,6 +11,7 @@ last_synced: "2026-11-05"
 | Standard / Specification | Owning Entity | Scope |
 | :--- | :--- | :--- |
 | [`Standards_Index.md`](Standards_Index.md) | `Alchemical-3D` | Master index of locked engineering standards and design rules. |
+| [`Governance_and_Constraint_Architecture.md`](Governance_and_Constraint_Architecture.md) | `shared` | Canonical 5-Slot Base Protection Format, Cross-System Constraint Matrix, 8-Rule Memory Governance Spec, and Modular `EXT-01..NN` Expansion Registry. |
 | [`Fasteners_and_Inserts.md`](Fasteners_and_Inserts.md) | `shared` | Metric heat-set inserts, aluminum vs. printed polymer torque limits, and threadlocker chemical safety. |
 | [`Verifiable_Accuracy_and_Anti_Hallucination.md`](Verifiable_Accuracy_and_Anti_Hallucination.md) | `shared` | Closed-World Truth Rule, `[TBD: ...]` quarantine, and `verify_claims.py` receipt standard. |
 | [`Image_and_Style_Rules.md`](Image_and_Style_Rules.md) | `Alchemical-3D` | `RGBA` `#FFFFFF` image card specification (`format_image.py`), GitHub-native alert rules, and color template bindings. |
