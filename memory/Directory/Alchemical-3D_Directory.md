@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "219df8d49867"
+tree_hash: "ac9259a02436"
 last_synced: "2026-11-10"
 ---
 
@@ -84,7 +84,8 @@ last_synced: "2026-11-10"
 │   │   ├── Homunculus_Script_Skill_Interaction_Matrix.md
 │   │   ├── Homunculus_Software.md
 │   │   ├── Homunculus_Stateful_Memory_Deployment_Plan.md
-│   │   └── Homunculus_Talking_Points.md
+│   │   ├── Homunculus_Talking_Points.md
+│   │   └── Homunculus_Version_and_Benchmark_Ledger.md
 │   ├── Maker-Tools/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
@@ -389,7 +390,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bfbe03a5a0b7` | `Tree: 1d656b9cc6c7`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 31aa0cb0a918` | `Tree: 1d656b9cc6c7`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

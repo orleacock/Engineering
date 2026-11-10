@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "56fe0934991e"
+tree_hash: "f9fef0630075"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "56fe0934991e"
+checkpoint_tree_hash: "f9fef0630075"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-10"
-checkpoint_lessons_digest: "2be2d1baeb5649ad"
+checkpoint_lessons_digest: "eea7a0935bdf6b1b"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -52,12 +52,12 @@ checkpoint_lessons_digest: "2be2d1baeb5649ad"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 56fe0934991e` | `Worktree: untracked` | `Last Verification: [TBD: receipt_or_test_id]`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: f9fef0630075` | `Worktree: untracked` | `Last Verification: SBX-20261110_115958-408697dc`
 - **Where We Stopped (Verified State & Context)**:
-  Converted remaining external relative links to portable <memory_root>-internal links.
+  Completed Sprints 1-4 of Workstation Standardized Benchmarking, v0.1.0 Versioning & Immutable RAID Snapshot Governance (version_manager.py, benchmark_homunculus.py, snapshot_homunculus_version.py; RAID v0.1.0_2026-11-10_foundation_baseline; OS Dry-Run SBX-20261110_115958-408697dc).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. [TBD: first_concrete_action_to_resume]
+  1. Run benchmark_homunculus.py against future Homunculus candidate edits and implant governance suite into Clean-Room when ready for v0.2.0.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -74,10 +74,15 @@ checkpoint_lessons_digest: "2be2d1baeb5649ad"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 56fe0934991e
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: f9fef0630075
+  benchmark_history.jsonl
+  benchmark_homunculus.py
   bootstrap_workstation.sh
   git_pre_commit_boundary.sh
+  homunculus_version.json
   pre_push_engineering_guard.sh
+  snapshot_homunculus_version.py
+  version_manager.py
   gmail_mcp/
   gmail_mcp/README.md
   gmail_mcp/gmail_mcp_server.py

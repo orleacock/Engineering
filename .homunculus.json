@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "homunculus_rel_path": "Homunculus",
+  "homunculus_rel_path": "../Alchemical3D/Homunculus",
   "memory_mode": "obsidian",
   "memory_dir": "memory",
   "study_briefs_dir": "study_briefs",

@@ -58,6 +58,9 @@ for d in (repo, *repo.parents):
     if (d / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Homunculus").resolve())
         sys.exit(0)
+    if (d / "Alchemical3D" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
+        print((d / "Alchemical3D" / "Homunculus").resolve())
+        sys.exit(0)
     if (d / "Engineering" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Engineering" / "Homunculus").resolve())
         sys.exit(0)
@@ -70,8 +73,14 @@ if [[ -z "$HOMUNCULUS_ROOT" || ! -f "${HOMUNCULUS_ROOT}/scripts/audit_data_bound
     exit 1
 fi
 
-if [[ -z "${HOMUNCULUS_BOUNDARY_CONFIG:-}" && -f "${HOMUNCULUS_ROOT}/../homunculus_safety.json" ]]; then
-    export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/.." && pwd)/homunculus_safety.json"
+if [[ -z "${HOMUNCULUS_BOUNDARY_CONFIG:-}" ]]; then
+    if [[ -f "${REPO_ROOT}/homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="${REPO_ROOT}/homunculus_safety.json"
+    elif [[ -f "${HOMUNCULUS_ROOT}/../homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/.." && pwd)/homunculus_safety.json"
+    elif [[ -f "${HOMUNCULUS_ROOT}/../../Engineering/homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/../../Engineering" && pwd)/homunculus_safety.json"
+    fi
 fi
 
 "$PYTHON_BIN" "${HOMUNCULUS_ROOT}/scripts/audit_data_boundary.py" --repo "$REPO_ROOT" --staged
@@ -89,15 +98,15 @@ fi
 
 # Maintainer Script-Skill Interaction Matrix Parity Gate (active only when Engineering maintainer matrix exists)
 MATRIX_FILE="${REPO_ROOT}/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md"
-if [[ -f "$MATRIX_FILE" && -d "${REPO_ROOT}/Homunculus" ]]; then
+if [[ -f "$MATRIX_FILE" && -d "${HOMUNCULUS_ROOT}" ]]; then
     if [[ "${HOMUNCULUS_FORCE_MATRIX_AUDIT:-0}" == "1" ]] || git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^(Homunculus/|memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix\.md$)' >/dev/null; then
-        if ! matrix_out="$("$PYTHON_BIN" - "$REPO_ROOT" "$MATRIX_FILE" << 'PY'
+        if ! matrix_out="$("$PYTHON_BIN" - "$REPO_ROOT" "$MATRIX_FILE" "$HOMUNCULUS_ROOT" << 'PY'
 import ast, re, sys
 from pathlib import Path
 
 repo_root = Path(sys.argv[1]).resolve()
 matrix_path = Path(sys.argv[2]).resolve()
-hom_root = repo_root / "Homunculus"
+hom_root = Path(sys.argv[3]).resolve()
 text = matrix_path.read_text(encoding="utf-8")
 errors = []
 

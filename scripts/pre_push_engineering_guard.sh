@@ -48,6 +48,9 @@ for d in (repo, *repo.parents):
     if (d / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Homunculus").resolve())
         sys.exit(0)
+    if (d / "Alchemical3D" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
+        print((d / "Alchemical3D" / "Homunculus").resolve())
+        sys.exit(0)
     if (d / "Engineering" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Engineering" / "Homunculus").resolve())
         sys.exit(0)
@@ -60,8 +63,14 @@ if [[ -z "$HOMUNCULUS_ROOT" || ! -f "${HOMUNCULUS_ROOT}/scripts/audit_data_bound
     exit 1
 fi
 
-if [[ -z "${HOMUNCULUS_BOUNDARY_CONFIG:-}" && -f "${HOMUNCULUS_ROOT}/../homunculus_safety.json" ]]; then
-    export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/.." && pwd)/homunculus_safety.json"
+if [[ -z "${HOMUNCULUS_BOUNDARY_CONFIG:-}" ]]; then
+    if [[ -f "${REPO_ROOT}/homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="${REPO_ROOT}/homunculus_safety.json"
+    elif [[ -f "${HOMUNCULUS_ROOT}/../homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/.." && pwd)/homunculus_safety.json"
+    elif [[ -f "${HOMUNCULUS_ROOT}/../../Engineering/homunculus_safety.json" ]]; then
+        export HOMUNCULUS_BOUNDARY_CONFIG="$(cd "${HOMUNCULUS_ROOT}/../../Engineering" && pwd)/homunculus_safety.json"
+    fi
 fi
 
 exec "$PYTHON_BIN" "${HOMUNCULUS_ROOT}/scripts/audit_data_boundary.py" \

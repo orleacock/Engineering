@@ -7,11 +7,11 @@ note_type: "reference"
 last_synced: "2026-11-09"
 ---
 
-# 🔬 Homunculus Workstation (`Engineering/Homunculus`) vs. Clean-Room (`Alchemical3D/Homunculus`) Validation & Promotion Diff Manifest
+# 🔬 Homunculus Single-Source Clean-Room Repository (`Alchemical3D/Homunculus`) Validation & Promotion Manifest
 
-> **Canonical Reference Role**: This document is the authoritative local validation and promotion ledger comparing the dogfooded **Parent Workstation Deployment** (`/home/orin/Projects/Engineering/Homunculus`) against the **Clean-Room Commercial Repository** (`/home/orin/Projects/Alchemical3D/Homunculus`).
-> **Current Synchronization State (`2026-11-09`)**: **`100%` BYTE-FOR-BYTE IDENTICAL (`93 / 93` tracked files, `0` diff lines)** following promotion of the 5-Sprint Stateful Memory Rebuild (`scripts/script_contracts.json`, `templates/memory/Decision_Profile.md`, `templates/memory/AGENTS.md`, `TIER0`–`TIER5` gravity store, 3-Stage station/detached repo resolution, entity-partitioned hybrid recall, and unified `--map`/`--preflight` receipt gate; `37 / 37` unit tests `OK`, `SBX-20261109_120538-a29c8228` `Controls: 2/2, +faults: 5/5`).
-> **Usage Law**: Consult and update this document whenever staging or promoting a new feature, bugfix, reference guide, or script from `/home/orin/Projects/Engineering/Homunculus` into `/home/orin/Projects/Alchemical3D/Homunculus`. *(For an optional, non-authoritative maintainer lookup of cross-skill couplings and naming hygiene, see [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md).)*
+> **Canonical Reference Role**: This document is the authoritative local validation and promotion ledger for the **Single-Source Clean-Room Repository** (`/home/orin/Projects/Alchemical3D/Homunculus`, remote `git@github-alchemical:Alchemical-3D/Homunculus.git`).
+> **Current Synchronization State (`2026-11-10`)**: **Consolidated Single-Source Clean-Room (`v0.1.0` at `bfbe03a5a0b7`, `101` tracked files, `0` duplicate copies on disk or in `orleacock/Engineering.git`)** following retirement of the duplicate `Engineering/Homunculus` folder and removal of `Homunculus/` from the parent `Engineering` Git index (`46 / 46` unit tests `OK`, `SBX-20261109_120538-a29c8228` `Controls: 2/2, +faults: 5/5`).
+> **Usage Law**: Consult and update this document whenever staging or promoting a new feature, bugfix, reference guide, or script into `/home/orin/Projects/Alchemical3D/Homunculus`. *(For an optional, non-authoritative maintainer lookup of cross-skill couplings and naming hygiene, see [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md).)*
 
 ---
 

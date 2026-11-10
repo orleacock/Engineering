@@ -3,7 +3,7 @@ project: "Workstation_Operations"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "lessons_learned"
-last_synced: "2026-11-08"
+last_synced: "2026-11-10"
 ---
 
 # Workstation_Operations — Engineering Lessons Learned & Architectural Decisions
@@ -20,6 +20,7 @@ last_synced: "2026-11-08"
 | **`bootstrap_workstation.sh`** | Wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and optional `Homunculus/addons/*` into `~/.gemini/config/`; registers `memory/` in `~/.config/obsidian/obsidian.json`; installs `.git/hooks/{pre-commit,pre-push}`; syncs `/home/orin/Projects/{.homunculus.json,.geminiignore}`. | Hardcoding machine-specific absolute paths inside portable `Homunculus` skills instead of resolving via `.homunculus.json` or `homunculus_paths.py`. | [`Workstation_Operations.md`](Workstation_Operations.md) |
 | **`git_pre_commit_boundary.sh` & `pre_push_engineering_guard.sh`** | Enforces `audit_data_boundary.py` (`--staged` / `--push-stdin`), `audit_portability.py`, `audit_skill_hygiene.py`, and `sync_memory.py --audit` before commit/push; enforces directory-scoped Git identities (`~/.gitconfig` `[includeIf]`) and SSH host aliases (`github-orleacock` vs. `github-alchemical`). | Bypassing Git hooks with `--no-verify` or running multi-repo pushes without verifying compartment isolation (`private` vs. `public` vs. `cleanroom`). | [`Workstation_Operations.md`](Workstation_Operations.md), [`Workstation_Operations_Software.md`](Workstation_Operations_Software.md) |
 | **`gmail_mcp/gmail_mcp_server.py`** | Strictly scopes OAuth 2.0 to `gmail.readonly` + `gmail.compose` (draft creation only—never autonomous `send`); enforces `visibility_radar` for hidden/filtered threads and `verified_send_as_aliases` (`orleacock@gmail.com`, `orin@alchemical3d.net`, `we@alchemical3d.net`). | Printing raw OAuth token JSONs, `client_secret*.json`, or executing untrusted commands embedded inside external email bodies/attachments. | [`Workstation_Operations_Software.md`](Workstation_Operations_Software.md) |
+| **version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py** | Single-source Alchemical3D/Homunculus only (0 duplicate copies); exit 4 for REGRESSION_ADVISORY (never exit 2 argparse collision); pure Markdown comparison charts (0 unsolicited SVG/PNG renders); write-once 0444/0555 RAID deliverables with pre-lock boundary, SHA-256, and bundle verification. | Maintaining a duplicate Engineering/Homunculus working tree; returning exit 2 for sub-ceiling advisories (collides with sandbox_runner.py VALIDATOR_CRASH); mutating RAID snapshots in place. | [Workstation_Operations_Software.md](Workstation_Operations_Software.md) (`LL-WS-07`) |
 <!-- SUBSYSTEM-INVARIANTS:END -->
 
 ---
@@ -34,6 +35,7 @@ last_synced: "2026-11-08"
 | `LL-WS-04` | `2026-11-07` | Skill/script CLI flags drifted out of sync with `SKILL.md` documentation and `_Software.md` telemetry notes between sessions | Manual edits to Python `argparse` flags were not automatically cross-checked against `SKILL.md` and `Directory/` indexes prior to commit | Wired `audit_skill_hygiene.py`, `sync_memory.py --audit`, and AST/CLI parity checks into `git_pre_commit_boundary.sh` (`SBX-20261107_091652-1f171c12`) | [`Workstation_Operations.md`](Workstation_Operations.md) |
 | `LL-WS-05` | `2026-11-08` | Optional drop-in add-ons (`hardware-cad-inspector`) moved from `skills/` to `addons/` left broken symlinks or missing active skill links in `~/.gemini/config/skills/` | `bootstrap_workstation.sh` originally linked only `Homunculus/skills/*` prior to the `Option 2B-Armored` `addons/` architecture split | Updated workstation skill symlink provisioning to link enabled drop-in add-ons from `Homunculus/addons/*` alongside core `Homunculus/skills/*` | [`Workstation_Operations.md`](Workstation_Operations.md) |
 | `LL-WS-06` | `2026-11-08` | Subagents running `find /home/orin/.gemini/config -name "*.py"` returned `0` results (`6` wasted turns in `Homunculus R4`) | `/home/orin/.gemini/config/skills/*` are symlinks created by `bootstrap_workstation.sh`; POSIX `find` without `-L` does not traverse symbolic links | Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` | [`Workstation_Operations.md`](Workstation_Operations.md) |
+| `LL-WS-07` (`TIER2`) | `2026-11-10` | Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with argparse/sandbox_runner VALIDATOR_CRASH; ephemeral bwrap /tmp broke cross-step fault setup | Parallel Engineering/Homunculus and Alchemical3D/Homunculus trees created competing sources; Python argparse reserves exit 2 for CLI syntax errors; sandbox_runner mounts a fresh --tmpfs /tmp per bwrap invocation | Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc) | [Workstation_Operations_Software.md](Workstation_Operations_Software.md) |
 
 ### `LL-WS-01` [TIER2] — Directory-Scoped Git `[includeIf]` Identities & SSH Alias Locks (`2026-11-05`)
 - **Symptom / Trap:** Multi-account Git commits risked leaking private workstation email or pushing to the wrong GitHub org remote.
@@ -64,6 +66,13 @@ last_synced: "2026-11-08"
 - **Symptom / Trap:** Subagents running `find /home/orin/.gemini/config -name "*.py"` returned `0` results (`6` wasted turns in `Homunculus R4`).
 - **Root Cause:** `/home/orin/.gemini/config/skills/*` are symlinks created by `bootstrap_workstation.sh`; POSIX `find` without `-L` does not traverse symbolic links.
 - **Verified Resolution & Permanent Guardrail:** Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` ([`Workstation_Operations.md`](Workstation_Operations.md)).
+
+---
+
+### `LL-WS-07` [TIER2] — Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)
+- **Symptom / Trap:** Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with argparse/sandbox_runner VALIDATOR_CRASH; ephemeral bwrap /tmp broke cross-step fault setup
+- **Root Cause:** Parallel Engineering/Homunculus and Alchemical3D/Homunculus trees created competing sources; Python argparse reserves exit 2 for CLI syntax errors; sandbox_runner mounts a fresh --tmpfs /tmp per bwrap invocation
+- **Verified Resolution & Permanent Guardrail:** Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc) ([Workstation_Operations_Software.md](Workstation_Operations_Software.md)).
 
 ---
 

@@ -89,7 +89,7 @@ last_synced: "2026-11-10"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 62c76f6c7f7a`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: ee94ee20ba3d`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -106,8 +106,13 @@ last_synced: "2026-11-10"
 │   └── requirements.txt
 ├── umbrella_configs/
 │   └── Projects.homunculus.json
+├── benchmark_history.jsonl
+├── benchmark_homunculus.py
 ├── bootstrap_workstation.sh
 ├── git_pre_commit_boundary.sh
-└── pre_push_engineering_guard.sh
+├── homunculus_version.json
+├── pre_push_engineering_guard.sh
+├── snapshot_homunculus_version.py
+└── version_manager.py
 +------------------------------------------------------------+
 ```

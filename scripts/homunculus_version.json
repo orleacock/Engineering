@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "engine_version": "0.1.0",
+  "release_stage": "development",
+  "public_release_target": "1.0.0",
+  "baseline_tag": "v0.1.0",
+  "baseline_head_sha": "31aa0cb0a918",
+  "baseline_tree_hash": "284d5a57b3c2",
+  "baseline_file_count": 102,
+  "contract_schema_version": "1.0",
+  "memory_schema_version": "1.1",
+  "benchmark_schema_version": "1.0",
+  "authoritative_cleanroom_path": "/home/orin/Projects/Alchemical3D/Homunculus",
+  "authoritative_remote_url": "git@github-alchemical:Alchemical-3D/Homunculus.git",
+  "updated_at": "2026-11-10",
+  "digit_trigger_laws": {
+    "major": {
+      "digit": "X (X.0.0)",
+      "rule": "0.Y.Z -> 1.0.0 is reserved strictly for public GitHub release of Alchemical-3D/Homunculus (requires --allow-v1-public-release). Post-1.0.0 major bumps require breaking schema/CLI changes.",
+      "required_gate": "Full Profile 6 Benchmark Suite + Compare-Full Subagent Gate + Immutable RAID Deliverable Snapshot."
+    },
+    "minor": {
+      "digit": "Y (0.Y.0)",
+      "rule": "Triggered by major architectural overhauls, multi-sprint subsystem rebuilds, new core skills/add-ons, new client adapters, or JSON/memory schema expansions. Resets patch Z to 0.",
+      "required_gate": "Full Profile 6 Benchmark Suite (0 unresolved regressions vs baseline) + Git Tag v0.Y.0 + Immutable RAID Snapshot."
+    },
+    "patch": {
+      "digit": "Z (0.y.Z)",
+      "rule": "Triggered by targeted bug fixes, false-positive/false-negative validator closures, regex/qualifier refinements, rule/skill prose trims, single-script latency optimizations, or new unit/+faults tests without schema changes.",
+      "required_gate": "Targeted Subsystem Benchmark Profile (0 regressions) + Unit Tests PASS + Git Tag v0.y.Z."
+    }
+  },
+  "version_history": [
+    {
+      "version": "0.1.0",
+      "tag": "v0.1.0",
+      "date": "2026-11-10",
+      "head_sha": "31aa0cb0a918",
+      "tree_hash": "284d5a57b3c2",
+      "trigger_type": "initial_baseline",
+      "reason": "Consolidated Single-Source Clean-Room Homunculus baseline on development workstation (101 files, Stateful Memory v1.1, 0 duplicate copies)."
+    }
+  ]
+}

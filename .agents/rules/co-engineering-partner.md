@@ -1,1 +1,0 @@
-../../Homunculus/rules/co-engineering-partner.md

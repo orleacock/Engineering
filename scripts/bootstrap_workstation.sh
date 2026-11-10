@@ -3,7 +3,9 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-HOMUNCULUS_DIR="${REPO_ROOT}/Homunculus"
+PROJECTS_DIR="$(dirname "$REPO_ROOT")"
+ALCHEMICAL_DIR="${PROJECTS_DIR}/Alchemical3D"
+HOMUNCULUS_DIR="${ALCHEMICAL_DIR}/Homunculus"
 MEMORY_DIR="${REPO_ROOT}/memory"
 NEA_DIR="${REPO_ROOT}/NEA_v2.2.3"
 GEMINI_CFG="${HOME}/.gemini/config"
@@ -58,23 +60,23 @@ ensure_link() {
 echo "=== Engineering Workstation Bootstrap (${MODE^^}) ==="
 echo "Repo Root: ${REPO_ROOT}"
 
-# 1. Global Antigravity Rules (~/.gemini/config/rules/*.md) & Portable Workspace .agents/rules/*.md -> Homunculus/rules/*.md
+# 1. Global Antigravity Rules (~/.gemini/config/rules/*.md) & Portable Workspace .agents/rules/*.md -> Alchemical3D/Homunculus/rules/*.md
 for rule_file in "${HOMUNCULUS_DIR}/rules/"*.md; do
     [[ -f "$rule_file" ]] || continue
     rule_name="$(basename "$rule_file")"
-    ensure_link "${GEMINI_CFG}/rules/${rule_name}" "../../../Projects/Engineering/Homunculus/rules/${rule_name}" "$rule_file"
-    ensure_link "${REPO_ROOT}/.agents/rules/${rule_name}" "../../Homunculus/rules/${rule_name}" "$rule_file"
+    ensure_link "${GEMINI_CFG}/rules/${rule_name}" "../../../Projects/Alchemical3D/Homunculus/rules/${rule_name}" "$rule_file"
+    ensure_link "${REPO_ROOT}/.agents/rules/${rule_name}" "../../../Alchemical3D/Homunculus/rules/${rule_name}" "$rule_file"
 done
 
-# 2. Global Antigravity Skills (~/.gemini/config/skills/*) & Portable Workspace .agents/skills/* -> Homunculus/skills/* + addons/*
+# 2. Global Antigravity Skills (~/.gemini/config/skills/*) & Portable Workspace .agents/skills/* -> Alchemical3D/Homunculus/skills/* + addons/*
 for skill_dir in "${HOMUNCULUS_DIR}/skills/"* "${HOMUNCULUS_DIR}/addons/"*; do
     [[ -d "$skill_dir" ]] || continue
     [[ -f "${skill_dir}/SKILL.md" ]] || continue
     skill_name="$(basename "$skill_dir")"
     tier_dir="$(basename "$(dirname "$skill_dir")")"
     [[ "$skill_name" == .* ]] && continue
-    ensure_link "${GEMINI_CFG}/skills/${skill_name}" "../../../Projects/Engineering/Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
-    ensure_link "${REPO_ROOT}/.agents/skills/${skill_name}" "../../Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
+    ensure_link "${GEMINI_CFG}/skills/${skill_name}" "../../../Projects/Alchemical3D/Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
+    ensure_link "${REPO_ROOT}/.agents/skills/${skill_name}" "../../../Alchemical3D/Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
 done
 
 # 2a. Local Workstation-Only MCP Skills (/home/orin/Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant)
@@ -86,7 +88,7 @@ fi
 
 # 2b. Global Antigravity Lifecycle Hooks (~/.gemini/config/hooks.json)
 if [[ -f "${HOMUNCULUS_DIR}/hooks/hooks.json" ]]; then
-    ensure_link "${GEMINI_CFG}/hooks.json" "../../Projects/Engineering/Homunculus/hooks/hooks.json" "${HOMUNCULUS_DIR}/hooks/hooks.json"
+    ensure_link "${GEMINI_CFG}/hooks.json" "../../Projects/Alchemical3D/Homunculus/hooks/hooks.json" "${HOMUNCULUS_DIR}/hooks/hooks.json"
 fi
 
 # 2bb. Private Engineering Repo Pre-Commit, Pre-Push & Post-Worktree Sync Hooks (.git/hooks/*)
@@ -99,15 +101,13 @@ if [[ -d "${REPO_ROOT}/.git/hooks" ]]; then
     fi
     if [[ -f "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh" ]]; then
         for wt_hook in post-checkout post-merge post-rewrite; do
-            ensure_link "${REPO_ROOT}/.git/hooks/${wt_hook}" "../../Homunculus/templates/hooks/post-worktree-sync.sh" "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh"
+            ensure_link "${REPO_ROOT}/.git/hooks/${wt_hook}" "../../../Alchemical3D/Homunculus/templates/hooks/post-worktree-sync.sh" "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh"
         done
     fi
 fi
 
-# 2bc. Public / Org Alchemical-3D Multi-Repo Boundary & Secret Hooks (/home/orin/Projects/Alchemical3D/*/.git/hooks/*)
-PROJECTS_DIR="$(dirname "$REPO_ROOT")"
-ALCHEMICAL_DIR="${PROJECTS_DIR}/Alchemical3D"
-if [[ -d "$ALCHEMICAL_DIR" && -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" && -f "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh" ]]; then
+# 2bc. Public / Org Alchemical-3D Multi-Repo Boundary Hooks (including Alchemical3D/Homunculus)
+if [[ -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" && -f "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh" ]]; then
     shopt -s nullglob dotglob
     for alch_repo in "${ALCHEMICAL_DIR}/"*; do
         repo_base="$(basename "$alch_repo")"

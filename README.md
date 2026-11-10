@@ -13,7 +13,7 @@ Private personal engineering umbrella repository backing up the workstation `Hom
 
 | Path | Scope | Description |
 | :--- | :--- | :--- |
-| `Homunculus/` | Workstation AI Engine | Canonical flat `Homunculus` engine: 3 always-on `rules/` (`co-engineering-partner`, `verifiable-accuracy`, `data-and-credential-safety`), 9 core `skills/` (`skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`, `teach-me`), Drop-In `addons/` (`author-voice-cadence`), `adapters/`, `scripts/`, and `tests/`. |
+| `../Alchemical3D/Homunculus/` | Single-Source Clean-Room AI Engine (`v0.1.0`) | Canonical `Homunculus` repository (`git@github-alchemical:Alchemical-3D/Homunculus.git`): 3 always-on `rules/` (`co-engineering-partner`, `verifiable-accuracy`, `data-and-credential-safety`), 9 core `skills/` (`skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`, `teach-me`), Drop-In `addons/` (`author-voice-cadence`, `hardware-cad-inspector`), `adapters/`, `scripts/`, and `tests/`. |
 | `memory/` | Dual-Mode Memory Vault (`obsidian`) | Self-contained per-project dossiers (`Projects/<Project>/`), Single-Writer Domain Task Umbrellas (`Tasks/*.md`), Locked Standards (`Standards_and_Specs/`), Templates (`Templates/`), and SVG Visual Brain (`Diagrams/`). |
 | `study_briefs/` | Non-Consumed Study Root | Sibling holding directory for `/teach-me` `Brief+` artifacts (`README.md` tracked; generated briefs quarantined via `.gitignore`, `.geminiignore`, and `.stignore`). |
 | `NEA_v2.2.3/` | NetCom Engineering Assistant | Portable `NEA v2.2.3` M365 Copilot 6-Agent Declarative Suite & OpenXML Inspector/Repair Tool (`Copilot_Agents/`, `Skills/`, `Scripts/inspect_nea_workbooks.py`, `Templates/`). |
@@ -30,7 +30,7 @@ git clone git@github-orleacock:orleacock/Engineering.git ~/Projects/Engineering
 
 # 3. Verify symlink parity, parent umbrella configs, and Dual-Mode Memory health
 ~/Projects/Engineering/scripts/bootstrap_workstation.sh --check --update-obsidian --compat-symlinks
-python3 ~/Projects/Engineering/Homunculus/skills/project-memory/scripts/sync_memory.py --memory-root ~/Projects/Engineering/memory --audit
+python3 ~/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py --memory-root ~/Projects/Engineering/memory --audit
 ```
 
 ## Offline-Only Local Assets (Excluded from Online Git)

@@ -17,12 +17,14 @@
       "session_date": "2026-11-09"
     },
     "homunculus_paths.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/homunculus_paths.py",
       "disposed": true,
-      "git_head_blob_sha256": "9299542aaf4e8e66",
-      "pre_edit_blob_sha256": "9299542aaf4e8e66",
+      "git_head_blob_sha256": "963205e19d329d50",
+      "pre_edit_blob_sha256": "963205e19d329d50",
+      "project": "Homunculus",
       "script": "homunculus_paths.py",
-      "script_rel_path": "homunculus_paths.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "scripts/homunculus_paths.py",
+      "session_date": "2026-11-10"
     },
     "inspect_hardware_ecosystem.py": {
       "disposed": true,
@@ -39,6 +41,16 @@
       "script": "sandbox_runner.py",
       "script_rel_path": "sandbox_runner.py",
       "session_date": "2026-11-09"
+    },
+    "scripts/homunculus_paths.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/homunculus_paths.py",
+      "disposed": true,
+      "git_head_blob_sha256": "963205e19d329d50",
+      "pre_edit_blob_sha256": "963205e19d329d50",
+      "project": "Homunculus",
+      "script": "homunculus_paths.py",
+      "script_rel_path": "scripts/homunculus_paths.py",
+      "session_date": "2026-11-10"
     },
     "skills/claim-verification/scripts/verify_claims.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/scripts/verify_claims.py",
