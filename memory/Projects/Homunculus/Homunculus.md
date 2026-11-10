@@ -5,11 +5,11 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v1.0.0 Release Candidate"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "bfbe03a5a0b7"
+repo_head_sha: "31aa0cb0a918"
 tree_hash: "305105480e7e"
-checkpoint_head_sha: "bfbe03a5a0b7"
+checkpoint_head_sha: "31aa0cb0a918"
 checkpoint_tree_hash: "305105480e7e"
-checkpoint_worktree: "dirty (10 files)"
+checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-10"
 checkpoint_lessons_digest: "5ec8f514612cf654"
@@ -261,13 +261,13 @@ Repository: Homunculus | HEAD SHA: bfbe03a5a0b7 | Tree Hash: 305105480e7e
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: bfbe03a5a0b7` | `Tree Hash: 305105480e7e` | `Worktree: dirty (10 files)` | `Last Verification: SBX-20261110_095541-5ba28fd8`
+- **Checkpoint Provenance**: `HEAD SHA: 31aa0cb0a918` | `Tree Hash: 305105480e7e` | `Worktree: clean` | `Last Verification: SBX-20261110_095541-5ba28fd8`
 - **Where We Stopped (Verified State & Context)**:
-  Completed Path A (Options #1, #2A, #2B, #3-Lite, #5B) plus Compact 5-Line Project State Ledger (2b: ### ▪ Project State Ledger + deterministic [LEDGER_MEMORY_LINE] in sync_memory.py). Verified 46/46 unit tests OK and OS Dry-Run (+3 faults) sandbox SBX-20261110_095541-5ba28fd8.
+  Completed and committed Path A (Options #1, #2A, #2B, #3-Lite, #5B) plus Compact 5-Line Project State Ledger (2b: ### ▪ Project State Ledger + deterministic [LEDGER_MEMORY_LINE] in sync_memory.py) at HEAD 31aa0cb0a918. Verified 46/46 unit tests OK and OS Dry-Run (+3 faults) sandbox SBX-20261110_095541-5ba28fd8.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
   1. Optionally evaluate Option #4 (Explicit Cross-Reference Graph Edges in <Entity>_memory_index.json) in a future session.
-- **Open Discussion / Alignment Questions**: All Path A memory upgrades and the compact memory-transparent Project State Ledger are live, verified, and locked.
+- **Open Discussion / Alignment Questions**: All Path A memory upgrades and the compact memory-transparent Project State Ledger are live, verified, committed, and locked.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks
