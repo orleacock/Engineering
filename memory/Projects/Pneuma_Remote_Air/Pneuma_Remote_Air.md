@@ -6,7 +6,7 @@ project_type: "hardware"
 status: "Active"
 local_path: "/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air"
 repo_head_sha: "0702c9c1c541"
-tree_hash: "dc295b6ec1e5"
+tree_hash: "c37739a571b2"
 checkpoint_head_sha: "0702c9c1c541"
 checkpoint_tree_hash: "dc295b6ec1e5"
 checkpoint_worktree: "clean"
@@ -45,18 +45,10 @@ Part of the [`README.md`](../../README.md) • CAD & Firmware Telemetry: [`Pneum
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: dc295b6ec1e5
-  Assembly_Guide.md
-  BOM.md
-  LICENSE.md
-  Print_Settings.md
-  README.md
+Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: c37739a571b2
   Firmware/
   Firmware/Pneuma_Control.cfg
   Images/
-  Images/Pneuma.png
-  Images/Pneuma_v2-4_back.png
-  Images/Pneuma_v2-4_side.png
   Images/Assembly/
   Images/Assembly/Heatset_Back.png
   Images/Assembly/Heatset_Body.png
@@ -64,6 +56,9 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: dc295b6ec1e5
   Images/Assembly/Pneuma_Complete_Table.png
   Images/Assembly/Pneuma_Explode.png
   Images/Assembly/Pump_Mount.png
+  Images/Pneuma.png
+  Images/Pneuma_v2-4_back.png
+  Images/Pneuma_v2-4_side.png
   STEP_Files/
   STEP_Files/Pneuma_201 - 1-8-NPT Direct_Action_Valve.step
   STEP_Files/Pneuma_201 - Extrusion_Mount_A.step
@@ -71,8 +66,8 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: dc295b6ec1e5
   STEP_Files/Pneuma_201 - Logo_Detail.step
   STEP_Files/Pneuma_201 - Plug_Grommet_TPU.step
   STEP_Files/Pneuma_201 - Pump_Mount.step
-  STEP_Files/Pneuma_201 - TPU_Grommet.step
   STEP_Files/Pneuma_201 - Table_Mount_TPU.step
+  STEP_Files/Pneuma_201 - TPU_Grommet.step
   STEP_Files/Pneuma_201 - Vacuum_Pump.step
   STEP_Files/Pneuma_201 parts - Front_Cover(1).step
   STEP_Files/Pneuma_201 parts - Main_Body(1).step
@@ -83,12 +78,17 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: dc295b6ec1e5
   STL_Files/Pneuma_201 - Logo_Detail.stl
   STL_Files/Pneuma_201 - Plug_Grommet_TPU.stl
   STL_Files/Pneuma_201 - Pump_Mount.stl
-  STL_Files/Pneuma_201 - TPU_Grommet.stl
   STL_Files/Pneuma_201 - Table_Mount_TPU.stl
+  STL_Files/Pneuma_201 - TPU_Grommet.stl
   STL_Files/Pneuma_201 - Vacuum_Pump.stl
   STL_Files/Pneuma_201 parts - Front_Cover.stl
   STL_Files/Pneuma_201 parts - Main_Body.stl
   STL_Files/Pneuma_201 parts - Rear_Cover.stl
+  Assembly_Guide.md
+  BOM.md
+  LICENSE.md
+  Print_Settings.md
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 

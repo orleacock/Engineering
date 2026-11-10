@@ -28,14 +28,16 @@ Responsibilities:
   Callers       : Developer CLI, Minor/Major Version Release Workflow (`v0.Y.0` / `v1.0.0`)
   Callees       : `version_manager.py`, `benchmark_homunculus.py`, `audit_data_boundary.py`, `git bundle`, `cp --reflink=auto`
   Contract      : `scripts/script_contracts.json` [`snapshot_homunculus_version.py`]
-  CLI Flags     : --slug, --raid-root, --homunculus-dir, --engineering-dir, --version-manifest, --allow-dirty, --skip-benchmark, --list, --verify, --dry-run, --json
+  CLI Flags     : --slug, --label, --raid-root, --homunculus-dir, --engineering-dir, --version-manifest, --allow-dirty, --skip-benchmark, --force-fresh-benchmark, --list, --verify, --dry-run, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def sanitize_slug (#L72-L75)                   | def copy_tree_cow (#L78-L108)
-    - def _redact_json_obj (#L111-L123)              | def collect_symlink_manifest (#L126-L144)
-    - def stage_client_wiring (#L147-L186)           | def create_git_bundles (#L189-L231)
-    - def build_restore_script (#L234-L424)          | def build_reconstruction_index (#L427-L487)
-    - def compute_sha256sums (#L490-L502)            | def lock_deliverable_readonly (#L505-L527)
-    - def verify_existing_snapshot (#L530-L542)      | def main (#L545-L798)
+    - def sanitize_slug (#L74-L77)                   | def _sha256_file (#L80-L86)
+    - def find_latest_same_dev_raid_snapshot (#L89-L114) | def find_verified_benchmark_receipt (#L117-L151)
+    - def _force_writable_rmtree (#L154-L173)        | def copy_tree_cow (#L176-L358)
+    - def _redact_json_obj (#L361-L373)              | def collect_symlink_manifest (#L376-L394)
+    - def stage_client_wiring (#L397-L436)           | def create_git_bundles (#L439-L481)
+    - def build_restore_script (#L484-L698)          | def build_reconstruction_index (#L701-L761)
+    - def compute_sha256sums (#L764-L776)            | def lock_deliverable_readonly (#L779-L801)
+    - def verify_existing_snapshot (#L804-L816)      | def main (#L819-L1119)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -75,22 +77,263 @@ def sanitize_slug(raw_slug: str) -> str:
     return cleaned or "release_snapshot"
 
 
-def copy_tree_cow(src: Path, dst: Path, exclude_names: set[str] | None = None) -> None:
-    """Copy `src` to `dst` using Btrfs `--reflink=auto` when available, pruning excluded names afterwards."""
+def _sha256_file(path: Path) -> str:
+    """Compute streaming SHA-256 hex digest for a regular file."""
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def find_latest_same_dev_raid_snapshot(raid_root: Path, exclude_dir: Path) -> Path | None:
+    """Locate the newest finalized `v*` deliverable on the same filesystem (`st_dev`) for Btrfs `--reflink=always` seeding."""
+    if not raid_root.is_dir():
+        return None
+    try:
+        target_dev = os.stat(raid_root).st_dev
+    except OSError:
+        return None
+    candidates: list[tuple[float, str, Path]] = []
+    for entry in raid_root.iterdir():
+        if entry == exclude_dir or entry.name.startswith(".") or not entry.name.startswith("v"):
+            continue
+        if entry.is_symlink() or not entry.is_dir():
+            continue
+        if not (entry / "SHA256SUMS.txt").is_file():
+            continue
+        try:
+            st = os.stat(entry)
+        except OSError:
+            continue
+        if st.st_dev == target_dev:
+            candidates.append((st.st_mtime, entry.name, entry))
+    if not candidates:
+        return None
+    candidates.sort()
+    return candidates[-1][2]
+
+
+def find_verified_benchmark_receipt(
+    history_jsonl: Path,
+    ver_status: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Return the newest `PASS` / `BASELINE_PINNED` `full-system-suite` receipt matching live `(HEAD, tree_hash, worktree)`."""
+    if not history_jsonl.is_file():
+        return None
+    want_head = str(ver_status.get("live_head_sha") or "")
+    want_tree = str(ver_status.get("live_tree_hash") or "")
+    want_wt = str(ver_status.get("worktree") or "")
+    if not want_head or not want_tree:
+        return None
+    lines = history_jsonl.read_text(encoding="utf-8", errors="replace").splitlines()
+    for raw in reversed(lines):
+        raw = raw.strip()
+        if not raw:
+            continue
+        try:
+            rec = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if rec.get("profile") != "full-system-suite":
+            continue
+        if rec.get("verdict") not in ("PASS", "BASELINE_PINNED"):
+            continue
+        if int(rec.get("hard_block_count", 1)) != 0:
+            continue
+        vs = rec.get("version_status") or {}
+        if (
+            str(vs.get("live_head_sha") or "") == want_head
+            and str(vs.get("live_tree_hash") or "") == want_tree
+            and str(vs.get("worktree") or "") == want_wt
+        ):
+            return rec
+    return None
+
+
+def _force_writable_rmtree(target: Path) -> None:
+    """Recursively restore `u+w` permissions before `shutil.rmtree` so `0555`/`0444` trees never block cleanup."""
+    if not os.path.lexists(target):
+        return
+    if target.is_symlink() or target.is_file():
+        target.unlink(missing_ok=True)
+        return
+    for rw, dw, fw in os.walk(target, topdown=True):
+        try:
+            os.chmod(rw, 0o755)
+        except OSError:
+            pass
+        for fn in fw:
+            fp = Path(rw) / fn
+            if not fp.is_symlink():
+                try:
+                    os.chmod(fp, 0o644)
+                except OSError:
+                    pass
+    shutil.rmtree(target, ignore_errors=True)
+
+
+def copy_tree_cow(
+    src: Path,
+    dst: Path,
+    exclude_names: set[str] | None = None,
+    seed_src: Path | None = None,
+) -> dict[str, int | str]:
+    """
+    Copy `src` to `dst`, seeding from a same-device `seed_src` via Btrfs `cp -dR --preserve=timestamps --reflink=always`
+    when available and reconciling modified/added/deleted files by cryptographic SHA-256 while retaining working-tree `.git/`.
+    """
+    if os.path.lexists(dst):
+        _force_writable_rmtree(dst)
     dst.parent.mkdir(parents=True, exist_ok=True)
     cp_bin = shutil.which("cp")
+    seeded = False
+    reflink_mode = "none"
+
+    if seed_src is not None and seed_src.is_dir() and cp_bin:
+        try:
+            same_dev = os.stat(seed_src).st_dev == os.stat(dst.parent).st_dev
+        except OSError:
+            same_dev = False
+        if same_dev:
+            p_always = subprocess.run(
+                [cp_bin, "-dR", "--preserve=timestamps", "--reflink=always", str(seed_src), str(dst)],
+                capture_output=True,
+                text=True,
+            )
+            if p_always.returncode == 0:
+                seeded = True
+                reflink_mode = "always"
+            else:
+                _force_writable_rmtree(dst)
+                p_auto = subprocess.run(
+                    [cp_bin, "-dR", "--preserve=timestamps", "--reflink=auto", str(seed_src), str(dst)],
+                    capture_output=True,
+                    text=True,
+                )
+                if p_auto.returncode == 0:
+                    seeded = True
+                    reflink_mode = "auto_fallback"
+                else:
+                    _force_writable_rmtree(dst)
+
+    if seeded:
+        # Unlock staging copy (`seed_src` on RAID remains 0444/0555 untouched!)
+        for root_u, dirs_u, files_u in os.walk(dst):
+            os.chmod(root_u, 0o755)
+            for fn_u in files_u:
+                fp_u = Path(root_u) / fn_u
+                if not fp_u.is_symlink():
+                    os.chmod(fp_u, 0o644)
+
+        pruned = 0
+        for root_d, dirs_d, files_d in os.walk(dst, topdown=False):
+            rel_dir = Path(root_d).relative_to(dst)
+            src_dir = src / rel_dir
+            for fname in files_d:
+                dst_fp = Path(root_d) / fname
+                src_fp = src_dir / fname
+                is_forbidden = (not dst_fp.is_symlink()) and bool(FORBIDDEN_SECRET_PATTERNS.search(fname))
+                is_excluded = bool(exclude_names and fname in exclude_names)
+                src_missing_or_type_changed = (
+                    (not os.path.lexists(src_fp))
+                    or (dst_fp.is_symlink() != src_fp.is_symlink())
+                    or (not src_fp.is_symlink() and src_fp.is_dir())
+                )
+                if is_forbidden or is_excluded or src_missing_or_type_changed:
+                    dst_fp.unlink(missing_ok=True)
+                    pruned += 1
+            for dname in dirs_d:
+                dst_dp = Path(root_d) / dname
+                src_dp = src_dir / dname
+                is_excluded_d = dname == "__pycache__" or bool(exclude_names and dname in exclude_names)
+                if dst_dp.is_symlink():
+                    if is_excluded_d or not src_dp.is_symlink():
+                        dst_dp.unlink(missing_ok=True)
+                        pruned += 1
+                else:
+                    if is_excluded_d or not src_dp.is_dir() or src_dp.is_symlink():
+                        shutil.rmtree(dst_dp, ignore_errors=True)
+                        pruned += 1
+
+        reflink_preserved = 0
+        copied_files = 0
+        for root_s, dirs_s, files_s in os.walk(src, topdown=True):
+            rel_dir = Path(root_s).relative_to(src)
+            dst_dir = dst / rel_dir
+            dst_dir.mkdir(parents=True, exist_ok=True)
+            os.chmod(dst_dir, 0o755)
+            for dname in list(dirs_s):
+                if dname == "__pycache__" or (exclude_names and dname in exclude_names):
+                    dirs_s.remove(dname)
+                    continue
+                src_dp = Path(root_s) / dname
+                if src_dp.is_symlink():
+                    dirs_s.remove(dname)
+                    dst_dp = dst_dir / dname
+                    want_link = os.readlink(src_dp)
+                    if os.path.lexists(dst_dp):
+                        if dst_dp.is_symlink() and os.readlink(dst_dp) == want_link:
+                            continue
+                        if dst_dp.is_dir() and not dst_dp.is_symlink():
+                            shutil.rmtree(dst_dp, ignore_errors=True)
+                        else:
+                            dst_dp.unlink(missing_ok=True)
+                    os.symlink(want_link, dst_dp)
+
+            for fname in files_s:
+                if exclude_names and fname in exclude_names:
+                    continue
+                src_fp = Path(root_s) / fname
+                dst_fp = dst_dir / fname
+                if src_fp.is_symlink():
+                    want_link = os.readlink(src_fp)
+                    if os.path.lexists(dst_fp):
+                        if dst_fp.is_symlink() and os.readlink(dst_fp) == want_link:
+                            continue
+                        dst_fp.unlink(missing_ok=True)
+                    os.symlink(want_link, dst_fp)
+                    continue
+                if FORBIDDEN_SECRET_PATTERNS.search(fname):
+                    dst_fp.unlink(missing_ok=True)
+                    continue
+                if (
+                    dst_fp.exists()
+                    and not dst_fp.is_symlink()
+                    and dst_fp.stat().st_size == src_fp.stat().st_size
+                    and _sha256_file(dst_fp) == _sha256_file(src_fp)
+                ):
+                    os.chmod(dst_fp, 0o644)
+                    reflink_preserved += 1
+                else:
+                    dst_fp.unlink(missing_ok=True)
+                    shutil.copy2(src_fp, dst_fp)
+                    os.chmod(dst_fp, 0o644)
+                    copied_files += 1
+
+        return {
+            "reflink_mode": reflink_mode,
+            "reflink_preserved_files": reflink_preserved,
+            "copied_or_updated_files": copied_files,
+            "pruned_entries": pruned,
+        }
+
     used_cp = False
     if cp_bin:
         proc = subprocess.run(
-            [cp_bin, "-a", "--reflink=auto", str(src), str(dst)],
+            [cp_bin, "-dR", "--preserve=timestamps", "--reflink=auto", str(src), str(dst)],
             capture_output=True,
             text=True,
         )
         if proc.returncode == 0:
             used_cp = True
+            reflink_mode = "direct_auto"
+        else:
+            _force_writable_rmtree(dst)
     if not used_cp:
         shutil.copytree(src, dst, symlinks=True)
 
+    copied_files = 0
     # Ensure staging tree is writable while assembling (source may contain 0444 locked core/archive files)
     for root_w, dirs_w, files_w in os.walk(dst):
         os.chmod(root_w, 0o755)
@@ -106,6 +349,13 @@ def copy_tree_cow(src: Path, dst: Path, exclude_names: set[str] | None = None) -
                 fp.unlink(missing_ok=True)
             else:
                 os.chmod(fp, 0o644)
+                copied_files += 1
+    return {
+        "reflink_mode": reflink_mode,
+        "reflink_preserved_files": 0,
+        "copied_or_updated_files": copied_files,
+        "pruned_entries": 0,
+    }
 
 
 def _redact_json_obj(obj: Any) -> Any:
@@ -240,7 +490,7 @@ def build_restore_script(version_label: str, folder_name: str) -> str:
 set -euo pipefail
 
 BACKUP_DIR="$(cd "$(dirname "${{BASH_SOURCE[0]}}")" && pwd)"
-HOME_DIR="/home/orin"
+HOME_DIR="${{HOMUNCULUS_RESTORE_HOME_OVERRIDE:-/home/orin}}"
 PROJECTS_ROOT="${{HOME_DIR}}/Projects"
 ENG_ROOT="${{PROJECTS_ROOT}}/Engineering"
 CLEANROOM_ROOT="${{PROJECTS_ROOT}}/Alchemical3D/Homunculus"
@@ -325,6 +575,7 @@ if [[ "$MODE" == "dry-run" ]]; then
     echo "      * Replace ${{CLEANROOM_ROOT}} with ${{BACKUP_DIR}}/Homunculus_CleanRoom"
     echo "      * Replace ${{ENG_ROOT}}/{{memory,study_briefs,scripts}} and root configs"
     echo "      * Restore ${{PROJECTS_ROOT}}/{{.homunculus.json,.geminiignore}} and ${{HOME_DIR}}/.homunculus.json"
+    echo "      * Preserve live ${{GEMINI_CFG}}/mcp_config.json (staging redacted template at mcp_config.redacted_reference.json) & non-Homunculus user skills/rules"
     echo "      * Restore client MCP schemas & ~/.agents/skills/find-skills"
     echo "      * Re-bind symlinks & run full 46-test suite + portability, boundary, hygiene, and memory audits"
     echo "=== DRY-RUN COMPLETE (0 live mutations) ==="
@@ -347,8 +598,8 @@ if [[ "$MODE" == "restore-engine" ]]; then
     chmod -R u+w "${{CLEANROOM_ROOT}}"
     python3 "${{CLEANROOM_ROOT}}/scripts/homunculus_paths.py" --homunculus-root "${{CLEANROOM_ROOT}}" --lock-core >/dev/null
     echo "[4/4] Re-binding workstation symlinks & running unit tests (memory/ untouched)..."
-    "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
-    "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
+    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
+    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "${{CLEANROOM_ROOT}}/tests" -p "test_*.py"
     echo "=== ENGINE-ONLY RESTORATION COMPLETE & VERIFIED (0 errors; memory/ preserved) ==="
     exit 0
@@ -356,8 +607,20 @@ fi
 
 echo "[3/4] Executing Full Catastrophic Workstation Restoration..."
 mkdir -p "${{ENG_ROOT}}" "${{PROJECTS_ROOT}}" "$(dirname "${{CLEANROOM_ROOT}}")"
-rm -rf "${{GEMINI_CFG}}/rules" "${{GEMINI_CFG}}/skills" "${{ENG_ROOT}}/.agents"
+rm -rf "${{ENG_ROOT}}/.agents"
 mkdir -p "${{GEMINI_CFG}}/rules" "${{GEMINI_CFG}}/skills"
+shopt -s nullglob dotglob
+for cfg_sub in "${{GEMINI_CFG}}/rules" "${{GEMINI_CFG}}/skills"; do
+    for entry in "${{cfg_sub}}/"*; do
+        if [[ -L "$entry" ]]; then
+            lnk_t="$(readlink "$entry" || true)"
+            if [[ ! -e "$entry" ]] || [[ "$lnk_t" == *"Homunculus/"* ]] || [[ "$lnk_t" == *"Engineering/"* ]]; then
+                rm -f "$entry"
+            fi
+        fi
+    done
+done
+shopt -u nullglob dotglob
 
 for live_d in "${{CLEANROOM_ROOT}}" "${{ENG_ROOT}}/memory" "${{ENG_ROOT}}/study_briefs" "${{ENG_ROOT}}/scripts"; do
     unlock_live_tree "$live_d"
@@ -374,19 +637,19 @@ chmod +x "${{ENG_ROOT}}/scripts/"*.sh "${{ENG_ROOT}}/scripts/"*.py 2>/dev/null |
 
 for root_cfg in README.md .gitignore .stignore .geminiignore .homunculus.json .homunculus_brand.json homunculus_safety.json; do
     if [[ -f "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/${{root_cfg}}" ]]; then
-        cp -a "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/${{root_cfg}}" "${{ENG_ROOT}}/${{root_cfg}}"
+        cp -af --remove-destination "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/${{root_cfg}}" "${{ENG_ROOT}}/${{root_cfg}}"
         chmod 0644 "${{ENG_ROOT}}/${{root_cfg}}"
     fi
 done
 
 for umb_cfg in .homunculus.json .geminiignore; do
     if [[ -f "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/Projects_${{umb_cfg}}" ]]; then
-        cp -a "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/Projects_${{umb_cfg}}" "${{PROJECTS_ROOT}}/${{umb_cfg}}"
+        cp -af --remove-destination "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/Projects_${{umb_cfg}}" "${{PROJECTS_ROOT}}/${{umb_cfg}}"
         chmod 0644 "${{PROJECTS_ROOT}}/${{umb_cfg}}"
     fi
 done
 if [[ -f "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/home.homunculus.json" ]]; then
-    cp -a "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/home.homunculus.json" "${{HOME_DIR}}/.homunculus.json"
+    cp -af --remove-destination "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/home.homunculus.json" "${{HOME_DIR}}/.homunculus.json"
     chmod 0644 "${{HOME_DIR}}/.homunculus.json"
 fi
 
@@ -397,8 +660,19 @@ if [[ -d "${{BACKUP_DIR}}/Client_Wiring_Snapshot/dot_agents_skills/find-skills" 
     chmod -R u+w "${{DOT_AGENTS}}/skills/find-skills"
 fi
 if [[ -f "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" ]]; then
-    cp -a "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" "${{GEMINI_CFG}}/mcp_config.json"
-    chmod 0600 "${{GEMINI_CFG}}/mcp_config.json"
+    mkdir -p "${{GEMINI_CFG}}"
+    if [[ -f "${{GEMINI_CFG}}/mcp_config.json" ]]; then
+        cp -af --remove-destination "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" "${{GEMINI_CFG}}/mcp_config.redacted_reference.json"
+        chmod 0600 "${{GEMINI_CFG}}/mcp_config.redacted_reference.json"
+        echo "  [SAFE-PRESERVE] Preserved live ${{GEMINI_CFG}}/mcp_config.json (redacted snapshot template staged at mcp_config.redacted_reference.json)."
+    elif grep -q "<REDACTED_BY_SNAPSHOT_SAFETY_GATE>" "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json"; then
+        cp -af --remove-destination "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" "${{GEMINI_CFG}}/mcp_config.redacted_reference.json"
+        chmod 0600 "${{GEMINI_CFG}}/mcp_config.redacted_reference.json"
+        echo "  [ACTION REQUIRED] Staged redacted MCP template at ${{GEMINI_CFG}}/mcp_config.redacted_reference.json — populate live credentials and rename to mcp_config.json."
+    else
+        cp -af --remove-destination "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" "${{GEMINI_CFG}}/mcp_config.json"
+        chmod 0600 "${{GEMINI_CFG}}/mcp_config.json"
+    fi
 fi
 if [[ -d "${{BACKUP_DIR}}/Client_Wiring_Snapshot/antigravity_mcp_gmail_schemas" ]]; then
     mkdir -p "$(dirname "${{AGY_MCP_DIR}}")"
@@ -412,8 +686,8 @@ python3 "${{CLEANROOM_ROOT}}/scripts/homunculus_paths.py" --homunculus-root "${{
 python3 "${{CLEANROOM_ROOT}}/skills/project-memory/scripts/sync_memory.py" --memory-root "${{ENG_ROOT}}/memory" --lock-memory-rules >/dev/null
 
 echo "[4/4] Re-binding workstation symlinks and running full verification gates..."
-"${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
-"${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
+HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
+HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "${{CLEANROOM_ROOT}}/tests" -p "test_*.py"
 PYTHONDONTWRITEBYTECODE=1 python3 "${{CLEANROOM_ROOT}}/skills/skill-architect/scripts/audit_skill_hygiene.py" --repo-root "${{CLEANROOM_ROOT}}" --audit --strict-structure >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 "${{CLEANROOM_ROOT}}/scripts/audit_portability.py" --repo "${{CLEANROOM_ROOT}}"
@@ -546,13 +820,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Homunculus Immutable RAID Version Deliverable Snapshot Builder."
     )
-    parser.add_argument("--slug", default="release_snapshot", help="Descriptive slug appended to v0.Y.Z_<YYYY-MM-DD>_<slug>.")
+    parser.add_argument("--slug", "--label", dest="slug", default="release_snapshot", help="Descriptive slug appended to v0.Y.Z_<YYYY-MM-DD>_<slug>.")
     parser.add_argument("--raid-root", default=str(DEFAULT_RAID_VERSIONS_ROOT), help="RAID versions root directory.")
     parser.add_argument("--homunculus-dir", default=str(DEFAULT_HOMUNCULUS_DIR), help="Path to single-source Alchemical3D/Homunculus.")
     parser.add_argument("--engineering-dir", default=str(DEFAULT_ENGINEERING_DIR), help="Path to Engineering parent root.")
     parser.add_argument("--version-manifest", default=str(DEFAULT_VERSION_MANIFEST), help="Path to homunculus_version.json.")
     parser.add_argument("--allow-dirty", action="store_true", help="Allow cutting a `-dev+<tree8>` candidate snapshot when Homunculus worktree is dirty.")
     parser.add_argument("--skip-benchmark", action="store_true", help="Skip running `benchmark_homunculus.py --profile full-system-suite` during staging.")
+    parser.add_argument("--force-fresh-benchmark", action="store_true", help="Always execute a fresh `full-system-suite` run even when a matching `(HEAD, tree_hash)` receipt exists.")
     parser.add_argument("--list", action="store_true", help="List existing immutable version deliverables on RAID.")
     parser.add_argument("--verify", default="", help="Verify an existing RAID deliverable directory (name or full path).")
     parser.add_argument("--dry-run", action="store_true", help="Print snapshot plan without writing to RAID.")
@@ -626,61 +901,104 @@ def main(argv: list[str] | None = None) -> int:
     staging_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        # 1. Run Standardized Full-System Benchmark Suite first (blocks snapshot on HARD_BLOCK_REGRESSION)
+        # 1. Reuse cryptographically matching `full-system-suite` receipt if available, else run fresh (blocks on HARD_BLOCK_REGRESSION)
         bench_summary: dict[str, Any] = {"run_id": "SKIPPED", "verdict": "SKIPPED"}
+        bench_reused = False
         if not args.skip_benchmark:
-            bench_script = SCRIPT_DIR / "benchmark_homunculus.py"
+            history_jsonl = eng_dir / "memory" / "Projects" / "Homunculus" / "benchmark_history.jsonl"
+            cached_rec = None if args.force_fresh_benchmark else find_verified_benchmark_receipt(history_jsonl, ver_status)
             scorecard_md = staging_dir / "BENCHMARK_SCORECARD.md"
-            p_bench = subprocess.run(
-                [
-                    sys.executable,
-                    str(bench_script),
-                    "--profile",
-                    "full-system-suite",
-                    "--output-md",
-                    str(scorecard_md),
-                    "--label",
-                    f"RAID Deliverable Gate ({folder_name})",
-                    "--json",
-                ],
-                capture_output=True,
-                text=True,
-            )
-            if p_bench.returncode == 1:
-                print(
-                    "[BLOCKED] Full-system benchmark detected HARD_BLOCK_REGRESSION (`exit 1`). "
-                    "Resolve regressions before cutting a RAID deliverable snapshot!",
-                    file=sys.stderr,
+            if cached_rec is not None:
+                import benchmark_homunculus  # local workstation companion module
+
+                bench_summary = cached_rec
+                bench_reused = True
+                scorecard_md.write_text(
+                    benchmark_homunculus.render_markdown_report(
+                        cached_rec, str(cached_rec.get("autopsy_markdown") or "")
+                    ),
+                    encoding="utf-8",
                 )
-                if p_bench.stdout:
-                    try:
-                        bad_obj = json.loads(p_bench.stdout)
-                        print(bad_obj.get("autopsy_markdown", ""), file=sys.stderr)
-                    except Exception:
-                        pass
-                return 1
-            bench_summary = json.loads(p_bench.stdout)
-            (staging_dir / "benchmark_report.json").write_text(
-                json.dumps(bench_summary, indent=2) + "\n",
-                encoding="utf-8",
-            )
+                (staging_dir / "benchmark_report.json").write_text(
+                    json.dumps(bench_summary, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+            else:
+                bench_script = SCRIPT_DIR / "benchmark_homunculus.py"
+                p_bench = subprocess.run(
+                    [
+                        sys.executable,
+                        str(bench_script),
+                        "--profile",
+                        "full-system-suite",
+                        "--homunculus-dir",
+                        str(hom_dir),
+                        "--memory-root",
+                        str(eng_dir / "memory"),
+                        "--version-manifest",
+                        str(ver_manifest),
+                        "--output-md",
+                        str(scorecard_md),
+                        "--label",
+                        f"RAID Deliverable Gate ({folder_name})",
+                        "--json",
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                if p_bench.returncode == 1:
+                    print(
+                        "[BLOCKED] Full-system benchmark detected HARD_BLOCK_REGRESSION (`exit 1`). "
+                        "Resolve regressions before cutting a RAID deliverable snapshot!",
+                        file=sys.stderr,
+                    )
+                    if p_bench.stdout:
+                        try:
+                            bad_obj = json.loads(p_bench.stdout)
+                            print(bad_obj.get("autopsy_markdown", ""), file=sys.stderr)
+                        except Exception:
+                            pass
+                    return 1
+                bench_summary = json.loads(p_bench.stdout)
+                (staging_dir / "benchmark_report.json").write_text(
+                    json.dumps(bench_summary, indent=2) + "\n",
+                    encoding="utf-8",
+                )
         else:
             (staging_dir / "BENCHMARK_SCORECARD.md").write_text(
                 f"# Benchmark Skipped (`--skip-benchmark`)\n\nDeliverable: `{folder_name}`\n",
                 encoding="utf-8",
             )
 
-        # 2. Stage Clean-Room Homunculus, Memory, Study Briefs, and Engineering Root/Scripts via Btrfs CoW
-        copy_tree_cow(hom_dir, staging_dir / "Homunculus_CleanRoom")
-        copy_tree_cow(eng_dir / "memory", staging_dir / "memory")
+        # 2. Stage Clean-Room Homunculus, Memory, Study Briefs, and Engineering Root/Scripts via Same-Device Btrfs CoW Seeding
+        seed_snap = find_latest_same_dev_raid_snapshot(raid_root, final_dir)
+        cow_stats: dict[str, Any] = {}
+        cow_stats["Homunculus_CleanRoom"] = copy_tree_cow(
+            hom_dir,
+            staging_dir / "Homunculus_CleanRoom",
+            seed_src=(seed_snap / "Homunculus_CleanRoom") if seed_snap else None,
+        )
+        cow_stats["memory"] = copy_tree_cow(
+            eng_dir / "memory",
+            staging_dir / "memory",
+            seed_src=(seed_snap / "memory") if seed_snap else None,
+        )
         if (eng_dir / "study_briefs").is_dir():
-            copy_tree_cow(eng_dir / "study_briefs", staging_dir / "study_briefs")
+            cow_stats["study_briefs"] = copy_tree_cow(
+                eng_dir / "study_briefs",
+                staging_dir / "study_briefs",
+                seed_src=(seed_snap / "study_briefs") if seed_snap else None,
+            )
         else:
             (staging_dir / "study_briefs").mkdir(parents=True, exist_ok=True)
 
         ers_dir = staging_dir / "Engineering_Root_and_Scripts"
         ers_dir.mkdir(parents=True, exist_ok=True)
-        copy_tree_cow(eng_dir / "scripts", ers_dir / "scripts")
+        cow_stats["scripts"] = copy_tree_cow(
+            eng_dir / "scripts",
+            ers_dir / "scripts",
+            seed_src=(seed_snap / "Engineering_Root_and_Scripts" / "scripts") if seed_snap else None,
+        )
         for cfg_name in (
             "README.md",
             ".gitignore",
@@ -769,6 +1087,9 @@ def main(argv: list[str] | None = None) -> int:
             "engine_tree_hash": ver_status["live_tree_hash"],
             "benchmark_run_id": bench_summary.get("run_id"),
             "benchmark_verdict": bench_summary.get("verdict"),
+            "benchmark_receipt_reused": bench_reused,
+            "cow_seed_snapshot": seed_snap.name if seed_snap else None,
+            "cow_sync_stats": cow_stats,
             "sha256_files_indexed": hashed_files,
             "locked_files_0444": locked_files,
             "locked_dirs_0555": locked_dirs,

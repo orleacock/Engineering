@@ -23,7 +23,10 @@ study_briefs/*
 !study_briefs/README.md
 !study_briefs/.gitkeep
 
-# Obsidian volatile UI state & local trash in Dual-Mode memory root
+# Obsidian volatile UI state, derived scoring/AST caches & local trash in Dual-Mode memory root
 memory/.obsidian/workspace.json
 memory/.obsidian/workspace-mobile.json
 memory/.trash/
+memory/.cache/*_scoring_vectors.json
+**/.cache/ast_map_cache.json
+**/.cache/homunculus_tree_stamp.json

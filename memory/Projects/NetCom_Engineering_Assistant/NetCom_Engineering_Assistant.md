@@ -6,12 +6,12 @@ project_type: "software"
 status: "v2.2.3 Hardened"
 local_path: "/home/orin/Projects/Engineering/NEA_v2.2.3"
 repo_head_sha: "UNTRACKED"
-tree_hash: "3ce4939d8bf7"
+tree_hash: "9e7492e491a3"
 checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "3ce4939d8bf7"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/NetCom_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -60,30 +60,30 @@ last_synced: "2026-11-06"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: NEA_v2.2.3 | HEAD SHA: UNTRACKED | Tree Hash: 3ce4939d8bf7
-  CHANGELOG.md
-  NEA_Governance_Register_v2.2.3.md
-  NEA_User_and_DevOps_Manual.md
-  README.md
-  .agents/
-  .agents/skills/
-  .agents/skills/nea-copilot-builder/
-  .agents/skills/nea-copilot-builder/SKILL.md
+Repository: NEA_v2.2.3 | HEAD SHA: UNTRACKED | Tree Hash: 9e7492e491a3
   Copilot_Agents/
-  Copilot_Agents/Agent_Builder_Guide.md
   Copilot_Agents/NEA_BOM_Builder/
-  Copilot_Agents/NEA_BOM_Builder/Agent_Config.md
-  Copilot_Agents/NEA_BOM_Builder/Instructions.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/
-  Copilot_Agents/NEA_BOM_Builder/Knowledge/BOM_Standards_v2.2.3.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/Behavior_v2.2.3.txt
+  Copilot_Agents/NEA_BOM_Builder/Knowledge/BOM_Standards_v2.2.3.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/Formatting_Standards_v2.2.3.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/Project_BOM_Build_Workflow_v2.2.3.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/Project_Metadata_Standard_v2.2.3.txt
   Copilot_Agents/NEA_BOM_Builder/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_BOM_Builder/Agent_Config.md
+  Copilot_Agents/NEA_BOM_Builder/Instructions.txt
+  Copilot_Agents/NEA_Catalog_Manager/
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Behavior_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/BOM_Standards_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Formatting_Standards_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Material_Catalog_Workflow_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Material_Master_Standards_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/NEA_Governance_Register_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_Catalog_Manager/Agent_Config.md
+  Copilot_Agents/NEA_Catalog_Manager/Instructions.txt
   Copilot_Agents/NEA_CRL_Builder/
-  Copilot_Agents/NEA_CRL_Builder/Agent_Config.md
-  Copilot_Agents/NEA_CRL_Builder/Instructions.txt
   Copilot_Agents/NEA_CRL_Builder/Knowledge/
   Copilot_Agents/NEA_CRL_Builder/Knowledge/Behavior_v2.2.3.txt
   Copilot_Agents/NEA_CRL_Builder/Knowledge/CRL_Build_Workflow_v2.2.3.txt
@@ -91,29 +91,18 @@ Repository: NEA_v2.2.3 | HEAD SHA: UNTRACKED | Tree Hash: 3ce4939d8bf7
   Copilot_Agents/NEA_CRL_Builder/Knowledge/Formatting_Standards_v2.2.3.txt
   Copilot_Agents/NEA_CRL_Builder/Knowledge/Project_Metadata_Standard_v2.2.3.txt
   Copilot_Agents/NEA_CRL_Builder/Knowledge/Workbook_Types_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/
-  Copilot_Agents/NEA_Catalog_Manager/Agent_Config.md
-  Copilot_Agents/NEA_Catalog_Manager/Instructions.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/BOM_Standards_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Behavior_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Formatting_Standards_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Material_Catalog_Workflow_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Material_Master_Standards_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/NEA_Governance_Register_v2.2.3.txt
-  Copilot_Agents/NEA_Catalog_Manager/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_CRL_Builder/Agent_Config.md
+  Copilot_Agents/NEA_CRL_Builder/Instructions.txt
   Copilot_Agents/NEA_Package_Reviewer/
-  Copilot_Agents/NEA_Package_Reviewer/Agent_Config.md
-  Copilot_Agents/NEA_Package_Reviewer/Instructions.txt
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/Behavior_v2.2.3.txt
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/Project_Review_Workflow_v2.2.3.txt
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/Review_Report_Template_v2.2.3.txt
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/Review_Standards_v2.2.3.txt
   Copilot_Agents/NEA_Package_Reviewer/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_Package_Reviewer/Agent_Config.md
+  Copilot_Agents/NEA_Package_Reviewer/Instructions.txt
   Copilot_Agents/NEA_Repair_Tool/
-  Copilot_Agents/NEA_Repair_Tool/Agent_Config.md
-  Copilot_Agents/NEA_Repair_Tool/Instructions.txt
   Copilot_Agents/NEA_Repair_Tool/Knowledge/
   Copilot_Agents/NEA_Repair_Tool/Knowledge/Behavior_v2.2.3.txt
   Copilot_Agents/NEA_Repair_Tool/Knowledge/Formatting_Standards_v2.2.3.txt
@@ -121,41 +110,48 @@ Repository: NEA_v2.2.3 | HEAD SHA: UNTRACKED | Tree Hash: 3ce4939d8bf7
   Copilot_Agents/NEA_Repair_Tool/Knowledge/Project_Metadata_Standard_v2.2.3.txt
   Copilot_Agents/NEA_Repair_Tool/Knowledge/Workbook_Repair_Workflow_v2.2.3.txt
   Copilot_Agents/NEA_Repair_Tool/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_Repair_Tool/Agent_Config.md
+  Copilot_Agents/NEA_Repair_Tool/Instructions.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/
-  Copilot_Agents/NEA_Timesheet_Consolidator/Agent_Config.md
-  Copilot_Agents/NEA_Timesheet_Consolidator/Instructions.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/Behavior_v2.2.3.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/Formatting_Standards_v2.2.3.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/Timesheet_Consolidation_Workflow_v2.2.3.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/Timesheet_Standards_v2.2.3.txt
   Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/Workbook_Types_v2.2.3.txt
+  Copilot_Agents/NEA_Timesheet_Consolidator/Agent_Config.md
+  Copilot_Agents/NEA_Timesheet_Consolidator/Instructions.txt
+  Copilot_Agents/Agent_Builder_Guide.md
   Scripts/
   Scripts/build_copilot_agents.py
   Scripts/inspect_nea_workbooks.py
   Scripts/package_nea_delivery.py
   Skills/
-  Skills/Skills_Deployment_Guide.md
   Skills/nea-anti-hallucination/
-  Skills/nea-anti-hallucination/SKILL.md
-  Skills/nea-anti-hallucination/nea-anti-hallucination.zip
   Skills/nea-anti-hallucination/scripts/
   Skills/nea-anti-hallucination/scripts/inspect_nea_workbooks.py
+  Skills/nea-anti-hallucination/nea-anti-hallucination.zip
+  Skills/nea-anti-hallucination/SKILL.md
   Skills/nea-verification-and-receipt/
-  Skills/nea-verification-and-receipt/SKILL.md
-  Skills/nea-verification-and-receipt/nea-verification-and-receipt.zip
   Skills/nea-verification-and-receipt/scripts/
   Skills/nea-verification-and-receipt/scripts/inspect_nea_workbooks.py
+  Skills/nea-verification-and-receipt/nea-verification-and-receipt.zip
+  Skills/nea-verification-and-receipt/SKILL.md
   Skills/nea-workbook-entry-guard/
-  Skills/nea-workbook-entry-guard/SKILL.md
-  Skills/nea-workbook-entry-guard/nea-workbook-entry-guard.zip
   Skills/nea-workbook-entry-guard/scripts/
   Skills/nea-workbook-entry-guard/scripts/inspect_nea_workbooks.py
+  Skills/nea-workbook-entry-guard/nea-workbook-entry-guard.zip
+  Skills/nea-workbook-entry-guard/SKILL.md
+  Skills/Skills_Deployment_Guide.md
   Templates/
   Templates/BOM_Materials_Master_Template.xlsx
   Templates/Cable_Running_List_Template.xlsx
   Templates/Project_Cover_Sheet_Template.xlsx
   Templates/Timesheet_Template.xlsx
+  CHANGELOG.md
+  NEA_Governance_Register_v2.2.3.md
+  NEA_User_and_DevOps_Manual.md
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 

@@ -3,7 +3,7 @@ title: "Orin_Workstation — Memory & Repository Directory Tree"
 entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "8ad39a1c231e"
+tree_hash: "75f9167033ec"
 last_synced: "2026-11-10"
 ---
 
@@ -41,6 +41,7 @@ last_synced: "2026-11-10"
 │       ├── Templates/
 │       ├── Workstation_Operations.md
 │       ├── Workstation_Operations_Lessons_Learned.md
+│       ├── Workstation_Operations_Playbooks.md
 │       └── Workstation_Operations_Software.md
 ├── Standards_and_Specs/
 │   ├── Alchemical_Ecosystem_Links_and_Brand.md
@@ -89,7 +90,7 @@ last_synced: "2026-11-10"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: ee94ee20ba3d`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 386f254d0621`)
 - **Repository Location**: `../scripts`
 
 ```text

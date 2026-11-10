@@ -22,10 +22,10 @@ Responsibilities:
   Contract      : `scripts/script_contracts.json` [`version_manager.py`]
   CLI Flags     : --homunculus-dir, --manifest, --status, --init-baseline, --sync-manifest, --bump, --reason, --allow-v1-public-release, --rollback, --dry-run, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def compute_engine_tree_hash (#L79-L105)       | def get_git_state (#L108-L157)
-    - def load_or_create_manifest (#L160-L197)       | def resolve_effective_version_status (#L200-L245)
-    - def ensure_git_tag (#L248-L271)                | def bump_version (#L274-L346)
-    - def rollback_engine (#L349-L408)               | def main (#L411-L550)
+    - def compute_content_tree_hash (#L79-L105)      | def get_git_state (#L111-L160)
+    - def load_or_create_manifest (#L163-L200)       | def resolve_effective_version_status (#L203-L251)
+    - def ensure_git_tag (#L254-L277)                | def bump_version (#L280-L352)
+    - def rollback_engine (#L355-L414)               | def main (#L417-L556)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -76,8 +76,8 @@ DIGIT_TRIGGER_LAWS: dict[str, dict[str, str]] = {
 }
 
 
-def compute_engine_tree_hash(homunculus_dir: Path) -> tuple[str, int]:
-    """Compute a deterministic 12-hex SHA-256 tree hash over all tracked/non-ignored files in Homunculus."""
+def compute_content_tree_hash(homunculus_dir: Path) -> tuple[str, int]:
+    """Compute a deterministic 12-hex full-byte Merkle content_tree_hash over all tracked/non-ignored files in Homunculus."""
     h = hashlib.sha256()
     file_count = 0
     if (homunculus_dir / ".git").exists():
@@ -103,6 +103,9 @@ def compute_engine_tree_hash(homunculus_dir: Path) -> tuple[str, int]:
             h.update(fp.read_bytes())
             h.update(b"\0")
     return h.hexdigest()[:12], file_count
+
+
+compute_engine_tree_hash = compute_content_tree_hash
 
 
 def get_git_state(homunculus_dir: Path) -> dict[str, Any]:
@@ -226,8 +229,11 @@ def resolve_effective_version_status(manifest_path: Path, homunculus_dir: Path) 
         "baseline_tag": manifest.get("baseline_tag", f"v{base_ver}"),
         "baseline_head_sha": base_sha,
         "baseline_tree_hash": base_tree,
+        "baseline_content_tree_hash": base_tree,
         "live_head_sha": git_info["head_sha"],
         "live_tree_hash": live_tree,
+        "live_content_tree_hash": live_tree,
+        "tree_hash_kind": "full_byte_merkle_content",
         "live_file_count": file_count,
         "worktree": git_info["worktree"],
         "dirty_files": git_info["dirty_files"],
@@ -285,7 +291,7 @@ def bump_version(
     if git_info["worktree"] != "clean":
         raise RuntimeError(
             f"Cannot bump version while Homunculus worktree is {git_info['worktree']}. "
-            "Commit or stash changes inside Engineering/Homunculus first."
+            f"Commit or stash changes inside {homunculus_dir} first."
         )
 
     manifest = load_or_create_manifest(manifest_path, homunculus_dir)
@@ -352,7 +358,7 @@ def rollback_engine(
     target_ref: str,
     dry_run: bool = False,
 ) -> dict[str, Any]:
-    """Roll back only `/home/orin/Projects/Engineering/Homunculus` without touching `memory/`."""
+    """Roll back only the single-source Clean-Room `Homunculus` repository without touching `memory/`."""
     norm_ref = target_ref.strip()
     if SEMVER_RE.match(norm_ref) and not norm_ref.startswith("v"):
         norm_ref = f"v{norm_ref}"
@@ -447,7 +453,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--rollback",
         metavar="TAG_OR_VERSION",
-        help="Roll back Engineering/Homunculus to a version tag/commit without touching memory/.",
+        help="Roll back Alchemical3D/Homunculus to a version tag/commit without touching memory/.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Preview rollback plan without mutating files.")
     parser.add_argument("--json", action="store_true", help="Emit JSON output.")
@@ -465,7 +471,7 @@ def main(argv: list[str] | None = None) -> int:
         tag_created = ensure_git_tag(
             hom_dir,
             "v0.1.0",
-            "Homunculus v0.1.0 — Consolidated Single-Source Clean-Room Baseline (101 files, Stateful Memory v1.1)",
+            "Homunculus v0.1.0 — Consolidated Single-Source Clean-Room Baseline (102 files, Stateful Memory v1.1)",
         )
         live_tree, file_count = compute_engine_tree_hash(hom_dir)
         git_info = get_git_state(hom_dir)
@@ -541,8 +547,8 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"=== Homunculus Version & Provenance Status ===\n"
             f"  Effective Version : {status['effective_version']} ({status['candidate_state']})\n"
-            f"  Baseline Tag      : {status['baseline_tag']} (HEAD: {status['baseline_head_sha']} | Tree: {status['baseline_tree_hash']})\n"
-            f"  Live Engine State : HEAD {status['live_head_sha']} | Tree {status['live_tree_hash']} ({status['live_file_count']} files | Worktree: {status['worktree']})\n"
+            f"  Baseline Tag      : {status['baseline_tag']} (HEAD: {status['baseline_head_sha']} | Content Merkle: {status['baseline_content_tree_hash']})\n"
+            f"  Live Engine State : HEAD {status['live_head_sha']} | Content Merkle {status['live_content_tree_hash']} ({status['live_file_count']} files | Worktree: {status['worktree']})\n"
             f"  Single Clean-Room : {status['authoritative_cleanroom_path']}\n"
             f"  Remote Backup     : {status['remote_url']}\n"
             f"  Git Tags          : {', '.join(status['tags']) if status['tags'] else 'none'}"

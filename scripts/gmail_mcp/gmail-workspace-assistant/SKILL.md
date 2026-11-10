@@ -11,12 +11,13 @@ This module governs multi-account Gmail MCP triage (`gmail_status`, `gmail_searc
 
 ## 1. Pre-Flight Foundation Checks
 
-1. **Multi-Account Identity & Alias Verification (`Accuracy & Truth > Speed`)**:
+1. **Multi-Account Identity, Lazy MCP Schema & Alias Verification (`Accuracy & Truth > Speed`)**:
    - Inspect `<memory_root>/Standards_and_Specs/Workspace_Gmail_MCP_Standard.md` (registered in `<memory_root>/Standards_and_Specs/Standards_Index.md`) to load configured account keys (e.g., `personal` vs. organization workspace accounts) and expected `Send-As` aliases.
+   - **Lazy vs. Eager MCP Tool Invocation**: In Antigravity / Gemini Carbon where `gmail` MCP tools are lazy-loaded, read `<appDataDir>/mcp/gmail/<toolName>.json` once for any tool schema you have not yet inspected in the active session, then invoke via `call_mcp_tool` (`ServerName: "gmail"`, `ToolName: "<toolName>"`, `Arguments: {...}`). On eager MCP clients, invoke `mcp_gmail_<toolName>` directly.
    - Before searching or drafting email, invoke `gmail_status` on the `gmail` MCP server to verify live OAuth readiness (`ready: true`) and inspect `verified_send_as_aliases` across configured accounts.
-   - **Zero Secret Read (`data-and-credential-safety.md`)**: Never call `read_file`, `cat`, or Python file reads on OAuth token files (`token_*.json`) or `client_secret*.json` inside `<gmail_config_dir>`.
+   - **Zero Secret Read (`data-and-credential-safety.md`)**: Never call `read_file`, `cat`, or Python file reads on OAuth token files (`token_*.json`), `mcp_config.json`, or `client_secret*.json` inside `<gmail_config_dir>`.
 2. **Project Memory & Entity Cross-Check (`project-memory`)**:
-   - When an email thread pertains to an indexed project or customer entity, inspect `<memory_root>/Projects/<Project>/<Project>.md` via `<HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --project <Project> --section summary` before drafting technical responses, and enforce strict entity containment (`entity:` frontmatter).
+   - When an email thread pertains to an indexed project or customer entity, inspect `<memory_root>/Projects/<Project>/<Project>.md` via `<HOMUNCULUS_ROOT>/skills/project-memory/scripts/sync_memory.py --project <Project> --section concept` before drafting technical responses, and enforce strict entity containment (`entity:` frontmatter).
 
 ---
 

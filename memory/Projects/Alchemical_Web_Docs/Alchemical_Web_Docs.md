@@ -6,12 +6,12 @@ project_type: "software"
 status: "Verified & Complete"
 local_path: "/home/orin/Projects/Alchemical3D/alchemical-3d.github.io"
 repo_head_sha: "55b4795b1e8d"
-tree_hash: "adeb4e18f33b"
+tree_hash: "ca85ba29ef7a"
 checkpoint_head_sha: "55b4795b1e8d"
 checkpoint_tree_hash: "adeb4e18f33b"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -43,30 +43,33 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: alchemical-3d.github.io | HEAD SHA: 55b4795b1e8d | Tree Hash: adeb4e18f33b
-  .gitignore
-  README.md
-  mkdocs.yml
-  requirements.txt
+Repository: alchemical-3d.github.io | HEAD SHA: 55b4795b1e8d | Tree Hash: ca85ba29ef7a
   .github/
   .github/workflows/
   .github/workflows/ci.yml
   docs/
+  docs/assets/
+  docs/assets/images/
+  docs/assets/images/img_core/
+  docs/assets/images/img_pestle/
+  docs/assets/images/img_retort/
+  docs/assets/images/!Alchemical-3D-Badge-Gradient-PRIMARY.png
+  docs/assets/images/!Alchemical-3D-Badge-Gradient-PRIMARY.svg
+  docs/assets/images/alchemical-3d-icon.png
+  docs/assets/images/Alchemical-3D-Logo-Gradient-PRIMARY-Transparent-Background.png
+  docs/assets/images/alchemical_fire1_web.png
+  docs/assets/images/Award.jpg
+  docs/assets/images/Award.png
+  docs/assets/images/banner.png
   docs/CNAME
   docs/core.md
   docs/index.md
   docs/pestle.md
   docs/retort.md
-  docs/assets/
-  docs/assets/images/
-  docs/assets/images/!Alchemical-3D-Badge-Gradient-PRIMARY.png
-  docs/assets/images/!Alchemical-3D-Badge-Gradient-PRIMARY.svg
-  docs/assets/images/Alchemical-3D-Logo-Gradient-PRIMARY-Transparent-Background.png
-  docs/assets/images/Award.jpg
-  docs/assets/images/Award.png
-  docs/assets/images/alchemical-3d-icon.png
-  docs/assets/images/alchemical_fire1_web.png
-  docs/assets/images/banner.png
+  .gitignore
+  mkdocs.yml
+  README.md
+  requirements.txt
 ```
 <!-- AUTO-TREE:END -->
 

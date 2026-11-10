@@ -4,13 +4,13 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
 note_type: "reference"
-last_synced: "2026-11-09"
+last_synced: "2026-11-10"
 ---
 
 # 🔬 Homunculus Single-Source Clean-Room Repository (`Alchemical3D/Homunculus`) Validation & Promotion Manifest
 
 > **Canonical Reference Role**: This document is the authoritative local validation and promotion ledger for the **Single-Source Clean-Room Repository** (`/home/orin/Projects/Alchemical3D/Homunculus`, remote `git@github-alchemical:Alchemical-3D/Homunculus.git`).
-> **Current Synchronization State (`2026-11-10`)**: **Consolidated Single-Source Clean-Room (`v0.1.0` at `bfbe03a5a0b7`, `101` tracked files, `0` duplicate copies on disk or in `orleacock/Engineering.git`)** following retirement of the duplicate `Engineering/Homunculus` folder and removal of `Homunculus/` from the parent `Engineering` Git index (`46 / 46` unit tests `OK`, `SBX-20261109_120538-a29c8228` `Controls: 2/2, +faults: 5/5`).
+> **Current Synchronization State (`2026-11-10`)**: **Consolidated Single-Source Clean-Room (`v0.1.0` at `31aa0cb0a918`, `102` tracked files, `0` duplicate copies on disk or in `orleacock/Engineering.git`)** following retirement of the duplicate `Engineering/Homunculus` folder and removal of `Homunculus/` from the parent `Engineering` Git index (`49 / 49` unit tests `OK` across `7` suites, `SBX-20261110_143655-1ecf0fa7` `Controls: 4/4, +faults: 2/2`).
 > **Usage Law**: Consult and update this document whenever staging or promoting a new feature, bugfix, reference guide, or script into `/home/orin/Projects/Alchemical3D/Homunculus`. *(For an optional, non-authoritative maintainer lookup of cross-skill couplings and naming hygiene, see [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md).)*
 
 ---
@@ -24,29 +24,28 @@ last_synced: "2026-11-09"
 2. **`Option B1` — Zero Legacy Regex Tokens (`audit_skill_hygiene.py`)**:
    - Removed legacy `|sync_vault_status` from `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) so `memory_dossier_or_tree` matches only canonical `Homunculus` tokens (`Projects/<Project>|AUTO-TREE|sync_memory|project-memory|memory_root`).
 3. **`Option C1` — Email-Client Neutrality (`gmail-workspace-assistant` Kept Workstation-Local)**:
-   - Because buyers use their own email clients and services, `gmail-workspace-assistant` lives outside `Homunculus` at `/home/orin/Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant/SKILL.md` (wired into `~/.gemini/config/skills/` and `.agents/skills/` by `bootstrap_workstation.sh`).
-   - As a result, `/home/orin/Projects/Engineering/Homunculus` and `/home/orin/Projects/Alchemical3D/Homunculus` have **zero file-set or adapter divergence** (`91 / 91` files match 1-to-1).
+   - Because buyers use their own email clients and services, `gmail-workspace-assistant` lives outside `Homunculus` at `/home/orin/Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant/SKILL.md` (wired into `~/.gemini/config/skills/` and `.agents/skills/` by `bootstrap_workstation.sh`), and `0` Clean-Room docs reference `addons/gmail-workspace-assistant/SKILL.md`.
 4. **`Section D` — Parent-Station vs. Clean-Room Deliverable Memory & `TIER0`–`TIER5` Promotion Contract ([`Homunculus_Stateful_Memory_Deployment_Plan.md`](Homunculus_Stateful_Memory_Deployment_Plan.md))**:
    - **Live Parent Station Power (`Engineering/memory/`)**: On the parent workstation (and on any end-user workstation after `Homunculus` is deployed), absolute `local_path` repository bindings (`/home/orin/Projects/...`), station project names (`Pneuma`, `Alembic`, `NEA`), and entity-partitioned search indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens—zero local turns are wasted scrubbing native workstation paths from the private parent vault.
-   - **Deterministic `TIER0`–`TIER5` Clean-Room Promotion Filter (`Engineering/Homunculus` $\rightarrow$ `Alchemical3D/Homunculus`)**:
+   - **Deterministic `TIER0`–`TIER5` Clean-Room Promotion Filter (`Engineering/memory/` $\rightarrow$ `Alchemical3D/Homunculus`)**:
      - **Promotes to Clean-Room Deliverable (`TIER0` & `TIER1` Universal Engine Laws Only)**: Distilled generic contracts in `scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers in `.py` scripts, generic starter templates (`templates/memory/Decision_Profile.md`, `templates/memory/AGENTS.md`, `templates/memory/Project_Lessons_Learned.md`), and `tests/test_*.py` regression suites (`0` `/home/orin` host paths or personal project names—verified by `audit_portability.py` and `audit_data_boundary.py --compartment cleanroom`).
      - **Stays Station-Local (`TIER2`–`TIER4` Dev-Cycle & Historical Narratives)**: Full project dossiers (`Projects/*/*.md`), absolute `local_path` bindings, `Directory/<Entity>_memory_index.json`, `TIER2` active dev-cycle full-context sections, and `TIER3`–`TIER4` `Archive/` post-mortems remain strictly inside `/home/orin/Projects/Engineering/memory/`.
      - **Superseded / Retired (`TIER5`)**: Excluded from both Clean-Room promotion and default active parent recall (`--recall` / `--preflight`).
 
 ---
 
-## 2. Full Workstation & Clean-Room Audit Scorecard (`2026-11-09T12:10-06:00`)
+## 2. Full Workstation & Clean-Room Audit Scorecard (`2026-11-10`)
 
 | Audit / Verification Gate | Command / Oracle | Target Scope | Result & Receipt |
 | :--- | :--- | :--- | :--- |
-| **1. Byte-for-Byte Engine Parity (`Engineering` $\leftrightarrow$ `Alchemical3D`)** | `diff -rq -x .git -x __pycache__ /home/orin/Projects/Engineering/Homunculus /home/orin/Projects/Alchemical3D/Homunculus` | All `101` files in both repositories | **`PASS`** (`101 / 101` files `100%` byte-for-byte identical; `0` diff lines) |
+| **1. Single-Source Clean-Room Authority (`LL-WS-07`)** | `python3 /home/orin/Projects/Engineering/scripts/version_manager.py --status` | `/home/orin/Projects/Alchemical3D/Homunculus` (`102` files; `0` duplicate copies in `Engineering/`) | **`PASS`** (`v0.1.0` baseline `31aa0cb0a918`, `0` duplicate copies) |
 | **2. Workstation Symlink & Hook Integrity** | `bash /home/orin/Projects/Engineering/scripts/bootstrap_workstation.sh --check --update-obsidian --compat-symlinks` | `~/.gemini/config/{rules,skills,hooks.json}`, `.agents/skills/*`, `.git/hooks/{pre-commit,pre-push}` across `Engineering` + 10 `Alchemical3D/*` repos, `~/.config/obsidian/obsidian.json` | **`PASS`** (`0` errors; `0` dangling symlinks; `Homunculus_Backup`, legacy vault, and `AI_Skill_Project` retired from disk & Git index) |
-| **3. Dual-Mode Memory Containment & Structure** | `python3 .../sync_memory.py --memory-root /home/orin/Projects/Engineering/memory --sync-trees --sync-tasks --sync-visuals --export-canvas --audit` | `/home/orin/Projects/Engineering/memory` (`obsidian` mode) | **`PASS`** (`3` entities: `Alchemical-3D`, `NetCom`, `Orin_Workstation` \| `12` projects \| `98` files \| `0` violations) |
-| **4. Clean-Room & Cross-OS Portability Gate** | `python3 .../audit_portability.py --repo /home/orin/Projects/Alchemical3D/Homunculus` | `/home/orin/Projects/Alchemical3D/Homunculus` & `/home/orin/Projects/Engineering/Homunculus` | **`PASS`** (`101` files scanned \| `0` violations \| `0` third-party vendor names `Fabreeko`/`KB-3D`/`West3D`) |
+| **3. Dual-Mode Memory Containment & Structure** | `python3 .../sync_memory.py --memory-root /home/orin/Projects/Engineering/memory --sync-trees --sync-tasks --sync-visuals --export-canvas --audit` | `/home/orin/Projects/Engineering/memory` (`obsidian` mode) | **`PASS`** (`3` entities: `Alchemical-3D`, `NetCom`, `Orin_Workstation` \| `12` projects \| `0` violations) |
+| **4. Clean-Room & Cross-OS Portability Gate** | `python3 .../audit_portability.py --repo /home/orin/Projects/Alchemical3D/Homunculus` | `/home/orin/Projects/Alchemical3D/Homunculus` | **`PASS`** (`102` files scanned \| `0` violations \| `0` third-party vendor names `Fabreeko`/`KB-3D`/`West3D`) |
 | **5. 3-Compartment Data-Boundary & Secret Firewall** | `python3 .../audit_data_boundary.py --repo /home/orin/Projects/Engineering --worktree` & `--all-in-root /home/orin/Projects/Alchemical3D` | `private` (`Engineering`), `public` (`9` `Alchemical3D` OSS repos), and `cleanroom` (`Alchemical3D/Homunculus`) | **`PASS`** (`11 / 11` repositories `PASS`, `0` violations) |
-| **6. Skill Architect Hygiene & Synergy Audit** | `python3 .../audit_skill_hygiene.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --strict-structure` | `3` Always-On Rules (`2,657w`), `9` Core Skills + `2` Add-Ons (`12,078w`), `5` References (`6,760w`) | **`PASS`** (`Load-Bearing Defects: 0` \| `Turn-Waste Hazards: 0` \| `Rule-to-Rule Overlaps: 0` \| `Cross-Skill Overlaps: 0` \| `Orphan Scripts: 0`) |
-| **7. Documentation & Alerts Audit** | `python3 .../audit_repo_docs.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --skip-image-check /home/orin/Projects/Alchemical3D/Homunculus` | `55` Markdown files in `/home/orin/Projects/Alchemical3D/Homunculus` | **`PASS`** (`55` files checked, `0` errors) |
-| **8. Automated Unit & Integration Test Suite** | `python3 -m unittest discover -s /home/orin/Projects/Alchemical3D/Homunculus/tests -p "test_*.py" -v` | `test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py` | **`PASS`** (`37 / 37` tests `OK`, including 6 end-to-end 5-Sprint Stateful Memory Rebuild suites) |
+| **6. Skill Architect Hygiene & Synergy Audit** | `python3 .../audit_skill_hygiene.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --strict-structure` | `3` Always-On Rules, `9` Core Skills + `2` Add-Ons, `5` References, `docs/*.md` | **`PASS`** (`Load-Bearing Defects: 0` \| `Turn-Waste Hazards: 0` \| `Rule-to-Rule Overlaps: 0` \| `Cross-Skill Overlaps: 0` \| `Orphan Scripts: 0`) |
+| **7. Documentation & Alerts Audit** | `python3 .../audit_repo_docs.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --skip-image-check /home/orin/Projects/Alchemical3D/Homunculus` | `56` Markdown files in `/home/orin/Projects/Alchemical3D/Homunculus` | **`PASS`** (`56` files checked, `0` errors) |
+| **8. Automated Unit & Integration Test Suite** | `python3 -m unittest discover -s /home/orin/Projects/Alchemical3D/Homunculus/tests -p "test_*.py" -v` | `test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py` | **`PASS`** (`49 / 49` tests `OK` across `7` suites) |
 | **9. CoW Sandbox Verification Receipts** | `sandbox_runner.py` (`dry-run (+faults)` & `compare-light (+faults)`) | Core engine, 27-group `QUALIFIER_GROUPS`, 3-step legacy retirement, 5-Sprint Stateful Memory Rebuild, and Clean-Room promotion | **`PASS`** across `SBX-20261106_105046-6eb9123f`, `SBX-20261108_160913-c12baab5`, and `SBX-20261109_120538-a29c8228` (`Controls 2/2, +faults 5/5, Live Host Mutations: 0`) |
 
 ---
@@ -111,8 +110,8 @@ Whenever dogfooding a new capability in `/home/orin/Projects/Engineering/Homuncu
      4. `python3 skills/skill-architect/scripts/audit_skill_hygiene.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --strict-structure` (`0` defects)
      5. `python3 skills/doc-and-card-studio/scripts/audit_repo_docs.py --repo-root /home/orin/Projects/Alchemical3D/Homunculus --skip-image-check /home/orin/Projects/Alchemical3D/Homunculus` (`0` errors)
      6. `python3 -m unittest discover -s /home/orin/Projects/Alchemical3D/Homunculus/tests -p "test_*.py" -v` (`OK`)
-3. **Sync & Verify 100% Byte Parity**:
-   - Copy updated engine files to `/home/orin/Projects/Alchemical3D/Homunculus`, run `diff -rq -x .git -x __pycache__ /home/orin/Projects/Engineering/Homunculus /home/orin/Projects/Alchemical3D/Homunculus`, and run a Post-Promotion CoW Sandbox verification (`Overlay Changes: +0 ~0 -0`).
+3. **Verify Post-Edit CoW Sandbox Cleanliness**:
+   - Run `sandbox_runner.py --mode dry-run --faults --target-dir /home/orin/Projects/Alchemical3D/Homunculus` and confirm `Live Host Mutations: 0` before committing and locking core (`--lock-core`).
 
 ---
 

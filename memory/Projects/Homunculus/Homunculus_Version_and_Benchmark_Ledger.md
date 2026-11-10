@@ -73,3 +73,49 @@ Part of the [`README.md`](../../README.md) and companion version scorecard for [
 
 ---
 
+### Standardized Benchmark Run: `full-system-suite` (`v0.2.0` vs. Baseline `v0.1.0`) — v0.2.0 Official Pinned Baseline (Gemini Carbon Remediation)
+
+- **Run ID & Timestamp**: `BMK-20261110_163542-4d137907` (`2026-11-10T16:35:42-06:00`)
+- **Engine Provenance**: `/home/orin/Projects/Alchemical3D/Homunculus` | Version: `v0.2.0` | `HEAD`: `108b504f4ea7` | `Tree`: `2a8cc775a316` (`102` files, `clean`)
+- **Overall Verdict**: **`BASELINE_PINNED`** (`Hard Blocks: 0` | `Advisories: 0` | `Wall-Clock: 15.03s`)
+
+#### Part A — Universal 4-Pillar Spine (`12` Locked Metrics)
+
+| # | Pillar | Standardized Metric | Baseline (`v0.1.0`) | Previous Run | Candidate (`v0.2.0`) | Delta (vs. Baseline) | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| `1` | `Meta` | **Version & Tree Provenance** | `v0.1.0 (31aa0cb0 / 284d5a57)` | `v0.1.0 (31aa0cb0 / 284d5a57)` | `v0.2.0 (108b504f / 2a8cc775)` | `—` | `Clean or -dev+<tree8>` | **`PINNED`** |
+| `2` | `#1 Accuracy` | **Positive Controls Pass Rate** | `17 / 17 (100.0%)` | `17 / 17 (100.0%)` | `17 / 17 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `3` | `#1 Accuracy` | **Adversarial +faults Catch Rate** | `14 / 14 (100.0%)` | `14 / 14 (100.0%)` | `14 / 14 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `4` | `#1 Accuracy` | **False Positives / False Negatives** | `FP: 0 / FN: 0` | `FP: 0 / FN: 0` | `FP: 0 / FN: 0` | `0 (no change)` | `FP: 0 / FN: 0` | `PASS` |
+| `5` | `#1 Accuracy` | **Automated Unit Test Suite** | `46 / 46 (100.0%)` | `46 / 46 (100.0%)` | `52 / 52 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `6` | `#2 Efficiency` | **Always-On 3-Rule Footprint** | `20,459 B / 2548 w (~3440 tok)` | `20,459 B / 2548 w (~3440 tok)` | `20,166 B / 2503 w (~3379 tok)` | `-293 B (-1.4%)` | `<= 21,500 B (~3,600 tok)` | **`IMPROVED`** |
+| `7` | `#2 Efficiency` | **AGENTS.md Ceiling & Headroom** | `21,819 B (headroom: 681 B)` | `21,819 B (headroom: 681 B)` | `21,526 B (headroom: 974 B)` | `-293 B (-1.3%)` | `<= 22,500 B (24k hard)` | **`IMPROVED`** |
+| `8` | `#2 Efficiency` | **Target Subsystem Context / Packet Tax** | `95,481 B (3 rules + 9 core SKILL.md files)` | `95,481 B (3 rules + 9 core SKILL.md files)` | `95,711 B (3 rules + 9 core SKILL.md files)` | `+230.00 units (+0.2%)` | `<= 115,000 B (modular sum <= 129,500 B)` | `PASS` |
+| `9` | `#2 Efficiency` | **Subagent Trajectory (Turns / Tokens / Cache %)** | `n/a (CLI bench)` | `n/a (CLI bench)` | `n/a (CLI bench)` | `—` | `<= Baseline` | **`PINNED`** |
+| `10` | `#3 Safety` | **Live Host Mutations & EROFS Blocks** | `mut: 0 / erofs: 1` | `mut: 0 / erofs: 1` | `mut: 0 / erofs: 1` | `0 (no change)` | `mut: 0 / erofs >= 1` | `PASS` |
+| `11` | `#3 Safety` | **Boundary, Portability & Governance Seal** | `B:0 / P:0 / G:PASS` | `B:0 / P:0 / G:PASS` | `B:0 / P:0 / G:PASS` | `0 (no change)` | `B:0 / P:0 / G:PASS` | `PASS` |
+| `12` | `#4 Speed` | **Execution Latency (p50 / p95 / Total) & Spawns** | `p50: 103ms / p95: 2264ms / 28.44s (49 spawns)` | `p50: 103ms / p95: 2264ms / 28.44s (49 spawns)` | `p50: 93ms / p95: 304ms / 15.03s (45 spawns)` | `-13.41 s (-47.2%)` | `<= Baseline + 15%` | **`IMPROVED`** |
+
+#### Part B — Fixed Subsystem Profile: `full-system-suite` (`16` Locked Metrics)
+
+| # | Pillar | Standardized Metric | Baseline (`v0.1.0`) | Previous Run | Candidate (`v0.2.0`) | Delta (vs. Baseline) | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| `1` | `#1 Accuracy` | **True-Positive Hallucinations Caught** | `7 / 7 (100.0%)` | `7 / 7 (100.0%)` | `7 / 7 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `2` | `#1 Accuracy` | **False-Positive Valid Prose Flagged** | `0` | `0` | `0` | `0 (no change)` | `0` | `PASS` |
+| `3` | `#3 Safety` | **Runtime Anti-Snoop Gate Triggers** | `PASS (blocked)` | `PASS (blocked)` | `PASS (blocked)` | `0 (no change)` | `PASS` | `PASS` |
+| `4` | `#4 Speed` | **CLI Cold-Start Verification Latency (median)** | `82.13 ms` | `82.13 ms` | `86.65 ms` | `+4.52 ms (+5.5%)` | `<= Baseline + 15%` | `PASS` |
+| `5` | `#1 Accuracy` | **Top-3 Semantic/ID Recall Hit Rate** | `100.0% (5/5)` | `100.0% (5/5)` | `100.0% (5/5)` | `0 (no change)` | `100.0%` | `PASS` |
+| `6` | `#1 Accuracy` | **N1 Numeric/Unit Query Weight Leak Rate** | `0.0%` | `0.0%` | `0.0%` | `0 (no change)` | `0.0%` | `PASS` |
+| `7` | `#2 Efficiency` | **--preflight Decision Packet Tokens (avg / max)** | `avg 562 / max 578 tok` | `avg 562 / max 578 tok` | `avg 555 / max 566 tok` | `-12 tok (-2.1%)` | `<= 600 tok` | **`IMPROVED`** |
+| `8` | `#2 Efficiency` | **Active _Lessons_Learned.md Max Line Count** | `234 L` | `234 L` | `231 L` | `-3 lines (-1.3%)` | `<= 420 L` | `PASS` |
+| `9` | `#3 Safety` | **v1.1 Governance Seal & Tamper Block** | `PASS` | `PASS` | `PASS` | `0 (no change)` | `PASS` | `PASS` |
+| `10` | `#4 Speed` | **--kickstart Cold-Resume Latency** | `98.09 ms` | `98.09 ms` | `105.52 ms` | `+7.43 ms (+7.6%)` | `<= Baseline + 15%` | `PASS` |
+| `11` | `#2 Efficiency` | **Combined 3-Rule Always-On Turn Tax** | `20,459 B / 2548 w (~3440 tok)` | `20,459 B / 2548 w (~3440 tok)` | `20,166 B / 2503 w (~3379 tok)` | `-293 B (-1.4%)` | `<= 21,500 B (~3,600 tok)` | **`IMPROVED`** |
+| `12` | `#2 Efficiency` | **In-Repo AGENTS.md Byte Size & Headroom** | `21,819 B (headroom: 681 B)` | `21,819 B (headroom: 681 B)` | `21,526 B (headroom: 974 B)` | `-293 B (-1.3%)` | `<= 22,500 B` | **`IMPROVED`** |
+| `13` | `#2 Efficiency` | **Out-of-Tree Expanded AGENTS.md Byte Size** | `22,524 B (headroom: 1,476 B)` | `22,524 B (headroom: 1,476 B)` | `22,231 B (headroom: 1,769 B)` | `-293 B (-1.3%)` | `<= 24,000 B hard cap` | **`IMPROVED`** |
+| `14` | `#2 Efficiency` | **Active Core Skills Footprint** | `9 skills / 8,684 w (~11,723 tok)` | `9 skills / 8,684 w (~11,723 tok)` | `9 skills / 8,744 w (~11,804 tok)` | `+60 words (+0.7%)` | `<= 10,500 w (~14,175 tok)` | `PASS` |
+| `15` | `#1 Accuracy` | **Markdown Files Audited & Pass Rate** | `56 / 56 (100.0%)` | `56 / 56 (100.0%)` | `56 / 56 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `16` | `#1 Accuracy` | **Closed 360° Cylinder vs. Open Fillet Filter** | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `0 (no change)` | `PASS` | `PASS` |
+
+---
+

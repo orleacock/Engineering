@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "ac9259a02436"
+tree_hash: "7a755eed6656"
 last_synced: "2026-11-10"
 ---
 
@@ -164,7 +164,7 @@ last_synced: "2026-11-10"
 
 ## 2. `Alchemical-3D` Repository Directory Trees (`10` Indexed)
 
-### [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`hardware` | `HEAD: 2f33452de3c6` | `Tree: 33fd5f9c25c5`)
+### [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`hardware` | `HEAD: 2f33452de3c6` | `Tree: 26262283bb41`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/A3DP_Gantry_Assembly`
 
 ```text
@@ -206,7 +206,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Alchemical_Web_Docs`](../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) (`software` | `HEAD: 55b4795b1e8d` | `Tree: 5b89cc035cd3`)
+### [`Alchemical_Web_Docs`](../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) (`software` | `HEAD: 55b4795b1e8d` | `Tree: ca85ba29ef7a`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/alchemical-3d.github.io`
 
 ```text
@@ -245,7 +245,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`hardware` | `HEAD: 3ff29ce51139` | `Tree: ee03c3d4d59c`)
+### [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`hardware` | `HEAD: 3ff29ce51139` | `Tree: 13b0feafb257`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Alembic_Toolhead`
 
 ```text
@@ -322,7 +322,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Brand`](../Projects/Brand/Brand.md) (`software` | `HEAD: 49354b32094e` | `Tree: db642fd3cee2`)
+### [`Brand`](../Projects/Brand/Brand.md) (`software` | `HEAD: 49354b32094e` | `Tree: d0509ca37b2c`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Brand`
 
 ```text
@@ -375,7 +375,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Extras`](../Projects/Extras/Extras.md) (`hardware` | `HEAD: 7c8db38eca18` | `Tree: 37fc5762b62e`)
+### [`Extras`](../Projects/Extras/Extras.md) (`hardware` | `HEAD: 7c8db38eca18` | `Tree: c5c41f218eb3`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Extras`
 
 ```text
@@ -390,7 +390,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 31aa0cb0a918` | `Tree: 1d656b9cc6c7`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 108b504f4ea7` | `Tree: b635c91e293d`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -546,7 +546,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`software` | `HEAD: 29641c5802f8` | `Tree: 99cb790ad20a`)
+### [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`software` | `HEAD: 29641c5802f8` | `Tree: 9c7d9625f4e2`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Maker-Tools`
 
 ```text
@@ -562,7 +562,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`software` | `HEAD: b74920e09eed` | `Tree: cc9fa50d0e29`)
+### [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`software` | `HEAD: b74920e09eed` | `Tree: 2c1bd93b5b77`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/.github`
 
 ```text
@@ -577,7 +577,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: d94ad4c83c71` | `Tree: 7269efc583ae`)
+### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: d94ad4c83c71` | `Tree: ac67baacbab6`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden`
 
 ```text
@@ -618,7 +618,7 @@ last_synced: "2026-11-10"
 +------------------------------------------------------------+
 ```
 
-### [`Pneuma_Remote_Air`](../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) (`hardware` | `HEAD: 0702c9c1c541` | `Tree: 4eb4d271dbc5`)
+### [`Pneuma_Remote_Air`](../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) (`hardware` | `HEAD: 0702c9c1c541` | `Tree: c37739a571b2`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air`
 
 ```text

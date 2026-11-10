@@ -7,7 +7,7 @@ PROJECTS_DIR="$(dirname "$REPO_ROOT")"
 ALCHEMICAL_DIR="${PROJECTS_DIR}/Alchemical3D"
 HOMUNCULUS_DIR="${ALCHEMICAL_DIR}/Homunculus"
 MEMORY_DIR="${REPO_ROOT}/memory"
-NEA_DIR="${REPO_ROOT}/NEA_v2.2.3"
+NEA_DIR="${ALCHEMICAL_DIR}/NEA_v2.2.3"
 GEMINI_CFG="${HOME}/.gemini/config"
 OBSIDIAN_CFG="${HOME}/.config/obsidian/obsidian.json"
 
@@ -172,16 +172,7 @@ for scan_dir in "${GEMINI_CFG}/rules" "${GEMINI_CFG}/skills" "${REPO_ROOT}/.agen
     shopt -u nullglob dotglob
 done
 
-# 3. Optional Compatibility Symlinks & Retired Legacy Symlink Pruning
-if [[ -L "${HOME}/Documents/Obsidian_Notes" ]]; then
-    if [[ "$MODE" == "check" ]]; then
-        echo "[FAIL] Retired legacy symlink still present: ${HOME}/Documents/Obsidian_Notes" >&2
-        errors=$((errors + 1))
-    else
-        rm -f "${HOME}/Documents/Obsidian_Notes"
-        echo "[PRUNE] Removed retired legacy symlink: ${HOME}/Documents/Obsidian_Notes"
-    fi
-fi
+# 3. Optional Compatibility Symlinks
 if [[ "$COMPAT_SYMLINKS" -eq 1 ]]; then
     if [[ -d "$NEA_DIR" ]]; then
         ensure_link "${HOME}/Downloads/NEA_v2.2.3" "${NEA_DIR}" "${NEA_DIR}"

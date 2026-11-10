@@ -1,12 +1,64 @@
 {
   "receipts": {
-    "audit_data_boundary.py": {
+    "addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py",
       "disposed": true,
-      "git_head_blob_sha256": "abb96084fa813cd1",
-      "pre_edit_blob_sha256": "abb96084fa813cd1",
+      "git_head_blob_sha256": "d72be2d099975dfe",
+      "pre_edit_blob_sha256": "5f2dd17e32a438b7",
+      "project": "Homunculus",
+      "script": "inspect_hardware_ecosystem.py",
+      "script_rel_path": "addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py",
+      "session_date": "2026-11-10"
+    },
+    "audit_data_boundary.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/audit_data_boundary.py",
+      "disposed": true,
+      "git_head_blob_sha256": "e7313b7936090f07",
+      "pre_edit_blob_sha256": "e00b6f57939a092c",
+      "project": "Homunculus",
       "script": "audit_data_boundary.py",
-      "script_rel_path": "audit_data_boundary.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "scripts/audit_data_boundary.py",
+      "session_date": "2026-11-10"
+    },
+    "audit_portability.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/audit_portability.py",
+      "disposed": true,
+      "git_head_blob_sha256": "2fba011023d8bfbb",
+      "pre_edit_blob_sha256": "8d54274c04cacccb",
+      "project": "Homunculus",
+      "script": "audit_portability.py",
+      "script_rel_path": "scripts/audit_portability.py",
+      "session_date": "2026-11-10"
+    },
+    "audit_skill_hygiene.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/skill-architect/scripts/audit_skill_hygiene.py",
+      "disposed": true,
+      "git_head_blob_sha256": "473264cc36b2a02a",
+      "pre_edit_blob_sha256": "51c293516fcf18ab",
+      "project": "Homunculus",
+      "script": "audit_skill_hygiene.py",
+      "script_rel_path": "skills/skill-architect/scripts/audit_skill_hygiene.py",
+      "session_date": "2026-11-10"
+    },
+    "benchmark_homunculus.py": {
+      "abs_path": "/home/orin/Projects/Engineering/scripts/benchmark_homunculus.py",
+      "disposed": true,
+      "git_head_blob_sha256": "aba02e07ae7cecae",
+      "pre_edit_blob_sha256": "1dc535469d3d179b",
+      "project": "Workstation_Operations",
+      "script": "benchmark_homunculus.py",
+      "script_rel_path": "benchmark_homunculus.py",
+      "session_date": "2026-11-10"
+    },
+    "build_adapters.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/build_adapters.py",
+      "disposed": true,
+      "git_head_blob_sha256": "3750b625d0ae3769",
+      "pre_edit_blob_sha256": "de6b01929b862e6c",
+      "project": "Homunculus",
+      "script": "build_adapters.py",
+      "script_rel_path": "scripts/build_adapters.py",
+      "session_date": "2026-11-10"
     },
     "git_pre_commit_boundary.sh": {
       "disposed": true,
@@ -20,33 +72,67 @@
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/homunculus_paths.py",
       "disposed": true,
       "git_head_blob_sha256": "963205e19d329d50",
-      "pre_edit_blob_sha256": "963205e19d329d50",
+      "pre_edit_blob_sha256": "12e5f1d4bd722bf8",
       "project": "Homunculus",
       "script": "homunculus_paths.py",
       "script_rel_path": "scripts/homunculus_paths.py",
       "session_date": "2026-11-10"
     },
     "inspect_hardware_ecosystem.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py",
       "disposed": true,
-      "git_head_blob_sha256": "47ec40b5f39230c7",
-      "pre_edit_blob_sha256": "47ec40b5f39230c7",
+      "git_head_blob_sha256": "d72be2d099975dfe",
+      "pre_edit_blob_sha256": "5f2dd17e32a438b7",
+      "project": "Homunculus",
       "script": "inspect_hardware_ecosystem.py",
-      "script_rel_path": "inspect_hardware_ecosystem.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py",
+      "session_date": "2026-11-10"
     },
     "sandbox_runner.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/engineering-sandbox/scripts/sandbox_runner.py",
       "disposed": true,
-      "git_head_blob_sha256": "09b52be59a5e3a9e",
-      "pre_edit_blob_sha256": "09b52be59a5e3a9e",
+      "git_head_blob_sha256": "dc8dd9a4a6d719be",
+      "pre_edit_blob_sha256": "97aa969eee67eafc",
+      "project": "Homunculus",
       "script": "sandbox_runner.py",
-      "script_rel_path": "sandbox_runner.py",
-      "session_date": "2026-11-09"
+      "script_rel_path": "skills/engineering-sandbox/scripts/sandbox_runner.py",
+      "session_date": "2026-11-10"
+    },
+    "scripts/audit_data_boundary.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/audit_data_boundary.py",
+      "disposed": true,
+      "git_head_blob_sha256": "e7313b7936090f07",
+      "pre_edit_blob_sha256": "e00b6f57939a092c",
+      "project": "Homunculus",
+      "script": "audit_data_boundary.py",
+      "script_rel_path": "scripts/audit_data_boundary.py",
+      "session_date": "2026-11-10"
+    },
+    "scripts/audit_portability.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/audit_portability.py",
+      "disposed": true,
+      "git_head_blob_sha256": "2fba011023d8bfbb",
+      "pre_edit_blob_sha256": "8d54274c04cacccb",
+      "project": "Homunculus",
+      "script": "audit_portability.py",
+      "script_rel_path": "scripts/audit_portability.py",
+      "session_date": "2026-11-10"
+    },
+    "scripts/build_adapters.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/build_adapters.py",
+      "disposed": true,
+      "git_head_blob_sha256": "3750b625d0ae3769",
+      "pre_edit_blob_sha256": "de6b01929b862e6c",
+      "project": "Homunculus",
+      "script": "build_adapters.py",
+      "script_rel_path": "scripts/build_adapters.py",
+      "session_date": "2026-11-10"
     },
     "scripts/homunculus_paths.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/scripts/homunculus_paths.py",
       "disposed": true,
       "git_head_blob_sha256": "963205e19d329d50",
-      "pre_edit_blob_sha256": "963205e19d329d50",
+      "pre_edit_blob_sha256": "12e5f1d4bd722bf8",
       "project": "Homunculus",
       "script": "homunculus_paths.py",
       "script_rel_path": "scripts/homunculus_paths.py",
@@ -55,41 +141,101 @@
     "skills/claim-verification/scripts/verify_claims.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/scripts/verify_claims.py",
       "disposed": true,
-      "git_head_blob_sha256": "80e42f36d6911700",
-      "pre_edit_blob_sha256": "783e1c9a231dca6f",
+      "git_head_blob_sha256": "783e1c9a231dca6f",
+      "pre_edit_blob_sha256": "bccfacc53e8eaea6",
       "project": "Homunculus",
       "script": "verify_claims.py",
       "script_rel_path": "skills/claim-verification/scripts/verify_claims.py",
+      "session_date": "2026-11-10"
+    },
+    "skills/engineering-sandbox/scripts/sandbox_runner.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/engineering-sandbox/scripts/sandbox_runner.py",
+      "disposed": true,
+      "git_head_blob_sha256": "dc8dd9a4a6d719be",
+      "pre_edit_blob_sha256": "97aa969eee67eafc",
+      "project": "Homunculus",
+      "script": "sandbox_runner.py",
+      "script_rel_path": "skills/engineering-sandbox/scripts/sandbox_runner.py",
       "session_date": "2026-11-10"
     },
     "skills/project-memory/scripts/sync_memory.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
       "disposed": true,
-      "git_head_blob_sha256": "2ccf63c4450fad74",
-      "pre_edit_blob_sha256": "e1bd60c47206770f",
+      "git_head_blob_sha256": "e1bd60c47206770f",
+      "pre_edit_blob_sha256": "ba9ce32f7abd57c9",
       "project": "Homunculus",
       "script": "sync_memory.py",
       "script_rel_path": "skills/project-memory/scripts/sync_memory.py",
+      "session_date": "2026-11-10"
+    },
+    "skills/skill-architect/scripts/audit_skill_hygiene.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/skill-architect/scripts/audit_skill_hygiene.py",
+      "disposed": true,
+      "git_head_blob_sha256": "473264cc36b2a02a",
+      "pre_edit_blob_sha256": "51c293516fcf18ab",
+      "project": "Homunculus",
+      "script": "audit_skill_hygiene.py",
+      "script_rel_path": "skills/skill-architect/scripts/audit_skill_hygiene.py",
+      "session_date": "2026-11-10"
+    },
+    "skills/teach-me/scripts/teach_brief.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/teach-me/scripts/teach_brief.py",
+      "disposed": true,
+      "git_head_blob_sha256": "686b76d0718011e7",
+      "pre_edit_blob_sha256": "9b50b0883e0f49d2",
+      "project": "Homunculus",
+      "script": "teach_brief.py",
+      "script_rel_path": "skills/teach-me/scripts/teach_brief.py",
+      "session_date": "2026-11-10"
+    },
+    "snapshot_homunculus_version.py": {
+      "abs_path": "/home/orin/Projects/Engineering/scripts/snapshot_homunculus_version.py",
+      "disposed": true,
+      "git_head_blob_sha256": "5905b1f055604a43",
+      "pre_edit_blob_sha256": "78cf7c419fcb2cbd",
+      "project": "Workstation_Operations",
+      "script": "snapshot_homunculus_version.py",
+      "script_rel_path": "snapshot_homunculus_version.py",
       "session_date": "2026-11-10"
     },
     "sync_memory.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
       "disposed": true,
-      "git_head_blob_sha256": "2ccf63c4450fad74",
-      "pre_edit_blob_sha256": "e1bd60c47206770f",
+      "git_head_blob_sha256": "e1bd60c47206770f",
+      "pre_edit_blob_sha256": "ba9ce32f7abd57c9",
       "project": "Homunculus",
       "script": "sync_memory.py",
       "script_rel_path": "skills/project-memory/scripts/sync_memory.py",
       "session_date": "2026-11-10"
     },
+    "teach_brief.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/teach-me/scripts/teach_brief.py",
+      "disposed": true,
+      "git_head_blob_sha256": "686b76d0718011e7",
+      "pre_edit_blob_sha256": "9b50b0883e0f49d2",
+      "project": "Homunculus",
+      "script": "teach_brief.py",
+      "script_rel_path": "skills/teach-me/scripts/teach_brief.py",
+      "session_date": "2026-11-10"
+    },
     "verify_claims.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/scripts/verify_claims.py",
       "disposed": true,
-      "git_head_blob_sha256": "80e42f36d6911700",
-      "pre_edit_blob_sha256": "783e1c9a231dca6f",
+      "git_head_blob_sha256": "783e1c9a231dca6f",
+      "pre_edit_blob_sha256": "bccfacc53e8eaea6",
       "project": "Homunculus",
       "script": "verify_claims.py",
       "script_rel_path": "skills/claim-verification/scripts/verify_claims.py",
+      "session_date": "2026-11-10"
+    },
+    "version_manager.py": {
+      "abs_path": "/home/orin/Projects/Engineering/scripts/version_manager.py",
+      "disposed": true,
+      "git_head_blob_sha256": "66d498b5fb8e4662",
+      "pre_edit_blob_sha256": "5908a68c2a9bc5ff",
+      "project": "Workstation_Operations",
+      "script": "version_manager.py",
+      "script_rel_path": "version_manager.py",
       "session_date": "2026-11-10"
     }
   }

@@ -30,14 +30,14 @@ Responsibilities:
     - def snapshot_host_hashes (#L121-L144)          | def run_cmd_timed (#L147-L170)
     - def probe_bwrap_erofs (#L173-L208)             | def collect_always_on_and_adapter_stats (#L211-L303)
     - def run_unit_tests (#L306-L339)                | def _write_minimal_png (#L342-L357)
-    - def bench_profile_oracle_claims (#L360-L779)   | def bench_profile_memory_engine (#L782-L1075)
-    - def bench_profile_hygiene_adapters (#L1078-L1222) | def bench_profile_doc_cad_visual (#L1225-L1480)
-    - def _parse_jsonl_trajectory (#L1483-L1581)     | def bench_profile_subagent_ab (#L1584-L1710)
-    - def bench_profile_full_suite (#L1713-L1792)    | def build_universal_spine (#L1795-L1838)
-    - def apply_synthetic_regression (#L1841-L1878)  | def evaluate_comparisons (#L1881-L1978)
-    - def render_regression_autopsy_md (#L1981-L2069) | def _render_table_md (#L2072-L2090)
-    - def render_markdown_report (#L2093-L2128)      | def load_history_maps (#L2131-L2174)
-    - def update_ledger_and_history (#L2177-L2227)   | def main (#L2230-L2425)
+    - def bench_profile_oracle_claims (#L360-L784)   | def bench_profile_memory_engine (#L787-L1085)
+    - def bench_profile_hygiene_adapters (#L1088-L1237) | def bench_profile_doc_cad_visual (#L1240-L1500)
+    - def _parse_jsonl_trajectory (#L1503-L1601)     | def bench_profile_subagent_ab (#L1604-L1730)
+    - def bench_profile_full_suite (#L1733-L1812)    | def build_universal_spine (#L1815-L1858)
+    - def apply_synthetic_regression (#L1861-L1898)  | def evaluate_comparisons (#L1901-L1998)
+    - def render_regression_autopsy_md (#L2001-L2089) | def _render_table_md (#L2092-L2110)
+    - def render_markdown_report (#L2113-L2148)      | def load_history_maps (#L2151-L2194)
+    - def update_ledger_and_history (#L2197-L2247)   | def main (#L2250-L2445)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -361,6 +361,8 @@ def bench_profile_oracle_claims(
     homunculus_dir: Path,
     latency_bucket: list[float],
     spawn_counter: list[int],
+    *,
+    skip_unit_tests: bool = False,
 ) -> dict[str, Any]:
     """Execute Profile 1 (`oracle-claims` — 14 locked metrics on `verify_claims.py`)."""
     verify_script = homunculus_dir / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
@@ -740,9 +742,12 @@ def bench_profile_oracle_claims(
         tp_total_caught = f1_caught_claims + smuggle_cnt + (1 if anchor_fail_caught else 0) + (1 if calc_fail_caught else 0) + borrow_blocks
         cold_cli_median_ms = round(statistics.median([cold_cli_ms_1, cold_cli_ms_2, cold_cli_ms_3]), 2)
 
-    ut_pass, ut_total, _ = run_unit_tests(
-        homunculus_dir, ["tests.test_claim_verification"], latency_bucket, spawn_counter
-    )
+    if skip_unit_tests:
+        ut_pass, ut_total = 0, 0
+    else:
+        ut_pass, ut_total, _ = run_unit_tests(
+            homunculus_dir, ["tests.test_claim_verification"], latency_bucket, spawn_counter
+        )
 
     rows = [
         MetricRow(1, "OC01_supported_claims", "#1 Accuracy", "Supported Claims Verified", f"{supported_cnt} claims", float(supported_cnt), "claims", "higher_better", ">= 8", 8.0, source_locus="verify_claims.py"),
@@ -784,6 +789,8 @@ def bench_profile_memory_engine(
     memory_root: Path,
     latency_bucket: list[float],
     spawn_counter: list[int],
+    *,
+    skip_unit_tests: bool = False,
 ) -> dict[str, Any]:
     """Execute Profile 2 (`memory-engine` — 16 locked metrics on `sync_memory.py` + `homunculus_paths.py`)."""
     mem_script = homunculus_dir / "skills" / "project-memory" / "scripts" / "sync_memory.py"
@@ -1030,9 +1037,12 @@ def bench_profile_memory_engine(
         spawn_counter=spawn_counter,
     )
 
-    ut_pass, ut_total, _ = run_unit_tests(
-        homunculus_dir, ["tests.test_project_memory"], latency_bucket, spawn_counter
-    )
+    if skip_unit_tests:
+        ut_pass, ut_total = 0, 0
+    else:
+        ut_pass, ut_total, _ = run_unit_tests(
+            homunculus_dir, ["tests.test_project_memory"], latency_bucket, spawn_counter
+        )
 
     rec_p50 = percentile(recall_latencies, 50.0)
     rec_p95 = percentile(recall_latencies, 95.0)
@@ -1080,6 +1090,8 @@ def bench_profile_hygiene_adapters(
     base_stats: dict[str, Any],
     latency_bucket: list[float],
     spawn_counter: list[int],
+    *,
+    skip_unit_tests: bool = False,
 ) -> dict[str, Any]:
     """Execute Profile 3 (`hygiene-adapters` — 15 locked metrics on `audit_skill_hygiene.py`, `build_adapters.py`, `audit_portability.py`)."""
     hyg = base_stats["hygiene"]
@@ -1175,12 +1187,15 @@ def bench_profile_hygiene_adapters(
         + (1 if stdlib_drift_ok else 0)
     )
 
-    ut_pass, ut_total, _ = run_unit_tests(
-        homunculus_dir,
-        ["tests.test_foundation", "tests.test_adapters", "tests.test_data_safety"],
-        latency_bucket,
-        spawn_counter,
-    )
+    if skip_unit_tests:
+        ut_pass, ut_total = 0, 0
+    else:
+        ut_pass, ut_total, _ = run_unit_tests(
+            homunculus_dir,
+            ["tests.test_foundation", "tests.test_adapters", "tests.test_data_safety"],
+            latency_bucket,
+            spawn_counter,
+        )
 
     r_co = per_rule.get("co-engineering-partner.md", {"bytes": 0, "words": 0, "tokens": 0})
     r_va = per_rule.get("verifiable-accuracy.md", {"bytes": 0, "words": 0, "tokens": 0})
@@ -1226,6 +1241,8 @@ def bench_profile_doc_cad_visual(
     homunculus_dir: Path,
     latency_bucket: list[float],
     spawn_counter: list[int],
+    *,
+    skip_unit_tests: bool = False,
 ) -> dict[str, Any]:
     """Execute Profile 4 (`doc-cad-visual` — 10 locked metrics across Docs, Image Cards, CAD Telemetry & SVG Studio)."""
     doc_script = homunculus_dir / "skills" / "doc-and-card-studio" / "scripts" / "audit_repo_docs.py"
@@ -1429,12 +1446,15 @@ def bench_profile_doc_cad_visual(
         )
         svg_gate_ok = p_svg_ok.returncode == 0 and p_svg_bad.returncode != 0
 
-    ut_pass, ut_total, _ = run_unit_tests(
-        homunculus_dir,
-        ["tests.test_core_skills", "tests.test_teach_me"],
-        latency_bucket,
-        spawn_counter,
-    )
+    if skip_unit_tests:
+        ut_pass, ut_total = 0, 0
+    else:
+        ut_pass, ut_total, _ = run_unit_tests(
+            homunculus_dir,
+            ["tests.test_core_skills", "tests.test_teach_me"],
+            latency_bucket,
+            spawn_counter,
+        )
 
     controls_total = 5
     controls_passed = (
@@ -1717,13 +1737,13 @@ def bench_profile_full_suite(
     latency_bucket: list[float],
     spawn_counter: list[int],
 ) -> dict[str, Any]:
-    """Execute Profile 6 (`full-system-suite` — Full 46-test unittest suite + Profiles 1–4 consolidated scorecard)."""
-    p1 = bench_profile_oracle_claims(homunculus_dir, latency_bucket, spawn_counter)
-    p2 = bench_profile_memory_engine(homunculus_dir, memory_root, latency_bucket, spawn_counter)
-    p3 = bench_profile_hygiene_adapters(homunculus_dir, base_stats, latency_bucket, spawn_counter)
-    p4 = bench_profile_doc_cad_visual(homunculus_dir, latency_bucket, spawn_counter)
+    """Execute Profile 6 (`full-system-suite` — Single-pass 52-test unittest suite + Profiles 1–4 consolidated scorecard)."""
+    p1 = bench_profile_oracle_claims(homunculus_dir, latency_bucket, spawn_counter, skip_unit_tests=True)
+    p2 = bench_profile_memory_engine(homunculus_dir, memory_root, latency_bucket, spawn_counter, skip_unit_tests=True)
+    p3 = bench_profile_hygiene_adapters(homunculus_dir, base_stats, latency_bucket, spawn_counter, skip_unit_tests=True)
+    p4 = bench_profile_doc_cad_visual(homunculus_dir, latency_bucket, spawn_counter, skip_unit_tests=True)
 
-    # Full `unittest discover` across all 7 test modules (`46` tests)
+    # Single unified `unittest discover` pass across all 7 test modules (`52` tests — zero duplicate test runs)
     ut_pass, ut_total, ut_ms = run_unit_tests(homunculus_dir, ["ALL"], latency_bucket, spawn_counter)
 
     controls_passed = p1["controls_passed"] + p2["controls_passed"] + p3["controls_passed"] + p4["controls_passed"]

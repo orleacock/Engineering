@@ -6,12 +6,12 @@ project_type: "hardware"
 status: "Beta"
 local_path: "/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden"
 repo_head_sha: "d94ad4c83c71"
-tree_hash: "22a0e73106de"
+tree_hash: "ac67baacbab6"
 checkpoint_head_sha: "d94ad4c83c71"
 checkpoint_tree_hash: "22a0e73106de"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -44,16 +44,24 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Pestle_Rotationa
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Pestle_Rotational_Bowden | HEAD SHA: d94ad4c83c71 | Tree Hash: 22a0e73106de
-  .gitignore
-  LICENSE.md
-  README.md
+Repository: Pestle_Rotational_Bowden | HEAD SHA: d94ad4c83c71 | Tree Hash: ac67baacbab6
+  images/
+  images/Pestle1.png
+  images/Pestle2.png
+  images/Pestle3.png
+  images/Pestle4.png
+  images/Pestle_Title_Formatted.png
+  images/PestleExploded1.png
+  images/PestleExploded2.png
+  images/PestleExploded3.png
+  images/PestleExploded3_Formatted.png
+  images/PestleExploded4.png
+  images/PestleExploded5.png
   Releases/
   Releases/1.2/
   Releases/1.2/CAD/
   Releases/1.2/CAD/Pestle_Rev-1.2.step
   Releases/1.2/STLs/
-  Releases/1.2/STLs/README.md
   Releases/1.2/STLs/[a]_pestle_lever.stl
   Releases/1.2/STLs/[a]_pestle_rotation_brace.stl
   Releases/1.2/STLs/pestle_2020_extrusion_mount.stl
@@ -61,18 +69,10 @@ Repository: Pestle_Rotational_Bowden | HEAD SHA: d94ad4c83c71 | Tree Hash: 22a0e
   Releases/1.2/STLs/pestle_main_body.stl
   Releases/1.2/STLs/pestle_motor_plate.stl
   Releases/1.2/STLs/pestle_top_plate.stl
-  images/
-  images/Pestle1.png
-  images/Pestle2.png
-  images/Pestle3.png
-  images/Pestle4.png
-  images/PestleExploded1.png
-  images/PestleExploded2.png
-  images/PestleExploded3.png
-  images/PestleExploded3_Formatted.png
-  images/PestleExploded4.png
-  images/PestleExploded5.png
-  images/Pestle_Title_Formatted.png
+  Releases/1.2/STLs/README.md
+  .gitignore
+  LICENSE.md
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 

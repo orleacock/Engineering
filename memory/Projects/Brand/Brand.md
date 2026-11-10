@@ -6,12 +6,12 @@ project_type: "software"
 status: "Verified & Complete"
 local_path: "/home/orin/Projects/Alchemical3D/Brand"
 repo_head_sha: "49354b32094e"
-tree_hash: "281551451964"
+tree_hash: "d0509ca37b2c"
 checkpoint_head_sha: "49354b32094e"
 checkpoint_tree_hash: "281551451964"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -44,8 +44,7 @@ Part of the [`README.md`](../../README.md) • Palette Tokens: `Alchemical3D_Col
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Brand | HEAD SHA: 49354b32094e | Tree Hash: 281551451964
-  README.md
+Repository: Brand | HEAD SHA: 49354b32094e | Tree Hash: d0509ca37b2c
   assets/
   assets/pdf/
   assets/pdf/!Alchemical-3D-Badge-Gradient-PRIMARY.pdf
@@ -85,6 +84,7 @@ Repository: Brand | HEAD SHA: 49354b32094e | Tree Hash: 281551451964
   assets/svg/Alchemical-3D-Logo-WoB.svg
   images/
   images/alchemical-cd-master-guideline.png
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 

@@ -6,12 +6,12 @@ project_type: "hardware"
 status: "Verified & Complete"
 local_path: "/home/orin/Projects/Alchemical3D/A3DP_Gantry_Assembly"
 repo_head_sha: "2f33452de3c6"
-tree_hash: "806533999a8d"
+tree_hash: "26262283bb41"
 checkpoint_head_sha: "2f33452de3c6"
 checkpoint_tree_hash: "806533999a8d"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -44,28 +44,22 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: A3DP_Gantry_Assembly | HEAD SHA: 2f33452de3c6 | Tree Hash: 806533999a8d
-  Assembly_Guide.md
-  BOM.md
-  LICENSE
-  Print_Settings.md
-  README.md
-  Resources_and_Acknowledgements.md
+Repository: A3DP_Gantry_Assembly | HEAD SHA: 2f33452de3c6 | Tree Hash: 26262283bb41
   Images/
   Images/formatted_assembly_images/
-  Images/formatted_assembly_images/LHSF_Bearing.png
-  Images/formatted_assembly_images/LHSF_Complete.png
-  Images/formatted_assembly_images/LHSF_Exploded_Thin.png
   Images/formatted_assembly_images/LHS_R_Bearing.png
   Images/formatted_assembly_images/LHS_R_Complete.png
   Images/formatted_assembly_images/LHS_R_Exploded.png
+  Images/formatted_assembly_images/LHSF_Bearing.png
+  Images/formatted_assembly_images/LHSF_Complete.png
+  Images/formatted_assembly_images/LHSF_Exploded_Thin.png
+  Images/formatted_assembly_images/RHS_R_Bearing.png
+  Images/formatted_assembly_images/RHS_R_Complete.png
+  Images/formatted_assembly_images/RHS_R_Exploded.png
   Images/formatted_assembly_images/RHSF_Bearing.png
   Images/formatted_assembly_images/RHSF_Complete.png
   Images/formatted_assembly_images/RHSF_Exploded_Thin.png
   Images/formatted_assembly_images/RHSF_Tension.png
-  Images/formatted_assembly_images/RHS_R_Bearing.png
-  Images/formatted_assembly_images/RHS_R_Complete.png
-  Images/formatted_assembly_images/RHS_R_Exploded.png
   Images/formatted_assembly_images/XC_CM.png
   Images/formatted_assembly_images/XC_TM.png
   Images/formatted_assembly_images/XY_LHS_Bearing.png
@@ -74,6 +68,12 @@ Repository: A3DP_Gantry_Assembly | HEAD SHA: 2f33452de3c6 | Tree Hash: 806533999
   Images/formatted_assembly_images/XY_RHS_Bearing.png
   Images/formatted_assembly_images/XY_RHS_F.png
   Images/formatted_assembly_images/XY_RHS_R.png
+  Assembly_Guide.md
+  BOM.md
+  LICENSE
+  Print_Settings.md
+  README.md
+  Resources_and_Acknowledgements.md
 ```
 <!-- AUTO-TREE:END -->
 

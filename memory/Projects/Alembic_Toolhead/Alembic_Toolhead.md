@@ -6,12 +6,12 @@ project_type: "hardware"
 status: "Alpha"
 local_path: "/home/orin/Projects/Alchemical3D/Alembic_Toolhead"
 repo_head_sha: "3ff29ce51139"
-tree_hash: "71ea081ef196"
+tree_hash: "13b0feafb257"
 checkpoint_head_sha: "3ff29ce51139"
 checkpoint_tree_hash: "71ea081ef196"
 checkpoint_worktree: "dirty (8 files)"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-10"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -45,13 +45,7 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Alembic_Toolhead
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 71ea081ef196
-  ALPHA_&_DIRECTION.md
-  Assembly_Guide.md
-  BOM.md
-  LICENSE.md
-  Print_Settings.md
-  README.md
+Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 13b0feafb257
   Images/
   Images/formatted_assembly_images/
   Images/formatted_assembly_images/bend_tool_combined.png
@@ -110,6 +104,12 @@ Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 71ea081ef196
   STL_Files/Sensor_Retainer_Dragon-MZE.stl
   STL_Files/Shim_06mm_BDsensor.stl
   STL_Files/Shim_56_BDsensor_Dragon-MZE.stl
+  ALPHA_&_DIRECTION.md
+  Assembly_Guide.md
+  BOM.md
+  LICENSE.md
+  Print_Settings.md
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 

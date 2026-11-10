@@ -3,7 +3,7 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "608fbe36bdb1"
+tree_hash: "e049d3dfc04b"
 last_synced: "2026-11-10"
 ---
 
@@ -90,7 +90,7 @@ last_synced: "2026-11-10"
 
 ## 2. `NetCom` Repository Directory Trees (`1` Indexed)
 
-### [`NetCom_Engineering_Assistant`](../Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) (`software` | `HEAD: UNTRACKED` | `Tree: bbceacb2a514`)
+### [`NetCom_Engineering_Assistant`](../Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) (`software` | `HEAD: UNTRACKED` | `Tree: 9e7492e491a3`)
 - **Repository Location**: `/home/orin/Projects/Engineering/NEA_v2.2.3`
 
 ```text

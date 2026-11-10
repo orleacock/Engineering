@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.1.0",
-  "baseline_head_sha": "31aa0cb0a918",
-  "baseline_tree_hash": "284d5a57b3c2",
+  "baseline_tag": "v0.2.0",
+  "baseline_head_sha": "108b504f4ea7",
+  "baseline_tree_hash": "2a8cc775a316",
   "baseline_file_count": 102,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
@@ -38,7 +38,16 @@
       "head_sha": "31aa0cb0a918",
       "tree_hash": "284d5a57b3c2",
       "trigger_type": "initial_baseline",
-      "reason": "Consolidated Single-Source Clean-Room Homunculus baseline on development workstation (101 files, Stateful Memory v1.1, 0 duplicate copies)."
+      "reason": "Consolidated Single-Source Clean-Room Homunculus baseline on development workstation (102 files, Stateful Memory v1.1, 0 duplicate copies)."
+    },
+    {
+      "version": "0.2.0",
+      "tag": "v0.2.0",
+      "date": "2026-11-10",
+      "head_sha": "108b504f4ea7",
+      "tree_hash": "2a8cc775a316",
+      "trigger_type": "minor",
+      "reason": "Gemini Carbon audit remediation: restore safety gates, truth-oracle fixes, slim vector cache, AST/memory hot-path speedups, and Carbon adapter parity"
     }
   ]
 }
