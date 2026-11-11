@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.2.0",
+  "engine_version": "0.2.1",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.2.0",
-  "baseline_head_sha": "108b504f4ea7",
-  "baseline_tree_hash": "2a8cc775a316",
+  "baseline_tag": "v0.2.1",
+  "baseline_head_sha": "f9c732fa7df3",
+  "baseline_tree_hash": "b1242ce694cf",
   "baseline_file_count": 102,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
   "benchmark_schema_version": "1.0",
   "authoritative_cleanroom_path": "/home/orin/Projects/Alchemical3D/Homunculus",
   "authoritative_remote_url": "git@github-alchemical:Alchemical-3D/Homunculus.git",
-  "updated_at": "2026-11-10",
+  "updated_at": "2026-11-11",
   "digit_trigger_laws": {
     "major": {
       "digit": "X (X.0.0)",
@@ -48,6 +48,15 @@
       "tree_hash": "2a8cc775a316",
       "trigger_type": "minor",
       "reason": "Gemini Carbon audit remediation: restore safety gates, truth-oracle fixes, slim vector cache, AST/memory hot-path speedups, and Carbon adapter parity"
+    },
+    {
+      "version": "0.2.1",
+      "tag": "v0.2.1",
+      "date": "2026-11-11",
+      "head_sha": "f9c732fa7df3",
+      "tree_hash": "b1242ce694cf",
+      "trigger_type": "patch",
+      "reason": "Memory retrieval v0.2.1 refinement: 17_Combo_C9_HeldT0 recall, Option A TIER0 two-lane, <=1800-tok budgeter, active-only bloat cap, and Check #7c shorthand advisory"
     }
   ]
 }

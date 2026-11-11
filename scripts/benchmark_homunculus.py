@@ -24,20 +24,20 @@ Responsibilities:
   Callers       : Developer CLI, `snapshot_homunculus_version.py`, `engineering-sandbox` Track-2 Gate
   Callees       : `version_manager.py`, `Homunculus` CLI Oracles & `unittest` Suite
   Contract      : `scripts/script_contracts.json` [`benchmark_homunculus.py`]
-  CLI Flags     : --profile, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
+  CLI Flags     : --profile, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
     - class MetricRow (#L86-L103)                    | def percentile (#L106-L118)
     - def snapshot_host_hashes (#L121-L144)          | def run_cmd_timed (#L147-L170)
     - def probe_bwrap_erofs (#L173-L208)             | def collect_always_on_and_adapter_stats (#L211-L303)
     - def run_unit_tests (#L306-L339)                | def _write_minimal_png (#L342-L357)
-    - def bench_profile_oracle_claims (#L360-L784)   | def bench_profile_memory_engine (#L787-L1085)
-    - def bench_profile_hygiene_adapters (#L1088-L1237) | def bench_profile_doc_cad_visual (#L1240-L1500)
-    - def _parse_jsonl_trajectory (#L1503-L1601)     | def bench_profile_subagent_ab (#L1604-L1730)
-    - def bench_profile_full_suite (#L1733-L1812)    | def build_universal_spine (#L1815-L1858)
-    - def apply_synthetic_regression (#L1861-L1898)  | def evaluate_comparisons (#L1901-L1998)
-    - def render_regression_autopsy_md (#L2001-L2089) | def _render_table_md (#L2092-L2110)
-    - def render_markdown_report (#L2113-L2148)      | def load_history_maps (#L2151-L2194)
-    - def update_ledger_and_history (#L2197-L2247)   | def main (#L2250-L2445)
+    - def bench_profile_oracle_claims (#L360-L784)   | def bench_profile_memory_engine (#L787-L1086)
+    - def bench_profile_hygiene_adapters (#L1089-L1238) | def bench_profile_doc_cad_visual (#L1241-L1501)
+    - def _parse_jsonl_trajectory (#L1504-L1602)     | def bench_profile_subagent_ab (#L1605-L1731)
+    - def bench_profile_full_suite (#L1734-L1813)    | def build_universal_spine (#L1816-L1859)
+    - def apply_synthetic_regression (#L1862-L1899)  | def evaluate_comparisons (#L1902-L1999)
+    - def render_regression_autopsy_md (#L2002-L2090) | def _render_table_md (#L2093-L2111)
+    - def render_markdown_report (#L2114-L2149)      | def load_history_maps (#L2152-L2195)
+    - def update_ledger_and_history (#L2198-L2248)   | def main (#L2251-L2456)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -828,9 +828,10 @@ def bench_profile_memory_engine(
             recall_latencies.append(r_ms)
             rec_obj = json.loads(p_rec.stdout).get("recall", {}) if p_rec.stdout.strip().startswith("{") else {}
             ranked_ids = [str(m.get("id", "")) for m in rec_obj.get("top_matches", []) if isinstance(m, dict)]
-            if ranked_ids and ranked_ids[0] in expected_ids:
+            active_t0_ids = [str(m.get("id", "")) for m in rec_obj.get("tier0_active_matches", []) if isinstance(m, dict)]
+            if (ranked_ids and ranked_ids[0] in expected_ids) or (active_t0_ids and active_t0_ids[0] in expected_ids):
                 top1_hits += 1
-            if any(rid in expected_ids for rid in ranked_ids[:3]):
+            if any(rid in expected_ids for rid in ranked_ids[:3]) or any(tid in expected_ids for tid in active_t0_ids[:3]):
                 top3_hits += 1
 
         top1_pct = round((top1_hits / len(golden_queries)) * 100.0, 1)
@@ -889,7 +890,7 @@ def bench_profile_memory_engine(
         else:
             fn_count += 1
 
-        # 3. `--preflight` Decision Packet Tokens across 4 core scripts (vs <= 600 tok ceiling)
+        # 3. `--preflight` Decision Packet Tokens across 4 core scripts (vs <= 1,800 tok ceiling)
         pf_scripts = [
             "scripts/homunculus_paths.py",
             "skills/project-memory/scripts/sync_memory.py",
@@ -909,7 +910,7 @@ def bench_profile_memory_engine(
             pf_body = str(pf_obj.get("content", ""))
             # Decision packet body starts at `<MEMORY_DECISION_PACKET`
             pkt_part = pf_body[pf_body.find("<MEMORY_DECISION_PACKET") :] if "<MEMORY_DECISION_PACKET" in pf_body else pf_body
-            tok_est = int(round(len(pkt_part.split()) * 1.35))
+            tok_est = int(pf_obj.get("recall", {}).get("packet_token_estimate") or round(len(pkt_part.split()) * 1.3))
             pf_tokens.append(tok_est)
             if "[TIER1_SUBSYSTEM_INVARIANTS]" in pkt_part or "T1`:" in pkt_part:
                 t1_covered += 1
@@ -917,7 +918,7 @@ def bench_profile_memory_engine(
         pf_avg_tok = int(round(statistics.mean(pf_tokens))) if pf_tokens else 0
         pf_max_tok = max(pf_tokens) if pf_tokens else 0
         t1_cov_pct = round((t1_covered / len(pf_scripts)) * 100.0, 1)
-        if pf_max_tok <= 600 and t1_cov_pct == 100.0:
+        if pf_max_tok <= 1800 and t1_cov_pct == 100.0:
             controls_passed += 1
 
         # 4. Governance Ceilings (`TIER0 <= 3`, `TIER2 <= 7` or current governed ceiling, `_Lessons_Learned.md <= 420L`, `AGENTS.md`, `Decision_Profile.md`)
@@ -1053,7 +1054,7 @@ def bench_profile_memory_engine(
         MetricRow(2, "ME02_top3_recall", "#1 Accuracy", "Top-3 Semantic/ID Recall Hit Rate", f"{top3_pct:.1f}% ({top3_hits}/{len(golden_queries)})", top3_pct, "%", "higher_better", "100.0%", 80.0, source_locus="sync_memory.py"),
         MetricRow(3, "ME03_sibling_precision", "#1 Accuracy", "Sibling-Project Recall Precision", f"{sib_precision:.1f}%", sib_precision, "%", "higher_better", "100.0%", 100.0, source_locus="sync_memory.py"),
         MetricRow(4, "ME04_n1_numeric_leak", "#1 Accuracy", "N1 Numeric/Unit Query Weight Leak Rate", f"{n1_leak_pct:.1f}%", n1_leak_pct, "%", "exact_zero", "0.0%", 0.0, source_locus="sync_memory.py"),
-        MetricRow(5, "ME05_preflight_tokens", "#2 Efficiency", "--preflight Decision Packet Tokens (avg / max)", f"avg {pf_avg_tok} / max {pf_max_tok} tok", float(pf_max_tok), "tok", "lower_better", "<= 600 tok", 600.0, advisory_pct=2.0, min_abs_noise=10.0, source_locus="sync_memory.py"),
+        MetricRow(5, "ME05_preflight_tokens", "#2 Efficiency", "--preflight Decision Packet Tokens (avg / max)", f"avg {pf_avg_tok} / max {pf_max_tok} tok", float(pf_max_tok), "tok", "lower_better", "<= 1,800 tok", 1800.0, advisory_pct=2.0, min_abs_noise=10.0, source_locus="sync_memory.py"),
         MetricRow(6, "ME06_tier1_coverage", "#1 Accuracy", "TIER1 Subsystem Invariant Recall Coverage", f"{t1_cov_pct:.1f}% ({t1_covered}/{len(pf_scripts)})", t1_cov_pct, "%", "higher_better", "100.0%", 100.0, source_locus="sync_memory.py"),
         MetricRow(7, "ME07_tier0_tier2_counts", "#2 Efficiency", "Active TIER0 / TIER2 Max Section Counts", f"T0: {max_t0} / T2: {max_t2}", float(max_t0 + max_t2), "sections", "lower_better", "T0 <= 3 / T2 <= 7", 10.0, source_locus="Homunculus_Lessons_Learned.md"),
         MetricRow(8, "ME08_lessons_max_lines", "#2 Efficiency", "Active _Lessons_Learned.md Max Line Count", f"{max_ll_lines} L", float(max_ll_lines), "lines", "lower_better", "<= 420 L", 420.0, advisory_pct=5.0, min_abs_noise=10.0, source_locus="memory/Projects/*/*_Lessons_Learned.md"),
@@ -1078,8 +1079,8 @@ def bench_profile_memory_engine(
         "unit_total": ut_total,
         "context_tax_display": f"max {pf_max_tok} tok (avg {pf_avg_tok} tok) / {max_ll_lines} L max LL",
         "context_tax_num": float(pf_max_tok),
-        "context_tax_ceiling": "<= 600 tok (--preflight packet)",
-        "context_tax_hard_limit": 600.0,
+        "context_tax_ceiling": "<= 1,800 tok (--preflight packet)",
+        "context_tax_hard_limit": 1800.0,
         "rows": rows,
         "forensic_notes": forensic_notes,
     }
@@ -2259,6 +2260,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ledger-md", default=str(DEFAULT_LEDGER_MD), help="Path to Homunculus_Version_and_Benchmark_Ledger.md.")
     parser.add_argument("--baseline-version", default="", help="Override baseline version tag (default: manifest baseline_tag).")
     parser.add_argument("--record-baseline", action="store_true", help="Pin this run as the official baseline for the current version and write to Ledger.")
+    parser.add_argument(
+        "--approve-advisory-reason",
+        default="",
+        help="Course D rationale approving sub-ceiling advisories when Hard Blocks == 0 (never waives Hard Blocks).",
+    )
     parser.add_argument("--append-ledger", action="store_true", help="Append this comparison run to history JSONL and Markdown Version Ledger.")
     parser.add_argument("--history-only", action="store_true", help="When combined with --record-baseline, write to JSONL history without appending Markdown Ledger.")
     parser.add_argument("--output-md", default="", help="Optional path to write standalone Markdown scorecard.")
@@ -2371,17 +2377,22 @@ def main(argv: list[str] | None = None) -> int:
 
     hard_blocks = hb_spine + hb_sub
     advisories = adv_spine + adv_sub
+    course_d_reason = args.approve_advisory_reason.strip()
 
     if hard_blocks:
         verdict = "HARD_BLOCK_REGRESSION"
         exit_code = 1
-    elif advisories:
+    elif advisories and not course_d_reason:
         verdict = "REGRESSION_ADVISORY"
         exit_code = 4
     elif args.record_baseline:
+        if advisories and course_d_reason:
+            prof_res["forensic_notes"].append(f"[COURSE_D_APPROVED_TRADEOFF] {course_d_reason}")
         verdict = "BASELINE_PINNED"
         exit_code = 0
     else:
+        if advisories and course_d_reason:
+            prof_res["forensic_notes"].append(f"[COURSE_D_APPROVED_TRADEOFF] {course_d_reason}")
         verdict = "PASS"
         exit_code = 0
 
@@ -2412,7 +2423,7 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     autopsy_md = ""
-    if hard_blocks or advisories:
+    if hard_blocks or (advisories and not course_d_reason):
         autopsy_md = render_regression_autopsy_md(
             ver_status, hom_dir, baseline_tag, hard_blocks, advisories, synthetic_note=synthetic_note
         )

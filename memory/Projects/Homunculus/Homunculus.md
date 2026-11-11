@@ -12,7 +12,7 @@ checkpoint_tree_hash: "b635c91e293d"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "6d55adccaa10d93c"
+checkpoint_lessons_digest: "89f50bc3b71f45e1"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -262,14 +262,14 @@ Repository: Homunculus | HEAD SHA: f9c732fa7df3 | Tree Hash: b635c91e293d
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: f9c732fa7df3` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_082207-2d5504ac, VRF-f899f601bef3, 53/53 unit tests OK, HEAD f9c732f`
+- **Checkpoint Provenance**: `HEAD SHA: f9c732fa7df3` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_082207-2d5504ac, VRF-f899f601bef3, 53/53 unit tests OK, tag v0.2.1 (f9c732fa7df3)`
 - **Where We Stopped (Verified State & Context)**:
-  Completed and committed Homunculus memory retrieval & authoring advisory upgrade (f9c732f): 17_Combo_C9_HeldT0 recall, Option A TIER0 Two-Lane + --kickstart TIER0 capsules, strict N1 0.0 numeric weight, v1.2 .cache/*_scoring_vectors.json sidecar, <=1,800-token 4-pass Anti-Bombing Budgeter (Tweak 2.1), active-section-only HOT_MEMORY_BLOAT_CEILING, and Check #7c non-blocking [BARE_NUMERIC_SHORTHAND_NOUN_MISSING] advisory; logged LL-044 + SUBSYSTEM-INVARIANTS and re-sealed governance.
+  Prepared Homunculus v0.2.1 release tag on f9c732fa7df3 (tree b1242ce694cf): 17_Combo_C9_HeldT0 recall, Option A TIER0 Two-Lane + --kickstart TIER0 capsules, strict N1 0.0 numeric weight, v1.2 .cache/*_scoring_vectors.json sidecar, <=1,800-token 4-pass Anti-Bombing Budgeter, active-section-only HOT_MEMORY_BLOAT_CEILING, and Check #7c shorthand advisory; compacted active TIER2 window to 7 (LL-038..LL-044) and re-sealed governance.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Confirm git push to origin/main if ready
-  2. Optionally align scripts/benchmark_homunculus.py (ME01 tier0_active_matches + ME05 <=1800-tok ceiling) before tagging v0.3.0 and taking a Btrfs RAID snapshot
-- **Open Discussion / Alignment Questions**: Whether to push f9c732f to origin/main and/or cut the official v0.3.0 tag + RAID snapshot
+  1. Confirm git push (with --tags) to origin/main
+  2. Execute immutable v0.2.1 Btrfs RAID backup via snapshot_homunculus_version.py
+- **Open Discussion / Alignment Questions**: Ready to execute git push and v0.2.1 RAID snapshot upon user go-ahead
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

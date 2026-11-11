@@ -11,7 +11,7 @@ checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "386f254d0621"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-10"
+last_synced: "2026-11-11"
 checkpoint_lessons_digest: "cab5a868a0349908"
 ---
 
@@ -53,13 +53,15 @@ checkpoint_lessons_digest: "cab5a868a0349908"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 386f254d0621` | `Worktree: untracked` | `Last Verification: SBX-20261110_162502-531b3a2c`
+- **Last Session Timestamp**: `2026-11-11`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 386f254d0621` | `Worktree: untracked` | `Last Verification: BMK-20261111_085728-9fee5ee6, VRF-02547714e424, SBX-20261111_082207-2d5504ac`
 - **Where We Stopped (Verified State & Context)**:
-  Completed v0.2.0 RAID deliverable (v0.2.0_2026-11-10_gemini_carbon_hardening), verified 625 Btrfs reflink-shared files, and verified benchmark_history.jsonl lookup
+  Pinned Homunculus v0.2.1 official baseline (BMK-20261111_085728-9fee5ee6, 17/17 controls, 14/14 +faults, 53/53 unit tests) in homunculus_version.json, benchmark_history.jsonl, and Homunculus_Version_and_Benchmark_Ledger.md; aligned benchmark_homunculus.py ME01/ME02 to credit Option A tier0_active_matches, ME05 to <=1,800-tok ceiling, and --approve-advisory-reason Course D baseline gate.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Await explicit user confirmation before pushing Homunculus v0.2.0 and Engineering to remotes
+  1. Confirm git push (origin/main --tags)
+  2. Execute immutable v0.2.1 RAID snapshot via snapshot_homunculus_version.py
+- **Open Discussion / Alignment Questions**: Ready for git push and RAID snapshot upon user confirmation
 <!-- SESSION-HANDOFF:END -->
 
 ---

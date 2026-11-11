@@ -4,8 +4,8 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "4c8c808c5b9f"
-last_synced: "2026-11-10"
+inventory_sha256: "c8ff1ee3fccc"
+last_synced: "2026-11-11"
 ---
 
 # Workstation_Operations — Software, CLI & Schema Telemetry (`_Software.md`)
@@ -19,7 +19,7 @@ last_synced: "2026-11-10"
 <!-- AUTO-SOFTWARE-MODULES:START -->
 | Script / Module Path | Language / Runtime | CLI Flags / Public Symbols | Line Count | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- | :--- |
-| `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--homunculus-dir`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L86-L103`), `percentile()` (`#L106-L118`), `snapshot_host_hashes()` (`#L121-L144`), `run_cmd_timed()` (`#L147-L170`), `probe_bwrap_erofs()` (`#L173-L208`), `build_universal_spine()` (`#L1815-L1858`), `render_regression_autopsy_md()` (`#L2001-L2089`), `render_markdown_report()` (`#L2113-L2148`), `main()` (`#L2250-L2445`) | `2449` | `1dc535469d` |
+| `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--homunculus-dir`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--approve-advisory-reason`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L86-L103`), `percentile()` (`#L106-L118`), `snapshot_host_hashes()` (`#L121-L144`), `run_cmd_timed()` (`#L147-L170`), `probe_bwrap_erofs()` (`#L173-L208`), `build_universal_spine()` (`#L1816-L1859`), `render_regression_autopsy_md()` (`#L2002-L2090`), `render_markdown_report()` (`#L2114-L2149`), `main()` (`#L2251-L2456`) | `2460` | `2d299ba1b9` |
 | `bootstrap_workstation.sh` | `POSIX Bash` | Executable Script / Source | `222` | `fa1a3165d4` |
 | `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `227` | `199c8189b5` |
 | `pre_push_engineering_guard.sh` | `POSIX Bash` | Executable Script / Source | `80` | `60e13724e7` |
@@ -35,7 +35,7 @@ last_synced: "2026-11-10"
 <!-- AUTO-SOFTWARE-SCHEMAS:START -->
 | Schema / Config File | Format | Top-Level Keys / Contract Version | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- |
-| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `e46a5c6565` |
+| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `0303c78597` |
 | `umbrella_configs/Projects.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `f2098fe12a` |
 <!-- AUTO-SOFTWARE-SCHEMAS:END -->
 
