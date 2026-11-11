@@ -7,7 +7,7 @@ last_synced: "2026-11-06"
 
 # 📊 Deep Author Voice, Tone & Cadence Telemetry Report (Pass 2)
 
-- **Corpus Inbox**: `/home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/corpus_inbox`
+- **Corpus Inbox**: `/home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/corpus_inbox`
 - **Active Domain Scope**: `maker` *(includes Alchemical-3D Blog/R&D, Maker Suppliers/Webstore Companies, and Open-Source Printer/Firmware Orgs; excludes gaming servers, private DMs, and internal business/admin channels)*
 - **Qualifying Threshold**: `>= 60` prose words per post (after chronological stitching & code/URL stripping)
 - **Total Qualifying Maker Posts**: `2,947` posts (`315,076` prose words)

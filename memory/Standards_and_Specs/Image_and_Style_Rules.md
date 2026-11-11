@@ -7,7 +7,7 @@ last_synced: "2026-11-06"
 
 # 🎨 Image Formatting, Style & Disclosure Standards
 
-Referenced by [`README.md`](../README.md), paired with [`Alchemical_Style_and_Voice_Guide.md`](Alchemical_Style_and_Voice_Guide.md) and [`Alchemical_Ecosystem_Links_and_Brand.md`](Alchemical_Ecosystem_Links_and_Brand.md), and enforced by `/home/orin/Projects/Engineering/Homunculus/skills/doc-and-card-studio/SKILL.md` (`audit_repo_docs.py` + `format_image.py`).
+Referenced by [`README.md`](../README.md), paired with [`Alchemical_Style_and_Voice_Guide.md`](Alchemical_Style_and_Voice_Guide.md) and [`Alchemical_Ecosystem_Links_and_Brand.md`](Alchemical_Ecosystem_Links_and_Brand.md), and enforced by `/home/orin/Projects/Alchemical3D/Homunculus/skills/doc-and-card-studio/SKILL.md` (`audit_repo_docs.py` + `format_image.py`).
 
 ---
 

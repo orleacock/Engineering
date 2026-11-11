@@ -7,7 +7,7 @@ last_synced: "2026-11-06"
 
 # 🎙️ Verbatim Author Exemplars (Few-Shot Acoustic Anchor Bank)
 
-Referenced by `/home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/SKILL.md` (`~/.gemini/config/skills/author-voice-cadence/SKILL.md`) and [`Author_Voice_and_Cadence.md`](Author_Voice_and_Cadence.md).
+Referenced by `/home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/SKILL.md` (`~/.gemini/config/skills/author-voice-cadence/SKILL.md`) and [`Author_Voice_and_Cadence.md`](Author_Voice_and_Cadence.md).
 
 > [!NOTE]
 > **Why Verbatim Exemplars Matter**: LLMs match an author's sentence rhythm, parenthetical habits, clause-final `"though"` pivots, humor, and explanatory flow far more accurately when anchored on **concrete verbatim paragraphs** written by the author than on abstract style adjectives alone.

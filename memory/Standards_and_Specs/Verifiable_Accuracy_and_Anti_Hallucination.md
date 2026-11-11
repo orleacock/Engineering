@@ -7,7 +7,7 @@ last_synced: "2026-11-05"
 
 # 🛡️ Verifiable Engineering Accuracy & Anti-Hallucination Standard
 
-Part of the [`README.md`](../README.md), enforced globally by `/home/orin/Projects/Engineering/Homunculus/rules/verifiable-accuracy.md` (`~/.gemini/config/rules/verifiable-accuracy.md`) and deterministically verified by `/home/orin/Projects/Engineering/Homunculus/skills/claim-verification/SKILL.md` (`scripts/verify_claims.py`).
+Part of the [`README.md`](../README.md), enforced globally by `/home/orin/Projects/Alchemical3D/Homunculus/rules/verifiable-accuracy.md` (`~/.gemini/config/rules/verifiable-accuracy.md`) and deterministically verified by `/home/orin/Projects/Alchemical3D/Homunculus/skills/claim-verification/SKILL.md` (`scripts/verify_claims.py`).
 
 > [!IMPORTANT]
 > **Domain-Agnostic Charter (`Accuracy > Efficiency`)**:

@@ -12,7 +12,7 @@ checkpoint_tree_hash: "1bea2f8341b2"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "3403527c93df8d96"
+checkpoint_lessons_digest: "c234ed9092671520"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -30,7 +30,6 @@ checkpoint_lessons_digest: "3403527c93df8d96"
 | **Software Telemetry (`_Software.md`)** | [`Workstation_Operations_Software.md`](Workstation_Operations_Software.md) | Verified runtime entrypoints, CLI flag contracts, schemas, and test receipts. |
 | **Lessons Learned & ADRs** | [`Workstation_Operations_Lessons_Learned.md`](Workstation_Operations_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
 | **Procedural Playbooks (`_Playbooks.md`)** | [`Workstation_Operations_Playbooks.md`](Workstation_Operations_Playbooks.md) | Reusable workstation release, benchmark, and immutable RAID deliverable runbooks (`PB-WS-*`). |
-| **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates (BOMs, quotes, test cards, checklists). |
 | **Unverified Quarantine Folder** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes/vendor quotes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Orin_Workstation_Tasks.md`](../../Tasks/Orin_Workstation_Tasks.md) | Single-writer task tracker for `Orin_Workstation` (do not duplicate `- [ ]` checkboxes here). |
 
@@ -38,10 +37,10 @@ checkpoint_lessons_digest: "3403527c93df8d96"
 
 ## 2. Executive Architecture & Locked Specifications
 
-- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent umbrella config sync (`umbrella_configs/Projects.homunculus.json`), and Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`) for the local engineering workstation (`/home/orin/Projects/Engineering`).
+- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent & home umbrella config sync (`umbrella_configs/{Projects,Home}.homunculus.json`), and Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`) for the local engineering workstation (`/home/orin/Projects/Engineering`).
 - **Primary Repository Path**: `../scripts`
 - **Verified Key Parameters**:
-  - **Workstation Bootstrap**: `bootstrap_workstation.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, `Homunculus/addons/*`, `memory/` in `~/.config/obsidian/obsidian.json`, parent `/home/orin/Projects/{.homunculus.json,.geminiignore}`, and `.git/hooks/{pre-commit,pre-push}` across `/home/orin/Projects/Engineering` and `/home/orin/Projects/Alchemical3D/*`.
+  - **Workstation Bootstrap**: `bootstrap_workstation.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and `Homunculus/addons/*` into `~/.gemini/config/` (`0` duplicate `.agents/` trees), registers `memory/` in `~/.config/obsidian/obsidian.json`, syncs `/home/orin/Projects/{.homunculus.json,.geminiignore}` + `/home/orin/.homunculus.json`, and installs + `cmp -s`-verifies `.git/hooks/{pre-commit,pre-push}` across `/home/orin/Projects/Engineering` and `/home/orin/Projects/Alchemical3D/*`.
   - **Multi-Compartment Boundary Guard**: `git_pre_commit_boundary.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) and `pre_push_engineering_guard.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) execute `Homunculus/scripts/audit_data_boundary.py` prior to commits and pushes across `private`, `public`, and `cleanroom` compartments, paired with directory-scoped Git identities (`~/.gitconfig` `[includeIf]`), SSH host aliases (`~/.ssh/config`: `github-orleacock` and `github-alchemical`), and offline Raid snapshots (`/run/media/orin/Raid/Backup Documents/`).
   - **Dual-Account Gmail MCP Server**: `gmail_mcp/gmail_mcp_server.py` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) provides OAuth 2.0 `Read + Create Drafts` access (`gmail.readonly` + `gmail.compose`) with `visibility_radar` and `verified_send_as_aliases` enforcement (`personal` `orleacock@gmail.com` + `alchemical` `orin@alchemical3d.net` / `we@alchemical3d.net`).
   - **Immutable RAID Deliverable Restore Guard (`S1-A`)**: `snapshot_homunculus_version.py` (`build_restore_script`) preserves live `~/.gemini/config/mcp_config.json` (staging redacted snapshot configs to `mcp_config.redacted_reference.json`) and prunes only `Homunculus`/`Engineering`/dangling symlinks in `~/.gemini/config/{rules,skills}`. Because the initial `v0.1.0_2026-11-10_foundation_baseline` RAID deliverable is write-once `0444`-locked (`0` in-place edits permitted), if ever running full-workstation recovery from that specific `v0.1.0` snapshot, invoke the updated `scripts/snapshot_homunculus_version.py` restore template or back up live `~/.gemini/config/mcp_config.json` and non-Homunculus user skills/rules first (its `--restore-engine-only` mode is already unaffected).
@@ -54,9 +53,9 @@ checkpoint_lessons_digest: "3403527c93df8d96"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 1bea2f8341b2` | `Worktree: untracked` | `Last Verification: SBX-20261111_110421-e810b0f0`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 1bea2f8341b2` | `Worktree: untracked` | `Last Verification: SBX-20261111_125331-63c9e71a, LL-WS-09`
 - **Where We Stopped (Verified State & Context)**:
-  Provisioned Home.homunculus.json (~/.homunculus.json) via bootstrap_workstation.sh (--check PASS) for zero-shell Turn-1 task triage from any CWD
+  Completed & sandbox-verified parent workstation dead-surface & anti-poisoning cleanup: pruned Engineering/.agents, ~/.agents (find-skills), --compat-symlinks, legacy Engineering/Homunculus probes, and 17 duplicate memory Templates; enforced cmp byte-parity on Alchemical3D git hooks and re-sealed 0444 governance
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
   1. Configure local Syncthing client pairing when ready
@@ -64,15 +63,7 @@ checkpoint_lessons_digest: "3403527c93df8d96"
 
 ---
 
-## 4. Project Deliverable Templates (`Projects/Workstation_Operations/Templates/`)
-
-> **AI Co-Engineering Trigger (`Project-Template Prompt`)**: When onboarding `Workstation_Operations` or whenever a recurring deliverable pattern is identified (e.g., BOM schedule, customer quote sheet, test report, assembly card), ask the user: *"Would you like to save a canonical template for this deliverable in `Projects/Workstation_Operations/Templates/` (or promote it to global `Templates/`)?"*
-
-- Registered Project Templates: *(None registered yet — place `.md` templates in [`Templates/`](Templates/))*
-
----
-
-## 5. Repository File Tree (`AUTO-TREE`)
+## 4. Repository File Tree (`AUTO-TREE`)
 
 <!-- AUTO-TREE:START -->
 ```text
@@ -99,7 +90,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 1bea2f8341b2
 
 ---
 
-## 6. Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+## 5. Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
 
 > [!WARNING]
 > **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until they are empirically verified and moved to Section 2 or the Domain Telemetry notes.

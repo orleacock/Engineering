@@ -7,7 +7,7 @@ last_synced: "2026-11-06"
 
 # ✍️ Author Voice, Cadence & Editorial Lexicon
 
-Part of [`README.md`](../README.md), paired with [`Verifiable_Accuracy_and_Anti_Hallucination`](Verifiable_Accuracy_and_Anti_Hallucination.md) and [`Image_and_Style_Rules`](Image_and_Style_Rules.md), and enforced by `/home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/SKILL.md` (`~/.gemini/config/skills/author-voice-cadence/SKILL.md`) and `/home/orin/Projects/Engineering/Homunculus/skills/doc-and-card-studio/SKILL.md`.
+Part of [`README.md`](../README.md), paired with [`Verifiable_Accuracy_and_Anti_Hallucination`](Verifiable_Accuracy_and_Anti_Hallucination.md) and [`Image_and_Style_Rules`](Image_and_Style_Rules.md), and enforced by `/home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/SKILL.md` (`~/.gemini/config/skills/author-voice-cadence/SKILL.md`) and `/home/orin/Projects/Alchemical3D/Homunculus/skills/doc-and-card-studio/SKILL.md`.
 
 > [!IMPORTANT]
 > **Active Baseline (`2026-10-29` — Pure Maker Corpus Telemetry, Zero Mixed-Repo Drift)**:
@@ -121,11 +121,11 @@ Use the author's verified recurring collocations rather than generic LLM transit
 
 ## 5. Re-Running or Updating the Corpus
 
-1. Drop additional Discord exports or standalone human-authored drafts into `/home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/corpus_inbox/`.
+1. Drop additional Discord exports or standalone human-authored drafts into `/home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/corpus_inbox/`.
 2. Run the deep stylometric extractor:
    ```bash
-   python3 /home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/scripts/extract_voice_cadence.py \
-     --inbox /home/orin/Projects/Engineering/Homunculus/addons/author-voice-cadence/corpus_inbox \
+   python3 /home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/scripts/extract_voice_cadence.py \
+     --inbox /home/orin/Projects/Alchemical3D/Homunculus/addons/author-voice-cadence/corpus_inbox \
      --scope maker \
      --output /home/orin/Projects/Engineering/memory/Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md
    ```

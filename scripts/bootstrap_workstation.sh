@@ -7,21 +7,18 @@ PROJECTS_DIR="$(dirname "$REPO_ROOT")"
 ALCHEMICAL_DIR="${PROJECTS_DIR}/Alchemical3D"
 HOMUNCULUS_DIR="${ALCHEMICAL_DIR}/Homunculus"
 MEMORY_DIR="${REPO_ROOT}/memory"
-NEA_DIR="${ALCHEMICAL_DIR}/NEA_v2.2.3"
 GEMINI_CFG="${HOME}/.gemini/config"
 OBSIDIAN_CFG="${HOME}/.config/obsidian/obsidian.json"
 
 MODE="apply"
 UPDATE_OBSIDIAN=0
-COMPAT_SYMLINKS=0
 
 for arg in "$@"; do
     case "$arg" in
         --check) MODE="check" ;;
         --update-obsidian) UPDATE_OBSIDIAN=1 ;;
-        --compat-symlinks) COMPAT_SYMLINKS=1 ;;
         -h|--help)
-            echo "Usage: $(basename "$0") [--check] [--update-obsidian] [--compat-symlinks]"
+            echo "Usage: $(basename "$0") [--check] [--update-obsidian]"
             exit 0
             ;;
         *)
@@ -60,15 +57,14 @@ ensure_link() {
 echo "=== Engineering Workstation Bootstrap (${MODE^^}) ==="
 echo "Repo Root: ${REPO_ROOT}"
 
-# 1. Global Antigravity Rules (~/.gemini/config/rules/*.md) & Portable Workspace .agents/rules/*.md -> Alchemical3D/Homunculus/rules/*.md
+# 1. Global Antigravity Rules (~/.gemini/config/rules/*.md) -> Alchemical3D/Homunculus/rules/*.md
 for rule_file in "${HOMUNCULUS_DIR}/rules/"*.md; do
     [[ -f "$rule_file" ]] || continue
     rule_name="$(basename "$rule_file")"
     ensure_link "${GEMINI_CFG}/rules/${rule_name}" "../../../Projects/Alchemical3D/Homunculus/rules/${rule_name}" "$rule_file"
-    ensure_link "${REPO_ROOT}/.agents/rules/${rule_name}" "../../../Alchemical3D/Homunculus/rules/${rule_name}" "$rule_file"
 done
 
-# 2. Global Antigravity Skills (~/.gemini/config/skills/*) & Portable Workspace .agents/skills/* -> Alchemical3D/Homunculus/skills/* + addons/*
+# 2. Global Antigravity Skills (~/.gemini/config/skills/*) -> Alchemical3D/Homunculus/skills/* + addons/*
 for skill_dir in "${HOMUNCULUS_DIR}/skills/"* "${HOMUNCULUS_DIR}/addons/"*; do
     [[ -d "$skill_dir" ]] || continue
     [[ -f "${skill_dir}/SKILL.md" ]] || continue
@@ -76,14 +72,12 @@ for skill_dir in "${HOMUNCULUS_DIR}/skills/"* "${HOMUNCULUS_DIR}/addons/"*; do
     tier_dir="$(basename "$(dirname "$skill_dir")")"
     [[ "$skill_name" == .* ]] && continue
     ensure_link "${GEMINI_CFG}/skills/${skill_name}" "../../../Projects/Alchemical3D/Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
-    ensure_link "${REPO_ROOT}/.agents/skills/${skill_name}" "../../../Alchemical3D/Homunculus/${tier_dir}/${skill_name}" "$skill_dir"
 done
 
 # 2a. Local Workstation-Only MCP Skills (/home/orin/Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant)
 GMAIL_SKILL_DIR="${REPO_ROOT}/scripts/gmail_mcp/gmail-workspace-assistant"
 if [[ -f "${GMAIL_SKILL_DIR}/SKILL.md" ]]; then
     ensure_link "${GEMINI_CFG}/skills/gmail-workspace-assistant" "../../../Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant" "$GMAIL_SKILL_DIR"
-    ensure_link "${REPO_ROOT}/.agents/skills/gmail-workspace-assistant" "../../scripts/gmail_mcp/gmail-workspace-assistant" "$GMAIL_SKILL_DIR"
 fi
 
 # 2b. Global Antigravity Lifecycle Hooks (~/.gemini/config/hooks.json)
@@ -114,12 +108,15 @@ if [[ -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" && -f "${REPO_ROOT}/s
         [[ "$repo_base" == "." || "$repo_base" == ".." ]] && continue
         [[ -d "${alch_repo}/.git/hooks" ]] || continue
         if [[ "$MODE" == "check" ]]; then
-            for hname in pre-commit pre-push; do
-                if [[ ! -x "${alch_repo}/.git/hooks/${hname}" ]]; then
-                    echo "[FAIL] Missing executable hook: ${alch_repo}/.git/hooks/${hname}" >&2
+            for pair in "pre-commit:${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" "pre-push:${REPO_ROOT}/scripts/pre_push_engineering_guard.sh"; do
+                hname="${pair%%:*}"
+                src_hook="${pair##*:}"
+                dst_hook="${alch_repo}/.git/hooks/${hname}"
+                if [[ ! -x "$dst_hook" ]] || ! cmp -s "$src_hook" "$dst_hook"; then
+                    echo "[FAIL] Missing or drifted executable hook: ${dst_hook} (expected byte parity with ${src_hook})" >&2
                     errors=$((errors + 1))
                 else
-                    echo "[OK]   ${alch_repo}/.git/hooks/${hname} (executable)"
+                    echo "[OK]   ${dst_hook} (in sync)"
                 fi
             done
         else
@@ -155,8 +152,18 @@ if [[ -d "$PROJECTS_DIR" && -f "$UMBRELLA_HOMUNCULUS_SRC" && -f "$HOME_HOMUNCULU
     done
 fi
 
-# 2c. Reverse Dangling Symlink Check / Cleanup
-for scan_dir in "${GEMINI_CFG}/rules" "${GEMINI_CFG}/skills" "${REPO_ROOT}/.agents/rules" "${REPO_ROOT}/.agents/skills"; do
+# 2c. Retired Workspace .agents Guard & Reverse Dangling Symlink Check / Cleanup
+if [[ -e "${REPO_ROOT}/.agents" || -L "${REPO_ROOT}/.agents" ]]; then
+    if [[ "$MODE" == "check" ]]; then
+        echo "[FAIL] Retired duplicate .agents directory exists: ${REPO_ROOT}/.agents" >&2
+        errors=$((errors + 1))
+    else
+        rm -rf "${REPO_ROOT}/.agents"
+        echo "[PRUNE] Removed retired duplicate directory: ${REPO_ROOT}/.agents"
+    fi
+fi
+
+for scan_dir in "${GEMINI_CFG}/rules" "${GEMINI_CFG}/skills" "${HOME}/.agents/rules" "${HOME}/.agents/skills"; do
     [[ -d "$scan_dir" ]] || continue
     shopt -s nullglob dotglob
     for entry in "${scan_dir}/"*; do
@@ -174,17 +181,9 @@ for scan_dir in "${GEMINI_CFG}/rules" "${GEMINI_CFG}/skills" "${REPO_ROOT}/.agen
     shopt -u nullglob dotglob
 done
 
-# 3. Optional Compatibility Symlinks
-if [[ "$COMPAT_SYMLINKS" -eq 1 ]]; then
-    if [[ -d "$NEA_DIR" ]]; then
-        ensure_link "${HOME}/Downloads/NEA_v2.2.3" "${NEA_DIR}" "${NEA_DIR}"
-    fi
-fi
-
-# 4. Optional Obsidian Vault Registry Path Sync
+# 3. Optional Obsidian Vault Registry Path Check
 if [[ "$UPDATE_OBSIDIAN" -eq 1 && -f "$OBSIDIAN_CFG" ]]; then
-    if [[ "$MODE" == "check" ]]; then
-        python3 - "$OBSIDIAN_CFG" "$MEMORY_DIR" << 'PY' || errors=$((errors + 1))
+    python3 - "$OBSIDIAN_CFG" "$MEMORY_DIR" << 'PY' || errors=$((errors + 1))
 import json, sys
 cfg_path, vault_dir = sys.argv[1], sys.argv[2]
 data = json.loads(open(cfg_path, encoding="utf-8").read())
@@ -195,26 +194,6 @@ else:
     print(f"[FAIL] Obsidian vault path {vault_dir} not found in {cfg_path}: {paths}", file=sys.stderr)
     sys.exit(1)
 PY
-    else
-        python3 - "$OBSIDIAN_CFG" "$MEMORY_DIR" << 'PY'
-import json, os, sys
-cfg_path, vault_dir = sys.argv[1], sys.argv[2]
-with open(cfg_path, encoding="utf-8") as f:
-    data = json.load(f)
-vaults = data.get("vaults", {})
-stale_keys = [k for k, v in vaults.items() if str(v.get("path", "")).endswith("/Obsidian_Notes")]
-for k in stale_keys:
-    del vaults[k]
-if stale_keys:
-    tmp = cfg_path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, separators=(",", ":"))
-    os.replace(tmp, cfg_path)
-    print(f"[SYNC] Pruned stale Obsidian_Notes entry; active vault is {vault_dir}")
-else:
-    print(f"[OK]   Obsidian vault path already aligned ({vault_dir})")
-PY
-    fi
 fi
 
 if [[ "$errors" -gt 0 ]]; then

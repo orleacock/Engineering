@@ -34,10 +34,10 @@ Responsibilities:
     - def find_latest_same_dev_raid_snapshot (#L89-L114) | def find_verified_benchmark_receipt (#L117-L151)
     - def _force_writable_rmtree (#L154-L173)        | def copy_tree_cow (#L176-L358)
     - def _redact_json_obj (#L361-L373)              | def collect_symlink_manifest (#L376-L394)
-    - def stage_client_wiring (#L397-L436)           | def create_git_bundles (#L439-L481)
-    - def build_restore_script (#L484-L698)          | def build_reconstruction_index (#L701-L761)
-    - def compute_sha256sums (#L764-L776)            | def lock_deliverable_readonly (#L779-L801)
-    - def verify_existing_snapshot (#L804-L816)      | def main (#L819-L1121)
+    - def stage_client_wiring (#L397-L429)           | def create_git_bundles (#L432-L474)
+    - def build_restore_script (#L477-L684)          | def build_reconstruction_index (#L687-L747)
+    - def compute_sha256sums (#L750-L762)            | def lock_deliverable_readonly (#L765-L787)
+    - def verify_existing_snapshot (#L790-L802)      | def main (#L805-L1107)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -401,14 +401,11 @@ def stage_client_wiring(staging_dir: Path, engineering_dir: Path) -> dict[str, A
 
     home = Path.home()
     gemini_cfg = home / ".gemini" / "config"
-    dot_agents = home / ".agents"
     agy_gmail_schemas = home / ".gemini" / "antigravity-cli" / "mcp" / "gmail"
 
     symlinks = collect_symlink_manifest(
         [
             ("gemini_config", gemini_cfg),
-            ("engineering_dot_agents", engineering_dir / ".agents"),
-            ("home_dot_agents", dot_agents),
         ]
     )
     (cw_dir / "symlink_topology_manifest.json").write_text(
@@ -428,10 +425,6 @@ def stage_client_wiring(staging_dir: Path, engineering_dir: Path) -> dict[str, A
 
     if agy_gmail_schemas.is_dir():
         copy_tree_cow(agy_gmail_schemas, cw_dir / "antigravity_mcp_gmail_schemas")
-
-    find_skills = dot_agents / "skills" / "find-skills"
-    if find_skills.is_dir():
-        copy_tree_cow(find_skills, cw_dir / "dot_agents_skills" / "find-skills")
 
     return {"symlink_count": len(symlinks), "mcp_config_included": mcp_copied}
 
@@ -496,7 +489,6 @@ ENG_ROOT="${{PROJECTS_ROOT}}/Engineering"
 CLEANROOM_ROOT="${{PROJECTS_ROOT}}/Alchemical3D/Homunculus"
 GEMINI_CFG="${{HOME_DIR}}/.gemini/config"
 AGY_MCP_DIR="${{HOME_DIR}}/.gemini/antigravity-cli/mcp/gmail"
-DOT_AGENTS="${{HOME_DIR}}/.agents"
 
 MODE=""
 
@@ -521,7 +513,7 @@ Modes:
                               (leaves /home/orin/Projects/Engineering/memory untouched!).
   --restore-full-workstation  Catastrophic full-workstation recovery: restore Alchemical3D/Homunculus,
                               Engineering/{{memory,study_briefs,scripts,configs}}, umbrella configs,
-                              client wiring, symlinks, and run all 46 unit tests + safety/hygiene gates.
+                              client wiring, symlinks, and run the full unit test suite + safety/hygiene gates.
 EOF
             exit 0
             ;;
@@ -570,14 +562,14 @@ if [[ "$MODE" == "dry-run" ]]; then
     echo "[3/4] DRY-RUN Restoration Plan (0 live files will be mutated):"
     echo "  - Engine-Only Mode (--restore-engine-only):"
     echo "      * Replace ${{CLEANROOM_ROOT}} with ${{BACKUP_DIR}}/Homunculus_CleanRoom (preserving live memory/)"
-    echo "      * Re-bind symlinks via ${{ENG_ROOT}}/scripts/bootstrap_workstation.sh --update-obsidian --compat-symlinks"
+    echo "      * Re-bind symlinks via ${{ENG_ROOT}}/scripts/bootstrap_workstation.sh --update-obsidian"
     echo "  - Full-Workstation Mode (--restore-full-workstation):"
     echo "      * Replace ${{CLEANROOM_ROOT}} with ${{BACKUP_DIR}}/Homunculus_CleanRoom"
     echo "      * Replace ${{ENG_ROOT}}/{{memory,study_briefs,scripts}} and root configs"
     echo "      * Restore ${{PROJECTS_ROOT}}/{{.homunculus.json,.geminiignore}} and ${{HOME_DIR}}/.homunculus.json"
     echo "      * Preserve live ${{GEMINI_CFG}}/mcp_config.json (staging redacted template at mcp_config.redacted_reference.json) & non-Homunculus user skills/rules"
-    echo "      * Restore client MCP schemas & ~/.agents/skills/find-skills"
-    echo "      * Re-bind symlinks & run full 46-test suite + portability, boundary, hygiene, and memory audits"
+    echo "      * Restore client MCP schemas"
+    echo "      * Re-bind symlinks & run full unit test suite + portability, boundary, hygiene, and memory audits"
     echo "=== DRY-RUN COMPLETE (0 live mutations) ==="
     exit 0
 fi
@@ -598,8 +590,8 @@ if [[ "$MODE" == "restore-engine" ]]; then
     chmod -R u+w "${{CLEANROOM_ROOT}}"
     python3 "${{CLEANROOM_ROOT}}/scripts/homunculus_paths.py" --homunculus-root "${{CLEANROOM_ROOT}}" --lock-core >/dev/null
     echo "[4/4] Re-binding workstation symlinks & running unit tests (memory/ untouched)..."
-    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
-    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
+    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian
+    HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "${{CLEANROOM_ROOT}}/tests" -p "test_*.py"
     echo "=== ENGINE-ONLY RESTORATION COMPLETE & VERIFIED (0 errors; memory/ preserved) ==="
     exit 0
@@ -653,12 +645,6 @@ if [[ -f "${{BACKUP_DIR}}/Engineering_Root_and_Scripts/Umbrella_Configs/home.hom
     chmod 0644 "${{HOME_DIR}}/.homunculus.json"
 fi
 
-if [[ -d "${{BACKUP_DIR}}/Client_Wiring_Snapshot/dot_agents_skills/find-skills" ]]; then
-    mkdir -p "${{DOT_AGENTS}}/skills"
-    rm -rf "${{DOT_AGENTS}}/skills/find-skills"
-    cp -a "${{BACKUP_DIR}}/Client_Wiring_Snapshot/dot_agents_skills/find-skills" "${{DOT_AGENTS}}/skills/find-skills"
-    chmod -R u+w "${{DOT_AGENTS}}/skills/find-skills"
-fi
 if [[ -f "${{BACKUP_DIR}}/Client_Wiring_Snapshot/mcp_config.json" ]]; then
     mkdir -p "${{GEMINI_CFG}}"
     if [[ -f "${{GEMINI_CFG}}/mcp_config.json" ]]; then
@@ -686,8 +672,8 @@ python3 "${{CLEANROOM_ROOT}}/scripts/homunculus_paths.py" --homunculus-root "${{
 python3 "${{CLEANROOM_ROOT}}/skills/project-memory/scripts/sync_memory.py" --memory-root "${{ENG_ROOT}}/memory" --lock-memory-rules >/dev/null
 
 echo "[4/4] Re-binding workstation symlinks and running full verification gates..."
-HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian --compat-symlinks
-HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian --compat-symlinks
+HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --update-obsidian
+HOME="${{HOME_DIR}}" "${{ENG_ROOT}}/scripts/bootstrap_workstation.sh" --check --update-obsidian
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "${{CLEANROOM_ROOT}}/tests" -p "test_*.py"
 PYTHONDONTWRITEBYTECODE=1 python3 "${{CLEANROOM_ROOT}}/skills/skill-architect/scripts/audit_skill_hygiene.py" --repo-root "${{CLEANROOM_ROOT}}" --audit --strict-structure >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 "${{CLEANROOM_ROOT}}/scripts/audit_portability.py" --repo "${{CLEANROOM_ROOT}}"
@@ -735,7 +721,7 @@ def build_reconstruction_index(
 | `memory/` | `/home/orin/Projects/Engineering/memory` | Complete Dual-Mode (`Headless` + `Obsidian`) engineering memory (`Projects/`, `Directory/`, `Profile/`, `Standards_and_Specs/`, `Tasks/`, `Templates/`, `Diagrams/`, `Homunculus_Version_and_Benchmark_Ledger.md`, and `governance_seal.json`). |
 | `study_briefs/` | `/home/orin/Projects/Engineering/study_briefs` | Non-consumed `/teach-me` `Brief+` directory. |
 | `Engineering_Root_and_Scripts/` | `/home/orin/Projects/Engineering/{{scripts,*}}` | Workstation governance & MCP scripts (`version_manager.py`, `benchmark_homunculus.py`, `snapshot_homunculus_version.py`, `bootstrap_workstation.sh`, git boundary hooks, `gmail_mcp/`), root configs, and `Umbrella_Configs/` (`/home/orin/Projects/.homunculus.json` + `/home/orin/.homunculus.json`). |
-| `Client_Wiring_Snapshot/` | `~/.gemini/config/` & `~/.agents/` | `symlink_topology_manifest.{{json,txt}}`, command-only `mcp_config.json`, `antigravity_mcp_gmail_schemas/`, and `~/.agents/skills/find-skills`. |
+| `Client_Wiring_Snapshot/` | `~/.gemini/config/` | `symlink_topology_manifest.{{json,txt}}`, command-only `mcp_config.json`, and `antigravity_mcp_gmail_schemas/`. |
 | `Git_Snapshots/` | Git repositories | Self-contained `Homunculus_Alchemical3D.bundle` + `Engineering_Parent.bundle` and `git_provenance_manifest.json`. |
 | `BENCHMARK_SCORECARD.md` | *(Generated Scorecard)* | Standardized 12-Row Universal Spine + 16-Row Full-System Suite Markdown comparison chart (`benchmark_report.json` alongside). |
 | `restore_version.sh` | *(Executable Restore Tool)* | Read-only cryptographic/bundle/immutability verifier (`--verify-backup`), dry-run planner (`--dry-run`), engine-only rollback (`--restore-engine-only`), and catastrophic full-workstation recovery (`--restore-full-workstation`). |
@@ -755,7 +741,7 @@ def build_reconstruction_index(
 # 3. Restore ONLY the Clean-Room Homunculus engine (leaves live Engineering/memory untouched)
 "{snap_path}/restore_version.sh" --restore-engine-only
 
-# 4. Catastrophic full-workstation restoration (Engine + Memory + Scripts + Client Wiring + 46 Tests)
+# 4. Catastrophic full-workstation restoration (Engine + Memory + Scripts + Client Wiring + Full Unit Test Suite)
 "{snap_path}/restore_version.sh" --restore-full-workstation
 ```
 """

@@ -5,7 +5,7 @@
 # === DEVELOPER & AI NAVIGATION MAP ===
 #   Owning Module : Parent Workstation Pre-Commit Boundary, Memory & Matrix Parity Gate (`scripts/git_pre_commit_boundary.sh`)
 #   Callees       : `audit_data_boundary.py --staged`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
-#   Section Index : Repo Root (#L13-L20) | Python Discovery (#L22-L30) | Homunculus Root Probe (#L33-L67) | Boundary & Memory Gate (#L78-L89) | AST Matrix Parity (#L91-L218)
+#   Section Index : Repo Root (#L12-L20) | Python Discovery (#L21-L30) | Homunculus Root Probe (#L32-L66) | Boundary & Memory Gate (#L73-L114) | AST Matrix Parity (#L117-L225)
 # === END NAVIGATION MAP ===
 set -euo pipefail
 
@@ -61,9 +61,6 @@ for d in (repo, *repo.parents):
     if (d / "Alchemical3D" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Alchemical3D" / "Homunculus").resolve())
         sys.exit(0)
-    if (d / "Engineering" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
-        print((d / "Engineering" / "Homunculus").resolve())
-        sys.exit(0)
 print("")
 PY
 )"
@@ -86,45 +83,63 @@ fi
 "$PYTHON_BIN" "${HOMUNCULUS_ROOT}/scripts/audit_data_boundary.py" --repo "$REPO_ROOT" --staged
 
 MEMORY_SCRIPT="${HOMUNCULUS_ROOT}/skills/project-memory/scripts/sync_memory.py"
-if [[ -f "$MEMORY_SCRIPT" && -d "${REPO_ROOT}/memory" ]]; then
-    if git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^(memory|(Homunculus/)?(rules|skills|addons))/' >/dev/null; then
-        if ! mem_out="$("$PYTHON_BIN" "$MEMORY_SCRIPT" --memory-root "${REPO_ROOT}/memory" --audit 2>&1)"; then
-            echo "[BLOCKED] Homunculus pre-commit memory gate failed (run: ${PYTHON_BIN} ${MEMORY_SCRIPT} --memory-root ${REPO_ROOT}/memory --audit):" >&2
+MEMORY_DIR="$("$PYTHON_BIN" - "$REPO_ROOT" << 'PY'
+import json, sys
+from pathlib import Path
+repo = Path(sys.argv[1]).resolve()
+cfg = repo / ".homunculus.json"
+if cfg.is_file():
+    try:
+        rel = json.loads(cfg.read_text(encoding="utf-8")).get("memory_dir", "")
+        if rel:
+            cand = (repo / rel).resolve()
+            if cand.is_dir() and repo in (cand, *cand.parents):
+                print(cand)
+                sys.exit(0)
+    except Exception:
+        pass
+fallback = repo / "memory"
+print(fallback if fallback.is_dir() else "")
+PY
+)"
+if [[ -f "$MEMORY_SCRIPT" && -n "$MEMORY_DIR" && -d "$MEMORY_DIR" ]]; then
+    MEMORY_REL="${MEMORY_DIR#"${REPO_ROOT}/"}"
+    if git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E "^${MEMORY_REL}/" >/dev/null; then
+        if ! mem_out="$("$PYTHON_BIN" "$MEMORY_SCRIPT" --memory-root "$MEMORY_DIR" --audit 2>&1)"; then
+            echo "[BLOCKED] Homunculus pre-commit memory gate failed (run: ${PYTHON_BIN} ${MEMORY_SCRIPT} --memory-root ${MEMORY_DIR} --audit):" >&2
             echo "$mem_out" >&2
             exit 1
         fi
     fi
 fi
 
-# Maintainer Script-Skill Interaction Matrix Parity Gate (active only when Engineering maintainer matrix exists)
-MATRIX_FILE="${REPO_ROOT}/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md"
-if [[ -f "$MATRIX_FILE" && -d "${HOMUNCULUS_ROOT}" ]]; then
-    if [[ "${HOMUNCULUS_FORCE_MATRIX_AUDIT:-0}" == "1" ]] || git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^(Homunculus/|memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix\.md$)' >/dev/null; then
-        if ! matrix_out="$("$PYTHON_BIN" - "$REPO_ROOT" "$MATRIX_FILE" "$HOMUNCULUS_ROOT" << 'PY'
+# Maintainer Script-Skill Interaction Matrix Parity Gate (active when Engineering maintainer matrix exists)
+MATRIX_FILE=""
+if [[ -f "${REPO_ROOT}/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md" ]]; then
+    MATRIX_FILE="${REPO_ROOT}/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md"
+elif [[ "$REPO_ROOT" == "$HOMUNCULUS_ROOT" && -f "${HOMUNCULUS_ROOT}/../../Engineering/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md" ]]; then
+    MATRIX_FILE="$(cd "${HOMUNCULUS_ROOT}/../../Engineering" && pwd)/memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md"
+fi
+if [[ -n "$MATRIX_FILE" && -f "$MATRIX_FILE" && -d "${HOMUNCULUS_ROOT}" ]]; then
+    RUN_MATRIX_AUDIT=0
+    if [[ "${HOMUNCULUS_FORCE_MATRIX_AUDIT:-0}" == "1" ]]; then
+        RUN_MATRIX_AUDIT=1
+    elif [[ "$REPO_ROOT" == "$HOMUNCULUS_ROOT" ]] && git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '\.(py|sh|ps1)$' >/dev/null; then
+        RUN_MATRIX_AUDIT=1
+    elif git -C "$REPO_ROOT" -c core.quotePath=false diff --cached --name-only | grep -E '^memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix\.md$' >/dev/null; then
+        RUN_MATRIX_AUDIT=1
+    fi
+    if [[ "$RUN_MATRIX_AUDIT" == "1" ]]; then
+        if ! matrix_out="$("$PYTHON_BIN" - "$MATRIX_FILE" "$HOMUNCULUS_ROOT" << 'PY'
 import ast, re, sys
 from pathlib import Path
 
-repo_root = Path(sys.argv[1]).resolve()
-matrix_path = Path(sys.argv[2]).resolve()
-hom_root = Path(sys.argv[3]).resolve()
+matrix_path = Path(sys.argv[1]).resolve()
+hom_root = Path(sys.argv[2]).resolve()
 text = matrix_path.read_text(encoding="utf-8")
 errors = []
 
-# 1. Verify every relative link pointing into Homunculus/ resolves on disk
-link_re = re.compile(r"\]\((\.\./\.\./\.\./Homunculus/[^)#\s]+)")
-linked_rel_paths = set()
-for m in link_re.finditer(text):
-    rel_target = m.group(1)
-    resolved = (matrix_path.parent / rel_target).resolve()
-    if not resolved.exists():
-        errors.append(f"DEAD_MATRIX_LINK: {rel_target} does not exist on disk")
-    else:
-        try:
-            linked_rel_paths.add(resolved.relative_to(hom_root).as_posix())
-        except ValueError:
-            pass
-
-# 2. Parse Master Table rows (Section 1 — supports both portable dual-bound anchors and legacy ../../../Homunculus links)
+# 1. Parse Master Table rows (Section 1 portable dual-bound anchors)
 sec1_match = re.search(r"## 1\. Master Script-to-Skill Cross-Reference Summary(.*?)(?:\n---\n|\n## 2\.)", text, re.S)
 master_rows = {}
 if not sec1_match:
@@ -136,8 +151,6 @@ else:
             r"^\|\s*`([^`]+)`\s*\(\[`Homunculus(?:_Software|_Hardware)?\.md`\]\(Homunculus(?:_Software|_Hardware)?\.md\)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|",
             s_ln,
         )
-        row_m6 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|", s_ln)
-        row_m5 = re.match(r"^\|\s*\[`([^`]+)`\]\(\.\./\.\./\.\./Homunculus/([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|", s_ln)
         if row_p6 and ("#L" in row_p6.group(4) or "N/A" in row_p6.group(4)):
             rel_p = row_p6.group(1).strip()
             if not (hom_root / rel_p).exists():
@@ -148,23 +161,8 @@ else:
                 "map_header": row_p6.group(4).strip(),
                 "callers": row_p6.group(5).strip(),
             }
-        elif row_m6 and ("#L" in row_m6.group(5) or "N/A" in row_m6.group(5)):
-            rel_p = row_m6.group(2).strip()
-            master_rows[rel_p] = {
-                "role": row_m6.group(3).strip(),
-                "owner": row_m6.group(4).strip().strip("`"),
-                "map_header": row_m6.group(5).strip(),
-                "callers": row_m6.group(6).strip(),
-            }
-        elif row_m5:
-            rel_p = row_m5.group(2).strip()
-            master_rows[rel_p] = {
-                "role": row_m5.group(3).strip(),
-                "owner": row_m5.group(4).strip().strip("`"),
-                "callers": row_m5.group(5).strip(),
-            }
 
-# 3. Verify 100% script, hook, installer & test coverage in Master Table
+# 2. Verify 100% script, hook, installer & test coverage in Master Table
 for path in sorted(hom_root.rglob("*")):
     if not path.is_file() or "__pycache__" in path.parts or ".git" in path.parts:
         continue
@@ -174,7 +172,7 @@ for path in sorted(hom_root.rglob("*")):
     if rel_p not in master_rows:
         errors.append(f"UNLISTED_HOMUNCULUS_SCRIPT: '{rel_p}' is missing from Section 1 of {matrix_path.name}")
 
-# 4. Verify AST cross-script Python imports are reflected in Master Table rows
+# 3. Verify AST cross-script Python imports are reflected in Master Table rows
 module_to_rel = {}
 for rel_p, info in master_rows.items():
     p = Path(rel_p)

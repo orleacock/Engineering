@@ -16,7 +16,7 @@ Part of the [`README.md`](../../README.md) and referenced by `Subagent_and_Memor
 
 ## 0. Machine-Readable Semantic Token Schema (`visual-studio`)
 
-*(Auto-discovered by `/home/orin/Projects/Engineering/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette gruvbox_dark`.)*
+*(Auto-discovered by `/home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py` via `--palette gruvbox_dark`.)*
 
 ```json palette_tokens
 {

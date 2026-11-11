@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-11",
-  "latest_audit_entry_sha256": "49a1f56ee532dfc746743c36332eacfc2287e30e35268f449bfcd4cf19036c79",
+  "latest_audit_entry_sha256": "8e55057c65dc416762603b1209665a5c1fa2729734fabd4280deae01e8e2ec38",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -107,29 +107,29 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "da11d081dbbf650f71dacb9e0054d9570e94c0753d921a229d5b898bc86f7008",
+      "block_sha256": "9c774162c930207ca2fd3a28bfec408255a0f5769631988b5d3e07dedc2843b9",
       "row_hashes": [
         "12b8ce6378c4f5c3",
         "22267a13be2c390c",
         "5481634ec5c5f0b8",
-        "bf4e94d90b2952e8"
+        "b4fd7c3c75eae925"
       ]
     }
   },
   "protected_files": {
-    "AGENTS.md": "71030c828f2499ac12763dcf7e568fabf86917d6b17eedfa271b5868965f7acb",
+    "AGENTS.md": "86197ff577bfd1b393117ed9a9797bb7d8400b4fc4e8ecf62ce69393f357982e",
     "Profile/Decision_Profile.md": "c0b2360302b4854a7f0e473517fdb1664b9ce3af3031eb56ec66e55a6efa19ac",
     "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md": "572018467687b7d783fbd31383259d48d01e04a959db330bd22b6449899dae6f",
-    "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "6fc354159fd0996ff40d588f27fef1ab91c17f2ed4b5589abbb892637f317569",
-    "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "f93ffbe9f00db1ad6c759476ff24f6baf107380694dd62417476c3d468c573e6",
-    "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "32152f61c3a526969c2cb5365f1d495e7349a821c6e4f2dc7767389b3d9a6c64",
-    "Standards_and_Specs/Author_Voice_and_Cadence.md": "5cd0e8a6966b50cb470f9379d7c501983c514539084102c99072705085bcbe65",
+    "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "cd996a33e1add47b81a7300b7acec3febc2da01140a64e3fb99b8cd2e44971b8",
+    "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "e3fe3db7b12b4cf780306a4064538217c72c97003823f759a0366e3d21bbcdc4",
+    "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
+    "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
     "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "bb54f78b1e5d999bbb2a568d81800b72cc131972735d3e908e915734927079f8",
-    "Standards_and_Specs/Image_and_Style_Rules.md": "56381197fc78fccead17cbc4f8392ef1b87f88a95b95beedbcc7302290dcd77e",
-    "Standards_and_Specs/Standards_Index.md": "5a3dc187d7e6e7cb5346d4261100aeb99060736d6637ff17169b4c751e8f63c1",
-    "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "230414f93d3f8e08a8683fcfdacda80ebab070ec1b16b2416c0b7d39115e58dc",
-    "Standards_and_Specs/Workspace_Gmail_MCP_Standard.md": "7d84aa08ca4cfd8df98fd19a2504c9dd148f9e922fadc5dce5d47777cd87ae59"
+    "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
+    "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
+    "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "1ba553b41daf8ecbc556bea6ccd31b4f7e752e400addb2e83ce2de394d7215a3",
+    "Standards_and_Specs/Workspace_Gmail_MCP_Standard.md": "1d18926239ed03ebd3506104cc89f7ab250395a9a0edb96aa29e8a688f3c2ce6"
   },
   "required_files": [
     "AGENTS.md",
@@ -161,5 +161,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "c7763e64a9728c522d63da86f5f4dd8bd5bbe684703b69e89ed4c23f5c440e4b"
+  "seal_root_sha256": "0766bd85a4341a2ca82cd839bc9a930faefadb244bf7afd45742e44d1f5f263e"
 }

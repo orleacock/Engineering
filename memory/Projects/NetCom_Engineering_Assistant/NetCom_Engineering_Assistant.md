@@ -21,7 +21,6 @@ last_synced: "2026-11-10"
 | **Project Hub (`AUTO-TREE`)** | [`NetCom_Engineering_Assistant.md`](NetCom_Engineering_Assistant.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Software Telemetry** | [`NetCom_Engineering_Assistant_Software.md`](NetCom_Engineering_Assistant_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Lessons Learned & Post-Mortems** | [`NetCom_Engineering_Assistant_Lessons_Learned.md`](NetCom_Engineering_Assistant_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
-| **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates. |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`NetCom_Tasks.md`](../../Tasks/NetCom_Tasks.md#NetCom_Engineering_Assistant) | Single-writer task tracker for `NetCom` (zero duplicate checkboxes in hub). |
 

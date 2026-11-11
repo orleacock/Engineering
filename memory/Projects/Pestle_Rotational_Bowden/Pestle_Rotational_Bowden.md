@@ -21,7 +21,6 @@ last_synced: "2026-11-10"
 | **Project Hub (`AUTO-TREE`)** | [`Pestle_Rotational_Bowden.md`](Pestle_Rotational_Bowden.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`Pestle_Rotational_Bowden_Hardware.md`](Pestle_Rotational_Bowden_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`Pestle_Rotational_Bowden_Lessons_Learned.md`](Pestle_Rotational_Bowden_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
-| **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates. |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Pestle_Rotational_Bowden) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 

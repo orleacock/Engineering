@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "eb9bc7ee1fd7"
+tree_hash: "8b06111c8446"
 last_synced: "2026-11-11"
 ---
 
@@ -38,35 +38,30 @@ last_synced: "2026-11-11"
 │   ├── A3DP_Gantry_Assembly/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── A3DP_Gantry_Assembly.md
 │   │   ├── A3DP_Gantry_Assembly_Hardware.md
 │   │   └── A3DP_Gantry_Assembly_Lessons_Learned.md
 │   ├── Alchemical_Web_Docs/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Alchemical_Web_Docs.md
 │   │   ├── Alchemical_Web_Docs_Lessons_Learned.md
 │   │   └── Alchemical_Web_Docs_Software.md
 │   ├── Alembic_Toolhead/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Alembic_Toolhead.md
 │   │   ├── Alembic_Toolhead_Hardware.md
 │   │   └── Alembic_Toolhead_Lessons_Learned.md
 │   ├── Brand/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Brand.md
 │   │   ├── Brand_Lessons_Learned.md
 │   │   └── Brand_Software.md
 │   ├── Extras/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Extras.md
 │   │   ├── Extras_Hardware.md
 │   │   └── Extras_Lessons_Learned.md
@@ -75,7 +70,6 @@ last_synced: "2026-11-11"
 │   │   │   └── Homunculus_Lessons_Archive.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
 │   │   ├── Homunculus_Lessons_Learned.md
@@ -90,21 +84,18 @@ last_synced: "2026-11-11"
 │   ├── Maker-Tools/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Maker-Tools.md
 │   │   ├── Maker-Tools_Lessons_Learned.md
 │   │   └── Maker-Tools_Software.md
 │   ├── Organization_Profile/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Organization_Profile.md
 │   │   ├── Organization_Profile_Lessons_Learned.md
 │   │   └── Organization_Profile_Software.md
 │   ├── Pestle_Rotational_Bowden/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
-│   │   ├── Templates/
 │   │   ├── Pestle_Rotational_Bowden.md
 │   │   ├── Pestle_Rotational_Bowden_Hardware.md
 │   │   └── Pestle_Rotational_Bowden_Lessons_Learned.md
@@ -113,7 +104,6 @@ last_synced: "2026-11-11"
 │       │   └── Pneuma_Remote_Air_Lessons_Archive.md
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
-│       ├── Templates/
 │       ├── Pneuma_Remote_Air.md
 │       ├── Pneuma_Remote_Air_Hardware.md
 │       ├── Pneuma_Remote_Air_Lessons_Learned.md
@@ -133,29 +123,11 @@ last_synced: "2026-11-11"
 ├── Tasks/
 │   └── Alchemical-3D_Tasks.md
 ├── Templates/
-│   ├── Color_Palettes/
-│   │   ├── Alchemical3D_Color_Template.md
-│   │   ├── Alchemical3D_Light_Color_Template.md
-│   │   ├── Gruvbox_Local_Color_Template.md
-│   │   └── NetCom_Corporate_Color_Template.md
-│   ├── Diagram_Blueprints/
-│   │   ├── Column_DataFlow_Blueprint.md
-│   │   ├── Engineering_Comparison_Card_Blueprint.md
-│   │   ├── Hardware_Pinout_and_Pneumatic_Blueprint.md
-│   │   ├── Layered_Architecture_Blueprint.md
-│   │   └── Spatial_Topology_Blueprint.md
-│   ├── AGENTS.md
-│   ├── Decision_Profile.md
-│   ├── Global_Standards_Index.md
-│   ├── Memory_Map_README.md
-│   ├── Project_Hardware.md
-│   ├── Project_Hub.md
-│   ├── Project_Lessons_Learned.md
-│   ├── Project_Playbooks.md
-│   ├── Project_Software.md
-│   ├── Quarantine_Note.md
-│   ├── Stateful_Sprint_Planning_Template.md
-│   └── Task_Umbrella.md
+│   └── Color_Palettes/
+│       ├── Alchemical3D_Color_Template.md
+│       ├── Alchemical3D_Light_Color_Template.md
+│       ├── Gruvbox_Local_Color_Template.md
+│       └── NetCom_Corporate_Color_Template.md
 ├── AGENTS.md
 └── README.md
 +------------------------------------------------------------+
@@ -391,7 +363,7 @@ last_synced: "2026-11-11"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 4a2802769b56` | `Tree: b635c91e293d`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: d32bd92cc170` | `Tree: b635c91e293d`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

@@ -16,7 +16,7 @@ Part of the [`README.md`](../../README.md). Companion to `Alchemical3D_Color_Tem
 
 ## 0. Machine-Readable Semantic Token Schema (`visual-studio`)
 
-*(Auto-discovered by `/home/orin/Projects/Engineering/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette alchemical_light`.)*
+*(Auto-discovered by `/home/orin/Projects/Alchemical3D/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette alchemical_light`.)*
 
 ```json palette_tokens
 {

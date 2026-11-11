@@ -3,8 +3,8 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "e049d3dfc04b"
-last_synced: "2026-11-10"
+tree_hash: "24b801bf1e57"
+last_synced: "2026-11-11"
 ---
 
 # 🗂️ `NetCom` — Directory Lookup Map (`entity: NetCom`)
@@ -38,7 +38,6 @@ last_synced: "2026-11-10"
 │   └── NetCom_Engineering_Assistant/
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
-│       ├── Templates/
 │       ├── NetCom_Engineering_Assistant.md
 │       ├── NetCom_Engineering_Assistant_Lessons_Learned.md
 │       ├── NetCom_Engineering_Assistant_Module_Launchpad.md
@@ -58,29 +57,11 @@ last_synced: "2026-11-10"
 ├── Tasks/
 │   └── NetCom_Tasks.md
 ├── Templates/
-│   ├── Color_Palettes/
-│   │   ├── Alchemical3D_Color_Template.md
-│   │   ├── Alchemical3D_Light_Color_Template.md
-│   │   ├── Gruvbox_Local_Color_Template.md
-│   │   └── NetCom_Corporate_Color_Template.md
-│   ├── Diagram_Blueprints/
-│   │   ├── Column_DataFlow_Blueprint.md
-│   │   ├── Engineering_Comparison_Card_Blueprint.md
-│   │   ├── Hardware_Pinout_and_Pneumatic_Blueprint.md
-│   │   ├── Layered_Architecture_Blueprint.md
-│   │   └── Spatial_Topology_Blueprint.md
-│   ├── AGENTS.md
-│   ├── Decision_Profile.md
-│   ├── Global_Standards_Index.md
-│   ├── Memory_Map_README.md
-│   ├── Project_Hardware.md
-│   ├── Project_Hub.md
-│   ├── Project_Lessons_Learned.md
-│   ├── Project_Playbooks.md
-│   ├── Project_Software.md
-│   ├── Quarantine_Note.md
-│   ├── Stateful_Sprint_Planning_Template.md
-│   └── Task_Umbrella.md
+│   └── Color_Palettes/
+│       ├── Alchemical3D_Color_Template.md
+│       ├── Alchemical3D_Light_Color_Template.md
+│       ├── Gruvbox_Local_Color_Template.md
+│       └── NetCom_Corporate_Color_Template.md
 ├── AGENTS.md
 └── README.md
 +------------------------------------------------------------+

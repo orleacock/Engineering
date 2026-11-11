@@ -128,4 +128,4 @@ To prevent our memory rebuild from creating the very "Token Bomb" or "Partial-Re
 ---
 
 ### Sprint 5: Ephemeral `sprint-auditor`, Full Sandbox `+faults` Red-Team, Future Planning Playbook & Clean-Room Parity (`LOCKED`)
-**Objective**: Audit every sprint via `sprint-auditor`, run `6` unit test suites in `test_project_memory.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) and `5` adversarial `+faults` injections in `sandbox_runner.py`, author [`Templates/Stateful_Sprint_Planning_Template.md`](../../Templates/Stateful_Sprint_Planning_Template.md), clean up all temporary build/audit scaffolding, and sync `/home/orin/Projects/Alchemical3D/Homunculus` at `100%` byte-for-byte parity (`101 / 101` files).
+**Objective**: Audit every sprint via `sprint-auditor`, run `6` unit test suites in `test_project_memory.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) and `5` adversarial `+faults` injections in `sandbox_runner.py`, author `Templates/Stateful_Sprint_Planning_Template.md` *(retired 2026-11-11)*, clean up all temporary build/audit scaffolding, and sync `/home/orin/Projects/Alchemical3D/Homunculus` at `100%` byte-for-byte parity (`101 / 101` files).

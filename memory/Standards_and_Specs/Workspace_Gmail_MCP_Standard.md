@@ -1,8 +1,8 @@
 ---
 title: "Workspace Dual-Account Gmail MCP & Non-Visible Inbox Safety Standard"
-entity: "Alchemical-3D"
+entity: "Orin_Workstation"
 compartment: "private"
-last_synced: "2026-11-06"
+last_synced: "2026-11-11"
 ---
 
 # 📬 Workspace Dual-Account Gmail MCP & Non-Visible Inbox Safety Standard

@@ -21,7 +21,7 @@ Operational multi-layer execution flowchart for [`NetCom_Engineering_Assistant`]
 ## 🔄 Single-Command Re-Render (Strict Layout Gate, NetCom Corporate Palette)
 
 ```bash
-python3 /home/orin/Projects/Engineering/Homunculus/skills/visual-studio/scripts/render_diagram.py \
+python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py \
   --spec /home/orin/Projects/Engineering/memory/Diagrams/NEA_v2_Copilot_Execution_Flowchart.md \
   --palette netcom_corporate \
   --out-dir /home/orin/Projects/Engineering/memory/Diagrams \

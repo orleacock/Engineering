@@ -19,7 +19,7 @@ Extracted from `netcom1989.com` corporate branding and standardized for `NetCom_
 
 ## 0. Machine-Readable Semantic Token Schema (`visual-studio`)
 
-*(Auto-discovered by `/home/orin/Projects/Engineering/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette netcom_corporate`.)*
+*(Auto-discovered by `/home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py` via `--palette netcom_corporate`.)*
 
 ```json palette_tokens
 {

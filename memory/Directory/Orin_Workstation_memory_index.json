@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 116.0,
+  "avg_doc_len": 125.2,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -19,16 +19,20 @@
       "entity": "Orin_Workstation",
       "invariants": [
         {
-          "governing_lls": [],
-          "must_keep": "Wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and optional `Homunculus/addons/*` into `~/.gemini/config/`; registers `memory/` in `~/.config/obsidian/obsidian.json`; installs `.git/hooks/{pre-commit,pre-push}`; syncs `/home/orin/Projects/{.homunculus.json,.geminiignore}`.",
-          "retired_bloat": "Hardcoding machine-specific absolute paths inside portable `Homunculus` skills instead of resolving via `.homunculus.json` or `homunculus_paths.py`.",
+          "governing_lls": [
+            "LL-WS-02",
+            "LL-WS-05"
+          ],
+          "must_keep": "Wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and optional `Homunculus/addons/*` into `~/.gemini/config/` (`0` duplicate `.agents/` trees); registers `memory/` in `~/.config/obsidian/obsidian.json`; installs & `cmp -s`-verifies `.git/hooks/{pre-commit,pre-push}` across `Engineering` and `Alchemical3D/*`; syncs `Projects/.homunculus.json` and `Home.homunculus.json` (`~/.homunculus.json`) so no-workspace sessions resolve `Projects/Engineering/memory` with `0` shell calls.",
+          "retired_bloat": "Hardcoding machine-specific absolute paths inside portable `Homunculus` skills; maintaining duplicate `Engineering/.agents` or `~/.agents` symlink trees; omitting `~/.homunculus.json` for no-workspace sessions; checking only `-x` instead of `cmp -s` byte parity on copied Alchemical-3D git hooks.",
           "subsystem": "`bootstrap_workstation.sh`",
           "tier": "TIER1",
           "touched_files": [
+            ".homunculus.json",
+            "Home.homunculus.json",
             "Workstation_Operations.md",
             "bootstrap_workstation.sh",
             "homunculus.json",
-            "homunculus_paths.py",
             "obsidian.json"
           ]
         },
@@ -74,22 +78,6 @@
             "sandbox_runner.py",
             "snapshot_homunculus_version.py",
             "version_manager.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-WS-02"
-          ],
-          "must_keep": "Syncs Home.homunculus.json (~/.homunculus.json) alongside Projects/.homunculus.json and verifies parity in --check so no-workspace sessions (~/.gemini/antigravity-cli or ~) resolve Projects/Engineering/memory with 0 shell calls.",
-          "retired_bloat": "Omitting home-level ~/.homunculus.json when sessions launch with no active workspace.",
-          "subsystem": "bootstrap_workstation.sh",
-          "tier": "TIER1",
-          "touched_files": [
-            ".homunculus.json",
-            "Home.homunculus.json",
-            "Workstation_Operations.md",
-            "bootstrap_workstation.sh",
-            "homunculus.json"
           ]
         }
       ],
@@ -200,10 +188,10 @@
         },
         {
           "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
-          "end_line": 84,
+          "end_line": 86,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-08",
-          "line_range": "#L81-L84",
+          "line_range": "#L81-L86",
           "location": "main",
           "start_line": 81,
           "tier": "TIER2",
@@ -212,6 +200,23 @@
             "benchmark_homunculus.py",
             "snapshot_homunculus_version.py",
             "version_manager.py"
+          ]
+        },
+        {
+          "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
+          "end_line": 91,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-09",
+          "line_range": "#L88-L91",
+          "location": "main",
+          "start_line": 88,
+          "tier": "TIER2",
+          "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
+          "touched_files": [
+            "bootstrap_workstation.sh",
+            "git_pre_commit_boundary.sh",
+            "pre_push_engineering_guard.sh",
+            "snapshot_homunculus_version.py"
           ]
         },
         {
@@ -235,8 +240,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 116.0,
-      "proj_total_docs": 9,
+      "proj_avg_doc_len": 125.2,
+      "proj_total_docs": 10,
       "project": "Workstation_Operations"
     }
   },
@@ -248,14 +253,14 @@
       "sha256": "c0b2360302b4854a"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 109,
+      "lines": 100,
       "sections": 0,
-      "sha256": "c0bfaf4f7ca92f36"
+      "sha256": "e50076600a029d92"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 98,
-      "sections": 8,
-      "sha256": "c6e305e7df85abb9"
+      "lines": 105,
+      "sections": 9,
+      "sha256": "df8ea0e1ee1d333e"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -265,10 +270,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 49,
       "sections": 0,
-      "sha256": "87e29ad65cf6b822"
+      "sha256": "4da22e056f9eea84"
     }
   },
-  "total_docs": 9,
+  "total_docs": 10,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "4ebf1c04dda29faf"
+  "vectors_digest": "1cdd37f81dd53ced"
 }

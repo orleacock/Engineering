@@ -16,7 +16,7 @@ Part of the [`README.md`](../../README.md). Extracted directly from official vec
 
 ## 0. Machine-Readable Semantic Token Schema (`visual-studio`)
 
-*(Auto-discovered by `/home/orin/Projects/Engineering/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette alchemical_dark`.)*
+*(Auto-discovered by `/home/orin/Projects/Alchemical3D/Homunculus/skills/visual-studio/scripts/render_diagram.py` via `--palette alchemical_dark`.)*
 
 ```json palette_tokens
 {

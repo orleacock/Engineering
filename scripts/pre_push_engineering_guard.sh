@@ -51,9 +51,6 @@ for d in (repo, *repo.parents):
     if (d / "Alchemical3D" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
         print((d / "Alchemical3D" / "Homunculus").resolve())
         sys.exit(0)
-    if (d / "Engineering" / "Homunculus" / "HOMUNCULUS_START_HERE.md").is_file():
-        print((d / "Engineering" / "Homunculus").resolve())
-        sys.exit(0)
 print("")
 PY
 )"

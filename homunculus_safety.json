@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "description": "Orin Workstation 3-Compartment Continuity Firewall (deployed at Homunculus cutover; slated for post-migration review).",
+  "description": "Orin Workstation Active 3-Compartment Continuity Firewall (`private`, `public`, and `cleanroom`).",
   "default_compartment": "private",
   "enforce_posix_win_user_paths_in_public": true,
   "compartments": {

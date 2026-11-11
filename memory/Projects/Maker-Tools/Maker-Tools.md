@@ -21,7 +21,6 @@ last_synced: "2026-11-06"
 | **Project Hub (`AUTO-TREE`)** | [`Maker-Tools.md`](Maker-Tools.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Software Telemetry** | [`Maker-Tools_Software.md`](Maker-Tools_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Lessons Learned & Post-Mortems** | [`Maker-Tools_Lessons_Learned.md`](Maker-Tools_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
-| **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates. |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Maker-Tools) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
