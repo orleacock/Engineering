@@ -5,14 +5,14 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.1.0 Development Baseline"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "108b504f4ea7"
+repo_head_sha: "f9c732fa7df3"
 tree_hash: "b635c91e293d"
-checkpoint_head_sha: "108b504f4ea7"
+checkpoint_head_sha: "f9c732fa7df3"
 checkpoint_tree_hash: "b635c91e293d"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-10"
-checkpoint_lessons_digest: "2f6dc5e0682877ad"
+last_synced: "2026-11-11"
+checkpoint_lessons_digest: "6d55adccaa10d93c"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -68,7 +68,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 108b504f4ea7 | Tree Hash: b635c91e293d
+Repository: Homunculus | HEAD SHA: f9c732fa7df3 | Tree Hash: b635c91e293d
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -261,13 +261,15 @@ Repository: Homunculus | HEAD SHA: 108b504f4ea7 | Tree Hash: b635c91e293d
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: 108b504f4ea7` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261110_162015-7ddf774e`
+- **Last Session Timestamp**: `2026-11-11`
+- **Checkpoint Provenance**: `HEAD SHA: f9c732fa7df3` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_082207-2d5504ac, VRF-f899f601bef3, 53/53 unit tests OK, HEAD f9c732f`
 - **Where We Stopped (Verified State & Context)**:
-  Completed 7-section Gemini Carbon remediation (Sections 1-7), locked Clean-Room core (0444), and committed v0.2.0 release candidate cleanly
+  Completed and committed Homunculus memory retrieval & authoring advisory upgrade (f9c732f): 17_Combo_C9_HeldT0 recall, Option A TIER0 Two-Lane + --kickstart TIER0 capsules, strict N1 0.0 numeric weight, v1.2 .cache/*_scoring_vectors.json sidecar, <=1,800-token 4-pass Anti-Bombing Budgeter (Tweak 2.1), active-section-only HOT_MEMORY_BLOAT_CEILING, and Check #7c non-blocking [BARE_NUMERIC_SHORTHAND_NOUN_MISSING] advisory; logged LL-044 + SUBSYSTEM-INVARIANTS and re-sealed governance.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run full-system-suite benchmark, pin v0.2.0 baseline, and cut immutable 0444/0555 RAID deliverable
+  1. Confirm git push to origin/main if ready
+  2. Optionally align scripts/benchmark_homunculus.py (ME01 tier0_active_matches + ME05 <=1800-tok ceiling) before tagging v0.3.0 and taking a Btrfs RAID snapshot
+- **Open Discussion / Alignment Questions**: Whether to push f9c732f to origin/main and/or cut the official v0.3.0 tag + RAID snapshot
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

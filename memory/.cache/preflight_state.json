@@ -30,6 +30,16 @@
       "script_rel_path": "scripts/audit_portability.py",
       "session_date": "2026-11-10"
     },
+    "audit_repo_docs.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/doc-and-card-studio/scripts/audit_repo_docs.py",
+      "disposed": true,
+      "git_head_blob_sha256": "5375617e42436910",
+      "pre_edit_blob_sha256": "4114868bb89e73a4",
+      "project": "Homunculus",
+      "script": "audit_repo_docs.py",
+      "script_rel_path": "skills/doc-and-card-studio/scripts/audit_repo_docs.py",
+      "session_date": "2026-11-10"
+    },
     "audit_skill_hygiene.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/skill-architect/scripts/audit_skill_hygiene.py",
       "disposed": true,
@@ -148,6 +158,16 @@
       "script_rel_path": "skills/claim-verification/scripts/verify_claims.py",
       "session_date": "2026-11-10"
     },
+    "skills/doc-and-card-studio/scripts/audit_repo_docs.py": {
+      "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/doc-and-card-studio/scripts/audit_repo_docs.py",
+      "disposed": true,
+      "git_head_blob_sha256": "5375617e42436910",
+      "pre_edit_blob_sha256": "4114868bb89e73a4",
+      "project": "Homunculus",
+      "script": "audit_repo_docs.py",
+      "script_rel_path": "skills/doc-and-card-studio/scripts/audit_repo_docs.py",
+      "session_date": "2026-11-10"
+    },
     "skills/engineering-sandbox/scripts/sandbox_runner.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/engineering-sandbox/scripts/sandbox_runner.py",
       "disposed": true,
@@ -161,8 +181,8 @@
     "skills/project-memory/scripts/sync_memory.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
       "disposed": true,
-      "git_head_blob_sha256": "e1bd60c47206770f",
-      "pre_edit_blob_sha256": "ba9ce32f7abd57c9",
+      "git_head_blob_sha256": "ba9ce32f7abd57c9",
+      "pre_edit_blob_sha256": "8ede77fabc0a2428",
       "project": "Homunculus",
       "script": "sync_memory.py",
       "script_rel_path": "skills/project-memory/scripts/sync_memory.py",
@@ -201,8 +221,8 @@
     "sync_memory.py": {
       "abs_path": "/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py",
       "disposed": true,
-      "git_head_blob_sha256": "e1bd60c47206770f",
-      "pre_edit_blob_sha256": "ba9ce32f7abd57c9",
+      "git_head_blob_sha256": "ba9ce32f7abd57c9",
+      "pre_edit_blob_sha256": "8ede77fabc0a2428",
       "project": "Homunculus",
       "script": "sync_memory.py",
       "script_rel_path": "skills/project-memory/scripts/sync_memory.py",

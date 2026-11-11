@@ -3,7 +3,7 @@ title: "Alchemical-3D — Domain Task Umbrella"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "task_umbrella"
-last_synced: "2026-11-10"
+last_synced: "2026-11-11"
 ---
 
 # 🧪 Alchemical-3D — Active Engineering Task Umbrella (`Tasks/Alchemical-3D_Tasks.md`)

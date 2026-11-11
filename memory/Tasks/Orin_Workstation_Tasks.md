@@ -3,7 +3,7 @@ title: "Orin Workstation — Domain Task Umbrella"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-10"
+last_synced: "2026-11-11"
 ---
 
 # 🖥️ Orin_Workstation — Active Engineering Task Umbrella (`Tasks/Orin_Workstation_Tasks.md`)

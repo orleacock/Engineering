@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 115.78,
+  "avg_doc_len": 116.0,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-10",
+  "last_synced": "2026-11-11",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -105,7 +105,6 @@
           "title": "Parent `/home/orin/Projects` Umbrella `.homunculus.json` Sync (`2026-11-06`)",
           "touched_files": [
             "Projects.homunculus.json",
-            "Workstation_Operations_Software.md",
             "bootstrap_workstation.sh"
           ]
         },
@@ -121,7 +120,6 @@
           "title": "Gmail MCP `visibility_radar` for Non-Visible Unread Threads (`2026-11-06`)",
           "touched_files": [
             "SKILL.md",
-            "Workstation_Operations_Software.md",
             "gmail_mcp_server.py"
           ]
         },
@@ -143,7 +141,7 @@
           ]
         },
         {
-          "capsule_1line": "Provisioning Optional `Homunculus/addons/*` Symlinks in... -> Updated workstation skill symlink provisioning to link enabled drop-in add-ons from `Homunculus/addons/*` alongside core `Homunculus/skills/*` (`Workstation_Operations.md`).",
+          "capsule_1line": "Provisioning Optional `Homunculus/addons/*` Symlinks in `bootstrap_workstation.sh` -> Updated workstation skill symlink provisioning to link enabled drop-in add-ons from `Homunculus/addons/*` alongside core `Homunculus/skills/*` (`Workstation_Operations.md`).",
           "end_line": 64,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-05",
@@ -157,7 +155,7 @@
           ]
         },
         {
-          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>`... -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
+          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
           "end_line": 71,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-06",
@@ -171,7 +169,7 @@
           ]
         },
         {
-          "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py...",
+          "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc)...",
           "end_line": 78,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-07",
@@ -181,12 +179,11 @@
           "tier": "TIER2",
           "title": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)",
           "touched_files": [
-            "Workstation_Operations_Software.md",
             "snapshot_homunculus_version.py"
           ]
         },
         {
-          "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs...",
+          "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
           "end_line": 83,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-08",
@@ -196,14 +193,13 @@
           "tier": "TIER2",
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
           "touched_files": [
-            "Workstation_Operations_Software.md",
             "benchmark_homunculus.py",
             "snapshot_homunculus_version.py",
             "version_manager.py"
           ]
         },
         {
-          "capsule_1line": "[PLAYBOOK] Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, --lock-core, --lock-memory-rules) and benchmark_homunculus.py...",
+          "capsule_1line": "[PLAYBOOK] Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, --lock-core, --lock-memory-rules) and benchmark_homunculus.py --profile full-system-suite. 2. Commit clean worktrees locally and run...",
           "end_line": 25,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md",
           "id": "PB-WS-01",
@@ -213,7 +209,6 @@
           "tier": "TIER2",
           "title": "Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable (`2026-11-10`)",
           "touched_files": [
-            "Workstation_Operations_Software.md",
             "audit_data_boundary.py",
             "audit_portability.py",
             "benchmark_homunculus.py",
@@ -224,7 +219,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 115.78,
+      "proj_avg_doc_len": 116.0,
       "proj_total_docs": 9,
       "project": "Workstation_Operations"
     }
@@ -259,5 +254,5 @@
   },
   "total_docs": 9,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "695bcb721bbe96e7"
+  "vectors_digest": "140725685fb0ed2d"
 }

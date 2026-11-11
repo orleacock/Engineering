@@ -1,6 +1,6 @@
 {
-  "last_sealed": "2026-11-10",
-  "latest_audit_entry_sha256": "cf13a08803bda4f32014b8cab4997934df72f36704fd6e87ec3972b68411760e",
+  "last_sealed": "2026-11-11",
+  "latest_audit_entry_sha256": "524c0591a5d8deb775b3a973ec5050a14c905598b5472262d8050bf81c71ae66",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,7 +39,7 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "497a4267cdd6eb4860593b439412e607b498323d829e73460240171e0cc10911",
+      "block_sha256": "97319999dbb467da458441ddcc71656ca485fc0a8e65fd05b5d8910ba8d6d449",
       "row_hashes": [
         "0009a3acc57ac04a",
         "0b7b7078a43aa6d5",
@@ -51,6 +51,7 @@
         "5559d0716859d1ee",
         "5d2a4c93ec84ec18",
         "6eb68ed8c16241a4",
+        "758036e5c5d501dd",
         "7604325b4c9413a8",
         "83e72a45da3bc31c",
         "875c4dde36ed05b6",
@@ -106,9 +107,10 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "0a18b432d397211bc74554c2be233bd7885066fc0a077bc8c7ec97eb0770cac7",
+      "block_sha256": "da11d081dbbf650f71dacb9e0054d9570e94c0753d921a229d5b898bc86f7008",
       "row_hashes": [
         "12b8ce6378c4f5c3",
+        "22267a13be2c390c",
         "5481634ec5c5f0b8",
         "bf4e94d90b2952e8"
       ]
@@ -159,5 +161,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "9fd6dbcbf674a8a76d4344244627d2f4bcea0c71a657fe3a613336f379032235"
+  "seal_root_sha256": "d2ca120877b78eb10e0bc80810cf5cd7fa05f7b2e5aaf83d65b4274146b44438"
 }

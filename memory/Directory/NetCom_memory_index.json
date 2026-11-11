@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "NetCom",
-  "last_synced": "2026-11-10",
+  "last_synced": "2026-11-11",
   "projects": {
     "NetCom_Engineering_Assistant": {
       "compartment": "private",
@@ -47,7 +47,7 @@
       ],
       "lessons": [
         {
-          "capsule_1line": "Overcoming M365 Copilot OneDrive Graph Latency & Ephemeral Container... -> Engineers upload live `.xlsx` deliverables **directly into the Copilot chat turn** (`+ Upload from device`), mounting exact bytes in `/mnt/data/` with `0` indexing latency; Mode 2 edits/repairs run `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) inside Code Interpreter and...",
+          "capsule_1line": "Overcoming M365 Copilot OneDrive Graph Latency & Ephemeral Container Boundaries -> Engineers upload live `.xlsx` deliverables **directly into the Copilot chat turn** (`+ Upload from device`), mounting exact bytes in `/mnt/data/` with `0` indexing latency; Mode 2 edits/repairs run `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) inside Code Interpreter and return a downloadable `.xlsx` artifact in chat...",
           "end_line": 38,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-01",
@@ -59,7 +59,7 @@
           "touched_files": []
         },
         {
-          "capsule_1line": "Solving the `8,000`-Char Instruction Cap, `\"2.2.3\"` Semver Lock & `.txt`... -> `Scripts/build_copilot_agents.py` (`NEA-SCR-002`) compiles the **6-Agent Modular Specialist Suite** (`NEA_Package_Reviewer` `5,330` chars `66.6%`, `NEA_BOM_Builder` `3,820` chars `47.8%`, `NEA_CRL_Builder` `3,342` chars `41.8%`, `NEA_Catalog_Manager` `3,794` chars `47.4%`...",
+          "capsule_1line": "Solving the `8,000`-Char Instruction Cap, `\"2.2.3\"` Semver Lock & `.txt` Knowledge Indexing -> `Scripts/build_copilot_agents.py` (`NEA-SCR-002`) compiles the **6-Agent Modular Specialist Suite** (`NEA_Package_Reviewer` `5,330` chars `66.6%`, `NEA_BOM_Builder` `3,820` chars `47.8%`, `NEA_CRL_Builder` `3,342` chars `41.8%`, `NEA_Catalog_Manager` `3,794` chars `47.4%`, `NEA_Repair_Tool` `3,607` chars `45.1%`...",
           "end_line": 43,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-02",
@@ -73,7 +73,7 @@
           ]
         },
         {
-          "capsule_1line": "Bundling `scripts/inspect_nea_workbooks.py` Inside Root-Level... -> `Scripts/build_copilot_agents.py` packages all `9` skills under `Skills/<skill-name>/<skill-name>.zip` with bundled `scripts/inspect_nea_workbooks.py`\u2014verified across `5`-agent parallel cold-start blind swarms and `NEA Timesheet Consolidator` `Blind-Light` (`24831c6b`) with...",
+          "capsule_1line": "Bundling `scripts/inspect_nea_workbooks.py` Inside Root-Level `<skill-name>.zip` Archives -> `Scripts/build_copilot_agents.py` packages all `9` skills under `Skills/<skill-name>/<skill-name>.zip` with bundled `scripts/inspect_nea_workbooks.py`\u2014verified across `5`-agent parallel cold-start blind swarms and `NEA Timesheet Consolidator` `Blind-Light` (`24831c6b`) with `0` custom OpenXML parser code written...",
           "end_line": 48,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-03",
@@ -89,7 +89,7 @@
           ]
         },
         {
-          "capsule_1line": "Preventing `openpyxl.save()` from Stripping Cross-Sheet `<extLst>`... -> Built `preserve_openxml_extensions()`, `[4E]` OpenXML DataValidation/AutoFilter auditing, `--repair [--out-dir <dir>]`, and `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) into `Scripts/inspect_nea_workbooks.py` (`NEA-SCR-001`) and `nea-workbook-entry-guard` (`NEA-SKL-002`...",
+          "capsule_1line": "Preventing `openpyxl.save()` from Stripping Cross-Sheet `<extLst>` DataValidations -> Built `preserve_openxml_extensions()`, `[4E]` OpenXML DataValidation/AutoFilter auditing, `--repair [--out-dir <dir>]`, and `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) into `Scripts/inspect_nea_workbooks.py` (`NEA-SCR-001`) and `nea-workbook-entry-guard` (`NEA-SKL-002`; `NetCom_Engineering_Assistant`).",
           "end_line": 53,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-04",
@@ -103,7 +103,7 @@
           ]
         },
         {
-          "capsule_1line": "Context Consolidation (`28` $\\rightarrow$ `5` Tier-1 Files)... -> Consolidated to Tier 1/2 routing + single-turn `inspect_nea_workbooks.py` (`41` $\\rightarrow$ `12` turns `-70.7%`, `360,676` cached tokens `-87.7%`), locked `Downloads/` to explicit deployment states (`package_nea_delivery.py`, `.zee` retired, `.agents/` excluded)...",
+          "capsule_1line": "Context Consolidation (`28` $\\rightarrow$ `5` Tier-1 Files), `Downloads/` Lock & Testbed Decontamination -> Consolidated to Tier 1/2 routing + single-turn `inspect_nea_workbooks.py` (`41` $\\rightarrow$ `12` turns `-70.7%`, `360,676` cached tokens `-87.7%`), locked `Downloads/` to explicit deployment states (`package_nea_delivery.py`, `.zee` retired, `.agents/` excluded), quarantined `Historical/`, and purged `100%` of `307-2` spoilers (`0`...",
           "end_line": 58,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-05",
@@ -118,7 +118,7 @@
           ]
         },
         {
-          "capsule_1line": "Preventing Windows Desktop Excel OpenXML \"File is Corrupt\" Rejections... -> Replaced `ElementTree` package serialization with deterministic UTF-8 XML builders (`_format_worksheet_xml_bytes()`, `SharedStringTable`, `_sort_sheetdata_rows_and_cells()`, per-sheet `drawing{idx}.xml` + unique `xr:uid`, and `validate_openxml_package_integrity()` inside...",
+          "capsule_1line": "Preventing Windows Desktop Excel OpenXML \"File is Corrupt\" Rejections on Generated Multi-Tab Workbooks -> Replaced `ElementTree` package serialization with deterministic UTF-8 XML builders (`_format_worksheet_xml_bytes()`, `SharedStringTable`, `_sort_sheetdata_rows_and_cells()`, per-sheet `drawing{idx}.xml` + unique `xr:uid`, and `validate_openxml_package_integrity()` inside `run_verify_write()`), verified by `xmllint --noout` and...",
           "end_line": 63,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-06",
@@ -132,7 +132,7 @@
           ]
         },
         {
-          "capsule_1line": "Multi-Media Timesheet OCR Staging, Key Normalization & Non-Target... -> Built `Templates/Timesheet_Template.xlsx` (`NEA-TPL-004`, `Expense Report` stripped, `AG35` restored, styled with the NetCom Corporate Color Palette `cellXfs 217..239`), enforced page-level classification and pruning of non-timesheet pages/tabs in `NEA Timesheet Consolidator`...",
+          "capsule_1line": "Multi-Media Timesheet OCR Staging, Key Normalization & Non-Target Tab/Page Pruning -> Built `Templates/Timesheet_Template.xlsx` (`NEA-TPL-004`, `Expense Report` stripped, `AG35` restored, styled with the NetCom Corporate Color Palette `cellXfs 217..239`), enforced page-level classification and pruning of non-timesheet pages/tabs in `NEA Timesheet Consolidator` (`NEA-AGT-006`), and added...",
           "end_line": 68,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-07",
@@ -176,5 +176,5 @@
   },
   "total_docs": 7,
   "vectors_cache_rel": ".cache/NetCom_scoring_vectors.json",
-  "vectors_digest": "4a4cbe70b83d5f15"
+  "vectors_digest": "9196afa5a1d83e22"
 }
