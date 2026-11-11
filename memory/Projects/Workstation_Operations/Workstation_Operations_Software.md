@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "c8ff1ee3fccc"
+inventory_sha256: "147b182e38fb"
 last_synced: "2026-11-11"
 ---
 
@@ -20,7 +20,7 @@ last_synced: "2026-11-11"
 | Script / Module Path | Language / Runtime | CLI Flags / Public Symbols | Line Count | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- | :--- |
 | `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--homunculus-dir`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--approve-advisory-reason`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L86-L103`), `percentile()` (`#L106-L118`), `snapshot_host_hashes()` (`#L121-L144`), `run_cmd_timed()` (`#L147-L170`), `probe_bwrap_erofs()` (`#L173-L208`), `build_universal_spine()` (`#L1816-L1859`), `render_regression_autopsy_md()` (`#L2002-L2090`), `render_markdown_report()` (`#L2114-L2149`), `main()` (`#L2251-L2456`) | `2460` | `2d299ba1b9` |
-| `bootstrap_workstation.sh` | `POSIX Bash` | Executable Script / Source | `222` | `fa1a3165d4` |
+| `bootstrap_workstation.sh` | `POSIX Bash` | Executable Script / Source | `224` | `9784b3e4cd` |
 | `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `227` | `199c8189b5` |
 | `pre_push_engineering_guard.sh` | `POSIX Bash` | Executable Script / Source | `80` | `60e13724e7` |
 | `snapshot_homunculus_version.py` | `Python 3.10+` | Flags: `--slug`, `--label`, `--raid-root`, `--homunculus-dir`, `--engineering-dir`, `--version-manifest`, `--allow-dirty`, `--skip-benchmark`, `--force-fresh-benchmark`, `--list`, `--verify`, `--dry-run`, `--json` — Symbols: `sanitize_slug()` (`#L74-L77`), `find_latest_same_dev_raid_snapshot()` (`#L89-L114`), `find_verified_benchmark_receipt()` (`#L117-L151`), `copy_tree_cow()` (`#L176-L358`), `collect_symlink_manifest()` (`#L376-L394`), `build_restore_script()` (`#L484-L698`), `build_reconstruction_index()` (`#L701-L761`), `verify_existing_snapshot()` (`#L804-L816`), `main()` (`#L819-L1121`) | `1125` | `1422a44b26` |
@@ -36,6 +36,7 @@ last_synced: "2026-11-11"
 | Schema / Config File | Format | Top-Level Keys / Contract Version | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- |
 | `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `0303c78597` |
+| `umbrella_configs/Home.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `71ee5f6b66` |
 | `umbrella_configs/Projects.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `f2098fe12a` |
 <!-- AUTO-SOFTWARE-SCHEMAS:END -->
 

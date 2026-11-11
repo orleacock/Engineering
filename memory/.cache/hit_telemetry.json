@@ -38,5 +38,12 @@
       ],
       "regression_near_misses": 0
     }
+  },
+  "Workstation_Operations": {
+    "LL-WS-02": {
+      "drilldown_count": 0,
+      "drilldown_dates": [],
+      "regression_near_misses": 1
+    }
   }
 }

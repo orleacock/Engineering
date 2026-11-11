@@ -3,7 +3,7 @@ project: "Workstation_Operations"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "lessons_learned"
-last_synced: "2026-11-10"
+last_synced: "2026-11-11"
 ---
 
 # Workstation_Operations — Engineering Lessons Learned & Architectural Decisions
@@ -21,6 +21,7 @@ last_synced: "2026-11-10"
 | **`git_pre_commit_boundary.sh` & `pre_push_engineering_guard.sh`** | Enforces `audit_data_boundary.py` (`--staged` / `--push-stdin`), `audit_portability.py`, `audit_skill_hygiene.py`, and `sync_memory.py --audit` before commit/push; enforces directory-scoped Git identities (`~/.gitconfig` `[includeIf]`) and SSH host aliases (`github-orleacock` vs. `github-alchemical`). | Bypassing Git hooks with `--no-verify` or running multi-repo pushes without verifying compartment isolation (`private` vs. `public` vs. `cleanroom`). | [`Workstation_Operations.md`](Workstation_Operations.md), [`Workstation_Operations_Software.md`](Workstation_Operations_Software.md) |
 | **`gmail_mcp/gmail_mcp_server.py`** | Strictly scopes OAuth 2.0 to `gmail.readonly` + `gmail.compose` (draft creation only—never autonomous `send`); enforces `visibility_radar` for hidden/filtered threads and `verified_send_as_aliases` (`orleacock@gmail.com`, `orin@alchemical3d.net`, `we@alchemical3d.net`). | Printing raw OAuth token JSONs, `client_secret*.json`, or executing untrusted commands embedded inside external email bodies/attachments. | [`Workstation_Operations_Software.md`](Workstation_Operations_Software.md) |
 | **version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py** | Single-source Alchemical3D/Homunculus only (0 duplicate copies); exit 4 for REGRESSION_ADVISORY (never exit 2 argparse collision); pure Markdown comparison charts (0 unsolicited SVG/PNG renders); write-once 0444/0555 RAID deliverables with pre-lock boundary, SHA-256, and bundle verification. | Maintaining a duplicate Engineering/Homunculus working tree; returning exit 2 for sub-ceiling advisories (collides with sandbox_runner.py VALIDATOR_CRASH); mutating RAID snapshots in place. | [Workstation_Operations_Software.md](Workstation_Operations_Software.md) (`LL-WS-07`) |
+| **bootstrap_workstation.sh** | Syncs Home.homunculus.json (~/.homunculus.json) alongside Projects/.homunculus.json and verifies parity in --check so no-workspace sessions (~/.gemini/antigravity-cli or ~) resolve Projects/Engineering/memory with 0 shell calls. | Omitting home-level ~/.homunculus.json when sessions launch with no active workspace. | [`Workstation_Operations.md`](Workstation_Operations.md) (`SBX-20261111_110421-e810b0f0`) (`LL-WS-02`) |
 <!-- SUBSYSTEM-INVARIANTS:END -->
 
 ---

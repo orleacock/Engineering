@@ -75,17 +75,33 @@
             "snapshot_homunculus_version.py",
             "version_manager.py"
           ]
+        },
+        {
+          "governing_lls": [
+            "LL-WS-02"
+          ],
+          "must_keep": "Syncs Home.homunculus.json (~/.homunculus.json) alongside Projects/.homunculus.json and verifies parity in --check so no-workspace sessions (~/.gemini/antigravity-cli or ~) resolve Projects/Engineering/memory with 0 shell calls.",
+          "retired_bloat": "Omitting home-level ~/.homunculus.json when sessions launch with no active workspace.",
+          "subsystem": "bootstrap_workstation.sh",
+          "tier": "TIER1",
+          "touched_files": [
+            ".homunculus.json",
+            "Home.homunculus.json",
+            "Workstation_Operations.md",
+            "bootstrap_workstation.sh",
+            "homunculus.json"
+          ]
         }
       ],
       "lessons": [
         {
           "capsule_1line": "Directory-Scoped Git `[includeIf]` Identities & SSH Alias Locks -> Configured directory-scoped `[includeIf]` rules in `~/.gitconfig`, dedicated SSH aliases (`github-orleacock`, `github-alchemical`), and `audit_data_boundary.py` remote/email locks in `git_pre_commit_boundary.sh` (`Workstation_Operations.md`).",
-          "end_line": 44,
+          "end_line": 45,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-01",
-          "line_range": "#L41-L44",
+          "line_range": "#L42-L45",
           "location": "main",
-          "start_line": 41,
+          "start_line": 42,
           "tier": "TIER2",
           "title": "Directory-Scoped Git `[includeIf]` Identities & SSH Alias Locks (`2026-11-05`)",
           "touched_files": [
@@ -95,12 +111,12 @@
         },
         {
           "capsule_1line": "Parent `/home/orin/Projects` Umbrella `.homunculus.json` Sync -> Added `umbrella_configs/Projects.homunculus.json` and wired `bootstrap_workstation.sh` to sync `/home/orin/Projects/{.homunculus.json,.geminiignore}` (`Workstation_Operations_Software.md`).",
-          "end_line": 49,
+          "end_line": 50,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-02",
-          "line_range": "#L46-L49",
+          "line_range": "#L47-L50",
           "location": "main",
-          "start_line": 46,
+          "start_line": 47,
           "tier": "TIER2",
           "title": "Parent `/home/orin/Projects` Umbrella `.homunculus.json` Sync (`2026-11-06`)",
           "touched_files": [
@@ -110,12 +126,12 @@
         },
         {
           "capsule_1line": "Gmail MCP `visibility_radar` for Non-Visible Unread Threads -> Built `visibility_radar` into `gmail_mcp_server.py` and `gmail-workspace-assistant/SKILL.md` to surface non-visible unread threads alongside inbox triage (`Workstation_Operations_Software.md`).",
-          "end_line": 54,
+          "end_line": 55,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-03",
-          "line_range": "#L51-L54",
+          "line_range": "#L52-L55",
           "location": "main",
-          "start_line": 51,
+          "start_line": 52,
           "tier": "TIER2",
           "title": "Gmail MCP `visibility_radar` for Non-Visible Unread Threads (`2026-11-06`)",
           "touched_files": [
@@ -125,12 +141,12 @@
         },
         {
           "capsule_1line": "Pre-Commit AST/CLI & Maintainer Matrix Parity Gate -> Wired `audit_skill_hygiene.py`, `sync_memory.py --audit`, and AST/CLI parity checks into `git_pre_commit_boundary.sh` (`SBX-20261107_091652-1f171c12`; `Workstation_Operations.md`).",
-          "end_line": 59,
+          "end_line": 60,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-04",
-          "line_range": "#L56-L59",
+          "line_range": "#L57-L60",
           "location": "main",
-          "start_line": 56,
+          "start_line": 57,
           "tier": "TIER2",
           "title": "Pre-Commit AST/CLI & Maintainer Matrix Parity Gate (`2026-11-07`)",
           "touched_files": [
@@ -142,12 +158,12 @@
         },
         {
           "capsule_1line": "Provisioning Optional `Homunculus/addons/*` Symlinks in `bootstrap_workstation.sh` -> Updated workstation skill symlink provisioning to link enabled drop-in add-ons from `Homunculus/addons/*` alongside core `Homunculus/skills/*` (`Workstation_Operations.md`).",
-          "end_line": 64,
+          "end_line": 65,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-05",
-          "line_range": "#L61-L64",
+          "line_range": "#L62-L65",
           "location": "main",
-          "start_line": 61,
+          "start_line": 62,
           "tier": "TIER2",
           "title": "Provisioning Optional `Homunculus/addons/*` Symlinks in `bootstrap_workstation.sh` (`2026-11-08`)",
           "touched_files": [
@@ -156,12 +172,12 @@
         },
         {
           "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
-          "end_line": 71,
+          "end_line": 72,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-06",
-          "line_range": "#L66-L71",
+          "line_range": "#L67-L72",
           "location": "main",
-          "start_line": 66,
+          "start_line": 67,
           "tier": "TIER2",
           "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation (`2026-11-08`)",
           "touched_files": [
@@ -170,12 +186,12 @@
         },
         {
           "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc)...",
-          "end_line": 78,
+          "end_line": 79,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-07",
-          "line_range": "#L73-L78",
+          "line_range": "#L74-L79",
           "location": "main",
-          "start_line": 73,
+          "start_line": 74,
           "tier": "TIER2",
           "title": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)",
           "touched_files": [
@@ -184,12 +200,12 @@
         },
         {
           "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
-          "end_line": 83,
+          "end_line": 84,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-08",
-          "line_range": "#L80-L83",
+          "line_range": "#L81-L84",
           "location": "main",
-          "start_line": 80,
+          "start_line": 81,
           "tier": "TIER2",
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
           "touched_files": [
@@ -232,14 +248,14 @@
       "sha256": "c0b2360302b4854a"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 110,
+      "lines": 109,
       "sections": 0,
-      "sha256": "03a4a1c7e28fdcb9"
+      "sha256": "c0bfaf4f7ca92f36"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 97,
+      "lines": 98,
       "sections": 8,
-      "sha256": "d7a0d479d013c317"
+      "sha256": "c6e305e7df85abb9"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -247,12 +263,12 @@
       "sha256": "17beedb38dc0c663"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
-      "lines": 48,
+      "lines": 49,
       "sections": 0,
-      "sha256": "36321a3df2e83bc6"
+      "sha256": "87e29ad65cf6b822"
     }
   },
   "total_docs": 9,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "a8e593513079ba58"
+  "vectors_digest": "4ebf1c04dda29faf"
 }

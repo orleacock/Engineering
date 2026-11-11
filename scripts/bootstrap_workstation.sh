@@ -132,11 +132,13 @@ if [[ -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" && -f "${REPO_ROOT}/s
     shopt -u nullglob dotglob
 fi
 
-# 2bd. Parent Projects Umbrella Configs (${PROJECTS_DIR}/.homunculus.json & ${PROJECTS_DIR}/.geminiignore)
+# 2bd. Parent Projects & Home Umbrella Configs (${PROJECTS_DIR}/.homunculus.json, ${HOME}/.homunculus.json & ${PROJECTS_DIR}/.geminiignore)
 UMBRELLA_HOMUNCULUS_SRC="${REPO_ROOT}/scripts/umbrella_configs/Projects.homunculus.json"
+HOME_HOMUNCULUS_SRC="${REPO_ROOT}/scripts/umbrella_configs/Home.homunculus.json"
+HOME_HOMUNCULUS_DST="${HOMUNCULUS_HOME_CFG_DST:-${HOME}/.homunculus.json}"
 UMBRELLA_GEMINIIGNORE_SRC="${REPO_ROOT}/.geminiignore"
-if [[ -d "$PROJECTS_DIR" && -f "$UMBRELLA_HOMUNCULUS_SRC" && -f "$UMBRELLA_GEMINIIGNORE_SRC" ]]; then
-    for pair in "${UMBRELLA_HOMUNCULUS_SRC}:${PROJECTS_DIR}/.homunculus.json" "${UMBRELLA_GEMINIIGNORE_SRC}:${PROJECTS_DIR}/.geminiignore"; do
+if [[ -d "$PROJECTS_DIR" && -f "$UMBRELLA_HOMUNCULUS_SRC" && -f "$HOME_HOMUNCULUS_SRC" && -f "$UMBRELLA_GEMINIIGNORE_SRC" ]]; then
+    for pair in "${UMBRELLA_HOMUNCULUS_SRC}:${PROJECTS_DIR}/.homunculus.json" "${HOME_HOMUNCULUS_SRC}:${HOME_HOMUNCULUS_DST}" "${UMBRELLA_GEMINIIGNORE_SRC}:${PROJECTS_DIR}/.geminiignore"; do
         src_cfg="${pair%%:*}"
         dst_cfg="${pair##*:}"
         if [[ "$MODE" == "check" ]]; then

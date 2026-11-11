@@ -5,14 +5,14 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.1.0 Development Baseline"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "f9c732fa7df3"
+repo_head_sha: "4a2802769b56"
 tree_hash: "b635c91e293d"
-checkpoint_head_sha: "f9c732fa7df3"
+checkpoint_head_sha: "4a2802769b56"
 checkpoint_tree_hash: "b635c91e293d"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "89f50bc3b71f45e1"
+checkpoint_lessons_digest: "a78e2aee50a10ced"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -26,6 +26,7 @@ checkpoint_lessons_digest: "89f50bc3b71f45e1"
 | **Stateful Memory Deployment Plan** | [`Homunculus_Stateful_Memory_Deployment_Plan.md`](Homunculus_Stateful_Memory_Deployment_Plan.md) | Locked 5-Sprint architecture, `TIER0`–`TIER5` gravity rules, pitfall guards, and per-sprint audit gates. |
 | **Script & Skill Interaction Matrix** | [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md) | **Non-authoritative** maintainer lookup table mapping what each skill/script touches (`authoritative: false`). |
 | **Version & Benchmark Ledger** | [`Homunculus_Version_and_Benchmark_Ledger.md`](Homunculus_Version_and_Benchmark_Ledger.md) | **Non-authoritative** `v0.Y.Z` version history & standardized side-by-side benchmark scorecards (`authoritative: false`). |
+| **`teach-me` Sandbox Condition Dossier** | [`Homunculus_Teach_Me_Sandbox_Dossier.md`](Homunculus_Teach_Me_Sandbox_Dossier.md) | **Non-authoritative** staged empirical probes & `TM-COND-01`–`TM-COND-11` findings for the standalone `teach-me` session (`authoritative: false`). |
 | **Project Templates** | [`Templates/`](Templates/) | Project-specific deliverable templates. |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Homunculus) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
@@ -68,7 +69,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: f9c732fa7df3 | Tree Hash: b635c91e293d
+Repository: Homunculus | HEAD SHA: 4a2802769b56 | Tree Hash: b635c91e293d
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -262,14 +263,13 @@ Repository: Homunculus | HEAD SHA: f9c732fa7df3 | Tree Hash: b635c91e293d
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: f9c732fa7df3` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_082207-2d5504ac, VRF-f899f601bef3, 53/53 unit tests OK, tag v0.2.1 (f9c732fa7df3)`
+- **Checkpoint Provenance**: `HEAD SHA: 4a2802769b56` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_110421-e810b0f0, VRF-ba0b2d8d5afc, VRF-d2cd34739fb2`
 - **Where We Stopped (Verified State & Context)**:
-  Prepared Homunculus v0.2.1 release tag on f9c732fa7df3 (tree b1242ce694cf): 17_Combo_C9_HeldT0 recall, Option A TIER0 Two-Lane + --kickstart TIER0 capsules, strict N1 0.0 numeric weight, v1.2 .cache/*_scoring_vectors.json sidecar, <=1,800-token 4-pass Anti-Bombing Budgeter, active-section-only HOT_MEMORY_BLOAT_CEILING, and Check #7c shorthand advisory; compacted active TIER2 window to 7 (LL-038..LL-044) and re-sealed governance.
+  Committed Vector 3 Turn-1 read-only task triage streamlining locally (4a28027, clean worktree) and staged TM-COND-01..11 in Homunculus_Teach_Me_Sandbox_Dossier.md for standalone session
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Confirm git push (with --tags) to origin/main
-  2. Execute immutable v0.2.1 Btrfs RAID backup via snapshot_homunculus_version.py
-- **Open Discussion / Alignment Questions**: Ready to execute git push and v0.2.1 RAID snapshot upon user go-ahead
+  1. Run standalone skills/teach-me/ hardening session from Homunculus_Teach_Me_Sandbox_Dossier.md (TM-COND-01..11)
+  2. Align on skill-architect telemetry pulse
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

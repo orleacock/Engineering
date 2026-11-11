@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "homunculus_rel_path": "Projects/Alchemical3D/Homunculus",
+  "memory_mode": "obsidian",
+  "memory_dir": "Projects/Engineering/memory",
+  "study_briefs_dir": "Projects/Engineering/study_briefs",
+  "visual_studio": {
+    "enabled": true,
+    "default_format": "svg",
+    "export_canvas_opt_in": false
+  },
+  "enabled_clients": [
+    "antigravity",
+    "claude_code",
+    "claude_cowork",
+    "cursor"
+  ],
+  "compartment_firewall": {
+    "enforce_secret_scan": true,
+    "safety_config_path": "Projects/Engineering/homunculus_safety.json",
+    "forbidden_tokens": []
+  }
+}

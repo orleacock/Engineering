@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "386f254d0621"
+tree_hash: "1bea2f8341b2"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "386f254d0621"
+checkpoint_tree_hash: "1bea2f8341b2"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "cab5a868a0349908"
+checkpoint_lessons_digest: "3403527c93df8d96"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -54,14 +54,12 @@ checkpoint_lessons_digest: "cab5a868a0349908"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 386f254d0621` | `Worktree: untracked` | `Last Verification: BMK-20261111_085728-9fee5ee6, VRF-02547714e424, SBX-20261111_082207-2d5504ac`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 1bea2f8341b2` | `Worktree: untracked` | `Last Verification: SBX-20261111_110421-e810b0f0`
 - **Where We Stopped (Verified State & Context)**:
-  Pinned Homunculus v0.2.1 official baseline (BMK-20261111_085728-9fee5ee6, 17/17 controls, 14/14 +faults, 53/53 unit tests) in homunculus_version.json, benchmark_history.jsonl, and Homunculus_Version_and_Benchmark_Ledger.md; aligned benchmark_homunculus.py ME01/ME02 to credit Option A tier0_active_matches, ME05 to <=1,800-tok ceiling, and --approve-advisory-reason Course D baseline gate.
+  Provisioned Home.homunculus.json (~/.homunculus.json) via bootstrap_workstation.sh (--check PASS) for zero-shell Turn-1 task triage from any CWD
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Confirm git push (origin/main --tags)
-  2. Execute immutable v0.2.1 RAID snapshot via snapshot_homunculus_version.py
-- **Open Discussion / Alignment Questions**: Ready for git push and RAID snapshot upon user confirmation
+  1. Configure local Syncthing client pairing when ready
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -78,7 +76,7 @@ checkpoint_lessons_digest: "cab5a868a0349908"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 386f254d0621
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 1bea2f8341b2
   gmail_mcp/
   gmail_mcp/gmail-workspace-assistant/
   gmail_mcp/gmail-workspace-assistant/SKILL.md
@@ -86,6 +84,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 386f254d0621
   gmail_mcp/README.md
   gmail_mcp/requirements.txt
   umbrella_configs/
+  umbrella_configs/Home.homunculus.json
   umbrella_configs/Projects.homunculus.json
   benchmark_history.jsonl
   benchmark_homunculus.py

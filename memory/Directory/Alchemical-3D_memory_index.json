@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 243.09,
+  "avg_doc_len": 242.81,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -580,12 +580,12 @@
       "lessons": [
         {
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 154,
+          "end_line": 155,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L149-L154",
+          "line_range": "#L150-L155",
           "location": "main",
-          "start_line": 149,
+          "start_line": 150,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `--lock-core` / `--unlock-core`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -602,12 +602,12 @@
         },
         {
           "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
-          "end_line": 169,
+          "end_line": 170,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-027",
-          "line_range": "#L156-L169",
+          "line_range": "#L157-L170",
           "location": "main",
-          "start_line": 156,
+          "start_line": 157,
           "tier": "TIER0",
           "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
           "touched_files": [
@@ -631,12 +631,12 @@
         },
         {
           "capsule_1line": "5-Sprint Stateful Memory Rebuild: 3-Stage Station/Detached Resolution, `TIER0`\u2013`TIER5` Gravity Store... -> Implemented 3-Stage repo resolution (`DIRECT_STATION` $\\rightarrow$ `REANCHORED_WORKSPACE` + `--rebind-station` $\\rightarrow$ `DETACHED_CACHE`), `TIER0`\u2013`TIER5` gravity window (`<=3 TIER0 + <=7 TIER2` in main, `TIER3`\u2013`TIER5` in `Archive/` with auto-exclusion in `verify_claims.py`), entity-partitioned hybrid recall (`<=450`-token...",
-          "end_line": 176,
+          "end_line": 177,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-038",
-          "line_range": "#L171-L176",
+          "line_range": "#L172-L177",
           "location": "main",
-          "start_line": 171,
+          "start_line": 172,
           "tier": "TIER2",
           "title": "5-Sprint Stateful Memory Rebuild: 3-Stage Station/Detached Resolution, `TIER0`\u2013`TIER5` Gravity Store, Entity-Partitioned Hybrid Recall, & `script_contracts.json` Preflight Gate (`2026-11-09`)",
           "touched_files": [
@@ -648,12 +648,12 @@
         },
         {
           "capsule_1line": "5-Slot Governance Architecture, `0444` Memory Rule Seal (`governance_seal.json`), `TIER5` Provenance &... -> Authored `Governance_and_Constraint_Architecture.md` (`5`-Slot Base Protection Format + `EXT-01..NN` Expansion Registry), added `--lock-memory-rules` (`0444`) + `--seal-governance` (`Directory/governance_seal.json` + hash-chained `Directory/governance_audit_log.jsonl`), enforced `GOVERNANCE_EVENT_REQUIRED` + inline...",
-          "end_line": 183,
+          "end_line": 184,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-039",
-          "line_range": "#L178-L183",
+          "line_range": "#L179-L184",
           "location": "main",
-          "start_line": 178,
+          "start_line": 179,
           "tier": "TIER2",
           "title": "5-Slot Governance Architecture, `0444` Memory Rule Seal (`governance_seal.json`), `TIER5` Provenance & Recall/Link Hardening (`2026-11-09`)",
           "touched_files": [
@@ -664,12 +664,12 @@
         },
         {
           "capsule_1line": "Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive... -> Removed --allow-lessons-source, enforced 0444 Archive/ + <=30L transcript cap + v1.1 monotonic TIER5 hashes, N1 non-numeric recall, 3.3-Unified-A portable anchors, Stage-2 disaster recovery, and Option 4D commit-lesson gate. (`skills/project-memory/scripts/sync_memory.py` (`Homunculus_Software.md`)...",
-          "end_line": 190,
+          "end_line": 191,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-040",
-          "line_range": "#L185-L190",
+          "line_range": "#L186-L191",
           "location": "main",
-          "start_line": 185,
+          "start_line": 186,
           "tier": "TIER2",
           "title": "Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive... (`2026-11-10`)",
           "touched_files": [
@@ -681,12 +681,12 @@
         },
         {
           "capsule_1line": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... -> Added multi-surface transcript_full.jsonl discovery + [TRUNCATED_TRANSCRIPT_FIELD] fail-closed gate, on-demand git rev-parse --verify SHA checks, VERTEX_POINT bbox-only fallback + unconditional inspect_hardware_ecosystem delegation, and EROFS_RE numeric-counter guard (SBX-20261110_141516-73c9069d, SBX-20261110_143655-1ecf0fa7)...",
-          "end_line": 197,
+          "end_line": 198,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-041",
-          "line_range": "#L192-L197",
+          "line_range": "#L193-L198",
           "location": "main",
-          "start_line": 192,
+          "start_line": 193,
           "tier": "TIER2",
           "title": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... (`2026-11-10`)",
           "touched_files": [
@@ -698,12 +698,12 @@
         },
         {
           "capsule_1line": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... -> Moved vectors to gitignored .cache/*_scoring_vectors.json (-92.3% tracked JSON) with transparent cold hydration, added atomic_write_text + unified structural tree hashing, cached ASTs by v3:{content_sha} with RO host seeding, and hoisted directory/blob scans for 2.1x-4.8x speedups (SBX-20261110_150832-70629ecd...",
-          "end_line": 204,
+          "end_line": 205,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-042",
-          "line_range": "#L199-L204",
+          "line_range": "#L200-L205",
           "location": "main",
-          "start_line": 199,
+          "start_line": 200,
           "tier": "TIER2",
           "title": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... (`2026-11-10`)",
           "touched_files": [
@@ -714,12 +714,12 @@
         },
         {
           "capsule_1line": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... -> Added composite --kickstart dedup, banned Model:inherit across all subagents with Workspace:branch for mutating frames, renamed voice /learn to /voice-learn, added --agy-skills-json + non-destructive hooks.json sync, and added Carbon PostToolUse + BROKEN_DOC_LINK_OR_SCRIPT checks (SBX-20261110_162015-7ddf774e) (`build_adapters.py`...",
-          "end_line": 211,
+          "end_line": 212,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-043",
-          "line_range": "#L206-L211",
+          "line_range": "#L207-L212",
           "location": "main",
-          "start_line": 206,
+          "start_line": 207,
           "tier": "TIER2",
           "title": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... (`2026-11-10`)",
           "touched_files": [
@@ -731,12 +731,12 @@
         },
         {
           "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration...",
-          "end_line": 216,
+          "end_line": 219,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-044",
-          "line_range": "#L213-L216",
+          "line_range": "#L214-L219",
           "location": "main",
-          "start_line": 213,
+          "start_line": 214,
           "tier": "TIER2",
           "title": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... (`2026-11-11`)",
           "touched_files": [
@@ -744,6 +744,23 @@
             "script_contracts.json",
             "sync_memory.py",
             "test_project_memory.py"
+          ]
+        },
+        {
+          "capsule_1line": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... -> Added multi-level .homunculus.json umbrella fallback preserving standalone client non-hijack in homunculus_paths.py, expanded entity-isolated AUTO-ROLLUP tables in sync_memory.py with live checkpoints plus entity-safe relative link rewriting, and split zero-shell read_file Turn-1 portfolio triage from --kickstart project work within...",
+          "end_line": 224,
+          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
+          "id": "LL-045",
+          "line_range": "#L221-L224",
+          "location": "main",
+          "start_line": 221,
+          "tier": "TIER2",
+          "title": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... (`2026-11-11`)",
+          "touched_files": [
+            "SKILL.md",
+            "co-engineering-partner.md",
+            "homunculus_paths.py",
+            "sync_memory.py"
           ]
         },
         {
@@ -1378,8 +1395,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 317.36,
-      "proj_total_docs": 45,
+      "proj_avg_doc_len": 315.28,
+      "proj_total_docs": 46,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -1940,12 +1957,12 @@
     "Projects/Homunculus/Homunculus.md": {
       "lines": 278,
       "sections": 0,
-      "sha256": "2a4d5e17edf47187"
+      "sha256": "d3d7671720cc6ae0"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 221,
-      "sections": 9,
-      "sha256": "bffd7feefec702e4"
+      "lines": 229,
+      "sections": 10,
+      "sha256": "5242cb13df5eb27c"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 26,
@@ -1955,7 +1972,7 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 71,
       "sections": 0,
-      "sha256": "b818673fe2455f05"
+      "sha256": "03837d57ffd0b7e9"
     },
     "Projects/Maker-Tools/Maker-Tools.md": {
       "lines": 90,
@@ -2028,7 +2045,7 @@
       "sha256": "1779e000a7d02d83"
     }
   },
-  "total_docs": 74,
+  "total_docs": 75,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "88e3535ca2f8604c"
+  "vectors_digest": "a07ef2e9d35ffb71"
 }

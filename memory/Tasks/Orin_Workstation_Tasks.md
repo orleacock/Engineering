@@ -15,7 +15,11 @@ last_synced: "2026-11-11"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `7 / 8` Tasks Complete (`87.5%`) | Open: `1`
+**Progress Summary**: `7 / 8` Tasks Complete (`87.5%`) | Open Tasks: `1` | Open `[TBD]`s: `0`
+
+| Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
+| :--- | :--- | :---: | :---: | :--- |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-11`) | `1` | `0` | Next: Configure local Syncthing client pairing when ready |
 <!-- AUTO-ROLLUP:END -->
 
 ---

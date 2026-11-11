@@ -15,7 +15,11 @@ last_synced: "2026-11-11"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `5 / 10` Tasks Complete (`50.0%`) | Open: `5`
+**Progress Summary**: `5 / 10` Tasks Complete (`50.0%`) | Open Tasks: `5` | Open `[TBD]`s: `1`
+
+| Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
+| :--- | :--- | :---: | :---: | :--- |
+| [`NetCom_Engineering_Assistant`](../Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) (`#L35`) | `UNTRACKED` (`untracked`, `2026-11-10`) | `5` | `1` | Next: Review open tasks in `NetCom_Tasks.md`. |
 <!-- AUTO-ROLLUP:END -->
 
 ---
