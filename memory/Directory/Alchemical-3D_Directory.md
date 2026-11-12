@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "8b06111c8446"
+tree_hash: "d511550a5fcb"
 last_synced: "2026-11-12"
 ---
 
@@ -69,6 +69,7 @@ last_synced: "2026-11-12"
 │   │   ├── Archive/
 │   │   │   └── Homunculus_Lessons_Archive.md
 │   │   ├── Quarantine/
+│   │   │   ├── 2026-11-12_Claude_Sonnet_Memory_Retrieval_Weight_Balance_Audit_Rev3.md
 │   │   │   └── Quarantine_README.md
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md

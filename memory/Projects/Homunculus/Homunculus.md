@@ -268,12 +268,12 @@ Repository: Homunculus | HEAD SHA: 4bd733d3bd56 | Tree Hash: 2ca5ab86e3ec
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-12`
-- **Checkpoint Provenance**: `HEAD SHA: 51453f63a444` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261112_102511-82bb9701 / SBX-20261112_114304-eb3256c8 / VRF-0c83f4d8ffe9 / LL-049`
+- **Checkpoint Provenance**: `HEAD SHA: 51453f63a444` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261112_102511-82bb9701 / SBX-20261112_114304-eb3256c8 / VRF-873f1bd2e0a7 / LL-049`
 - **Where We Stopped (Verified State & Context)**:
-  Shipped & pushed Homunculus v0.3.1 (Section One 541e2f8 + Ring-0 51453f6), enrolled 8 scrypt remote turnkeys (0600), and enabled protect_builtin_ring1=true (0444)
+  Shipped Homunculus v0.3.1 (51453f6) + 8 remote turnkeys + protect_builtin_ring1=true; quarantined Claude Sonnet Memory Retrieval & Weight-Balance Audit (Rev 3) for next-session validation
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Optional: run live /teach-me subagent canary against sealed v0.3.1; 2. Tackle sync_memory.py tty_turnkey governance gap (#L61 in Alchemical-3D_Tasks.md) or Course B rule/adapter byte compaction
+  1. Validate quarantined Claude Sonnet Memory Retrieval & Weight-Balance Audit (Rev 3 + probes in e41eebf7/scratch/) against live 51453f6 code & intent before planning; 2. Optional live /teach-me canary; 3. sync_memory tty_turnkey governance parity
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks
