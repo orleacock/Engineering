@@ -2103,9 +2103,9 @@
       "sha256": "b1495833e3e14417"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 282,
+      "lines": 386,
       "sections": 0,
-      "sha256": "b0528b9a53cbf7a5"
+      "sha256": "9e63cfc938911ac7"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
       "lines": 244,
@@ -2195,5 +2195,5 @@
   },
   "total_docs": 80,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "632683519b57860a"
+  "vectors_digest": "8e8588188f8bd7fc"
 }
