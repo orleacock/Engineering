@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.2.1",
+  "engine_version": "0.3.0",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.2.1",
-  "baseline_head_sha": "f9c732fa7df3",
-  "baseline_tree_hash": "b1242ce694cf",
-  "baseline_file_count": 102,
+  "baseline_tag": "v0.3.0",
+  "baseline_head_sha": "4bd733d3bd56",
+  "baseline_tree_hash": "5ef00c0786c6",
+  "baseline_file_count": 107,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
   "benchmark_schema_version": "1.0",
@@ -57,6 +57,15 @@
       "tree_hash": "b1242ce694cf",
       "trigger_type": "patch",
       "reason": "Memory retrieval v0.2.1 refinement: 17_Combo_C9_HeldT0 recall, Option A TIER0 two-lane, <=1800-tok budgeter, active-only bloat cap, and Check #7c shorthand advisory"
+    },
+    {
+      "version": "0.3.0",
+      "tag": "v0.3.0",
+      "date": "2026-11-11",
+      "head_sha": "4bd733d3bd56",
+      "tree_hash": "5ef00c0786c6",
+      "trigger_type": "minor",
+      "reason": "Homunculus v0.3.0: Ring-0 sudo kernel seal, 3-Ring isolation, MEMORY_SDK_V1 memory_gateway.py multi-lens context/write platform, AST gateway enforcement, and Add-On Memory Integration Playbook"
     }
   ]
 }

@@ -363,7 +363,7 @@ last_synced: "2026-11-11"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: d32bd92cc170` | `Tree: b635c91e293d`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 4bd733d3bd56` | `Tree: 2ca5ab86e3ec`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -423,6 +423,8 @@ last_synced: "2026-11-11"
 │   ├── audit_portability.py
 │   ├── build_adapters.py
 │   ├── homunculus_paths.py
+│   ├── kernel_seal.json
+│   ├── memory_gateway.py
 │   └── script_contracts.json
 ├── skills/
 │   ├── claim-verification/
@@ -449,6 +451,8 @@ last_synced: "2026-11-11"
 │   │   │   └── sync_memory.py
 │   │   └── SKILL.md
 │   ├── skill-architect/
+│   │   ├── references/
+│   │   │   └── ring0_sudo_protocol.md
 │   │   ├── scripts/
 │   │   │   └── audit_skill_hygiene.py
 │   │   └── SKILL.md
@@ -471,6 +475,7 @@ last_synced: "2026-11-11"
 │   ├── community_sdk/
 │   │   ├── addon_skeleton/
 │   │   │   └── SKILL.md
+│   │   ├── Addon_Memory_Integration_Playbook.md
 │   │   └── README.md
 │   ├── diagrams/
 │   │   ├── Diagram_Blueprints/
@@ -508,7 +513,8 @@ last_synced: "2026-11-11"
 │   ├── test_data_safety.py
 │   ├── test_foundation.py
 │   ├── test_project_memory.py
-│   └── test_teach_me.py
+│   ├── test_teach_me.py
+│   └── test_v030_memory_platform.py
 ├── .git/ (excluded)
 ├── .gitignore
 ├── HOMUNCULUS_START_HERE.md

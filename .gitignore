@@ -24,3 +24,5 @@ memory/.obsidian/workspace.json
 memory/.obsidian/workspace-mobile.json
 memory/.trash/
 memory/.cache/*_scoring_vectors.json
+memory/.cache/*_context_fabric.json
+addon_staging/

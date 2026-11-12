@@ -3,16 +3,16 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 project_type: "software"
-status: "v0.1.0 Development Baseline"
+status: "v0.3.0 Ring-0 Sudo & Memory Gateway Ready"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "d32bd92cc170"
-tree_hash: "b635c91e293d"
-checkpoint_head_sha: "d32bd92cc170"
-checkpoint_tree_hash: "b635c91e293d"
+repo_head_sha: "4bd733d3bd56"
+tree_hash: "2ca5ab86e3ec"
+checkpoint_head_sha: "4bd733d3bd56"
+checkpoint_tree_hash: "2ca5ab86e3ec"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "3f0ed505c0c9a504"
+checkpoint_lessons_digest: "f260de5a9b337215"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -59,16 +59,16 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; baseline tag `v0.1.0` at `31aa0cb0a918` across **`102` clean-room files**; verified across `7` `unittest` suites in [`Homunculus_Software.md`](Homunculus_Software.md) with `0` portability, boundary, or hygiene defects)
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; `v0.3.0` Ring-0 Sudo & `MEMORY_SDK_V1` Gateway architecture across **`108` clean-room files**; verified across `8` `unittest` suites (`62` tests) in [`Homunculus_Software.md`](Homunculus_Software.md) with `0` portability, boundary, or hygiene defects)
 - **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
 - **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
-- **Clean-Room Module Directories (`102` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills: `skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`, `teach-me`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/`), `scripts/` (`homunculus_paths.py`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`)
+- **Clean-Room Module Directories (`108` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills across `Ring 0` kernel skills + `Ring 1` consumer skills, plus `skills/skill-architect/references/ring0_sudo_protocol.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`)
 - **CAD & Firmware Directories:** _None (Pure Software / AI Skill & Tooling Suite)_
 - **Standards Applied:** [`Governance_and_Constraint_Architecture`](../../Standards_and_Specs/Governance_and_Constraint_Architecture.md), [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), [`Author_Voice_and_Cadence`](../../Standards_and_Specs/Author_Voice_and_Cadence.md), [`Image_and_Style_Rules`](../../Standards_and_Specs/Image_and_Style_Rules.md), [`Alchemical3D_Color_Template`](../../Templates/Color_Palettes/Alchemical3D_Color_Template.md), [`Homunculus_Talking_Points`](Homunculus_Talking_Points.md), [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
+Repository: Homunculus | HEAD SHA: 4bd733d3bd56 | Tree Hash: 2ca5ab86e3ec
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -120,6 +120,8 @@ Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
   scripts/audit_portability.py
   scripts/build_adapters.py
   scripts/homunculus_paths.py
+  scripts/kernel_seal.json
+  scripts/memory_gateway.py
   scripts/script_contracts.json
   skills/
   skills/claim-verification/
@@ -146,6 +148,8 @@ Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
   skills/project-memory/scripts/sync_memory.py
   skills/project-memory/SKILL.md
   skills/skill-architect/
+  skills/skill-architect/references/
+  skills/skill-architect/references/ring0_sudo_protocol.md
   skills/skill-architect/scripts/
   skills/skill-architect/scripts/audit_skill_hygiene.py
   skills/skill-architect/SKILL.md
@@ -168,6 +172,7 @@ Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
   templates/community_sdk/
   templates/community_sdk/addon_skeleton/
   templates/community_sdk/addon_skeleton/SKILL.md
+  templates/community_sdk/Addon_Memory_Integration_Playbook.md
   templates/community_sdk/README.md
   templates/diagrams/
   templates/diagrams/Diagram_Blueprints/
@@ -206,6 +211,7 @@ Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
   tests/test_foundation.py
   tests/test_project_memory.py
   tests/test_teach_me.py
+  tests/test_v030_memory_platform.py
   .gitignore
   HOMUNCULUS_START_HERE.md
   install.ps1
@@ -262,12 +268,15 @@ Repository: Homunculus | HEAD SHA: d32bd92cc170 | Tree Hash: b635c91e293d
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: d32bd92cc170` | `Tree Hash: b635c91e293d` | `Worktree: clean` | `Last Verification: SBX-20261111_125331-63c9e71a, LL-046`
+- **Checkpoint Provenance**: `HEAD SHA: 4bd733d3bd56` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261111_204624-cae34931 / VRF-1b9bdc0c0826`
 - **Where We Stopped (Verified State & Context)**:
-  Committed & sandbox-verified A1-1..A5 dead-surface & anti-poisoning cleanup: sparse Templates default (--eject-templates), lazy per-project Templates/, Vector-3 memory/AGENTS.md alignment, Diagram_Palettes.json override discovery, and --tier-config voice classification
+  Completed, sealed (0444), committed, and tagged Homunculus v0.3.0 (4bd733d3bd56; M1 Context Fabric, M2 MEMORY_SDK_V1 memory_gateway.py, M3 Three-Ring Sudo Shield + kernel_seal.json + raw /dev/tty challenge + symmetric resolve_sudo_policy enforced_roots fix + AST BYPASSED_MEMORY_GATEWAY gate, and M4 Addon_Memory_Integration_Playbook.md; 62/62 piped & TTY unit tests OK). Exposed and logged a post-release follow-up gap: while Ring-0 engine files (homunculus_paths.py) enforce raw /dev/tty tty_turnkey challenges, sync_memory.py (--unlock-memory-rules / --seal-governance / --set-tier) does not yet call _require_interactive_tty_if_needed directly (allowing AI subshells to bypass h-sudo unlock-memory). Also pinned Course D sub-ceiling delta (+259B rules / +252B AGENTS.md at 21,778B <= 22,500B cap; +2,444B across 9 core SKILL.md files at 98,155B <= 115,000B cap) with Course B (~260B rule/adapter trim) queued in Alchemical-3D_Tasks.md.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run standalone skills/teach-me/ hardening session from Homunculus_Teach_Me_Sandbox_Dossier.md (TM-COND-01..11) · Align on skill-architect on-call telemetry pulse
+  1. [PRIORITY 1 - sudo:] Wire homunculus_paths._require_interactive_tty_if_needed into sync_memory.py (--unlock-memory-rules, --seal-governance, --set-tier) + adversarial +faults test via h-sudo unlock --files skills/project-memory/scripts/sync_memory.py tests/test_v030_memory_platform.py
+  2. [PRIORITY 2 - sudo:] Run Course B bloat-removal pass (~260B / ~35 words in rules/co-engineering-partner.md + optional SKILL.md pointer trim) to reclaim full v0.2.1 AGENTS.md byte headroom (<=21,526B in-repo / <=22,231B out-of-tree)
+  3. [PRIORITY 3 - User Space:] Run standalone skills/teach-me/ hardening session (TM-COND-01..11) consuming memory_gateway.py via --unlock-scope teach-me (0 Ring-0 edits)
+- **Open Discussion / Alignment Questions**: Tomorrow: combine Priority 1 (sync_memory.py /dev/tty tty_turnkey parity) and Priority 2 (Course B ~260B rule/adapter bloat compaction) into a single clean sudo: patch (v0.3.1), then run Priority 3 (standalone User-Space teach-me session).
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

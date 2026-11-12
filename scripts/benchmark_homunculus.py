@@ -27,17 +27,17 @@ Responsibilities:
   CLI Flags     : --profile, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
     - class MetricRow (#L86-L103)                    | def percentile (#L106-L118)
-    - def snapshot_host_hashes (#L121-L144)          | def run_cmd_timed (#L147-L170)
-    - def probe_bwrap_erofs (#L173-L208)             | def collect_always_on_and_adapter_stats (#L211-L303)
-    - def run_unit_tests (#L306-L339)                | def _write_minimal_png (#L342-L357)
-    - def bench_profile_oracle_claims (#L360-L784)   | def bench_profile_memory_engine (#L787-L1086)
-    - def bench_profile_hygiene_adapters (#L1089-L1238) | def bench_profile_doc_cad_visual (#L1241-L1501)
-    - def _parse_jsonl_trajectory (#L1504-L1602)     | def bench_profile_subagent_ab (#L1605-L1731)
-    - def bench_profile_full_suite (#L1734-L1813)    | def build_universal_spine (#L1816-L1859)
-    - def apply_synthetic_regression (#L1862-L1899)  | def evaluate_comparisons (#L1902-L1999)
-    - def render_regression_autopsy_md (#L2002-L2090) | def _render_table_md (#L2093-L2111)
-    - def render_markdown_report (#L2114-L2149)      | def load_history_maps (#L2152-L2195)
-    - def update_ledger_and_history (#L2198-L2248)   | def main (#L2251-L2456)
+    - def snapshot_host_hashes (#L121-L158)          | def run_cmd_timed (#L161-L184)
+    - def probe_bwrap_erofs (#L187-L222)             | def collect_always_on_and_adapter_stats (#L225-L317)
+    - def run_unit_tests (#L320-L353)                | def _write_minimal_png (#L356-L371)
+    - def bench_profile_oracle_claims (#L374-L798)   | def bench_profile_memory_engine (#L801-L1100)
+    - def bench_profile_hygiene_adapters (#L1103-L1252) | def bench_profile_doc_cad_visual (#L1255-L1515)
+    - def _parse_jsonl_trajectory (#L1518-L1616)     | def bench_profile_subagent_ab (#L1619-L1745)
+    - def bench_profile_full_suite (#L1748-L1827)    | def build_universal_spine (#L1830-L1873)
+    - def apply_synthetic_regression (#L1876-L1913)  | def evaluate_comparisons (#L1916-L2013)
+    - def render_regression_autopsy_md (#L2016-L2104) | def _render_table_md (#L2107-L2125)
+    - def render_markdown_report (#L2128-L2163)      | def load_history_maps (#L2166-L2209)
+    - def update_ledger_and_history (#L2212-L2262)   | def main (#L2265-L2470)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -134,6 +134,20 @@ def snapshot_host_hashes(roots: list[Path], ignore_paths: set[Path] | None = Non
                 if fname.endswith((".pyc", ".pyo")):
                     continue
                 fpath = cpath / fname
+                rel_posix = fpath.relative_to(root_res).as_posix()
+                if rel_posix in (
+                    ".obsidian/workspace.json",
+                    ".obsidian/workspace-mobile.json",
+                    ".obsidian/graph.json",
+                ) or (
+                    rel_posix.startswith(".cache/")
+                    and (
+                        rel_posix.endswith("_context_fabric.json")
+                        or rel_posix.endswith("_scoring_vectors.json")
+                        or rel_posix == ".cache/hit_telemetry.json"
+                    )
+                ):
+                    continue
                 if fpath.resolve() in ignore_resolved:
                     continue
                 key = f"{root_res.name}:{fpath.relative_to(root_res).as_posix()}"
@@ -814,7 +828,7 @@ def bench_profile_memory_engine(
             ("Homunculus", "core script upgrade dual-repo clean-room sync governance re-seal sequence", {"PB-HOM-01"}),
             ("Homunculus", "TBD_SPECULATIVE_GUESS bracket smuggling git rev-list SHA PNG IHDR", {"LL-037"}),
             ("Homunculus", "stateful memory 3-stage repo resolution TIER0 TIER5 gravity store script_contracts", {"LL-038"}),
-            ("Homunculus", "governance_seal.json 0444 lock-memory-rules TIER5 retirement provenance", {"LL-039", "LL-040"}),
+            ("Homunculus", "governance_seal.json 0444 lock-memory-rules TIER5 retirement provenance", {"LL-039", "LL-040", "LL-047"}),
         ]
         top1_hits = 0
         top3_hits = 0

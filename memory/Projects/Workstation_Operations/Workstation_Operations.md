@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "1bea2f8341b2"
+tree_hash: "49f5ae26b415"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "1bea2f8341b2"
+checkpoint_tree_hash: "49f5ae26b415"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-11"
-checkpoint_lessons_digest: "c234ed9092671520"
+checkpoint_lessons_digest: "29c3f27d0a0203d3"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -53,9 +53,9 @@ checkpoint_lessons_digest: "c234ed9092671520"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 1bea2f8341b2` | `Worktree: untracked` | `Last Verification: SBX-20261111_125331-63c9e71a, LL-WS-09`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: SBX-20261111_204624-cae34931, LL-WS-08`
 - **Where We Stopped (Verified State & Context)**:
-  Completed & sandbox-verified parent workstation dead-surface & anti-poisoning cleanup: pruned Engineering/.agents, ~/.agents (find-skills), --compat-symlinks, legacy Engineering/Homunculus probes, and 17 duplicate memory Templates; enforced cmp byte-parity on Alchemical3D git hooks and re-sealed 0444 governance
+  Promoted Homunculus v0.3.0 workstation release: added h_sudo.sh (~/.local/bin/h-sudo with os.path.realpath symlink dereference), installed 0444 workstation tty_turnkey policy, wired OPEN_SUDO_LEASE_COMMIT_BLOCKED + kernel_seal check in git_pre_commit_boundary.sh, and excluded volatile Obsidian UI / .cache files in benchmark_homunculus.py snapshot_host_hashes.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
   1. Configure local Syncthing client pairing when ready
@@ -67,7 +67,7 @@ checkpoint_lessons_digest: "c234ed9092671520"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 1bea2f8341b2
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 49f5ae26b415
   gmail_mcp/
   gmail_mcp/gmail-workspace-assistant/
   gmail_mcp/gmail-workspace-assistant/SKILL.md
@@ -81,6 +81,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 1bea2f8341b2
   benchmark_homunculus.py
   bootstrap_workstation.sh
   git_pre_commit_boundary.sh
+  h_sudo.sh
   homunculus_version.json
   pre_push_engineering_guard.sh
   snapshot_homunculus_version.py

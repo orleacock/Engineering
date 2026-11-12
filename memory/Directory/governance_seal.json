@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-11",
-  "latest_audit_entry_sha256": "8e55057c65dc416762603b1209665a5c1fa2729734fabd4280deae01e8e2ec38",
+  "latest_audit_entry_sha256": "fc82c3387df76d40903e3ff467c34df6ba7c39f706510816b3a6fe4fe41d4dc6",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,7 +39,7 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "d1c7372948e00acade7c83fb76576e7cfdb0a82264fd68e02d63c9ef45d1369b",
+      "block_sha256": "ba9d58c1d23b17a0aa58a97f24b24fdf23bcf94ead16c1c3f344b36ed98ea8ac",
       "row_hashes": [
         "0009a3acc57ac04a",
         "0b7b7078a43aa6d5",
@@ -48,6 +48,8 @@
         "220383e2175b2957",
         "366d37fc11f6e724",
         "36ec1478a2527938",
+        "3fa6879ce02d230d",
+        "4a25b2e34b15393e",
         "544877fecfa8bdad",
         "5559d0716859d1ee",
         "5d2a4c93ec84ec18",
@@ -58,6 +60,7 @@
         "8b5f1fbecbd55df1",
         "97f1b0765b016359",
         "a3c758b26b32da36",
+        "a4827a94bea1d423",
         "b15bf18b386f24f7",
         "b7508766cd533a89",
         "c80c356c9ecf90db",
@@ -107,12 +110,13 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "9c774162c930207ca2fd3a28bfec408255a0f5769631988b5d3e07dedc2843b9",
+      "block_sha256": "13c7dd7061ef3cf1b02e5cdb9f125cbcc1ed12c1fe9cc84cc70b7aae05eac33b",
       "row_hashes": [
         "12b8ce6378c4f5c3",
         "22267a13be2c390c",
         "5481634ec5c5f0b8",
-        "b4fd7c3c75eae925"
+        "b4fd7c3c75eae925",
+        "e6481e8149facd4b"
       ]
     }
   },
@@ -125,7 +129,7 @@
     "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
     "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
-    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "bb54f78b1e5d999bbb2a568d81800b72cc131972735d3e908e915734927079f8",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "4ce42364aa6a85e4c132a800c92f78f7e59d79f20ae26a39c907a6febd3575a9",
     "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
     "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
     "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "1ba553b41daf8ecbc556bea6ccd31b4f7e752e400addb2e83ce2de394d7215a3",
@@ -161,5 +165,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "0766bd85a4341a2ca82cd839bc9a930faefadb244bf7afd45742e44d1f5f263e"
+  "seal_root_sha256": "deaac7f1d2c02434e046a6b9481d43eb103847f463fce7882802fb578732c25a"
 }

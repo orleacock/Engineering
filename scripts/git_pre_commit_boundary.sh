@@ -70,6 +70,15 @@ if [[ -z "$HOMUNCULUS_ROOT" || ! -f "${HOMUNCULUS_ROOT}/scripts/audit_data_bound
     exit 1
 fi
 
+if [[ -f "${HOMUNCULUS_ROOT}/.cache/sudo_lease.json" ]]; then
+    echo "[OPEN_SUDO_LEASE_COMMIT_BLOCKED] Active Ring-0 sudo lease detected (${HOMUNCULUS_ROOT}/.cache/sudo_lease.json). Seal Ring-0 via 'h-sudo seal' before committing." >&2
+    exit 1
+fi
+
+if [[ -f "${HOMUNCULUS_ROOT}/scripts/kernel_seal.json" ]]; then
+    "$PYTHON_BIN" "${HOMUNCULUS_ROOT}/scripts/homunculus_paths.py" --homunculus-root "$HOMUNCULUS_ROOT" --verify-seal --quiet
+fi
+
 if [[ -z "${HOMUNCULUS_BOUNDARY_CONFIG:-}" ]]; then
     if [[ -f "${REPO_ROOT}/homunculus_safety.json" ]]; then
         export HOMUNCULUS_BOUNDARY_CONFIG="${REPO_ROOT}/homunculus_safety.json"
