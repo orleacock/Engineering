@@ -5,14 +5,14 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.3.0 Ring-0 Sudo & Memory Gateway Ready"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "4bd733d3bd56"
+repo_head_sha: "51453f63a444"
 tree_hash: "2ca5ab86e3ec"
-checkpoint_head_sha: "4bd733d3bd56"
+checkpoint_head_sha: "51453f63a444"
 checkpoint_tree_hash: "2ca5ab86e3ec"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-11"
-checkpoint_lessons_digest: "f260de5a9b337215"
+last_synced: "2026-11-12"
+checkpoint_lessons_digest: "b156cd25a08a6ae7"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -267,16 +267,13 @@ Repository: Homunculus | HEAD SHA: 4bd733d3bd56 | Tree Hash: 2ca5ab86e3ec
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: 4bd733d3bd56` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261111_204624-cae34931 / VRF-1b9bdc0c0826`
+- **Last Session Timestamp**: `2026-11-12`
+- **Checkpoint Provenance**: `HEAD SHA: 51453f63a444` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261112_102511-82bb9701 / SBX-20261112_114304-eb3256c8 / VRF-0c83f4d8ffe9 / LL-049`
 - **Where We Stopped (Verified State & Context)**:
-  Completed, sealed (0444), committed, and tagged Homunculus v0.3.0 (4bd733d3bd56; M1 Context Fabric, M2 MEMORY_SDK_V1 memory_gateway.py, M3 Three-Ring Sudo Shield + kernel_seal.json + raw /dev/tty challenge + symmetric resolve_sudo_policy enforced_roots fix + AST BYPASSED_MEMORY_GATEWAY gate, and M4 Addon_Memory_Integration_Playbook.md; 62/62 piped & TTY unit tests OK). Exposed and logged a post-release follow-up gap: while Ring-0 engine files (homunculus_paths.py) enforce raw /dev/tty tty_turnkey challenges, sync_memory.py (--unlock-memory-rules / --seal-governance / --set-tier) does not yet call _require_interactive_tty_if_needed directly (allowing AI subshells to bypass h-sudo unlock-memory). Also pinned Course D sub-ceiling delta (+259B rules / +252B AGENTS.md at 21,778B <= 22,500B cap; +2,444B across 9 core SKILL.md files at 98,155B <= 115,000B cap) with Course B (~260B rule/adapter trim) queued in Alchemical-3D_Tasks.md.
+  Shipped & pushed Homunculus v0.3.1 (Section One 541e2f8 + Ring-0 51453f6), enrolled 8 scrypt remote turnkeys (0600), and enabled protect_builtin_ring1=true (0444)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. [PRIORITY 1 - sudo:] Wire homunculus_paths._require_interactive_tty_if_needed into sync_memory.py (--unlock-memory-rules, --seal-governance, --set-tier) + adversarial +faults test via h-sudo unlock --files skills/project-memory/scripts/sync_memory.py tests/test_v030_memory_platform.py
-  2. [PRIORITY 2 - sudo:] Run Course B bloat-removal pass (~260B / ~35 words in rules/co-engineering-partner.md + optional SKILL.md pointer trim) to reclaim full v0.2.1 AGENTS.md byte headroom (<=21,526B in-repo / <=22,231B out-of-tree)
-  3. [PRIORITY 3 - User Space:] Run standalone skills/teach-me/ hardening session (TM-COND-01..11) consuming memory_gateway.py via --unlock-scope teach-me (0 Ring-0 edits)
-- **Open Discussion / Alignment Questions**: Tomorrow: combine Priority 1 (sync_memory.py /dev/tty tty_turnkey parity) and Priority 2 (Course B ~260B rule/adapter bloat compaction) into a single clean sudo: patch (v0.3.1), then run Priority 3 (standalone User-Space teach-me session).
+  1. Optional: run live /teach-me subagent canary against sealed v0.3.1; 2. Tackle sync_memory.py tty_turnkey governance gap (#L61 in Alchemical-3D_Tasks.md) or Course B rule/adapter byte compaction
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

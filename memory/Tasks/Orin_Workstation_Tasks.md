@@ -3,7 +3,7 @@ title: "Orin Workstation — Domain Task Umbrella"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-11"
+last_synced: "2026-11-12"
 ---
 
 # 🖥️ Orin_Workstation — Active Engineering Task Umbrella (`Tasks/Orin_Workstation_Tasks.md`)
@@ -15,11 +15,11 @@ last_synced: "2026-11-11"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `7 / 8` Tasks Complete (`87.5%`) | Open Tasks: `1` | Open `[TBD]`s: `0`
+**Progress Summary**: `7 / 9` Tasks Complete (`77.8%`) | Open Tasks: `2` | Open `[TBD]`s: `0`
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-11`) | `1` | `0` | Next: Configure local Syncthing client pairing when ready |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-11`) | `2` | `0` | Next: Configure local Syncthing client pairing when ready |
 <!-- AUTO-ROLLUP:END -->
 
 ---
@@ -32,6 +32,7 @@ last_synced: "2026-11-11"
 - [x] **[COMPLETED 2026-11-01] Dual-Account GitHub SSH (`orleacock` + `Orin-Alchemical-3D`), Gmail MCP v2 (`personal` + `alchemical`), 3-Compartment Boundary Firewall (`audit_data_boundary.py`) & Pre-Upgrade Backup Removal:** Wired `IdentitiesOnly=yes` SSH across `Engineering` and all `9` published `Alchemical-3D` clones (`Homunculus` at `NONE`), provisioned Dual-Account Gmail MCP (`Read + Create Drafts`, `visibility_radar`, `we@alchemical3d.net` `sendAs`), enforced `data-and-credential-safety.md` + `audit_data_boundary.py` (`SBX-20261101_120052-27726090`, `SBX-20261101_120617-30480afc`), and removed the `480K` pre-upgrade safety backup (`2026-11-01_Security_Firewall_Gmail_MCP_and_SVG_Overhaul`).
 
 ### AI Skills, Voice Corpus & Memory Architecture (`[WORKFLOWS]`)
+- [ ] **Post-Verification Speed & Efficiency Optimization (Verified Anti-Hallucination Fast-Paths):** Investigate and update workstation/workflow token & turn efficiency (`#2`) and execution speed (`#4`) leveraging artifacts, source whitelists, and state that have already passed our anti-hallucination protocols (`verifiable-accuracy.md`, [`Verifiable_Accuracy_and_Anti_Hallucination.md`](../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `verify_claims.py` `VRF-*` receipts, and `(HEAD, tree_hash)` / SHA-256 provenance)—eliminating redundant re-scans and repeat verification passes while preserving `#1 Accuracy & Truth` and fail-closed invalidation whenever underlying files drift.
 - [x] **[COMPLETED 2026-11-06] `[LOAD-BEARING]` Cut Over Local Workstation (`/home/orin/Projects/Engineering/`) to Run Directly on `Homunculus` (`FEATURE-01`–`FEATURE-15` + Dual-Mode Memory Transplant):** Completed all 4 stages of the Dual-Mode Memory Transplant (`12` projects, `83` files) and all 15 capabilities (`FEATURE-01`–`FEATURE-15`), resolved `INH-01`–`INH-36` (`FIX-01`–`FIX-13`), eliminated speculative COTS/mass heuristics (`INH-10`, `INH-23`), and verified via `OS Dry-Run (+faults)` (`SBX-20261106_082824-c7325eea`) and `Compare-Light` (`SBX-20261106_083332-1b3c07be`).
 - [x] **[COMPLETED 2026-11-04] `Homunculus` Phases 2A, 2B, 3A & 3B Clean-Room Construction + Touch-2 Triangulated Sandbox Verification (`SBX-20261104_203744-63957361`):** Built 78 clean-room files across `rules/`, `scripts/`, `adapters/`, `skills/` (`skill-architect`, `project-memory`, `claim-verification`, `subagent-orchestrator`, `engineering-sandbox`, `visual-studio`, `doc-and-card-studio`, `pre-commit-gate`), `addons/author-voice-cadence/`, `templates/`, `docs/Memory_Setup_README.md`, `docs/Commands_and_Prompts_Reference.md`, and `tests/` (`22/22` unit tests OK); triangulated Touch-2 via `OS Dry-Run` (`SBX-20261104_200652-ebb2f0ff`) + `Compare-Light` (`916e2de1` vs `821d2441`), resolved `DEF-01`–`DEF-07` & `PF-01`–`PF-16`, and verified `0` defects / `0` overlaps / `0` violations in `SBX-20261104_203744-63957361`.
 - [x] **[COMPLETED 2026-11-04] `Compare-Full (Pro)` System Audit (`SBX-20261104_090329-12245bb9`), 8-Script Fail-Closed Hardening (`SBX-20261104_091445-fb9d6384`), Vault Deduplication & `Homunculus_Construction_and_Migration_Manual`:** Deduplicated all `<Project>_Lessons_Learned.md` ledgers, executed `Compare-Full (Pro)` A/B differential audit (`Blind-Full` + `Visible-Full`), tightened `verifiable-accuracy.md` §5 Tier-B scope, removed `numpy` from `inspect_hardware_ecosystem.py`, hardened all 8 scripts (`5/5` controls, `8/8` faults caught in `SBX-20261104_091445-fb9d6384`), logged `LL-018`, and authored `Homunculus_Construction_and_Migration_Manual`.

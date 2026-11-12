@@ -4,7 +4,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
 tree_hash: "8b06111c8446"
-last_synced: "2026-11-11"
+last_synced: "2026-11-12"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -363,7 +363,7 @@ last_synced: "2026-11-11"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 4bd733d3bd56` | `Tree: 2ca5ab86e3ec`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 51453f63a444` | `Tree: 2ca5ab86e3ec`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

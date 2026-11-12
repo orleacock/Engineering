@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-11",
+  "last_synced": "2026-11-12",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -286,10 +286,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 50,
       "sections": 0,
-      "sha256": "525cb6ffca549f24"
+      "sha256": "a2ca2219f00ea071"
     }
   },
   "total_docs": 10,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "3a3b0d9305494b91"
+  "vectors_digest": "5ef775bc4445f261"
 }

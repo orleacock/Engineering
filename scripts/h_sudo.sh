@@ -30,6 +30,10 @@ Ring-0 Kernel Commands (requires interactive human terminal under tty_turnkey):
   unlock --files <f1> [f2...] --reason "..." Grant scoped Ring-0 write lease for explicit files
   seal   --reason "..."                      Re-lock Ring-0/1 (0444/0555), seal kernel_seal.json, close lease
   revoke                                     Close active lease & re-lock leased files without updating seal
+  enroll-turnkeys [COUNT] [--turnkey-ttl-minutes 45]
+                                             Enroll single-use CSPRNG remote turnkeys in 0600 sudo_turnkeys.json
+  policy <tty_turnkey|scoped_lease> [--protect-builtin-ring1] [--enforced-roots ...]
+                                             Update workstation sudo_policy.json
 
 Memory Governance Commands (Standards_and_Specs/, AGENTS.md, Decision_Profile.md, Archives):
   unlock-memory                              Unlock memory governance surfaces (0644) for approved edit
@@ -55,6 +59,35 @@ case "$cmd" in
     revoke)
         require_human_tty
         python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --sudo-revoke "$@"
+        ;;
+    enroll-turnkeys|gen-remote-codes)
+        require_human_tty
+        if [[ $# -gt 0 && "$1" =~ ^[0-9]+$ ]]; then
+            cnt="$1"
+            shift
+            python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --enroll-remote-turnkeys "$cnt" "$@"
+        else
+            python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --enroll-remote-turnkeys "$@"
+        fi
+        ;;
+    policy)
+        require_human_tty
+        pol_val="${1:-}"
+        if [[ -z "$pol_val" ]]; then
+            echo "[FAIL] Usage: h-sudo policy <tty_turnkey|scoped_lease> [--protect-builtin-ring1] [--enforced-roots ...]" >&2
+            exit 2
+        fi
+        shift
+        pol_cfg="${HOME}/.config/homunculus/sudo_policy.json"
+        relock_pol=0
+        if [[ -f "$pol_cfg" && ! -w "$pol_cfg" ]]; then
+            chmod 0600 "$pol_cfg"
+            relock_pol=1
+        fi
+        python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --set-sudo-policy "$pol_val" "$@"
+        if [[ "$relock_pol" == "1" || -f "$pol_cfg" ]]; then
+            chmod 0444 "$pol_cfg"
+        fi
         ;;
     unlock-memory)
         require_human_tty
