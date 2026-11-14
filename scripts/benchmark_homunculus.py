@@ -31,14 +31,14 @@ Responsibilities:
     - def probe_bwrap_erofs (#L190-L225)             | def collect_always_on_and_adapter_stats (#L228-L320)
     - def _parse_unittest_proc (#L323-L339)          | def run_unit_tests (#L342-L418)
     - def _write_minimal_png (#L421-L436)            | def bench_profile_oracle_claims (#L439-L863)
-    - def bench_profile_memory_engine (#L866-L1165)  | def bench_profile_hygiene_adapters (#L1168-L1317)
-    - def bench_profile_doc_cad_visual (#L1320-L1580) | def _parse_jsonl_trajectory (#L1583-L1681)
-    - def bench_profile_subagent_ab (#L1684-L1810)   | def bench_profile_full_suite (#L1813-L1895)
-    - def build_universal_spine (#L1898-L1941)       | def apply_synthetic_regression (#L1944-L1981)
-    - def evaluate_comparisons (#L1984-L2081)        | def render_regression_autopsy_md (#L2084-L2172)
-    - def _render_table_md (#L2175-L2193)            | def render_markdown_report (#L2196-L2231)
-    - def load_history_maps (#L2234-L2277)           | def update_ledger_and_history (#L2280-L2330)
-    - def main (#L2333-L2578)
+    - def bench_profile_memory_engine (#L866-L1198)  | def bench_profile_hygiene_adapters (#L1201-L1350)
+    - def bench_profile_doc_cad_visual (#L1353-L1613) | def _parse_jsonl_trajectory (#L1616-L1714)
+    - def bench_profile_subagent_ab (#L1717-L1843)   | def bench_profile_full_suite (#L1846-L1928)
+    - def build_universal_spine (#L1931-L1974)       | def apply_synthetic_regression (#L1977-L2014)
+    - def evaluate_comparisons (#L2017-L2114)        | def render_regression_autopsy_md (#L2117-L2205)
+    - def _render_table_md (#L2208-L2226)            | def render_markdown_report (#L2229-L2264)
+    - def load_history_maps (#L2267-L2310)           | def update_ledger_and_history (#L2313-L2363)
+    - def main (#L2366-L2611)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -1000,18 +1000,51 @@ def bench_profile_memory_engine(
         if pf_max_tok <= 1800 and t1_cov_pct == 100.0:
             controls_passed += 1
 
-        # 4. Governance Ceilings (`TIER0 <= 3`, `TIER2 <= 7` or current governed ceiling, `_Lessons_Learned.md <= 420L`, `AGENTS.md`, `Decision_Profile.md`)
+        # 4. Governance Ceilings (`TIER0 <= 3`, unscoped `TIER2 <= 7` / total `TIER2 <= 9`, `_Lessons_Learned.md <= 420L`, `AGENTS.md`, `Decision_Profile.md`)
         max_ll_lines = 0
         max_t0 = 0
         max_t2 = 0
+        max_t2_total = 0
         archive_locked_ok = True
         for ll_file in sorted((memory_root / "Projects").glob("*/*_Lessons_Learned.md")):
             lines = ll_file.read_text(encoding="utf-8", errors="replace").splitlines()
             max_ll_lines = max(max_ll_lines, len(lines))
-            t0_c = sum(1 for ln in lines if re.match(r"^###\s+`LL-\d+`\s+\[TIER0\]", ln))
-            t2_c = sum(1 for ln in lines if re.match(r"^###\s+`LL-\d+`\s+\[TIER2\]", ln))
+            t0_c = 0
+            t2_unscoped_c = 0
+            t2_total_c = 0
+            cur_tier: str | None = None
+            cur_scoped = False
+            for ln in [*lines, "### `LL-SENTINEL` [END]"]:
+                m_ll = re.match(r"^###\s+`LL-[A-Z0-9-]+`\s+\[(TIER\d+)\]", ln)
+                if m_ll:
+                    if cur_tier == "TIER0":
+                        t0_c += 1
+                    elif cur_tier == "TIER2":
+                        t2_total_c += 1
+                        if not cur_scoped:
+                            t2_unscoped_c += 1
+                    cur_tier = m_ll.group(1)
+                    cur_scoped = False
+                    continue
+                if cur_tier is not None and re.match(r"^#{1,3}\s+", ln):
+                    if cur_tier == "TIER0":
+                        t0_c += 1
+                    elif cur_tier == "TIER2":
+                        t2_total_c += 1
+                        if not cur_scoped:
+                            t2_unscoped_c += 1
+                    cur_tier = None
+                    cur_scoped = False
+                    continue
+                if cur_tier is not None:
+                    m_scope = re.match(r"^\s*-\s*\*\*Scope:\*\*\s*(.+?)\s*$", ln)
+                    if m_scope:
+                        sval = m_scope.group(1).strip().strip("`").strip().lower()
+                        if sval not in {"", "none", "unscoped", "global"}:
+                            cur_scoped = True
             max_t0 = max(max_t0, t0_c)
-            max_t2 = max(max_t2, t2_c)
+            max_t2 = max(max_t2, t2_unscoped_c)
+            max_t2_total = max(max_t2_total, t2_total_c)
         for arch_file in sorted((memory_root / "Projects").glob("*/Archive/*_Lessons_Archive.md")):
             mode_oct = oct(arch_file.stat().st_mode & 0o777)
             if mode_oct != "0o444":
@@ -1026,7 +1059,7 @@ def bench_profile_memory_engine(
         dec_prof = tmp_mem / "Profile" / "Decision_Profile.md"
         dp_lines = len(dec_prof.read_text(encoding="utf-8").splitlines()) if dec_prof.is_file() else 0
 
-        if max_ll_lines <= 420 and max_t0 <= 3 and max_t2 <= 8 and dp_lines <= 60 and ma_words <= 180:
+        if max_ll_lines <= 420 and max_t0 <= 3 and max_t2 <= 7 and max_t2_total <= 9 and dp_lines <= 60 and ma_words <= 180:
             controls_passed += 1
 
         # 5. Governance Seal + Adversarial Fault 2 (Tampering with sealed `Decision_Profile.md` without `--seal-governance` must fail `--audit`!)

@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.3.3",
+  "engine_version": "0.3.4",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.3.3",
-  "baseline_head_sha": "43ebac1c849e",
-  "baseline_tree_hash": "ce9d11b21eb3",
+  "baseline_tag": "v0.3.4",
+  "baseline_head_sha": "3996460a1e68",
+  "baseline_tree_hash": "ef6cefb600c3",
   "baseline_file_count": 107,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
   "benchmark_schema_version": "1.0",
   "authoritative_cleanroom_path": "/home/orin/Projects/Alchemical3D/Homunculus",
   "authoritative_remote_url": "git@github-alchemical:Alchemical-3D/Homunculus.git",
-  "updated_at": "2026-11-13",
+  "updated_at": "2026-11-14",
   "digit_trigger_laws": {
     "major": {
       "digit": "X (X.0.0)",
@@ -93,6 +93,15 @@
       "tree_hash": "ce9d11b21eb3",
       "trigger_type": "patch",
       "reason": "Wave 2 v0.3.3: single-process hooks, safe rg UTF-8 pre-filter, stateless Option A telemetry-pulse, parallel TMPDIR unittest, and Gate 1.5 teach-me/verify_claims fixes"
+    },
+    {
+      "version": "0.3.4",
+      "tag": "v0.3.4",
+      "date": "2026-11-14",
+      "head_sha": "3996460a1e68",
+      "tree_hash": "ef6cefb600c3",
+      "trigger_type": "patch",
+      "reason": "Wave 3 v0.3.4 (C1): opt-in OpenSSH ssh-keygen -Y seal & lease signatures, h-sudo enroll-signer, and section-aware scoped TIER2 pulse accounting"
     }
   ]
 }

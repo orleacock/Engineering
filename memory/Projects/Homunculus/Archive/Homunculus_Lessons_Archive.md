@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-13"
+last_synced: "2026-11-14"
 ---
 
 # 🗄️ Homunculus — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)
@@ -397,5 +397,12 @@ last_synced: "2026-11-13"
 - **Symptom / Trap:** Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list --all (2s timeout risk); sync_memory _parse_step_metrics still held legacy circle regexes; EROFS_RE matched lowercase erofs:1 counters
 - **Root Cause:** Transcript discovery checked one brain dir without truncated_fields guards; SourceIndex ran git rev-list upfront instead of on-demand rev-parse; _parse_step_metrics duplicated STEP parsing; EROFS_RE lacked negative lookahead for numeric counters
 - **Verified Resolution & Permanent Guardrail:** Added multi-surface transcript_full.jsonl discovery + [TRUNCATED_TRANSCRIPT_FIELD] fail-closed gate, on-demand git rev-parse --verify SHA checks, VERTEX_POINT bbox-only fallback + unconditional inspect_hardware_ecosystem delegation, and EROFS_RE numeric-counter guard (SBX-20261110_141516-73c9069d, SBX-20261110_143655-1ecf0fa7) (`verify_claims.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `sandbox_runner.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `inspect_hardware_ecosystem.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `teach_brief.py` ([`Homunculus_Software.md`](../Homunculus_Software.md))).
+
+---
+
+### `LL-042` [TIER3] — Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... (`2026-11-10`)
+- **Symptom / Trap:** Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp trees; sync_memory re-walked vaults per check; pre-push boundary scans ran duplicate git ls-tree passes
+- **Root Cause:** Scoring vectors were serialized inside tracked entity indexes; AST/stamp caches lacked v3:{content_sha} keys and RO-cage host cache seeding; audit_memory loaded full vectors and re-walked directories
+- **Verified Resolution & Permanent Guardrail:** Moved vectors to gitignored .cache/*_scoring_vectors.json (-92.3% tracked JSON) with transparent cold hydration, added atomic_write_text + unified structural tree hashing, cached ASTs by v3:{content_sha} with RO host seeding, and hoisted directory/blob scans for 2.1x-4.8x speedups (SBX-20261110_150832-70629ecd, SBX-20261110_154951-9079d30f) (`sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `homunculus_paths.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `audit_data_boundary.py` ([`Homunculus_Software.md`](../Homunculus_Software.md))).
 
 ---

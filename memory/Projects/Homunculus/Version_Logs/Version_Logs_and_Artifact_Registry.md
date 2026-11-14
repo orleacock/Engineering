@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "private"
 note_type: "version_worklog"
 authoritative: false
-last_synced: "2026-11-13"
+last_synced: "2026-11-14"
 ---
 
 # 📚 Homunculus — Version Worklogs & Non-Destructive Artifact Registry (`W-1` & `W-5`)
@@ -26,6 +26,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 | **`v0.3.1`** | [`v0.3.1_Teach_Me_and_Turnkey_Worklog.md`](v0.3.1_Teach_Me_and_Turnkey_Worklog.md) | `LOCKED_HISTORICAL` | Standalone `teach-me` `SDK-MIG-01`/`TM-COND-01`–`11`, Section One (`541e2f8`) & Section Two `Ring 0` (`51453f6` / tag `v0.3.1`), `9` solved engineering edge cases, plus `9` rejected/failed approaches. |
 | **`v0.3.2`** | [`v0.3.2_Unified_Audit_and_Graduation_Worklog.md`](v0.3.2_Unified_Audit_and_Graduation_Worklog.md) | `LOCKED_HISTORICAL` | Unified Claude Sonnet + Gemini Carbon audit scope (`D-1A`, `D-2A`, `D-3A + M-1 + M-3a`, `S-A` Waves `1`–`3`, `W-1`–`W-5`, `6` Graduation Cleanups), `BMK-20261113_201953-1d6f3896` baseline pin, Gate 1.5 live canary findings (`TM-LIVE-01..03`, `VC-LIVE-01`), and `9` rejected proposals. |
 | **`v0.3.3`** | [`v0.3.3_Wave2_Performance_and_Pulse_Worklog.md`](v0.3.3_Wave2_Performance_and_Pulse_Worklog.md) | `LOCKED_HISTORICAL` | Wave 2 graduation (`43ebac1c849e`, `BMK-20261113_230808-9c7213da` at `15.29s` / `-52.1%`, `SBX-20261113_230606-cb97d55e` / `LL-WS-10`, `telemetry_pulse_history.jsonl`, and Gate 1.5 `/teach-me` re-attestation `6fb61c8e` / `VRF-0f8ded23c6c4` `ATTEST: PASS`): `S-A` `A2` single-process hooks, `B1` safe `rg` UTF-8 pre-filter, `Task #66`, and `Task #67` Option A stateless `--telemetry-pulse` + OOT `--quick-pulse`/`--record-pulse`. |
+| **`v0.3.4`** | [`v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md`](v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md) | `LOCKED_HISTORICAL` | Wave 3 (`C1`) graduation (`3996460a1e68`, `BMK-20261114_115712-942d545c` at `19.82s` Course D approved, live `/dev/tty` `seal_signing: "required"` in `local_config`, `SBX-20261114_101413-c32af7d0`, `v0.3.4-post-seal-enrolled` pulse, and `LL-051`): opt-in OpenSSH `ssh-keygen -Y` seal/lease signing (`homunculus.kernel.v1`, `homunculus.governance.v1`, `homunculus.lease.v1`; `local_config` & `inline`; default `off`; `0` private-key reads; `Claude permissions.deny`; `h-sudo enroll-signer`), section-aware `LL-[A-Z0-9-]+` scoped-`TIER2` telemetry accounting (`--telemetry-pulse` & `ME07`), and `TIER2` compaction (`LL-051`). |
 
 ---
 
@@ -41,7 +42,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 
 ---
 
-## 3. External Conversation Artifact Registry (`15` Bundles — `0` Deleted)
+## 3. External Conversation Artifact Registry (`16` Bundles — `0` Deleted)
 
 | # | Class | Session / Bundle | Artifact & Companion Files | Version / Role & Preservation Note |
 | :---: | :---: | :--- | :--- | :--- |
@@ -60,6 +61,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 | `13` | `CLASS-C` | `e41eebf7` | [Memory_Retrieval_Weight_Balance_Audit.md](file:///home/orin/.gemini/antigravity-cli/brain/e41eebf7-644b-43e6-99e9-e36580ebbce0/Memory_Retrieval_Weight_Balance_Audit.md) + [`2026-11-12_Claude_Sonnet_Memory_Retrieval_Weight_Balance_Audit_Rev3.md`](../Quarantine/2026-11-12_Claude_Sonnet_Memory_Retrieval_Weight_Balance_Audit_Rev3.md) | Quarantined Claude Sonnet Rev-3 memory retrieval audit (`F-01`–`F-16`, `R-01`–`R-08` + `probe1.py`–`probe5.py`); reconciled into `v0.3.2` (`D-1A`, `D-2A`, `D-3A + M-1 + M-3a`, `-M-2`). |
 | `14` | `CLASS-C` | `b4e4ead6` | [homunculus_security_and_performance_audit.md](file:///home/orin/.gemini/antigravity-cli/brain/b4e4ead6-10c1-48ef-aaa7-83bf3c8c1892/homunculus_security_and_performance_audit.md) + [`2026-11-12_Gemini_Carbon_Security_and_Performance_Audit.md`](../Quarantine/2026-11-12_Gemini_Carbon_Security_and_Performance_Audit.md) | Quarantined Gemini Carbon *"Opencode Auth Login Instructions"* security/perf audit (`Cracks 1`–`7`, `Tier A`/`B`/`C` + `bench_security_cli.py`); reconciled into `v0.3.2` (`S-A` Waves `1`–`3`). |
 | `15` | `CLASS-E` | `eaa8998c` | [Homunculus_v0_3_2_CMOS_Reboot_Handoff.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_2_CMOS_Reboot_Handoff.md) | Point-in-time `2026-11-13` `v0.3.2` Wave-1 pre-CMOS reboot checkpoint handoff (`2dc4fb129fb7`, dual `0444` seal, post-CMOS `v0.3.2` tag + `Course D` `BMK-*` baseline resume runbook). |
+| `16` | `CLASS-E` | `eaa8998c` | [Homunculus_v0_3_3_Session_Handoff_Package.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_3_Session_Handoff_Package.md) | Point-in-time `2026-11-13` `v0.3.3` session handoff snapshot after Wave 2 graduation (`43ebac1c849e`, `BMK-20261113_230808-9c7213da`) queuing Wave 3 (`C1`). |
 
 ---
 

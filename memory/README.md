@@ -3,7 +3,7 @@ title: "Engineering Memory"
 memory_mode: "obsidian"
 default_entity: "Alchemical-3D"
 schema_version: "2.0.0"
-last_synced: "2026-11-13"
+last_synced: "2026-11-14"
 ---
 
 # Engineering Memory — Dual-Mode Engineering Memory Hub
@@ -45,7 +45,7 @@ last_synced: "2026-11-13"
 | **Alembic_Toolhead** | `Alchemical-3D` | `public` | `hardware` | `3ff29ce` (`dirty`) | [`Alembic_Toolhead.md`](Projects/Alembic_Toolhead/Alembic_Toolhead.md) | [`_Hardware.md`](Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Brand** | `Alchemical-3D` | `public` | `software` | `49354b3` (`clean`) | [`Brand.md`](Projects/Brand/Brand.md) | [`_Software.md`](Projects/Brand/Brand_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Extras** | `Alchemical-3D` | `public` | `hardware` | `7c8db38` (`clean`) | [`Extras.md`](Projects/Extras/Extras.md) | [`_Hardware.md`](Projects/Extras/Extras_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
-| **Homunculus** | `Alchemical-3D` | `cleanroom` | `software` | `43ebac1` (`clean`) | [`Homunculus.md`](Projects/Homunculus/Homunculus.md) | [`_Software.md`](Projects/Homunculus/Homunculus_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
+| **Homunculus** | `Alchemical-3D` | `cleanroom` | `software` | `3996460` (`clean`) | [`Homunculus.md`](Projects/Homunculus/Homunculus.md) | [`_Software.md`](Projects/Homunculus/Homunculus_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Maker-Tools** | `Alchemical-3D` | `public` | `software` | `29641c5` (`clean`) | [`Maker-Tools.md`](Projects/Maker-Tools/Maker-Tools.md) | [`_Software.md`](Projects/Maker-Tools/Maker-Tools_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **NetCom_Engineering_Assistant** | `NetCom` | `private` | `software` | `UNTRACKED` (`untracked`) | [`NetCom_Engineering_Assistant.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) | [`_Software.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md) | [`NetCom_Tasks.md`](Tasks/NetCom_Tasks.md) |
 | **Organization_Profile** | `Alchemical-3D` | `public` | `software` | `b74920e` (`clean`) | [`Organization_Profile.md`](Projects/Organization_Profile/Organization_Profile.md) | [`_Software.md`](Projects/Organization_Profile/Organization_Profile_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |

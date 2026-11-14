@@ -1,6 +1,6 @@
 {
-  "last_sealed": "2026-11-13",
-  "latest_audit_entry_sha256": "75f431ca0fb274fab0a3479f7acbb9acf7023e76ec24988e9a328f3996c0d9b2",
+  "last_sealed": "2026-11-14",
+  "latest_audit_entry_sha256": "919694a496808d44f0bb6469294133433399d20f3c858ddb5c62c3b8f8f9b7c9",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,13 +39,14 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "da6e69412901151cf80be0e74a89041d8295dd5cc3e8821753acc3e987ded4e7",
+      "block_sha256": "759002bdcfa456b1318e46df677bcbe8067ffe1ee804eb3fd8f085e7e5f7b03e",
       "row_hashes": [
         "0009a3acc57ac04a",
         "06740a8ed7b60115",
         "079ed7195b018529",
         "0cda5b90d504e7a5",
         "103e61554e8847a1",
+        "2192563552b56120",
         "36ec1478a2527938",
         "544877fecfa8bdad",
         "5c98f15c941c4a12",
@@ -62,8 +63,7 @@
         "d7948870db84ec4b",
         "daaadbe5adb2bee5",
         "deefeed11218a58d",
-        "f9128e47d9cd5086",
-        "fd6540cb7f877d2c"
+        "f9128e47d9cd5086"
       ]
     },
     "Maker-Tools": {
@@ -103,12 +103,12 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "13c7dd7061ef3cf1b02e5cdb9f125cbcc1ed12c1fe9cc84cc70b7aae05eac33b",
+      "block_sha256": "24c4fbc1e485055df12413a98d0ed3bc4f15a23c9073e487a06529adb875535e",
       "row_hashes": [
-        "12b8ce6378c4f5c3",
         "22267a13be2c390c",
-        "5481634ec5c5f0b8",
-        "b4fd7c3c75eae925",
+        "4d9f01bf1e6801ff",
+        "b25f6545678aa79e",
+        "d83b880f9e8f299e",
         "e6481e8149facd4b"
       ]
     }
@@ -158,5 +158,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "c6424602f79ddb39e1ef07306c64983c4a703d09b7e3a2dcbdd179252d370558"
+  "seal_root_sha256": "e41cdad43a5caf0831a31a7cead16d17b57c2b38fe96daace1a2fe6f20dcebe1"
 }

@@ -3,7 +3,7 @@ title: "Orin Workstation — Domain Task Umbrella"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-13"
+last_synced: "2026-11-14"
 ---
 
 # 🖥️ Orin_Workstation — Active Engineering Task Umbrella (`Tasks/Orin_Workstation_Tasks.md`)
@@ -19,7 +19,7 @@ last_synced: "2026-11-13"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-13`) | `2` | `0` | Next: Execute Homunculus Wave 3 (C1 OpenSSH signing) when scheduled |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-14`) | `2` | `0` | Next: Optional: sync drifted sibling Alchemical3D/* pre-commit hooks via bootstrap_workstation.sh |
 <!-- AUTO-ROLLUP:END -->
 
 ---

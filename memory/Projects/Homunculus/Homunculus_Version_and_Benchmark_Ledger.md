@@ -6,7 +6,7 @@ compartment: "private"
 note_type: "reference"
 authoritative: false
 status: "NON_AUTHORITATIVE_REFERENCE"
-last_synced: "2026-11-13"
+last_synced: "2026-11-14"
 ---
 
 # 📊 Homunculus Version & Standardized Benchmark Ledger (`v0.Y.Z`)
@@ -319,6 +319,56 @@ Part of the [`README.md`](../../README.md) and companion version scorecard for [
 | `14` | `#2 Efficiency` | **Active Core Skills Footprint** | `9 skills / 9,017 w (~12,173 tok)` | `9 skills / 9,017 w (~12,173 tok)` | `9 skills / 9,037 w (~12,200 tok)` | `+20 words (+0.2%)` | `<= 10,500 w (~14,175 tok)` | `PASS` |
 | `15` | `#1 Accuracy` | **Markdown Files Audited & Pass Rate** | `58 / 58 (100.0%)` | `58 / 58 (100.0%)` | `58 / 58 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
 | `16` | `#1 Accuracy` | **Closed 360° Cylinder vs. Open Fillet Filter** | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `0 (no change)` | `PASS` | `PASS` |
+
+---
+
+### Standardized Benchmark Run: `full-system-suite` (`v0.3.4` vs. Baseline `v0.3.3`) — v0.3.4 Wave 3 (C1) Official Baseline
+
+- **Run ID & Timestamp**: `BMK-20261114_115712-942d545c` (`2026-11-14T11:57:12-06:00`)
+- **Engine Provenance**: `/home/orin/Projects/Alchemical3D/Homunculus` | Version: `v0.3.4` | `HEAD`: `3996460a1e68` | `Tree`: `ef6cefb600c3` (`107` files, `clean`)
+- **Overall Verdict**: **`BASELINE_PINNED`** (`Hard Blocks: 0` | `Advisories: 1` | `Wall-Clock: 19.82s`)
+
+#### Part A — Universal 4-Pillar Spine (`12` Locked Metrics)
+
+| # | Pillar | Standardized Metric | Baseline (`v0.3.3`) | Previous Run | Candidate (`v0.3.4`) | Delta (vs. Baseline) | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| `1` | `Meta` | **Version & Tree Provenance** | `v0.3.3 (43ebac1c / ce9d11b2)` | `v0.3.3 (43ebac1c / ce9d11b2)` | `v0.3.4 (3996460a / ef6cefb6)` | `—` | `Clean or -dev+<tree8>` | **`PINNED`** |
+| `2` | `#1 Accuracy` | **Positive Controls Pass Rate** | `17 / 17 (100.0%)` | `17 / 17 (100.0%)` | `17 / 17 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `3` | `#1 Accuracy` | **Adversarial +faults Catch Rate** | `14 / 14 (100.0%)` | `14 / 14 (100.0%)` | `14 / 14 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `4` | `#1 Accuracy` | **False Positives / False Negatives** | `FP: 0 / FN: 0` | `FP: 0 / FN: 0` | `FP: 0 / FN: 0` | `0 (no change)` | `FP: 0 / FN: 0` | `PASS` |
+| `5` | `#1 Accuracy` | **Automated Unit Test Suite** | `75 / 75 (100.0%)` | `75 / 75 (100.0%)` | `76 / 76 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `6` | `#2 Efficiency` | **Always-On 3-Rule Footprint** | `19,990 B / 2427 w (~3276 tok)` | `19,990 B / 2427 w (~3276 tok)` | `19,990 B / 2427 w (~3276 tok)` | `0 (no change)` | `<= 21,500 B (~3,600 tok)` | `PASS` |
+| `7` | `#2 Efficiency` | **AGENTS.md Ceiling & Headroom** | `21,343 B (headroom: 1,157 B)` | `21,343 B (headroom: 1,157 B)` | `21,343 B (headroom: 1,157 B)` | `0 (no change)` | `<= 22,500 B (24k hard)` | `PASS` |
+| `8` | `#2 Efficiency` | **Target Subsystem Context / Packet Tax** | `99,922 B (3 rules + 9 core SKILL.md files)` | `99,922 B (3 rules + 9 core SKILL.md files)` | `99,922 B (3 rules + 9 core SKILL.md files)` | `0 (no change)` | `<= 115,000 B (modular sum <= 129,500 B)` | `PASS` |
+| `9` | `#2 Efficiency` | **Subagent Trajectory (Turns / Tokens / Cache %)** | `n/a (CLI bench)` | `n/a (CLI bench)` | `n/a (CLI bench)` | `—` | `<= Baseline` | **`PINNED`** |
+| `10` | `#3 Safety` | **Live Host Mutations & EROFS Blocks** | `mut: 0 / erofs: 1` | `mut: 0 / erofs: 1` | `mut: 0 / erofs: 1` | `0 (no change)` | `mut: 0 / erofs >= 1` | `PASS` |
+| `11` | `#3 Safety` | **Boundary, Portability & Governance Seal** | `B:0 / P:0 / G:PASS` | `B:0 / P:0 / G:PASS` | `B:0 / P:0 / G:PASS` | `0 (no change)` | `B:0 / P:0 / G:PASS` | `PASS` |
+| `12` | `#4 Speed` | **Execution Latency (p50 / p95 / Total) & Spawns** | `p50: 104ms / p95: 491ms / 15.29s (52 spawns)` | `p50: 104ms / p95: 491ms / 15.29s (52 spawns)` | `p50: 102ms / p95: 476ms / 19.82s (52 spawns)` | `+4.53 s (+29.6%)` | `<= Baseline + 15%` | **`ADVISORY`** |
+
+#### Part B — Fixed Subsystem Profile: `full-system-suite` (`16` Locked Metrics)
+
+| # | Pillar | Standardized Metric | Baseline (`v0.3.3`) | Previous Run | Candidate (`v0.3.4`) | Delta (vs. Baseline) | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| `1` | `#1 Accuracy` | **True-Positive Hallucinations Caught** | `7 / 7 (100.0%)` | `7 / 7 (100.0%)` | `7 / 7 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `2` | `#1 Accuracy` | **False-Positive Valid Prose Flagged** | `0` | `0` | `0` | `0 (no change)` | `0` | `PASS` |
+| `3` | `#3 Safety` | **Runtime Anti-Snoop Gate Triggers** | `PASS (blocked)` | `PASS (blocked)` | `PASS (blocked)` | `0 (no change)` | `PASS` | `PASS` |
+| `4` | `#4 Speed` | **CLI Cold-Start Verification Latency (median)** | `100.46 ms` | `100.46 ms` | `96.76 ms` | `-3.70 ms (-3.7%)` | `<= Baseline + 15%` | `PASS` |
+| `5` | `#1 Accuracy` | **Top-3 Semantic/ID Recall Hit Rate** | `100.0% (5/5)` | `100.0% (5/5)` | `100.0% (5/5)` | `0 (no change)` | `100.0%` | `PASS` |
+| `6` | `#1 Accuracy` | **N1 Numeric/Unit Query Weight Leak Rate** | `0.0%` | `0.0%` | `0.0%` | `0 (no change)` | `0.0%` | `PASS` |
+| `7` | `#2 Efficiency` | **--preflight Decision Packet Tokens (avg / max)** | `avg 638 / max 657 tok` | `avg 638 / max 657 tok` | `avg 638 / max 651 tok` | `-6 tok (-0.9%)` | `<= 1,800 tok` | **`IMPROVED`** |
+| `8` | `#2 Efficiency` | **Active _Lessons_Learned.md Max Line Count** | `227 L` | `227 L` | `228 L` | `+1 lines (+0.4%)` | `<= 420 L` | `PASS` |
+| `9` | `#3 Safety` | **v1.1 Governance Seal & Tamper Block** | `PASS` | `PASS` | `PASS` | `0 (no change)` | `PASS` | `PASS` |
+| `10` | `#4 Speed` | **--kickstart Cold-Resume Latency** | `143.09 ms` | `143.09 ms` | `135.38 ms` | `-7.71 ms (-5.4%)` | `<= Baseline + 15%` | `PASS` |
+| `11` | `#2 Efficiency` | **Combined 3-Rule Always-On Turn Tax** | `19,990 B / 2427 w (~3276 tok)` | `19,990 B / 2427 w (~3276 tok)` | `19,990 B / 2427 w (~3276 tok)` | `0 (no change)` | `<= 21,500 B (~3,600 tok)` | `PASS` |
+| `12` | `#2 Efficiency` | **In-Repo AGENTS.md Byte Size & Headroom** | `21,343 B (headroom: 1,157 B)` | `21,343 B (headroom: 1,157 B)` | `21,343 B (headroom: 1,157 B)` | `0 (no change)` | `<= 22,500 B` | `PASS` |
+| `13` | `#2 Efficiency` | **Out-of-Tree Expanded AGENTS.md Byte Size** | `22,095 B (headroom: 1,905 B)` | `22,095 B (headroom: 1,905 B)` | `22,095 B (headroom: 1,905 B)` | `0 (no change)` | `<= 24,000 B hard cap` | `PASS` |
+| `14` | `#2 Efficiency` | **Active Core Skills Footprint** | `9 skills / 9,037 w (~12,200 tok)` | `9 skills / 9,037 w (~12,200 tok)` | `9 skills / 9,037 w (~12,200 tok)` | `0 (no change)` | `<= 10,500 w (~14,175 tok)` | `PASS` |
+| `15` | `#1 Accuracy` | **Markdown Files Audited & Pass Rate** | `58 / 58 (100.0%)` | `58 / 58 (100.0%)` | `58 / 58 (100.0%)` | `0 (no change)` | `100.0%` | `PASS` |
+| `16` | `#1 Accuracy` | **Closed 360° Cylinder vs. Open Fillet Filter** | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `0 (no change)` | `PASS` | `PASS` |
+
+#### Run-Specific Forensic Notes *(Decoupled from Standardized Metric Rows)*
+
+- [COURSE_D_APPROVED_TRADEOFF] Course D approved (2026-11-14): +4.46s (95.7% of +4.66s delta) is the new 76th end-to-end OpenSSH ssh-agent/ssh-keygen -Y seal & lease verification test method in serial test_v030_memory_platform.py (52-spawn ruler preserved); runtime CLI cold-start (-3.1%), --kickstart (-3.7%), p95 (-8ms), and --preflight (-6 tok) all improved; dedicated Speed & Efficiency optimization pass scheduled post-v0.3.4.
 
 ---
 

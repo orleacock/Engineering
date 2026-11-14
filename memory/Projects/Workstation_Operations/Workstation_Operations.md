@@ -11,8 +11,8 @@ checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "0167224a4e41"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-13"
-checkpoint_lessons_digest: "9bd1efb5c365d2f8"
+last_synced: "2026-11-14"
+checkpoint_lessons_digest: "c7b05ad1bd733a32"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -44,7 +44,7 @@ checkpoint_lessons_digest: "9bd1efb5c365d2f8"
   - **Multi-Compartment Boundary Guard**: `git_pre_commit_boundary.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) and `pre_push_engineering_guard.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) execute `Homunculus/scripts/audit_data_boundary.py` prior to commits and pushes across `private`, `public`, and `cleanroom` compartments, paired with directory-scoped Git identities (`~/.gitconfig` `[includeIf]`), SSH host aliases (`~/.ssh/config`: `github-orleacock` and `github-alchemical`), and offline Raid snapshots (`/run/media/orin/Raid/Backup Documents/`).
   - **Dual-Account Gmail MCP Server**: `gmail_mcp/gmail_mcp_server.py` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) provides OAuth 2.0 `Read + Create Drafts` access (`gmail.readonly` + `gmail.compose`) with `visibility_radar` and `verified_send_as_aliases` enforcement (`personal` `orleacock@gmail.com` + `alchemical` `orin@alchemical3d.net` / `we@alchemical3d.net`).
   - **Immutable RAID Deliverable Restore Guard (`S1-A`)**: `snapshot_homunculus_version.py` (`build_restore_script`) preserves live `~/.gemini/config/mcp_config.json` (staging redacted snapshot configs to `mcp_config.redacted_reference.json`) and prunes only `Homunculus`/`Engineering`/dangling symlinks in `~/.gemini/config/{rules,skills}`. Because the initial `v0.1.0_2026-11-10_foundation_baseline` RAID deliverable is write-once `0444`-locked (`0` in-place edits permitted), if ever running full-workstation recovery from that specific `v0.1.0` snapshot, invoke the updated `scripts/snapshot_homunculus_version.py` restore template or back up live `~/.gemini/config/mcp_config.json` and non-Homunculus user skills/rules first (its `--restore-engine-only` mode is already unaffected).
-  - **Ring-0 & Memory Governance Human Turnkey (`h_sudo.sh` / `~/.local/bin/h-sudo`)**: Out-of-tree `/dev/tty` human turnkey helper ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) supporting `status`, `unlock [--with-memory] --files ... --reason "..."` (`unlock-all`), `seal [--with-memory] --reason "..."` (`seal-all`), `revoke`, `enroll-turnkeys`, `policy`, `unlock-memory`, and `seal-memory`, sequencing Ring-0 and Memory Governance prompts inside a single interactive command to eliminate multi-line clipboard paste swallowing.
+  - **Ring-0 & Memory Governance Human Turnkey (`h_sudo.sh` / `~/.local/bin/h-sudo`)**: Out-of-tree `/dev/tty` human turnkey helper ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) supporting `status`, `unlock [--with-memory] --files ... --reason "..."` (`unlock-all`), `seal [--with-memory] --reason "..."` (`seal-all`), `revoke`, `enroll-turnkeys`, `enroll-signer`, `policy`, `unlock-memory`, and `seal-memory`, sequencing Ring-0 and Memory Governance prompts inside a single interactive command to eliminate multi-line clipboard paste swallowing.
 
 ---
 
@@ -53,13 +53,13 @@ checkpoint_lessons_digest: "9bd1efb5c365d2f8"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-13`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 0167224a4e41` | `Worktree: untracked` | `Last Verification: BMK-20261113_230808-9c7213da + SBX-20261113_230606-cb97d55e`
+- **Last Session Timestamp**: `2026-11-14`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 0167224a4e41` | `Worktree: untracked` | `Last Verification: v0.3.4 (3996460a1e68) + BMK-20261114_115712-942d545c BASELINE_PINNED + v0.3.4-post-seal-enrolled`
 - **Where We Stopped (Verified State & Context)**:
-  Graduated Homunculus v0.3.3 baseline (BMK-20261113_230808-9c7213da), hardened hermetic parallel unittest HOME isolation (LL-WS-10 / SBX-20261113_230606-cb97d55e), and initialized telemetry_pulse_history.jsonl
+  Graduated Homunculus v0.3.4 (3996460a1e68), enrolled live OpenSSH seal signing (id_ed25519_alchemical.pub, seal_signing=required, local_config), pinned BMK-20261114_115712-942d545c, and recorded post-seal telemetry pulse.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Execute Homunculus Wave 3 (C1 OpenSSH signing) when scheduled
+  1. Optional: sync drifted sibling Alchemical3D/* pre-commit hooks via bootstrap_workstation.sh
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -68,7 +68,7 @@ checkpoint_lessons_digest: "9bd1efb5c365d2f8"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 49f5ae26b415
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 0167224a4e41
   gmail_mcp/
   gmail_mcp/gmail-workspace-assistant/
   gmail_mcp/gmail-workspace-assistant/SKILL.md
@@ -86,6 +86,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 49f5ae26b415
   homunculus_version.json
   pre_push_engineering_guard.sh
   snapshot_homunculus_version.py
+  telemetry_pulse_history.jsonl
   version_manager.py
 ```
 <!-- AUTO-TREE:END -->

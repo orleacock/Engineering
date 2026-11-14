@@ -36,6 +36,8 @@ Ring-0 Kernel Commands (requires interactive human terminal under tty_turnkey):
   revoke                                     Close active lease & re-lock leased files without updating seal
   enroll-turnkeys [COUNT] [--turnkey-ttl-minutes 45]
                                              Enroll single-use CSPRNG remote turnkeys in 0600 sudo_turnkeys.json
+  enroll-signer --signing-key <PUB> [--seal-signing required|optional|off] [--signature-storage local_config|inline] [--signer-principal <NAME>]
+                                             Enroll opt-in OpenSSH ssh-keygen -Y seal signer (public key only)
   policy <tty_turnkey|scoped_lease> [--protect-builtin-ring1] [--enforced-roots ...]
                                              Update workstation sudo_policy.json
 
@@ -131,6 +133,10 @@ case "$cmd" in
         else
             python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --enroll-remote-turnkeys "$@"
         fi
+        ;;
+    enroll-signer)
+        require_human_tty
+        python3 "$PATHS_PY" --homunculus-root "$HOMUNCULUS_ROOT" --memory-root "$MEMORY_ROOT" --enroll-seal-signer "$@"
         ;;
     policy)
         require_human_tty
