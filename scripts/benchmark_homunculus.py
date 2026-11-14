@@ -24,25 +24,27 @@ Responsibilities:
   Callers       : Developer CLI, `snapshot_homunculus_version.py`, `engineering-sandbox` Track-2 Gate
   Callees       : `version_manager.py`, `Homunculus` CLI Oracles & `unittest` Suite
   Contract      : `scripts/script_contracts.json` [`benchmark_homunculus.py`]
-  CLI Flags     : --profile, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
+  CLI Flags     : --profile, --quick-pulse, --record-pulse, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - class MetricRow (#L86-L103)                    | def percentile (#L106-L118)
-    - def snapshot_host_hashes (#L121-L158)          | def run_cmd_timed (#L161-L184)
-    - def probe_bwrap_erofs (#L187-L222)             | def collect_always_on_and_adapter_stats (#L225-L317)
-    - def run_unit_tests (#L320-L353)                | def _write_minimal_png (#L356-L371)
-    - def bench_profile_oracle_claims (#L374-L798)   | def bench_profile_memory_engine (#L801-L1100)
-    - def bench_profile_hygiene_adapters (#L1103-L1252) | def bench_profile_doc_cad_visual (#L1255-L1515)
-    - def _parse_jsonl_trajectory (#L1518-L1616)     | def bench_profile_subagent_ab (#L1619-L1745)
-    - def bench_profile_full_suite (#L1748-L1827)    | def build_universal_spine (#L1830-L1873)
-    - def apply_synthetic_regression (#L1876-L1913)  | def evaluate_comparisons (#L1916-L2013)
-    - def render_regression_autopsy_md (#L2016-L2104) | def _render_table_md (#L2107-L2125)
-    - def render_markdown_report (#L2128-L2163)      | def load_history_maps (#L2166-L2209)
-    - def update_ledger_and_history (#L2212-L2262)   | def main (#L2265-L2470)
+    - class MetricRow (#L89-L106)                    | def percentile (#L109-L121)
+    - def snapshot_host_hashes (#L124-L161)          | def run_cmd_timed (#L164-L187)
+    - def probe_bwrap_erofs (#L190-L225)             | def collect_always_on_and_adapter_stats (#L228-L320)
+    - def _parse_unittest_proc (#L323-L339)          | def run_unit_tests (#L342-L418)
+    - def _write_minimal_png (#L421-L436)            | def bench_profile_oracle_claims (#L439-L863)
+    - def bench_profile_memory_engine (#L866-L1165)  | def bench_profile_hygiene_adapters (#L1168-L1317)
+    - def bench_profile_doc_cad_visual (#L1320-L1580) | def _parse_jsonl_trajectory (#L1583-L1681)
+    - def bench_profile_subagent_ab (#L1684-L1810)   | def bench_profile_full_suite (#L1813-L1895)
+    - def build_universal_spine (#L1898-L1941)       | def apply_synthetic_regression (#L1944-L1981)
+    - def evaluate_comparisons (#L1984-L2081)        | def render_regression_autopsy_md (#L2084-L2172)
+    - def _render_table_md (#L2175-L2193)            | def render_markdown_report (#L2196-L2231)
+    - def load_history_maps (#L2234-L2277)           | def update_ledger_and_history (#L2280-L2330)
+    - def main (#L2333-L2578)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import dataclasses
 import datetime as dt
 import hashlib
@@ -67,6 +69,7 @@ DEFAULT_HOMUNCULUS_DIR = ENGINEERING_ROOT.parent / "Alchemical3D" / "Homunculus"
 DEFAULT_MEMORY_ROOT = ENGINEERING_ROOT / "memory"
 DEFAULT_VERSION_MANIFEST = SCRIPT_DIR / "homunculus_version.json"
 DEFAULT_HISTORY_JSONL = SCRIPT_DIR / "benchmark_history.jsonl"
+DEFAULT_PULSE_HISTORY_JSONL = SCRIPT_DIR / "telemetry_pulse_history.jsonl"
 DEFAULT_LEDGER_MD = DEFAULT_MEMORY_ROOT / "Projects" / "Homunculus" / "Homunculus_Version_and_Benchmark_Ledger.md"
 
 sys.path.insert(0, str(SCRIPT_DIR))
@@ -317,29 +320,12 @@ def collect_always_on_and_adapter_stats(
     }
 
 
-def run_unit_tests(
-    homunculus_dir: Path,
-    pattern_or_modules: list[str],
-    latency_bucket: list[float],
-    spawn_counter: list[int],
-) -> tuple[int, int, float]:
-    """Run targeted or full `unittest` suites and return `(passed_count, total_count, elapsed_ms)`."""
-    if pattern_or_modules == ["ALL"]:
-        cmd = [sys.executable, "-m", "unittest", "discover", "-s", str(homunculus_dir / "tests"), "-p", "test_*.py"]
-    else:
-        cmd = [sys.executable, "-m", "unittest", *pattern_or_modules]
-    proc, elapsed_ms = run_cmd_timed(
-        cmd,
-        cwd=homunculus_dir,
-        latency_bucket=latency_bucket,
-        spawn_counter=spawn_counter,
-        timeout=180,
-    )
+def _parse_unittest_proc(proc: subprocess.CompletedProcess[str]) -> tuple[int, int]:
     combined = proc.stdout + "\n" + proc.stderr
     m_ran = re.search(r"Ran\s+(\d+)\s+tests?", combined)
     total = int(m_ran.group(1)) if m_ran else 0
     if proc.returncode == 0 and total > 0:
-        return (total, total, elapsed_ms)
+        return (total, total)
     m_fail = re.search(r"FAILED\s*\(([^)]+)\)", combined)
     failed = 0
     if m_fail:
@@ -350,7 +336,86 @@ def run_unit_tests(
     passed = max(0, total - failed) if proc.returncode != 0 else total
     if proc.returncode != 0 and passed == total:
         passed = max(0, total - 1)
-    return (passed, max(total, 1), elapsed_ms)
+    return (passed, max(total, 1))
+
+
+def run_unit_tests(
+    homunculus_dir: Path,
+    pattern_or_modules: list[str],
+    latency_bucket: list[float],
+    spawn_counter: list[int],
+    forensic_notes: list[str] | None = None,
+) -> tuple[int, int, float]:
+    """Run targeted or zero-shared-state parallel `unittest` suites and return `(passed_count, total_count, elapsed_ms)`."""
+    test_dir = homunculus_dir / "tests"
+    if pattern_or_modules == ["ALL"]:
+        test_files = sorted(test_dir.glob("test_*.py"))
+        if test_files:
+            t0 = time.perf_counter()
+            max_workers = min(8, len(test_files), os.cpu_count() or 4)
+            with tempfile.TemporaryDirectory(prefix="hom_ut_par_") as par_tmp:
+                def _run_one(idx_tf: tuple[int, Path]) -> tuple[int, int, str]:
+                    idx, tf = idx_tf
+                    worker_tmp = Path(par_tmp) / f"w_{idx}"
+                    worker_home = worker_tmp / "home"
+                    worker_tmp.mkdir(parents=True, exist_ok=True)
+                    (worker_home / ".cache").mkdir(parents=True, exist_ok=True)
+                    (worker_home / ".config").mkdir(parents=True, exist_ok=True)
+                    env = os.environ.copy()
+                    env["TMPDIR"] = str(worker_tmp)
+                    env["TEMP"] = str(worker_tmp)
+                    env["TMP"] = str(worker_tmp)
+                    env["HOME"] = str(worker_home)
+                    env["USERPROFILE"] = str(worker_home)
+                    env["XDG_CACHE_HOME"] = str(worker_home / ".cache")
+                    env["XDG_CONFIG_HOME"] = str(worker_home / ".config")
+                    env["HOMUNCULUS_SANDBOX_CACHE"] = str(worker_home / ".cache" / "homunculus_sandbox")
+                    env["HOMUNCULUS_SUDO_CONFIG_DIR"] = str(worker_home / ".config" / "homunculus")
+                    env["PYTHONDONTWRITEBYTECODE"] = "1"
+                    proc = subprocess.run(
+                        [sys.executable, "-B", "-m", "unittest", "discover", "-s", str(test_dir), "-p", tf.name],
+                        cwd=str(homunculus_dir),
+                        env=env,
+                        capture_output=True,
+                        text=True,
+                        timeout=180,
+                    )
+                    passed, total = _parse_unittest_proc(proc)
+                    note = ""
+                    if proc.returncode != 0 or passed < total:
+                        tail_lines = [
+                            ln.strip()
+                            for ln in (proc.stdout + "\n" + proc.stderr).splitlines()
+                            if ln.strip()
+                        ][-4:]
+                        note = f"Unit worker failure ({tf.name}, rc={proc.returncode}, {passed}/{total}): {' | '.join(tail_lines)}"
+                    return passed, total, note
+
+                with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
+                    results = list(pool.map(_run_one, enumerate(test_files)))
+
+            elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            spawn_counter[0] += len(test_files)
+            latency_bucket.append(elapsed_ms)
+            total_passed = sum(p for p, _, _ in results)
+            total_count = sum(t for _, t, _ in results)
+            if forensic_notes is not None:
+                for _, _, note in results:
+                    if note:
+                        forensic_notes.append(note)
+            return (total_passed, max(total_count, 1), elapsed_ms)
+        cmd = [sys.executable, "-m", "unittest", "discover", "-s", str(test_dir), "-p", "test_*.py"]
+    else:
+        cmd = [sys.executable, "-m", "unittest", *pattern_or_modules]
+    proc, elapsed_ms = run_cmd_timed(
+        cmd,
+        cwd=homunculus_dir,
+        latency_bucket=latency_bucket,
+        spawn_counter=spawn_counter,
+        timeout=180,
+    )
+    passed, total = _parse_unittest_proc(proc)
+    return (passed, total, elapsed_ms)
 
 
 def _write_minimal_png(path: Path, width: int, height: int, rgba: tuple[int, int, int, int]) -> None:
@@ -1758,8 +1823,11 @@ def bench_profile_full_suite(
     p3 = bench_profile_hygiene_adapters(homunculus_dir, base_stats, latency_bucket, spawn_counter, skip_unit_tests=True)
     p4 = bench_profile_doc_cad_visual(homunculus_dir, latency_bucket, spawn_counter, skip_unit_tests=True)
 
-    # Single unified `unittest discover` pass across all 7 test modules (`52` tests — zero duplicate test runs)
-    ut_pass, ut_total, ut_ms = run_unit_tests(homunculus_dir, ["ALL"], latency_bucket, spawn_counter)
+    # Single unified `unittest discover` pass across all test modules (zero duplicate test runs)
+    ut_notes: list[str] = []
+    ut_pass, ut_total, ut_ms = run_unit_tests(
+        homunculus_dir, ["ALL"], latency_bucket, spawn_counter, forensic_notes=ut_notes
+    )
 
     controls_passed = p1["controls_passed"] + p2["controls_passed"] + p3["controls_passed"] + p4["controls_passed"]
     controls_total = p1["controls_total"] + p2["controls_total"] + p3["controls_total"] + p4["controls_total"]
@@ -1823,7 +1891,7 @@ def bench_profile_full_suite(
             "hygiene-adapters": [r.to_dict() for r in p3["rows"]],
             "doc-cad-visual": [r.to_dict() for r in p4["rows"]],
         },
-        "forensic_notes": p1["forensic_notes"] + p2["forensic_notes"] + p3["forensic_notes"] + p4["forensic_notes"],
+        "forensic_notes": p1["forensic_notes"] + p2["forensic_notes"] + p3["forensic_notes"] + p4["forensic_notes"] + ut_notes,
     }
 
 
@@ -2267,6 +2335,8 @@ def main(argv: list[str] | None = None) -> int:
         description="Homunculus Standardized Benchmark, Comparison & Regression Governance Engine."
     )
     parser.add_argument("--profile", choices=PROFILES, default="full-system-suite", help="Standardized benchmark profile to execute.")
+    parser.add_argument("--quick-pulse", action="store_true", help="Run stateless Option A telemetry pulse via `audit_skill_hygiene.py --telemetry-pulse`.")
+    parser.add_argument("--record-pulse", action="store_true", help="With --quick-pulse, append an `authoritative: false` snapshot to `scripts/telemetry_pulse_history.jsonl`.")
     parser.add_argument("--homunculus-dir", default=str(DEFAULT_HOMUNCULUS_DIR), help="Path to single-source Homunculus repository.")
     parser.add_argument("--memory-root", default=str(DEFAULT_MEMORY_ROOT), help="Path to Dual-Mode memory vault.")
     parser.add_argument("--version-manifest", default=str(DEFAULT_VERSION_MANIFEST), help="Path to homunculus_version.json.")
@@ -2305,6 +2375,44 @@ def main(argv: list[str] | None = None) -> int:
     if not hom_dir.is_dir():
         print(f"[BLOCKED] Homunculus directory not found: {hom_dir}", file=sys.stderr)
         return 1
+
+    if args.quick_pulse:
+        hygiene_py = hom_dir / "skills" / "skill-architect" / "scripts" / "audit_skill_hygiene.py"
+        if not hygiene_py.is_file():
+            print(f"[BLOCKED] audit_skill_hygiene.py not found under {hom_dir}", file=sys.stderr)
+            return 1
+        cmd_p = [sys.executable, str(hygiene_py), "--root", str(hom_dir), "--telemetry-pulse", "--json"]
+        if mem_root.is_dir():
+            cmd_p.extend(["--memory-root", str(mem_root)])
+        proc_p = subprocess.run(cmd_p, cwd=str(hom_dir), capture_output=True, text=True)
+        if not proc_p.stdout.strip().startswith("{"):
+            print(proc_p.stdout, file=sys.stdout)
+            print(proc_p.stderr, file=sys.stderr)
+            return proc_p.returncode or 1
+        pulse_obj = json.loads(proc_p.stdout)
+        pulse_rec = {
+            "timestamp": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+            "authoritative": False,
+            "label": args.label.strip(),
+            **pulse_obj,
+        }
+        if args.record_pulse:
+            DEFAULT_PULSE_HISTORY_JSONL.parent.mkdir(parents=True, exist_ok=True)
+            with DEFAULT_PULSE_HISTORY_JSONL.open("a", encoding="utf-8") as pfh:
+                pfh.write(json.dumps(pulse_rec, sort_keys=False) + "\n")
+        if args.json:
+            print(json.dumps(pulse_rec, indent=2))
+        else:
+            txt_p = subprocess.run(
+                [a for a in cmd_p if a != "--json"],
+                cwd=str(hom_dir),
+                capture_output=True,
+                text=True,
+            )
+            print(txt_p.stdout.rstrip())
+            if args.record_pulse:
+                print(f"[LOGBOOK] Recorded non-authoritative pulse snapshot -> {DEFAULT_PULSE_HISTORY_JSONL}")
+        return proc_p.returncode
 
     # Ensure directory freshness stamp is current BEFORE snapshotting live host hashes so read/audit steps mutate 0 files
     hp_script = hom_dir / "scripts" / "homunculus_paths.py"

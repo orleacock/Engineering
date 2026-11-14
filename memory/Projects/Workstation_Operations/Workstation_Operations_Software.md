@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "9fef654cc63a"
+inventory_sha256: "e4292a82ba7e"
 last_synced: "2026-11-13"
 ---
 
@@ -19,9 +19,9 @@ last_synced: "2026-11-13"
 <!-- AUTO-SOFTWARE-MODULES:START -->
 | Script / Module Path | Language / Runtime | CLI Flags / Public Symbols | Line Count | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- | :--- |
-| `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--homunculus-dir`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--approve-advisory-reason`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L86-L103`), `percentile()` (`#L106-L118`), `snapshot_host_hashes()` (`#L121-L158`), `run_cmd_timed()` (`#L161-L184`), `probe_bwrap_erofs()` (`#L187-L222`), `build_universal_spine()` (`#L1830-L1873`), `render_regression_autopsy_md()` (`#L2016-L2104`), `render_markdown_report()` (`#L2128-L2163`), `main()` (`#L2265-L2470`) | `2474` | `b1dc6f5003` |
+| `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--quick-pulse`, `--record-pulse`, `--homunculus-dir`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--approve-advisory-reason`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L89-L106`), `percentile()` (`#L109-L121`), `snapshot_host_hashes()` (`#L124-L161`), `run_cmd_timed()` (`#L164-L187`), `probe_bwrap_erofs()` (`#L190-L225`), `build_universal_spine()` (`#L1898-L1941`), `render_regression_autopsy_md()` (`#L2084-L2172`), `render_markdown_report()` (`#L2196-L2231`), `main()` (`#L2333-L2578`) | `2582` | `fd0ab8ca5f` |
 | `bootstrap_workstation.sh` | `POSIX Bash` | Executable Script / Source | `203` | `839c761a20` |
-| `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `234` | `44f23582a3` |
+| `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `249` | `705f908897` |
 | `h_sudo.sh` | `POSIX Bash` | Executable Script / Source | `170` | `fdf2102124` |
 | `pre_push_engineering_guard.sh` | `POSIX Bash` | Executable Script / Source | `77` | `ac977c95b2` |
 | `snapshot_homunculus_version.py` | `Python 3.10+` | Flags: `--slug`, `--label`, `--raid-root`, `--homunculus-dir`, `--engineering-dir`, `--version-manifest`, `--allow-dirty`, `--skip-benchmark`, `--force-fresh-benchmark`, `--list`, `--verify`, `--dry-run`, `--json` — Symbols: `sanitize_slug()` (`#L74-L77`), `find_latest_same_dev_raid_snapshot()` (`#L89-L114`), `find_verified_benchmark_receipt()` (`#L117-L151`), `copy_tree_cow()` (`#L176-L358`), `collect_symlink_manifest()` (`#L376-L394`), `build_restore_script()` (`#L477-L684`), `build_reconstruction_index()` (`#L687-L747`), `verify_existing_snapshot()` (`#L790-L802`), `main()` (`#L805-L1107`) | `1111` | `fc6af3c4a4` |
@@ -36,7 +36,7 @@ last_synced: "2026-11-13"
 <!-- AUTO-SOFTWARE-SCHEMAS:START -->
 | Schema / Config File | Format | Top-Level Keys / Contract Version | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- |
-| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `f3fb225e8d` |
+| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `3cdbffdd59` |
 | `umbrella_configs/Home.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `71ee5f6b66` |
 | `umbrella_configs/Projects.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `f2098fe12a` |
 <!-- AUTO-SOFTWARE-SCHEMAS:END -->

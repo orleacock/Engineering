@@ -23,6 +23,11 @@
       "drilldown_count": 0,
       "drilldown_dates": [],
       "regression_near_misses": 2
+    },
+    "LL-050": {
+      "drilldown_count": 0,
+      "drilldown_dates": [],
+      "regression_near_misses": 2
     }
   },
   "Pneuma_Remote_Air": {

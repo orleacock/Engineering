@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.3.2",
+  "engine_version": "0.3.3",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.3.2",
-  "baseline_head_sha": "2dc4fb129fb7",
-  "baseline_tree_hash": "efca171d0034",
+  "baseline_tag": "v0.3.3",
+  "baseline_head_sha": "43ebac1c849e",
+  "baseline_tree_hash": "ce9d11b21eb3",
   "baseline_file_count": 107,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
@@ -84,6 +84,15 @@
       "tree_hash": "efca171d0034",
       "trigger_type": "patch",
       "reason": "Homunculus v0.3.2: D-1A scope isolation, D-2A promotion firewall, duty-char budgets, tty_turnkey memory parity, streaming ZIP/bwrap security & W-3 software test telemetry"
+    },
+    {
+      "version": "0.3.3",
+      "tag": "v0.3.3",
+      "date": "2026-11-13",
+      "head_sha": "43ebac1c849e",
+      "tree_hash": "ce9d11b21eb3",
+      "trigger_type": "patch",
+      "reason": "Wave 2 v0.3.3: single-process hooks, safe rg UTF-8 pre-filter, stateless Option A telemetry-pulse, parallel TMPDIR unittest, and Gate 1.5 teach-me/verify_claims fixes"
     }
   ]
 }

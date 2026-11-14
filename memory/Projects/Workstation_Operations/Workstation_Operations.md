@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "49f5ae26b415"
+tree_hash: "0167224a4e41"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "49f5ae26b415"
+checkpoint_tree_hash: "0167224a4e41"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-13"
-checkpoint_lessons_digest: "29c3f27d0a0203d3"
+checkpoint_lessons_digest: "9bd1efb5c365d2f8"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -54,13 +54,12 @@ checkpoint_lessons_digest: "29c3f27d0a0203d3"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-13`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: BMK-20261113_201953-1d6f3896 / inventory_sha256:9fef654cc63a`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 0167224a4e41` | `Worktree: untracked` | `Last Verification: BMK-20261113_230808-9c7213da + SBX-20261113_230606-cb97d55e`
 - **Where We Stopped (Verified State & Context)**:
-  Updated scripts/homunculus_version.json to v0.3.2 (LOCKED_RELEASE_TAG), synced Workstation_Operations_Software.md (9fef654cc63a), and recorded pinned baseline BMK-20261113_201953-1d6f3896 in scripts/benchmark_history.jsonl.
+  Graduated Homunculus v0.3.3 baseline (BMK-20261113_230808-9c7213da), hardened hermetic parallel unittest HOME isolation (LL-WS-10 / SBX-20261113_230606-cb97d55e), and initialized telemetry_pulse_history.jsonl
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Support Wave 2 CoW pre-staging and single-command h_sudo.sh turnkey workflow
-  2. Evaluate workstation vs cleanroom placement for telemetry pulse
+  1. Execute Homunculus Wave 3 (C1 OpenSSH signing) when scheduled
 <!-- SESSION-HANDOFF:END -->
 
 ---

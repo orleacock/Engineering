@@ -19,7 +19,7 @@ last_synced: "2026-11-13"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-13`) | `2` | `0` | Next: Support Wave 2 CoW pre-staging and single-command h_sudo.sh turnkey workflow · Evaluate workstation vs cleanroom placement for... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-13`) | `2` | `0` | Next: Execute Homunculus Wave 3 (C1 OpenSSH signing) when scheduled |
 <!-- AUTO-ROLLUP:END -->
 
 ---
