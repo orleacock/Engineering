@@ -3,7 +3,7 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 project_type: "software"
-status: "v0.3.1 Tagged / v0.3.2 Wave 1 Sealed & Committed (2dc4fb129fb7; Pre-CMOS Checkpoint)"
+status: "v0.3.2 Tagged & Baseline Pinned (2dc4fb129fb7 / BMK-20261113_201953-1d6f3896; Wave 2 Queued)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
 repo_head_sha: "2dc4fb129fb7"
 tree_hash: "2ca5ab86e3ec"
@@ -60,7 +60,7 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; `v0.3.2` Wave 1 (`2dc4fb129fb7`) Ring-0 Security, `D-1A` Scope Isolation, `D-2A` Promotion Firewall, Duty-Char Budgets & `MEMORY_SDK_V1` Gateway architecture across **`107` clean-room tracked files**; verified across `8` `unittest` suites (`72` tests) in [`Homunculus_Software.md`](Homunculus_Software.md) with `0` portability, boundary, or hygiene defects)
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; `v0.3.2` tagged & baseline-pinned at `2dc4fb129fb7` (`BMK-20261113_201953-1d6f3896`) with Ring-0 Security, `D-1A` Scope Isolation, `D-2A` Promotion Firewall, Duty-Char Budgets & `MEMORY_SDK_V1` Gateway architecture across **`107` clean-room tracked files**; verified across `8` `unittest` suites (`72` tests) in [`Homunculus_Software.md`](Homunculus_Software.md) with `0` portability, boundary, or hygiene defects)
 - **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
 - **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
 - **Clean-Room Module Directories (`107` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills across `Ring 0` kernel skills + `Ring 1` consumer skills, plus `skills/skill-architect/references/ring0_sudo_protocol.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`)
@@ -269,15 +269,15 @@ Repository: Homunculus | HEAD SHA: 2dc4fb129fb7 | Tree Hash: 2ca5ab86e3ec
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-13`
-- **Checkpoint Provenance**: `HEAD SHA: 2dc4fb129fb7` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: SBX-20261113_193607-e48c8727 / unittest 72/72 OK / Sealed:39`
+- **Checkpoint Provenance**: `HEAD SHA: 2dc4fb129fb7` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: BMK-20261113_201953-1d6f3896 / VRF-0f8ded23c6c4 / Sealed:39`
 - **Where We Stopped (Verified State & Context)**:
-  v0.3.2 Wave 1 sealed & committed (2dc4fb129fb7); paused cleanly for workstation CMOS reboot (Option 1)
-- **Active Project State Ledger & Blockers**: Post-CMOS: run version_manager.py --bump patch (v0.3.2) and Course D benchmark_homunculus.py --record-baseline
+  Graduated Homunculus v0.3.2 post-CMOS (annotated tag v0.3.2 at 2dc4fb129fb7 / efca171d0034), pinned Course D official baseline BMK-20261113_201953-1d6f3896 (0 hard blocks, 1 S12 advisory), and executed Gate 1.5 live pro teach-me canary (30aa49ae, VRF-0f8ded23c6c4) queuing 4 Ring-0/harness findings (TM-LIVE-01..03, VC-LIVE-01) into Wave 2.
+- **Active Project State Ledger & Blockers**: Gate 1.5 clean re-attestation queued behind Wave 2 Ring-0 fixes (TM-LIVE-01..03, VC-LIVE-01)
 - **Next Session Kickstart & Discussion Points**:
-  1. Verify post-CMOS clock & bwrap health
-  2. Run version_manager.py --bump patch for v0.3.2
-  3. Pin v0.3.2 baseline via Course D benchmark_homunculus.py --record-baseline
-  4. Run Gate 1.5 Task #66 /teach-me canary & Wave 2
+  1. Align on Task #67 telemetry pulse architecture
+  2. Pre-stage Wave 2 in CoW sandbox (A2, B1, setUpClass snapshot caching, TM-LIVE-01..03, VC-LIVE-01, Task #67)
+  3. Apply Wave 2 under h_sudo.sh and re-run clean Task #66 attestation
+- **Open Discussion / Alignment Questions**: Select Option A, B, or C for Task #67 skill-architect telemetry pulse before Wave 2 CoW pre-staging
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

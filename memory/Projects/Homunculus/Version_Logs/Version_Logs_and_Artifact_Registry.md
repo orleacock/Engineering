@@ -24,7 +24,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 | :--- | :--- | :--- | :--- |
 | **`v0.1.0` – `v0.3.0`** | [`v0.1.0_to_v0.3.0_Foundation_and_Gateway_Worklog.md`](v0.1.0_to_v0.3.0_Foundation_and_Gateway_Worklog.md) | `LOCKED_HISTORICAL` | Phases `1`–`4E`, `teach-me` v1 creation, 2-Tier rule diet, Stateful Memory `v1.1` Sprints `1`–`5`, `P1`–`P6`, Vector 3, `v0.3.0` 3-Ring `sudo:` + `MEMORY_SDK_V1`, plus `9` rejected/failed approaches. |
 | **`v0.3.1`** | [`v0.3.1_Teach_Me_and_Turnkey_Worklog.md`](v0.3.1_Teach_Me_and_Turnkey_Worklog.md) | `LOCKED_HISTORICAL` | Standalone `teach-me` `SDK-MIG-01`/`TM-COND-01`–`11`, Section One (`541e2f8`) & Section Two `Ring 0` (`51453f6` / tag `v0.3.1`), `9` solved engineering edge cases, plus `9` rejected/failed approaches. |
-| **`v0.3.2` (Active)** | [`v0.3.2_Unified_Audit_and_Graduation_Worklog.md`](v0.3.2_Unified_Audit_and_Graduation_Worklog.md) | `STAGE3_WAVE1_SEALED_PRE_CMOS_REBOOT` | Unified Claude Sonnet + Gemini Carbon audit scope (`D-1A`, `D-2A`, `D-3A + M-1 + M-3a`, `S-A` Waves `1`–`3`, `W-1`–`W-5`, `6` Graduation Cleanups), `9` rejected/dropped proposals, and staged execution status. |
+| **`v0.3.2` (Graduated / Wave 2 Active)** | [`v0.3.2_Unified_Audit_and_Graduation_Worklog.md`](v0.3.2_Unified_Audit_and_Graduation_Worklog.md) | `V0_3_2_GRADUATED_BASELINE_PINNED_WAVE2_QUEUED` | Unified Claude Sonnet + Gemini Carbon audit scope (`D-1A`, `D-2A`, `D-3A + M-1 + M-3a`, `S-A` Waves `1`–`3`, `W-1`–`W-5`, `6` Graduation Cleanups), `BMK-20261113_201953-1d6f3896` baseline pin, Gate 1.5 live canary findings (`TM-LIVE-01..03`, `VC-LIVE-01`), and `9` rejected proposals. |
 
 ---
 

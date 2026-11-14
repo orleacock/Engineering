@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.3.1",
+  "engine_version": "0.3.2",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.3.1",
-  "baseline_head_sha": "51453f63a444",
-  "baseline_tree_hash": "9567a5fa5732",
+  "baseline_tag": "v0.3.2",
+  "baseline_head_sha": "2dc4fb129fb7",
+  "baseline_tree_hash": "efca171d0034",
   "baseline_file_count": 107,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
@@ -75,6 +75,15 @@
       "tree_hash": "9567a5fa5732",
       "trigger_type": "patch",
       "reason": "Homunculus v0.3.1: Teach-me Vision Protocols 1-6/D1-D8, 7-axis CALC vectors, burn-on-use remote turnkeys, and builtin Ring-1 protection"
+    },
+    {
+      "version": "0.3.2",
+      "tag": "v0.3.2",
+      "date": "2026-11-13",
+      "head_sha": "2dc4fb129fb7",
+      "tree_hash": "efca171d0034",
+      "trigger_type": "patch",
+      "reason": "Homunculus v0.3.2: D-1A scope isolation, D-2A promotion firewall, duty-char budgets, tty_turnkey memory parity, streaming ZIP/bwrap security & W-3 software test telemetry"
     }
   ]
 }

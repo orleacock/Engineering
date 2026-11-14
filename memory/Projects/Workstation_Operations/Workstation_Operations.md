@@ -54,13 +54,13 @@ checkpoint_lessons_digest: "29c3f27d0a0203d3"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-13`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: version_manager.py:v0.3.1-LOCKED_RELEASE_TAG`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: BMK-20261113_201953-1d6f3896 / inventory_sha256:9fef654cc63a`
 - **Where We Stopped (Verified State & Context)**:
-  Upgraded h_sudo.sh with --with-memory, unlock-all, and seal-all single-command Ring-0 + Memory Governance sequencing (W-4), documented h_sudo.sh in Workstation_Operations.md, and tagged/synced Homunculus v0.3.1 (51453f63a444 / 9567a5fa5732) in homunculus_version.json via version_manager.py.
+  Updated scripts/homunculus_version.json to v0.3.2 (LOCKED_RELEASE_TAG), synced Workstation_Operations_Software.md (9fef654cc63a), and recorded pinned baseline BMK-20261113_201953-1d6f3896 in scripts/benchmark_history.jsonl.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run W-2 CoW Wave-1 Pre-Staging for Homunculus v0.3.2
-  2. Execute single-command h_sudo.sh unlock --with-memory and h_sudo.sh seal --with-memory at /dev/tty during v0.3.2 graduation
+  1. Support Wave 2 CoW pre-staging and single-command h_sudo.sh turnkey workflow
+  2. Evaluate workstation vs cleanroom placement for telemetry pulse
 <!-- SESSION-HANDOFF:END -->
 
 ---

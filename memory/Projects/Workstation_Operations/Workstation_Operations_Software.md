@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "5997d2dfdc68"
+inventory_sha256: "9fef654cc63a"
 last_synced: "2026-11-13"
 ---
 
@@ -36,7 +36,7 @@ last_synced: "2026-11-13"
 <!-- AUTO-SOFTWARE-SCHEMAS:START -->
 | Schema / Config File | Format | Top-Level Keys / Contract Version | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- |
-| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `2be680f0f8` |
+| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `f3fb225e8d` |
 | `umbrella_configs/Home.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `71ee5f6b66` |
 | `umbrella_configs/Projects.homunculus.json` | `JSON` | `schema_version`, `homunculus_rel_path`, `memory_mode`, `memory_dir`, `study_briefs_dir`, `visual_studio` | `f2098fe12a` |
 <!-- AUTO-SOFTWARE-SCHEMAS:END -->
@@ -45,6 +45,8 @@ last_synced: "2026-11-13"
 
 ## 3. Deterministic Test & Verification Receipts
 
-| Test Suite / Gate | Command | Last Verified Result | Receipt / Anchor |
-| :--- | :--- | :--- | :--- |
-| Workstation Bootstrap, Version & Snapshot Gate | `bash scripts/bootstrap_workstation.sh --check && python3 scripts/version_manager.py --status` | `PASS (0 errors, Single-Source Alchemical3D/Homunculus v0.2.0 verified)` | `SBX-20261110_162502-531b3a2c` |
+<!-- AUTO-SOFTWARE-TESTS:START -->
+| Test File | Test Classes | AST test_* Count | SHA-256 Prefix |
+| :--- | :--- | :---: | :---: |
+| *(No `test_*.py` suites indexed yet)* | — | `0` | — |
+<!-- AUTO-SOFTWARE-TESTS:END -->

@@ -19,7 +19,7 @@ last_synced: "2026-11-13"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-13`) | `2` | `0` | Next: Run W-2 CoW Wave-1 Pre-Staging for Homunculus v0.3.2 · Execute single-command h_sudo.sh unlock --with-memory and h_sudo.sh seal... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-13`) | `2` | `0` | Next: Support Wave 2 CoW pre-staging and single-command h_sudo.sh turnkey workflow · Evaluate workstation vs cleanroom placement for... |
 <!-- AUTO-ROLLUP:END -->
 
 ---

@@ -286,7 +286,7 @@
     "Projects/Workstation_Operations/Workstation_Operations.md": {
       "lines": 103,
       "sections": 0,
-      "sha256": "6cd5dfb78d92197b"
+      "sha256": "15d9498b9e411347"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
       "lines": 106,
@@ -299,12 +299,12 @@
       "sha256": "17beedb38dc0c663"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
-      "lines": 50,
+      "lines": 52,
       "sections": 0,
-      "sha256": "bad68398b27de354"
+      "sha256": "f55d1c0492f5b7cb"
     }
   },
   "total_docs": 10,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "1d3bc0708c0f934c"
+  "vectors_digest": "c5248af372e5471e"
 }
