@@ -4,7 +4,7 @@ parent_note: "Pneuma_Remote_Air"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-10"
+last_synced: "2026-11-13"
 ---
 
 # 🧠 Pneuma Remote Air — Engineering Lessons Learned & Post-Mortem Ledger (`Pneuma_Remote_Air_Lessons_Learned`)
@@ -27,8 +27,6 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 | **Enclosure & Snap-Fit Covers (`Main_Body.stl`, `Rear_Cover.stl`, `Pump_Top_Cover.stl`, `Filter_Top_Cover.stl`)** | `Rear_Cover.stl` attaches via `5` `M3x5x4` brass heat-set inserts + `5` `M3x8 SHCS` (`BOM.md:6-10`, `Assembly_Guide.md:30,78`). `Pump_Top_Cover.stl` and `Filter_Top_Cover.stl` are toolless snap-fit / press-fit covers (`Assembly_Guide.md:61,66`). | Misinterpreting `16 × R1.50mm` open partial-arc snap-fit relief grooves on `Pump_Top_Cover.stl` / `Filter_Top_Cover.stl` as closed `Ø3.00mm` (`360°`) M3 fastener holes (`16x M3 screws` hallucination). | [`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md), [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) (`LL-PNE-05`, `LL-PNE-06`) |
 | **COTS Packaging & Port Geometry (`CAD/Pneuma_Remote_Air.step`, `STL/*.stl`)** | `Main_Body.stl` has `8` total `Ø4.70mm` heat-set pockets (`5` rear cover + `2` table mount + `1` auxiliary boss) and `5 × Ø12.00mm` grommet pass-through ports (`4` top + `1` bottom). `Vacuum_Pump.stl` is a `2`-body COTS reference model (`90.10 × 124.22 × 65.50 mm`). | Treating `Vacuum_Pump.stl` (`334.62 cm³`) as a printable part (`Assembly_Guide.md:20`); assuming `Tube_Fitting.stl` exists in `STL/` (`Assembly_Guide.md:54`); or assuming `6` `Ø12.00mm` ports exist in `Main_Body.stl` just because `BOM.md` lists `6` `TPU_Grommet.stl`. | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) (`LL-PNE-06`, `LL-PNE-07`, `LL-PNE-08`) |
 | **Polymer Separation (`Print_Settings.md`)** | Structural enclosure parts (`Main_Body`, `Rear_Cover`, `Pump_Top_Cover`, `Filter_Top_Cover`, `Table_Mount`) use `ABS`/`ASA` (`4` walls, `5` top/bottom layers, `40%` `Grid`/`Gyroid` infill, `0.2mm` layers). | Borrowing `40%` structural `ABS`/`ASA` infill/walls onto the `3` `TPU` elastomer vibration-isolation parts (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) or inventing Shore hardness (`95A`/`85A`). | [`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md) (`LL-PNE-03`) |
-| **Pneuma_Control.cfg, README.md** | Part-cooling diaphragm pumps use shutdown_speed: 0 in Pneuma_Control.cfg while hotend heatsink fans ([heater_fan]) remain shutdown_speed: 1 to prevent heat creep | shutdown_speed: 1 on pump_cool and pump_warm in Firmware/Pneuma_Control.cfg | `Firmware/Pneuma_Control.cfg` ([`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md)), `README.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md)) (`LL-PNE-04`) |
-| **Print_Settings.md, BOM.md, Assembly_Guide.md** | Separate structural ABS/ASA/PETG slicer parameters from TPU vibration-isolation elastomer parts and Dual-Pump BOM/Assembly tables | Single-table structural slicer settings without TPU separation or legacy 1/8-NPT solenoid primary BOM rows | `Print_Settings.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md)), `BOM.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md)), `Assembly_Guide.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md)) (`LL-PNE-03`) |
 <!-- SUBSYSTEM-INVARIANTS:END -->
 
 ---
@@ -46,10 +44,10 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 - **Root Cause:** Borrowing `40%` structural infill onto TPU makes vibration isolators rigid and transmits pump resonance directly into the frame/table.
 - **Verified Resolution & Canonical Owner:** Graduated into [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md) (`Ban Cross-Entity Borrowing`); TPU parameters remain quarantined as an explicit `[TBD]` in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) until measured.
 
-### `LL-PNE-04` [TIER2] — Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard & `#kick_start_time: 0.5` Stall Hazard
-- **Symptom / Failed Approach (`Historical / Rejected`):** In `Firmware/Pneuma_Control.cfg:6,17`, both `[fan_generic pump_cool]` and `[fan_generic pump_warm]` define `shutdown_speed: 1` (100% duty cycle on MCU fault/emergency stop) and comment out `#kick_start_time: 0.5` (`Firmware/Pneuma_Control.cfg:8,19`).
-- **Root Cause:** `shutdown_speed: 1` forces both diaphragm air pumps to run at 100% power during a Klipper MCU shutdown or thermal runaway fault (potentially feeding air to a faulted hotend/chamber), while commenting out `kick_start_time: 0.5` risks diaphragm motor stall when starting at low PWM duty cycles (`M106 S<low>`).
-- **Verified Resolution & Canonical Owner:** Flagged as a mandatory firmware safety audit item in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md) (`shutdown_speed: 0.0` recommended for fail-safe de-energization unless intentional purge behavior is desired; uncomment `kick_start_time: 0.5` if low-PWM stall occurs).
+### `LL-PNE-04` [TIER2] — Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)
+- **Symptom / Failed Approach (`Historical / Rejected`):** Previously, `Firmware/Pneuma_Control.cfg` defined `shutdown_speed: 1` on both `[fan_generic pump_cool]` and `[fan_generic pump_warm]` while commenting out `#kick_start_time: 0.5`.
+- **Root Cause:** `shutdown_speed: 1` forced both diaphragm pumps to run at 100% duty cycle on Klipper MCU shutdown or thermal fault, while inactive `kick_start_time` risked low-PWM startup stalls.
+- **Verified Resolution & Canonical Owner:** Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md), [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md)).
 
 ### `LL-PNE-06` [TIER2] — `Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation
 - **Symptom / Failed Approach (`Historical / Rejected`):** Assuming `Main_Body.stl` contains only `5` or `7` `Ø4.70mm` (`R2.35mm`) heat-set insert pockets based solely on `BOM.md:6,12` (`5` Rear Cover + `2` Optional Table Mount = `7` inserts).

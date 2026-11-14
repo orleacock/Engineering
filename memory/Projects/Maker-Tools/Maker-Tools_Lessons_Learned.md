@@ -3,7 +3,7 @@ project: "Maker-Tools"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-08"
+last_synced: "2026-11-13"
 ---
 
 # Maker-Tools — Engineering Lessons Learned & Architectural Decisions
@@ -34,13 +34,6 @@ last_synced: "2026-11-08"
 - **Symptom / Trap:** Builders selecting `PLA` (`Tg ~55-60 °C`) or `PETG` (`Tg ~80 °C`) for CoreXY gantry/toolhead structural parts experienced creep and bolt-load relaxation.
 - **Root Cause:** Lack of a centralized first-principles polymer reference explaining glass transition (`Tg`) vs. sustained mechanical load inside heated chambers.
 - **Verified Resolution & Permanent Guardrail:** Authored `Filament_Guide.md` (`5` polymer tiers + composite modifiers) and cross-linked it across all Alchemical-3D `Print_Settings.md` files ([`Maker-Tools.md`](Maker-Tools.md)).
-
-### `LL-MT-02` [TIER2] — Separating Reusable Bench Tooling (`Tools_and_Hardware.md`) from Project COTS BOMs (`2026-11-05`)
-- **Symptom / Trap:** Individual hardware repository BOMs became cluttered with generic shop tools (soldering irons, hex drivers, reamers, threadlockers).
-- **Root Cause:** No separation between build-consumed COTS fasteners/electronics and reusable bench tooling.
-- **Verified Resolution & Permanent Guardrail:** Extracted all bench tooling and consumables into `Tools_and_Hardware.md` (`282` verified claims across `Maker-Tools`, `VRF-076c174de9c5`; [`Maker-Tools.md`](Maker-Tools.md)).
-
----
 
 ## 2. Architectural Decision Records (`ADR`)
 

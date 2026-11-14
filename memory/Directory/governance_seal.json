@@ -1,6 +1,6 @@
 {
-  "last_sealed": "2026-11-11",
-  "latest_audit_entry_sha256": "fc82c3387df76d40903e3ff467c34df6ba7c39f706510816b3a6fe4fe41d4dc6",
+  "last_sealed": "2026-11-13",
+  "latest_audit_entry_sha256": "f5ab33d306d3c8ffef398be885cd2465f7fb9914b6190f02224d65dfe122c1f7",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,36 +39,31 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "ba9d58c1d23b17a0aa58a97f24b24fdf23bcf94ead16c1c3f344b36ed98ea8ac",
+      "block_sha256": "3195a87797c90bac49b94da140505591a00d746900d66f7376bade2aa256f0b6",
       "row_hashes": [
         "0009a3acc57ac04a",
-        "0b7b7078a43aa6d5",
+        "079ed7195b018529",
         "0cda5b90d504e7a5",
         "103e61554e8847a1",
-        "220383e2175b2957",
-        "366d37fc11f6e724",
         "36ec1478a2527938",
-        "3fa6879ce02d230d",
-        "4a25b2e34b15393e",
+        "484a821041618243",
         "544877fecfa8bdad",
-        "5559d0716859d1ee",
+        "5c98f15c941c4a12",
         "5d2a4c93ec84ec18",
-        "6eb68ed8c16241a4",
         "7604325b4c9413a8",
+        "7c5e16d783653463",
         "83e72a45da3bc31c",
-        "875c4dde36ed05b6",
-        "8b5f1fbecbd55df1",
-        "97f1b0765b016359",
-        "a3c758b26b32da36",
-        "a4827a94bea1d423",
-        "b15bf18b386f24f7",
         "b7508766cd533a89",
+        "be6b9d15c8511594",
+        "c6bf1cbbd9eae8e8",
+        "c702cd49d8ca5eb9",
         "c80c356c9ecf90db",
-        "c89675f3d6b03d93",
         "ccd2e817237aff4b",
+        "d5c891a082a75a83",
         "d7948870db84ec4b",
         "daaadbe5adb2bee5",
-        "deefeed11218a58d"
+        "deefeed11218a58d",
+        "f9128e47d9cd5086"
       ]
     },
     "Maker-Tools": {
@@ -99,11 +94,9 @@
       ]
     },
     "Pneuma_Remote_Air": {
-      "block_sha256": "bef827672abca9104b67b9f38b1932a1629640f44e0fb7d801feaec7f5e0f144",
+      "block_sha256": "62d0271eca0961b9f39e5c195ea535eeeb7a1a9ae93ccc4cf289f6a5d2c5a840",
       "row_hashes": [
         "0b3b013e36fbc773",
-        "1efebd028e5f8fd8",
-        "290f626dd91feb6d",
         "a0310a4a8d599bab",
         "c118b457bef10a35",
         "e00a8e23e616262e"
@@ -121,15 +114,15 @@
     }
   },
   "protected_files": {
-    "AGENTS.md": "86197ff577bfd1b393117ed9a9797bb7d8400b4fc4e8ecf62ce69393f357982e",
-    "Profile/Decision_Profile.md": "c0b2360302b4854a7f0e473517fdb1664b9ce3af3031eb56ec66e55a6efa19ac",
+    "AGENTS.md": "58c07e435a5f55811043d0614fa90f7a922406a5b4abb65b64c7ba99d1e12125",
+    "Profile/Decision_Profile.md": "6a5a049a04418a162ce05c8046486733ce20d7ab189b44222a01be8b8dbadfaf",
     "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md": "572018467687b7d783fbd31383259d48d01e04a959db330bd22b6449899dae6f",
     "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "cd996a33e1add47b81a7300b7acec3febc2da01140a64e3fb99b8cd2e44971b8",
     "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "e3fe3db7b12b4cf780306a4064538217c72c97003823f759a0366e3d21bbcdc4",
     "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
     "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
-    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "4ce42364aa6a85e4c132a800c92f78f7e59d79f20ae26a39c907a6febd3575a9",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "fb518986d0cf6e2bb58df09f69b258a2aa3b0d5930ce03354f6eba0b51afb5da",
     "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
     "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
     "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "1ba553b41daf8ecbc556bea6ccd31b4f7e752e400addb2e83ce2de394d7215a3",
@@ -165,5 +158,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "deaac7f1d2c02434e046a6b9481d43eb103847f463fce7882802fb578732c25a"
+  "seal_root_sha256": "ceb38012091c8728fed1fbc7caf3a8ed7c0f8de58635dac1c40f925912083cec"
 }

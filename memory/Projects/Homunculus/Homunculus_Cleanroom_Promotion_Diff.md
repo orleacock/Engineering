@@ -4,13 +4,13 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
 note_type: "reference"
-last_synced: "2026-11-10"
+last_synced: "2026-11-13"
 ---
 
 # 🔬 Homunculus Single-Source Clean-Room Repository (`Alchemical3D/Homunculus`) Validation & Promotion Manifest
 
 > **Canonical Reference Role**: This document is the authoritative local validation and promotion ledger for the **Single-Source Clean-Room Repository** (`/home/orin/Projects/Alchemical3D/Homunculus`, remote `git@github-alchemical:Alchemical-3D/Homunculus.git`).
-> **Current Synchronization State (`2026-11-10`)**: **Consolidated Single-Source Clean-Room (`v0.1.0` at `31aa0cb0a918`, `102` tracked files, `0` duplicate copies on disk or in `orleacock/Engineering.git`)** following retirement of the duplicate `Engineering/Homunculus` folder and removal of `Homunculus/` from the parent `Engineering` Git index (`49 / 49` unit tests `OK` across `7` suites, `SBX-20261110_143655-1ecf0fa7` `Controls: 4/4, +faults: 2/2`).
+> **Current Synchronization State (`2026-11-13`)**: **Consolidated Single-Source Clean-Room (`v0.3.2 Wave 1` at `2dc4fb129fb7`, `v0.3.1` tagged at `51453f63a444`, Git tree `d48652e25d09`, `107` tracked files, `0` duplicate copies on disk or in `orleacock/Engineering.git`)** following retirement of the duplicate `Engineering/Homunculus` folder and removal of `Homunculus/` from the parent `Engineering` Git index (`72 / 72` unit tests `OK` across `8` suites, `SBX-20261113_193607-e48c8727` (`Controls: 4/4, +faults: 5/5`)).
 > **Usage Law**: Consult and update this document whenever staging or promoting a new feature, bugfix, reference guide, or script into `/home/orin/Projects/Alchemical3D/Homunculus`. *(For an optional, non-authoritative maintainer lookup of cross-skill couplings and naming hygiene, see [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md).)*
 
 ---

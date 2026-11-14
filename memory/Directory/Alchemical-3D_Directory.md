@@ -3,8 +3,8 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "33492afaddcd"
-last_synced: "2026-11-12"
+tree_hash: "9995a1b5b621"
+last_synced: "2026-11-13"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -42,6 +42,8 @@ last_synced: "2026-11-12"
 │   │   ├── A3DP_Gantry_Assembly_Hardware.md
 │   │   └── A3DP_Gantry_Assembly_Lessons_Learned.md
 │   ├── Alchemical_Web_Docs/
+│   │   ├── Archive/
+│   │   │   └── Alchemical_Web_Docs_Lessons_Archive.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Alchemical_Web_Docs.md
@@ -72,6 +74,11 @@ last_synced: "2026-11-12"
 │   │   │   ├── 2026-11-12_Claude_Sonnet_Memory_Retrieval_Weight_Balance_Audit_Rev3.md
 │   │   │   ├── 2026-11-12_Gemini_Carbon_Security_and_Performance_Audit.md
 │   │   │   └── Quarantine_README.md
+│   │   ├── Version_Logs/
+│   │   │   ├── v0.1.0_to_v0.3.0_Foundation_and_Gateway_Worklog.md
+│   │   │   ├── v0.3.1_Teach_Me_and_Turnkey_Worklog.md
+│   │   │   ├── v0.3.2_Unified_Audit_and_Graduation_Worklog.md
+│   │   │   └── Version_Logs_and_Artifact_Registry.md
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
 │   │   ├── Homunculus_Lessons_Learned.md
@@ -84,12 +91,16 @@ last_synced: "2026-11-12"
 │   │   ├── Homunculus_Teach_Me_Sandbox_Dossier.md
 │   │   └── Homunculus_Version_and_Benchmark_Ledger.md
 │   ├── Maker-Tools/
+│   │   ├── Archive/
+│   │   │   └── Maker-Tools_Lessons_Archive.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Maker-Tools.md
 │   │   ├── Maker-Tools_Lessons_Learned.md
 │   │   └── Maker-Tools_Software.md
 │   ├── Organization_Profile/
+│   │   ├── Archive/
+│   │   │   └── Organization_Profile_Lessons_Archive.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Organization_Profile.md
@@ -365,7 +376,7 @@ last_synced: "2026-11-12"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 51453f63a444` | `Tree: 2ca5ab86e3ec`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 2dc4fb129fb7` | `Tree: 2ca5ab86e3ec`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

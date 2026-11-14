@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-11"
+last_synced: "2026-11-13"
 ---
 
 # 🗄️ Homunculus — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)
@@ -376,5 +376,19 @@ last_synced: "2026-11-11"
 - **Symptom / Trap:** Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive dumps, numeric/unit BM25 collisions, scalar .cfg gaps, and station-coupled ../../../Homunculus links.
 - **Root Cause:** verify_claims exposed --allow-lessons-source; Archive/ lacked 0444 and <=30L read caps; BM25 kept numbers and unit words; sync_hardware filtered .cfg keys; companion notes used ../../../ links.
 - **Verified Resolution & Permanent Guardrail:** Removed --allow-lessons-source, enforced 0444 Archive/ + <=30L transcript cap + v1.1 monotonic TIER5 hashes, N1 non-numeric recall, 3.3-Unified-A portable anchors, Stage-2 disaster recovery, and Option 4D commit-lesson gate. (`skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `scripts/homunculus_paths.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261109_202707-75056003`)).
+
+---
+
+### `LL-043` [TIER3] — Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... (`2026-11-10`)
+- **Symptom / Trap:** Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity Carbon .agents/skills.json and non-destructive hooks.json preservation; audit_skill_hygiene missed named Carbon PostToolUse hooks and broken docs/ links
+- **Root Cause:** kickstart_project lacked [LEDGER_MEMORY_LINE] and composite dedup; build_adapters overwrote workspace hooks.json without .agents/skills.json support; audit_skill_hygiene checked only Claude hooks.PostToolUse and skipped docs/*.md link checks
+- **Verified Resolution & Permanent Guardrail:** Added composite --kickstart dedup, banned Model:inherit across all subagents with Workspace:branch for mutating frames, renamed voice /learn to /voice-learn, added --agy-skills-json + non-destructive hooks.json sync, and added Carbon PostToolUse + BROKEN_DOC_LINK_OR_SCRIPT checks (SBX-20261110_162015-7ddf774e) (`build_adapters.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `audit_skill_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `audit_portability.py` ([`Homunculus_Software.md`](../Homunculus_Software.md))).
+
+---
+
+### `LL-046` [TIER3] — Eager memory template ejection and pre-created empty project template directories drifted behind canonical... (`2026-11-11`)
+- **Symptom / Trap:** Eager memory template ejection and pre-created empty project template directories drifted behind canonical engine templates and poisoned Turn-One read-only task triage instructions while render_diagram scanned a missing Color_Palettes folder and extract_voice_cadence lacked declarative guild tier loading
+- **Root Cause:** init_memory_root copied all built-in templates unconditionally into memory Templates, init_project pre-created empty per-project Templates folders with stale task stubs, render_diagram pointed at an unshipped Color_Palettes directory instead of Diagram_Palettes.json, and extract_voice_cadence left supplier and maker guild sets empty by default
+- **Verified Resolution & Permanent Guardrail:** Made memory Templates sparse by default behind opt-in --eject-templates, switched per-project Templates creation to lazy on-demand --create-project-template, aligned templates/memory/AGENTS.md with zero-shell read_file Turn-One task triage, pointed render_diagram at Diagram_Palettes.json override discovery, and added fail-closed --tier-config loading to extract_voice_cadence (`skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/visual-studio/scripts/render_diagram.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `addons/author-voice-cadence/scripts/extract_voice_cadence.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `scripts/build_adapters.py` ([`Homunculus_Software.md`](../Homunculus_Software.md))).
 
 ---

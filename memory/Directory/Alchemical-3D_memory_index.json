@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 241.49,
+  "avg_doc_len": 238.99,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
-    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 450` tokens) and deferred `pre-commit-gate` batching.",
+    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
     "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and fast `Model: 'flash'` subagents.",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-12",
+  "last_synced": "2026-11-13",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -22,6 +22,7 @@
           "governing_lls": [],
           "must_keep": "Torque `M3` fasteners in CNC aluminum to `1.0 to 1.5 Nm` with `Loctite 222MS` (Purple) on metal-to-metal threads; torque `M5` fasteners to `3.0 to 4.5 Nm` with `Loctite 243` (Blue) on metal-to-metal threads; keep all anaerobic threadlockers away from printed `ABS`/`ASA`/`PC`.",
           "retired_bloat": "Tightening `M3`/`M5` screws in 6061 aluminum to steel torque specs; applying blue `Loctite 243` to small `M3` screws; allowing anaerobic threadlocker liquid/vapor near printed thermoplastics.",
+          "scope": "",
           "subsystem": "CNC Aluminum Plate Torque & Threadlocker (`M3` & `M5`)",
           "tier": "TIER1",
           "touched_files": [
@@ -33,6 +34,7 @@
           "governing_lls": [],
           "must_keep": "Shim every `(10)` smooth and `(2)` toothed `2GT` `9mm` idler stack (`5mm` bore) with `M5x7x0.3mm` precision shims across the inner race; tension across a `150mm` unsupported span to `110 Hz` (`6mm` belts) or `130\u2013140 Hz` (`9mm` belts).",
           "retired_bloat": "Clamping idler stacks without `0.3mm` shims (pinching bearing shields); tensioning standard belts or single-shear mounts above `200 Hz`.",
+          "scope": "",
           "subsystem": "Dual-Shear Idler Stacks & `2GT` Belt Tensioning",
           "tier": "TIER1",
           "touched_files": [
@@ -48,6 +50,7 @@
           "id": "LL-GAN-01",
           "line_range": "#L34-L37",
           "location": "main",
+          "scope": "",
           "start_line": 34,
           "tier": "TIER2",
           "title": "CNC Aluminum Thread Stripping & Anaerobic Threadlocker Stress-Cracking",
@@ -62,6 +65,7 @@
           "id": "LL-GAN-02",
           "line_range": "#L39-L42",
           "location": "main",
+          "scope": "",
           "start_line": 39,
           "tier": "TIER2",
           "title": "Unshimmed Dual-Shear Idler Binding & `>200 Hz` Belt Over-Tensioning",
@@ -74,6 +78,7 @@
           "id": "LL-GAN-03",
           "line_range": "#L44-L48",
           "location": "main",
+          "scope": "",
           "start_line": 44,
           "tier": "TIER2",
           "title": "X-Carriage Mount & 9mm Belt Clamp Interface (`Alembic_Toolhead` Coupled)",
@@ -83,7 +88,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 129.67,
+      "proj_avg_doc_len": 126.67,
       "proj_total_docs": 3,
       "project": "A3DP_Gantry_Assembly"
     },
@@ -95,6 +100,7 @@
           "governing_lls": [],
           "must_keep": "Serves `alchemical3d.net` via Material for MkDocs (`slate`/`pink` theme) with the verified 4-page navigation (`index.md`, `core.md`, `pestle.md`, `retort.md`) and relative internal Markdown links.",
           "retired_bloat": "Hardcoding legacy `https://alchemical-3d.com/{core,retort,pestle}/` URLs inside `docs/index.md`, which break local preview builds and diverge from `docs/CNAME` (`alchemical3d.net`).",
+          "scope": "",
           "subsystem": "`mkdocs.yml` & `docs/CNAME` (`alchemical3d.net`)",
           "tier": "TIER1",
           "touched_files": [
@@ -110,6 +116,7 @@
           "governing_lls": [],
           "must_keep": "Houses canonical public specifications for **Core Printer** (`300x300x300` build volume, `1x MGN12H` X + `5x MGN9H` Y/Z, `9mm` `2GT` belts, `42STH48-2504AC`) and **Retort Filament Dryer** (`ABS`/`ASA`/`PC` solid-state dryer) until standalone CAD repos are published.",
           "retired_bloat": "Borrowing Core Printer frame/rail specs onto standalone sub-assemblies (`A3DP_Gantry_Assembly` or `Alembic_Toolhead`) without explicit cross-repo verification.",
+          "scope": "",
           "subsystem": "`docs/core.md` & `docs/retort.md` (Portal-Only System Specs)",
           "tier": "TIER1",
           "touched_files": [
@@ -127,6 +134,7 @@
           "id": "LL-AWD-01",
           "line_range": "#L33-L36",
           "location": "main",
+          "scope": "",
           "start_line": 33,
           "tier": "TIER2",
           "title": "Relative MkDocs Page Links vs. Hardcoded Legacy Domain URLs (`2026-11-02`)",
@@ -141,13 +149,14 @@
         },
         {
           "capsule_1line": "Standardized Showcase Card Framing Across Dark/Light Browser Themes -> Verified all showcase cards via `format_image.py --inspect` (`[PASS]`) and `verify_claims.py --fail-on-tbd` (`0` unbacked claims across all `5` Markdown files; `Alchemical_Web_Docs.md`).",
-          "end_line": 41,
-          "file": "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Lessons_Learned.md",
+          "end_line": 24,
+          "file": "Projects/Alchemical_Web_Docs/Archive/Alchemical_Web_Docs_Lessons_Archive.md",
           "id": "LL-AWD-02",
-          "line_range": "#L38-L41",
-          "location": "main",
-          "start_line": 38,
-          "tier": "TIER2",
+          "line_range": "#L19-L24",
+          "location": "archive",
+          "scope": "",
+          "start_line": 19,
+          "tier": "TIER3",
           "title": "Standardized Showcase Card Framing Across Dark/Light Browser Themes (`2026-11-02`)",
           "touched_files": [
             "format_image.py",
@@ -155,7 +164,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 95.5,
+      "proj_avg_doc_len": 94.5,
       "proj_total_docs": 2,
       "project": "Alchemical_Web_Docs"
     },
@@ -167,6 +176,7 @@
           "governing_lls": [],
           "must_keep": "Set `5\u201310mm` initial gap between bend-jig halves; insert `2.8mm` plastic welding rod (`<3mm` mandrel) inside tube before forming; rotate formed tubes `~5\u00b0` inward above nozzle plane; snug `M3` cup-point grub screws just to lock rotation.",
           "retired_bloat": "Pressing bend-jig halves flush together at start of bend (snaps pivot ears); bending tubing hollow (kinks/collapses `3mm ID` bore); over-tightening `M3` grub screws (crushes thin aluminum wall).",
+          "scope": "",
           "subsystem": "`5mm OD x 3mm ID` Aluminum Part-Cooling Tubes & Bend Jig (`Bend_Tool_Base.stl`, `Bend_Tool_Lever.stl`)",
           "tier": "TIER1",
           "touched_files": [
@@ -180,6 +190,7 @@
           "governing_lls": [],
           "must_keep": "Seat upper `9x2` (`23/64 x 5/64\"`) O-ring into intake groove prior to threading `PC4-M10`; align central `9x2` O-ring before snugging the `2 \u00d7 65mm M3 BHCS` vertical tie-bolts to initial plastic compression.",
           "retired_bloat": "Over-torquing `65mm M3 BHCS` tie-bolts to metal torque specs (`~1.2 Nm`) to stop air leaks, which cracks printed `ABS`/`ASA` manifold ears and crushes the O-ring seat.",
+          "scope": "",
           "subsystem": "Pneumatic Intake & Manifold Sealing (`PC4-M10`, `9x2` O-Rings, `65mm M3 BHCS`)",
           "tier": "TIER1",
           "touched_files": [
@@ -190,6 +201,7 @@
           "governing_lls": [],
           "must_keep": "Anchor all BOM and fastener verification strictly on clean `HEAD:BOM.md` (`3ff29ce`) and [`Alembic_Toolhead_Hardware.md`](Alembic_Toolhead_Hardware.md).",
           "retired_bloat": "Treating unstaged dirty working-tree edits (`DIRTY_GIT_WORKTREE`) as authoritative ground truth when they drop `M3` grub screws, `M3x24mm` fan-baffle bolts, or `M2` BDsensor fasteners.",
+          "scope": "",
           "subsystem": "Git Provenance (`HEAD` `3ff29ce` vs. Unstaged Worktree)",
           "tier": "TIER1",
           "touched_files": [
@@ -206,6 +218,7 @@
           "id": "LL-ALM-01",
           "line_range": "#L35-L38",
           "location": "main",
+          "scope": "",
           "start_line": 35,
           "tier": "TIER2",
           "title": "Unstaged `BOM.md` Working-Tree Divergence vs. Committed `HEAD` (`3ff29ce`)",
@@ -221,6 +234,7 @@
           "id": "LL-ALM-02",
           "line_range": "#L40-L43",
           "location": "main",
+          "scope": "",
           "start_line": 40,
           "tier": "TIER2",
           "title": "`5mm OD x 3mm ID` Aluminum Tube Buckling & Bend-Jig Ear Fracture",
@@ -236,6 +250,7 @@
           "id": "LL-ALM-03",
           "line_range": "#L45-L49",
           "location": "main",
+          "scope": "",
           "start_line": 45,
           "tier": "TIER2",
           "title": "Coupled `6mm OD` Pneumatic Intake & `9x2` O-Ring Manifold Sealing (`Pneuma_Remote_Air` Coupled)",
@@ -246,7 +261,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 157.33,
+      "proj_avg_doc_len": 154.0,
       "proj_total_docs": 3,
       "project": "Alembic_Toolhead"
     },
@@ -258,6 +273,7 @@
           "governing_lls": [],
           "must_keep": "Primary Pink `#FF3985`, Deep Crimson `#C90448`, Dark Slate Canvas `#1E1E24` / Card `#282830`, and Pure White `#FFFFFF` showcase interiors with `20px` RGBA drop-shadow margin; `Inter` UI + `JetBrains Mono` telemetry font stacks.",
           "retired_bloat": "Ad-hoc unapproved hex colors in Mermaid/SVG diagrams or running destructive card crops on master brand guideline sheets (`images/alchemical-cd-master-guideline.png`).",
+          "scope": "",
           "subsystem": "Color & Typography Tokens (`Alchemical3D_Color_Template`)",
           "tier": "TIER1",
           "touched_files": [
@@ -268,6 +284,7 @@
           "governing_lls": [],
           "must_keep": "Canonical source of truth for `!Alchemical-3D-Logo-Gradient-PRIMARY`, `!Alchemical-3D-Badge-Gradient-PRIMARY`, and `Alchemical-3D-Badge-Gradient-PRIMARY-Alchemical-3D-Logo-Gradient-PRIMARY-Transparent-Background.svg` consumed by [`Organization_Profile`](../Organization_Profile/Organization_Profile.md) and [`Alchemical_Web_Docs`](../Alchemical_Web_Docs/Alchemical_Web_Docs.md).",
           "retired_bloat": "Renaming or moving primary SVG assets in `assets/svg/`, which breaks raw GitHub embeds across downstream repositories.",
+          "scope": "",
           "subsystem": "Vector & Raster Logo Assets (`assets/{svg,png,pdf}/`)",
           "tier": "TIER1",
           "touched_files": [
@@ -286,6 +303,7 @@
           "id": "LL-BR-01",
           "line_range": "#L33-L36",
           "location": "main",
+          "scope": "",
           "start_line": 33,
           "tier": "TIER2",
           "title": "Exempting Master Brand Guideline Sheets from Automated Image Card Framing (`2026-11-05`)",
@@ -300,13 +318,14 @@
           "id": "LL-BR-02",
           "line_range": "#L38-L41",
           "location": "main",
+          "scope": "",
           "start_line": 38,
           "tier": "TIER2",
           "title": "Gradient Primary Marks & `#FFFFFF` Showcase Cards Across GitHub Dark/Light Themes (`2026-11-05`)",
           "touched_files": []
         }
       ],
-      "proj_avg_doc_len": 84.5,
+      "proj_avg_doc_len": 83.5,
       "proj_total_docs": 2,
       "project": "Brand"
     },
@@ -318,6 +337,7 @@
           "governing_lls": [],
           "must_keep": "Exact outer bounding envelope `20.00 \u00d7 20.00 \u00d7 20.00 mm` (`4.40 cm\u00b3` / `8,476` triangles for `Alch_Cube_20mm_V4.stl`; `4.35 cm\u00b3` / `14,036` triangles for `Alchemical_20mm_Cube.stl`) used as the pre-build XY/Z polymer shrinkage gate across all Alchemical-3D hardware repositories.",
           "retired_bloat": "Guessing the functional or visual difference between `Alch_Cube_20mm_V4.stl` and `Alchemical_20mm_Cube.stl` without engineer confirmation (`[TBD: calibration_cube_v4_vs_legacy_distinction]`).",
+          "scope": "",
           "subsystem": "Calibration Cube STLs (`Alch_Cube_20mm_V4.stl`, `Alchemical_20mm_Cube.stl`)",
           "tier": "TIER1",
           "touched_files": [
@@ -336,6 +356,7 @@
           "id": "LL-EX-01",
           "line_range": "#L32-L35",
           "location": "main",
+          "scope": "",
           "start_line": 32,
           "tier": "TIER2",
           "title": "Mandatory `20.00 \u00d7 20.00 \u00d7 20.00 mm` Polymer Shrinkage Calibration Gate (`2026-11-05`)",
@@ -348,6 +369,7 @@
           "id": "LL-EX-02",
           "line_range": "#L37-L40",
           "location": "main",
+          "scope": "",
           "start_line": 37,
           "tier": "TIER2",
           "title": "Quarantining Unconfirmed `Alch_Cube_20mm_V4.stl` vs. `Alchemical_20mm_Cube.stl` Mesh Distinctions (`2026-11-05`)",
@@ -358,7 +380,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 79.5,
+      "proj_avg_doc_len": 78.0,
       "proj_total_docs": 2,
       "project": "Extras"
     },
@@ -381,10 +403,13 @@
             "LL-033",
             "LL-034",
             "LL-035",
-            "LL-037"
+            "LL-037",
+            "LL-040",
+            "LL-041"
           ],
-          "must_keep": "Closed-world quantitative/`[CALC]` lock (`27` `QUALIFIER_GROUPS`), Markdown table `(qty, noun)` cell-pair indexing, live git SHA (`git rev-list --all`) & 24-byte PNG `IHDR` `(w_px, h_px)` indexing, `[TBD_SPECULATIVE_GUESS]` (keyworded + keywordless unbacked Shore/fastener/unit inside `[TBD: ...]`), `[Line Text]` verbatim failure snippets, `CROSS_ENTITY_CONTAMINATION` & `ABS/ASA` $\\rightarrow$ `TPU` firewall, Quarantine/Lessons/Frontmatter/URL exclusion, discrete `L1,L2,L3` anchor checks, in-process `verify_target_inprocess()`, full-stack `_enforce_anti_snoop_gate()`.",
-          "retired_bloat": "Rejecting `_Hardware.md` `\u00d8` diameters when `(.F. bore)` is stripped; flagging Homunculus `.py` tool names or `\"0 <noun>\"` absence phrasing as unbacked; allowing `python3 -c \"import verify_claims; inspect.getsource\"` or `compile(..., fake_path, 'exec')` / env-var snooping; allowing `[TBD: ... (recommend 95A)]` or `[TBD: ... (95A)]` smuggling; mutating `Directory/` during read-only checks.",
+          "must_keep": "Closed-world quantitative/`[CALC]` lock (`27` `QUALIFIER_GROUPS`), Markdown table `(qty, noun)` cell-pair indexing, on-demand `git rev-parse --verify` SHA & 24-byte PNG `IHDR` indexing, `[TBD_SPECULATIVE_GUESS]` bracket smuggling closure, `[Line Text]` verbatim failure snippets, `CROSS_ENTITY_CONTAMINATION` & `ABS/ASA` -> `TPU` firewall, Quarantine/Lessons/Frontmatter/URL exclusion, discrete `L1,L2,L3` anchor checks, in-process `verify_target_inprocess()` (`target_sha256` pin / `TOCTOU_MUTATION_BLOCKED`), full-stack `_enforce_anti_snoop_gate()`.",
+          "retired_bloat": "Rejecting `_Hardware.md` `\u00d8` diameters when `(.F. bore)` is stripped; flagging Homunculus `.py` tool names or `\"0 <noun>\"` absence phrasing as unbacked; allowing `python3 -c \"import verify_claims; inspect.getsource\"` or `compile(..., fake_path, 'exec')` / env snooping; allowing `[TBD: ... (recommend 95A)]`; mutating `Directory/` during read-only checks; never re-add retired `--allow-lessons-source`.",
+          "scope": "",
           "subsystem": "`verify_claims.py` (`claim-verification`)",
           "tier": "TIER1",
           "touched_files": [
@@ -402,10 +427,12 @@
             "LL-030",
             "LL-031",
             "LL-036",
-            "LL-037"
+            "LL-037",
+            "LL-041"
           ],
-          "must_keep": "Pure-stdlib STEP/STL outer bounding boxes (`X \u00d7 Y \u00d7 Z mm`, unit scale detection), closed-mesh volumes (`cm\u00b3`), STEP$\\leftrightarrow$STL parity, closed `360\u00b0` circular surface histograms (`not has_line`), `.cfg` pinouts, `[GIT_PROVENANCE]` recent commits header, `[COVERAGE_RECEIPT]` footer, safe `--sync-manifest` marker replacement, `[CAD STOP GATE]`.",
+          "must_keep": "Pure-stdlib STEP/STL outer bounding boxes (`X \u00d7 Y \u00d7 Z mm`, unit scale detection + `VERTEX_POINT` bbox fallback), closed-mesh volumes (`cm\u00b3`), STEP<->STL parity, closed `360\u00b0` circular surface histograms (`not has_line`), `.cfg` pinouts, `[GIT_PROVENANCE]` recent commits header, `[COVERAGE_RECEIPT]` footer, safe `--sync-manifest` marker replacement via `memory_gateway.upsert_hardware_manifest`, `[CAD STOP GATE]`.",
           "retired_bloat": "Guessing COTS parts (`\u00d86.00mm (Magnet)`) or print mass (`solid_abs_g`); classifying `.F. bore` vs. `.T. pin/boss` or `coaxial`; emitting `### STEP Feature Axis & Coordinate Clusters`; instructing agents to read `804`-line `hw_telemetry.json` when `_Hardware.md` is cached.",
+          "scope": "",
           "subsystem": "`inspect_hardware_ecosystem.py` (`addons/hardware-cad-inspector`)",
           "tier": "TIER1",
           "touched_files": [
@@ -421,10 +448,12 @@
             "LL-020",
             "LL-023",
             "LL-032",
-            "LL-037"
+            "LL-037",
+            "LL-044"
           ],
-          "must_keep": "Lazy `PIL` loading + `_inspect_png_stdlib` (`(WxH px, mode)` in audit output), `[COVERAGE_RECEIPT]` footer, `--repo-root` isolated excerpt link/CAD resolution, `.homunculus_brand.json` config, `repo_type == \"hardware\"` gating for Check `#7b` (`UNDERSPECIFIED_FASTENER_DODGE`), zero read-only `ensure_directory_fresh()` side-effects.",
+          "must_keep": "Lazy `PIL` loading + `_inspect_png_stdlib` (`(WxH px, mode)` in audit output), `[COVERAGE_RECEIPT]` footer, `--repo-root` isolated excerpt link/CAD resolution, `.homunculus_brand.json` config, `repo_type == \"hardware\"` gating for Check `#7b` (`UNDERSPECIFIED_FASTENER_DODGE`), Check `#7c` non-blocking `[BARE_NUMERIC_SHORTHAND_NOUN_MISSING]` advisory, zero read-only `ensure_directory_fresh()` side-effects.",
           "retired_bloat": "Top-level `PIL`/`numpy` imports; hardcoded vendor affiliate URLs; running hardware fastener checks on pure software repositories.",
+          "scope": "",
           "subsystem": "`audit_repo_docs.py` & `format_image.py` (`doc-and-card-studio`)",
           "tier": "TIER1",
           "touched_files": [
@@ -443,10 +472,12 @@
             "LL-026",
             "LL-029",
             "LL-031",
-            "LL-035"
+            "LL-035",
+            "LL-041"
           ],
-          "must_keep": "3-tier Cross-OS CoW isolation (`bwrap` $\\rightarrow$ `APFS` $\\rightarrow$ `copytree` + SHA-256 host check), `EROFS` cache fallback, `_norm_cmd()` array support, `VALIDATOR_CRASH` (`rc in (2,126,127)`) + `WRONG_FAULT_SIGNATURE` fail-closed checks, `ADHOC_CAD_SNOOP_RE`, `SHELL_PY_SNOOP_RE` (`import verify_claims` / `inspect.getsource`).",
+          "must_keep": "3-tier Cross-OS CoW isolation (`bwrap` hardened namespaces + read-only binds -> `APFS` -> `copytree` + SHA-256 host check), `EROFS` cache fallback (with numeric counter negative lookahead), `_norm_cmd()` array support, `VALIDATOR_CRASH` (`rc in (2,126,127)`) + `WRONG_FAULT_SIGNATURE` fail-closed checks, multi-surface `transcript_full.jsonl` `[TRUNCATED_TRANSCRIPT_FIELD]` gate, `ADHOC_CAD_SNOOP_RE`, `SHELL_PY_SNOOP_RE` (`import verify_claims` / `inspect.getsource`).",
           "retired_bloat": "Counting `rc=2` CLI syntax crashes as caught faults; missing `import verify_claims` introspection or em-dash `[TBD: CONFLICT \u2014 ...]` tags; mutating live host files during `--mode dry-run` (`--writable-dir` binds live vs `--target-dir` CoW).",
+          "scope": "",
           "subsystem": "`sandbox_runner.py` (`engineering-sandbox`)",
           "tier": "TIER1",
           "touched_files": [
@@ -457,17 +488,23 @@
           "governing_lls": [
             "LL-010",
             "LL-017",
-            "LL-019",
-            "LL-020",
-            "LL-026",
-            "LL-028",
-            "LL-038"
+            "LL-038",
+            "LL-039",
+            "LL-040",
+            "LL-041",
+            "LL-042",
+            "LL-043",
+            "LL-044",
+            "LL-045",
+            "LL-046"
           ],
-          "must_keep": "Pure-stdlib YAML frontmatter (`0` `import yaml`), Dual-Mode `headless`/`obsidian`, 3-Stage repo resolution (`DIRECT_STATION` $\\rightarrow$ `REANCHORED_WORKSPACE` $\\rightarrow$ `DETACHED_CACHE` + `--rebind-station`), `TIER0`\u2013`TIER5` gravity store (`<=3 TIER0 + <=7 TIER2` active window, `PINNED_UNMAPPED_LESSON` lock, `TIER0_USER_PIN_IMMUNITY`), entity-partitioned `<Entity>_memory_index.json` + `<Entity>_Decision_Router.md` (`<=450` tok 1-line radar capsules, 3-signal friction promotion, `[MANUAL_MEMORY_EDIT_DETECTED]` + `--repair-memory`), separate `--sync-hardware` & `--sync-software`, `SESSION-HANDOFF` (`--save-handoff`/`--kickstart`), `SUBSYSTEM-INVARIANTS` (`--preflight`/`--recall`/`--invariants`/`--add-lesson`), `CROSS_ENTITY_CONTAMINATION` & `MALFORMED_WORKTREE_TUPLE` audits.",
-          "retired_bloat": "Top-level `import yaml`; mixing hardware/software telemetry; allowing `- [ ]` checkboxes in `<Project>.md`; unbounded monolithic `*_Lessons_Learned.md` files (`>320` lines); passive-recall hit inflation; leaving `*_Lessons_Learned.md` as unpopulated stubs.",
+          "must_keep": "Pure-stdlib YAML (`0` `import yaml`), Dual-Mode `headless`/`obsidian`, 3-Stage repo resolution (`DIRECT_STATION` -> `REANCHORED_WORKSPACE` -> `DETACHED_CACHE` + `--rebind-station`), `TIER0`\u2013`TIER5` gravity store (`<=3 TIER0 + <=9 TIER2` active, `0444` `Archive/` + `v1.1` `retired_tier5_hashes`, `GOVERNANCE_EVENT_REQUIRED`), `BM25F` `2.5x`/`1.5x`/`1.0x` + word-trigram `Dice>=0.52` + strict `N1` `0.0` numeric/unit weight + stemmer & preserved `*` globs, `Option A TIER0` Two-Lane (`M-1` cold vs post-kickstart `0600` cache + ID-only unmatched line), `S3` Adaptive Top-K `3..6` + `S5` MMR + `S6_Budgeted` + `D-3A duty_char_budgets` (`2200`/`7200`/`12000` chars), `v1.3` gitignored `.cache/*_scoring_vectors.json`, Option `#1` same-entity sibling recall (`0.52x`/`0.90x`, `0%` cross-entity bleed), `D-1A` explicit `--scope` + normalized invariant upsert, `Option #3-Lite` Cosine`>=0.72` dedup, `Option 4D` handoff gate, `--sync-software` `AUTO-SOFTWARE-TESTS` (`--test-receipt`), `<Project>_Playbooks.md`, `SCORING_DOC_CONFIG_DRIFT` & `STALE_CLI_FLAG_IN_ACTIVE_MEMORY` audits, `CROSS_ENTITY_CONTAMINATION`, `MALFORMED_WORKTREE_TUPLE`, `flock` + `sha256`.",
+          "retired_bloat": "Never re-add retired `--allow-lessons-source` or `packet_token_ceiling`; Unconditional TIER0[:2] Top-K slot cannibalization; 0.30*max_dw word-trigram floor on multi-word queries; counting 1-line archived Quick-Lookup table rows toward HOT_MEMORY_BLOAT_CEILING; tightening implicit sibling stem coverage to >=0.35 (drops valid multi-word secondary sibling matches); unwindowed `Archive/` reads (`>30` lines); station-coupled `../../../Homunculus/` links; mixing hardware/software telemetry.",
+          "scope": "",
           "subsystem": "`sync_memory.py` (`project-memory`)",
           "tier": "TIER1",
           "touched_files": [
+            "Homunculus_Software.md",
             "sync_memory.py"
           ]
         },
@@ -486,19 +523,27 @@
             "LL-027",
             "LL-028",
             "LL-032",
-            "LL-038"
+            "LL-042",
+            "LL-043",
+            "LL-045",
+            "LL-047"
           ],
-          "must_keep": "Unified AST kernel (`inspect_python_ast_and_map` + auto-healing `--sync-maps`), `scripts/script_contracts.json` (`14` scripts, hub-filtered 1-hop coupling) + `#L1-L55` `Contract :` line + `.cache/preflight_state.json` (`[UNPREFLIGHTED_CORE_SCRIPT_EDIT]`), `os.path.realpath(__file__)` + `prefer_copy`/`.zip` co-bundling, `<= 22,500` B `AGENTS.md` ceiling, `DEV_JOURNAL_CROSS_BLEED` one-way boundary, `UTF-8/16/32` boundary scanning, `--lock-core`/`--unlock-core`.",
-          "retired_bloat": "Exceeding `22,500` B in `AGENTS.md`; using `os.path.abspath(__file__)` on symlinked scripts; leaking `Homunculus_Lessons_Learned` or `LL-xxx` IDs into portable `rules/` or `skills/`; modifying core `.py` scripts without a `--map`/`--preflight` receipt.",
-          "subsystem": "`homunculus_paths.py`, `build_adapters.py` & `audit_skill_hygiene.py`",
+          "must_keep": "Unified `v3:{content_sha}` AST kernel (`inspect_python_ast_and_map` + `--sync-maps`), `script_contracts.json` + `.cache/preflight_state.json`, `os.path.realpath(__file__)` + `prefer_copy`/`.zip` co-bundling, `<=22,500` B `AGENTS.md` + `check_out_of_tree_agents_md_budget` + Claude `permissions.deny` + empty `hooks`, `DEV_JOURNAL_CROSS_BLEED`, `UTF-8/16/32` + `.xlsx/.docx/.3mf` ZIP XML + `git cat-file --batch` + BiDi/Tag boundary scans, `3-Ring` `kernel_seal.json` + `sudo:` (`--sudo-unlock`/`--sudo-seal`, `/dev/tty` challenge + `tty_turnkey` `--remote-turnkey`, `enforced_roots` + `is_temp_fw` symmetry, `_set_file_lock_mode` `has_exec`), `_enforce_gateway_kernel_seal`, `MEMORY_SDK_V1` (`authoritative: false` external promotion + explicit lesson/playbook fields), `SPLASH_EXPOSURE_BLOCKED`, AST `[BYPASSED_MEMORY_GATEWAY]`.",
+          "retired_bloat": "Never re-add retired `--unlock-core` or `--lock-core`; relying solely on `os.isatty` without `/dev/tty` challenge; falling back to home `sudo_policy.json` bypassing `enforced_roots`; unconditional chmod `+x` on non-executable `.py`; direct `Ring 1/2` `sync_memory` imports or vault writes; exceeding `22,500` B in `AGENTS.md`; `os.path.abspath(__file__)` on symlinks; leaking `LL-xxx` into portable rules/skills; bypassing `--preflight`.",
+          "scope": "",
+          "subsystem": "`scripts/homunculus_paths.py`, `memory_gateway.py`, `build_adapters.py`, `audit_data_boundary.py` & `audit_skill_hygiene.py`",
           "tier": "TIER1",
           "touched_files": [
             "AGENTS.md",
+            "audit_data_boundary.py",
             "audit_skill_hygiene.py",
             "build_adapters.py",
             "homunculus_paths.py",
+            "kernel_seal.json",
+            "memory_gateway.py",
             "preflight_state.json",
-            "script_contracts.json"
+            "script_contracts.json",
+            "sudo_policy.json"
           ]
         },
         {
@@ -514,123 +559,35 @@
             "LL-031",
             "LL-032",
             "LL-035",
-            "LL-036"
+            "LL-036",
+            "LL-043",
+            "LL-045"
           ],
-          "must_keep": "2-Tier Single-Source Rule Architecture, Turn-1 parallel read batching (`<Project>.md` + `_Hardware.md`/`_Software.md` + `_Lessons_Learned.md` in 1 turn; `4\u20138` repo files/turn), direct `<skill_dir>/scripts/<script>.py` resolution from `<skills>`, `ZERO_ADHOC_CAD_PARSING`, `Pre-Mutation Change Advisory Gate` citing `SUBSYSTEM-INVARIANTS`, `Max 2-Pass verify_claims.py` ceiling.",
-          "retired_bloat": "Blanket `.py` source bans during porting/debugging (`LL-005`); symlink-blind `find /home/.../.gemini/config`; 1-file-per-turn serialized `read_file` loops; mid-task `--sync-visuals` or per-edit `PostToolUse` hooks.",
-          "subsystem": "`rules/.md` & `skills//SKILL.md` Routing",
+          "must_keep": "2-Tier Single-Source Rule Architecture (`AGENTS.md` + modular rules; zero middle `Agent.md`), zero-shell `read_file` Turn-1 portfolio triage vs. `--kickstart` project work, parallel repo doc batching (`4\u20138` files/turn), direct `<skill_dir>/scripts/<script>.py` resolution from `<skills>`, `Model: 'inherit'` banned (`flash_lite`/`flash`/`pro` explicit + `Workspace: 'branch'` for mutating frames), `ZERO_ADHOC_CAD_PARSING`, `Pre-Mutation Change Advisory Gate`, `Max 2-Pass verify_claims.py` ceiling.",
+          "retired_bloat": "Blanket `.py` source bans during porting/debugging (`LL-005`); `Model: 'inherit'` on subagents; symlink-blind `find /home/.../.gemini/config`; 1-file-per-turn serialized `read_file` loops; mid-task `--sync-visuals` or per-edit `PostToolUse` hooks.",
+          "scope": "",
+          "subsystem": "`rules/*.md` & `skills/*/SKILL.md` Routing",
           "tier": "TIER1",
           "touched_files": [
-            ".md",
+            "AGENTS.md",
+            "Agent.md",
             "SKILL.md",
-            "_Hardware.md",
-            "_Lessons_Learned.md",
-            "_Software.md",
             "verify_claims.py"
           ]
         },
         {
           "governing_lls": [
-            "LL-039"
-          ],
-          "must_keep": "`0444` `--lock-memory-rules` + hash-chained `Directory/governance_seal.json` / `Directory/governance_audit_log.jsonl` (`LL-039`); `TIER5` `GOVERNANCE_EVENT_REQUIRED` + inline `Retirement Provenance`; noise-floor-adjusted recall & backtick-safe `_adjust_relative_links`.",
-          "retired_bloat": "Hardcoded 14-script basename bypass on directory-qualified paths in `verify_claims.py`; splitting backticked Markdown link labels on inline backticks.",
-          "subsystem": "`sync_memory.py` & Governance Seal",
-          "tier": "TIER1",
-          "touched_files": [
-            "Governance_and_Constraint_Architecture.md",
-            "governance_seal.json",
-            "sync_memory.py",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-040"
-          ],
-          "must_keep": "0444 Archive/ + <=30L read cap + v1.1 retired_tier5_hashes; N1 0.0 numeric/unit recall weight; 3.3-Unified-A portable dual-bound anchors; Stage-2 parent/sibling + HOMUNCULUS_ROOT re-anchoring; Option 4D commit-lesson gate; <=600-tok Profile B packet; Option #1 same-entity sibling recall (0.65x/0.90x, 0% cross-entity bleed); Option #2 active-signal weight renormalization + [0.85,1.25] activity modifier; Option #3-Lite Cosine>=0.72 pre-write dedup; Option #5B <Project>_Playbooks.md (PB-xx) (`LL-040`)",
-          "retired_bloat": "--allow-lessons-source CLI flag; unwindowed Archive/ reads; numeric/unit BM25 scoring; station-coupled ../../../Homunculus/ links in memory/; unlinked intra-entity sibling memory islands; duplicate LL-xx/PB-xx entries",
-          "subsystem": "sync_memory.py & verify_claims.py (v1.1 Governance, N1 Recall, Sibling Inheritance & Playbooks)",
-          "tier": "TIER1",
-          "touched_files": [
-            "Homunculus_Software.md",
-            "homunculus_paths.py",
-            "inspect_hardware_ecosystem.py",
-            "sync_memory.py",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-044"
-          ],
-          "must_keep": "BM25F 2.5x/1.5x/1.0x + word-trigram Dice>=0.52 + strict N1 0.0 numeric weight; Option A TIER0 Two-Lane (relevance-sorted TIER0[:3], narrow <=3-file gate, ID-only unmatched line, --kickstart TIER0 capsules); S3 Adaptive Top-K 3..6 + S5 query-facet MMR + S6_Budgeted <=1,350c [GUARDRAIL CONTEXT ONLY] hydration + <=1,800-tok 4-pass budgeter; v1.2 .cache/<Entity>_scoring_vectors.json sidecar; active-section-only HOT_MEMORY_BLOAT_CEILING (<=12 sections / <=320 active lines); Check #7c non-blocking [BARE_NUMERIC_SHORTHAND_NOUN_MISSING] advisory",
-          "retired_bloat": "Unconditional TIER0[:2] Top-K slot cannibalization; 0.30*max_dw word-trigram floor on multi-word queries; counting 1-line archived Quick-Lookup table rows toward HOT_MEMORY_BLOAT_CEILING; tightening implicit sibling stem coverage to >=0.35 (drops valid multi-word secondary sibling matches)",
-          "subsystem": "sync_memory.py & audit_repo_docs.py (v0.2.1 Option A TIER0, 17_Combo_C9_HeldT0 Recall & <=1,800-Tok Budgeter)",
-          "tier": "TIER1",
-          "touched_files": [
-            "Homunculus_Software.md",
-            "audit_repo_docs.py",
-            "script_contracts.json",
-            "sync_memory.py",
-            "test_project_memory.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-047"
-          ],
-          "must_keep": "_enforce_gateway_kernel_seal in main/resolve_memory_root, SPLASH_EXPOSURE_BLOCKED Ring-One/Two dirty guard, AST BYPASSED_MEMORY_GATEWAY enforcement, and has_exec fileMode preservation in _set_file_lock_mode",
-          "retired_bloat": "Blanket --unlock-core in always-on rules, direct Ring-One/Two import sync_memory or raw Projects/ writes, and unconditional executable bit forcing on Python files",
-          "subsystem": "memory_gateway.py & homunculus_paths.py (Three-Ring Sudo Seal & MEMORY_SDK_V1)",
-          "tier": "TIER1",
-          "touched_files": [
-            "Homunculus_Software.md",
-            "audit_skill_hygiene.py",
-            "homunculus_paths.py",
-            "memory_gateway.py",
-            "sync_memory.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-047"
-          ],
-          "must_keep": "Live random hex /dev/tty challenge prompt with timeout under tty_turnkey so PTY-allocated AI agent shells cannot unlock Ring-Zero unattended",
-          "retired_bloat": "Relying solely on os.isatty checks to distinguish human terminals from PTY-wrapped AI coding harnesses",
-          "subsystem": "memory_gateway.py & homunculus_paths.py (Three-Ring Sudo Seal & MEMORY_SDK_V1)",
-          "tier": "TIER1",
-          "touched_files": [
-            "Homunculus_Software.md",
-            "homunculus_paths.py",
-            "memory_gateway.py"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-047"
-          ],
-          "must_keep": "Symmetric enforced_roots and is_temp_fw checks in both Step-One UID policy and Step-Two configurable fallback of resolve_sudo_policy so disposable /tmp unittest runs never inherit host tty_turnkey outside enforced_roots",
-          "retired_bloat": "Falling back to Path.home sudo_policy.json in Step-Two without checking enforced_roots",
-          "subsystem": "memory_gateway.py & homunculus_paths.py (Three-Ring Sudo Seal & MEMORY_SDK_V1)",
-          "tier": "TIER1",
-          "touched_files": [
-            "Homunculus.md",
-            "homunculus_paths.py",
-            "memory_gateway.py",
-            "sudo_policy.json"
-          ]
-        },
-        {
-          "governing_lls": [
+            "LL-048",
             "LL-049"
           ],
-          "must_keep": "2-call D1 routing seed + attestation, D7-A cold-start ambiguity fail-closed, D8-A 3-vector anti-negative-hallucination guard",
-          "retired_bloat": "\u2014",
-          "subsystem": "skills/teach-me/scripts/teach_brief.py",
+          "must_keep": "`2-call` D1 routing seed + attestation (`attest_subagent_execution` write containment inside `<study_briefs_root>` and brain `scratch/`), `D7-A` cold-start ambiguity fail-closed, `D8-A` `3-vector` anti-negative-hallucination guard, routing all promotions strictly through `memory_gateway.py` (`MEMORY_SDK_V1`) with `verify_target_inprocess` SHA-256 pinning.",
+          "retired_bloat": "Direct `<memory_root>` writes bypassing `MEMORY_SDK_V1`, permissive `/tmp` allowlists, `init-brief --out` inside `<memory_root>/`, raw key matching without backtick stripping.",
+          "scope": "skill:teach-me",
+          "subsystem": "`skills/teach-me/scripts/teach_brief.py`",
           "tier": "TIER1",
           "touched_files": [
             "Homunculus_Software.md",
+            "memory_gateway.py",
             "teach_brief.py",
             "test_teach_me.py"
           ]
@@ -639,14 +596,15 @@
       "lessons": [
         {
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 163,
+          "end_line": 157,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L158-L163",
+          "line_range": "#L152-L157",
           "location": "main",
-          "start_line": 158,
+          "scope": "",
+          "start_line": 152,
           "tier": "TIER0",
-          "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `--lock-core` / `--unlock-core`, & `Option 3` De-Bloating)",
+          "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
             "SKILL.md",
             "audit_repo_docs.py",
@@ -655,18 +613,20 @@
             "format_image.py",
             "homunculus_paths.py",
             "inspect_hardware_ecosystem.py",
+            "kernel_seal.json",
             "render_diagram.py",
             "verify_claims.py"
           ]
         },
         {
           "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
-          "end_line": 178,
+          "end_line": 172,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-027",
-          "line_range": "#L165-L178",
+          "line_range": "#L159-L172",
           "location": "main",
-          "start_line": 165,
+          "scope": "",
+          "start_line": 159,
           "tier": "TIER0",
           "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
           "touched_files": [
@@ -690,12 +650,13 @@
         },
         {
           "capsule_1line": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... -> Added multi-surface transcript_full.jsonl discovery + [TRUNCATED_TRANSCRIPT_FIELD] fail-closed gate, on-demand git rev-parse --verify SHA checks, VERTEX_POINT bbox-only fallback + unconditional inspect_hardware_ecosystem delegation, and EROFS_RE numeric-counter guard (SBX-20261110_141516-73c9069d, SBX-20261110_143655-1ecf0fa7)...",
-          "end_line": 185,
+          "end_line": 179,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-041",
-          "line_range": "#L180-L185",
+          "line_range": "#L174-L179",
           "location": "main",
-          "start_line": 180,
+          "scope": "",
+          "start_line": 174,
           "tier": "TIER2",
           "title": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... (`2026-11-10`)",
           "touched_files": [
@@ -707,12 +668,13 @@
         },
         {
           "capsule_1line": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... -> Moved vectors to gitignored .cache/*_scoring_vectors.json (-92.3% tracked JSON) with transparent cold hydration, added atomic_write_text + unified structural tree hashing, cached ASTs by v3:{content_sha} with RO host seeding, and hoisted directory/blob scans for 2.1x-4.8x speedups (SBX-20261110_150832-70629ecd...",
-          "end_line": 192,
+          "end_line": 186,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-042",
-          "line_range": "#L187-L192",
+          "line_range": "#L181-L186",
           "location": "main",
-          "start_line": 187,
+          "scope": "",
+          "start_line": 181,
           "tier": "TIER2",
           "title": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... (`2026-11-10`)",
           "touched_files": [
@@ -722,30 +684,14 @@
           ]
         },
         {
-          "capsule_1line": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... -> Added composite --kickstart dedup, banned Model:inherit across all subagents with Workspace:branch for mutating frames, renamed voice /learn to /voice-learn, added --agy-skills-json + non-destructive hooks.json sync, and added Carbon PostToolUse + BROKEN_DOC_LINK_OR_SCRIPT checks (SBX-20261110_162015-7ddf774e) (`build_adapters.py`...",
-          "end_line": 199,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-043",
-          "line_range": "#L194-L199",
-          "location": "main",
-          "start_line": 194,
-          "tier": "TIER2",
-          "title": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... (`2026-11-10`)",
-          "touched_files": [
-            "audit_portability.py",
-            "audit_skill_hygiene.py",
-            "build_adapters.py",
-            "hooks.json"
-          ]
-        },
-        {
-          "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration...",
-          "end_line": 206,
+          "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration, D-3A...",
+          "end_line": 193,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-044",
-          "line_range": "#L201-L206",
+          "line_range": "#L188-L193",
           "location": "main",
-          "start_line": 201,
+          "scope": "",
+          "start_line": 188,
           "tier": "TIER2",
           "title": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... (`2026-11-11`)",
           "touched_files": [
@@ -757,12 +703,13 @@
         },
         {
           "capsule_1line": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... -> Added multi-level .homunculus.json umbrella fallback preserving standalone client non-hijack in homunculus_paths.py, expanded entity-isolated AUTO-ROLLUP tables in sync_memory.py with live checkpoints plus entity-safe relative link rewriting, and split zero-shell read_file Turn-1 portfolio triage from --kickstart project work within...",
-          "end_line": 213,
+          "end_line": 200,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-045",
-          "line_range": "#L208-L213",
+          "line_range": "#L195-L200",
           "location": "main",
-          "start_line": 208,
+          "scope": "",
+          "start_line": 195,
           "tier": "TIER2",
           "title": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... (`2026-11-11`)",
           "touched_files": [
@@ -773,32 +720,14 @@
           ]
         },
         {
-          "capsule_1line": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... -> Made memory Templates sparse by default behind opt-in --eject-templates, switched per-project Templates creation to lazy on-demand --create-project-template, aligned templates/memory/AGENTS.md with zero-shell read_file Turn-One task triage, pointed render_diagram at Diagram_Palettes.json override discovery, and added fail-closed...",
-          "end_line": 220,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-046",
-          "line_range": "#L215-L220",
-          "location": "main",
-          "start_line": 215,
-          "tier": "TIER2",
-          "title": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... (`2026-11-11`)",
-          "touched_files": [
-            "AGENTS.md",
-            "Diagram_Palettes.json",
-            "build_adapters.py",
-            "extract_voice_cadence.py",
-            "render_diagram.py",
-            "sync_memory.py"
-          ]
-        },
-        {
           "capsule_1line": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... -> Enforce Three-Ring isolation with kernel_seal.json and sudo-only Ring-Zero leases, execute _enforce_gateway_kernel_seal across main and resolve_memory_root in memory_gateway.py, block direct Ring-One and Ring-Two sync_memory imports or vault writes via AST BYPASSED_MEMORY_GATEWAY in audit_skill_hygiene.py, and preserve existing...",
-          "end_line": 227,
+          "end_line": 207,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-047",
-          "line_range": "#L222-L227",
+          "line_range": "#L202-L207",
           "location": "main",
-          "start_line": 222,
+          "scope": "",
+          "start_line": 202,
           "tier": "TIER2",
           "title": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... (`2026-11-11`)",
           "touched_files": [
@@ -811,12 +740,13 @@
         },
         {
           "capsule_1line": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... -> Route all teach-me promotions and context seeds exclusively through memory_gateway.py (MEMORY_SDK_V1) with atomic rollback, gate Directory/ sync to promote_document, enforce max(Trigger_Floor, Inline_Tag) + require_depth=True, slice 60-word theory strictly from H2 Section 1, and snap >=14-char compound modifiers before trailing nouns....",
-          "end_line": 234,
+          "end_line": 215,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-048",
-          "line_range": "#L229-L234",
+          "line_range": "#L209-L215",
           "location": "main",
-          "start_line": 229,
+          "scope": "skill:teach-me",
+          "start_line": 209,
           "tier": "TIER2",
           "title": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... (`2026-11-12`)",
           "touched_files": [
@@ -829,12 +759,13 @@
         },
         {
           "capsule_1line": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... -> Restrict attest_subagent_execution writes strictly to <study_briefs_root> and /brain/<uuid>/scratch/, block <memory_root>/ in init_brief --out, and strip backticks before FALSE_TBD_KNOWN_IN_SOURCE lookup. (`skills/teach-me/scripts/teach_brief.py` (`Homunculus_Software.md`), `tests/test_teach_me.py` (`Homunculus_Software.md`)...",
-          "end_line": 239,
+          "end_line": 222,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-049",
-          "line_range": "#L236-L239",
+          "line_range": "#L217-L222",
           "location": "main",
-          "start_line": 236,
+          "scope": "skill:teach-me",
+          "start_line": 217,
           "tier": "TIER2",
           "title": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... (`2026-11-12`)",
           "touched_files": [
@@ -849,6 +780,7 @@
           "id": "LL-001",
           "line_range": "#L19-L23",
           "location": "archive",
+          "scope": "",
           "start_line": 19,
           "tier": "TIER3",
           "title": "Always-On Core Rule vs. On-Demand Skill Placement for Anti-Bloat Gates",
@@ -864,6 +796,7 @@
           "id": "LL-002",
           "line_range": "#L25-L29",
           "location": "archive",
+          "scope": "",
           "start_line": 25,
           "tier": "TIER3",
           "title": "Retiring Per-Edit `PostToolUse` Hooks in Favor of Deferred `pre-commit-gate` Batching",
@@ -879,6 +812,7 @@
           "id": "LL-003",
           "line_range": "#L31-L37",
           "location": "archive",
+          "scope": "",
           "start_line": 31,
           "tier": "TIER3",
           "title": "Unifying Meta-Skills (`skill-architect`) Instead of Splitting Builder vs. Cleanup Auditor",
@@ -895,6 +829,7 @@
           "id": "LL-004",
           "line_range": "#L39-L45",
           "location": "archive",
+          "scope": "",
           "start_line": 39,
           "tier": "TIER3",
           "title": "Permission-First Cleanup vs. Authoritarian Auto-Deletion (`Chesterton's Fence`)",
@@ -911,6 +846,7 @@
           "id": "LL-005",
           "line_range": "#L47-L58",
           "location": "archive",
+          "scope": "",
           "start_line": 47,
           "tier": "TIER3",
           "title": "Two-Mode CLI Oracle Rule (`Navigation Map / SKILL.md for Routine Runs` vs. `Mandatory .py Source Read for Porting / Diagnosis`)",
@@ -928,6 +864,7 @@
           "id": "LL-006",
           "line_range": "#L60-L64",
           "location": "archive",
+          "scope": "",
           "start_line": 60,
           "tier": "TIER3",
           "title": "Quarantining Open `[TBD]` Ledgers & YAML Frontmatter Line Citations in `verify_claims.py`",
@@ -942,6 +879,7 @@
           "id": "LL-007",
           "line_range": "#L66-L70",
           "location": "archive",
+          "scope": "",
           "start_line": 66,
           "tier": "TIER3",
           "title": "Multi-Encoding (`UTF-8/16/32`) & NUL-Delimited (`-z`) Boundary Scanning",
@@ -957,6 +895,7 @@
           "id": "LL-008",
           "line_range": "#L72-L76",
           "location": "archive",
+          "scope": "",
           "start_line": 72,
           "tier": "TIER3",
           "title": "Cross-OS (`1. Linux -> 2. macOS -> 3. Windows`) & Corporate Locked-Down Station Constraints",
@@ -976,6 +915,7 @@
           "id": "LL-009",
           "line_range": "#L78-L85",
           "location": "archive",
+          "scope": "",
           "start_line": 78,
           "tier": "TIER5",
           "title": "Two-Touch Skill Hygiene Cadence (Up-Front Guardrails $\\rightarrow$ Post-Build Release Audit)",
@@ -992,6 +932,7 @@
           "id": "LL-010",
           "line_range": "#L87-L91",
           "location": "archive",
+          "scope": "",
           "start_line": 87,
           "tier": "TIER3",
           "title": "`AUTO-TREE` Is a Turn-1 Routing Map, Never a Substitute for Live Filesystem Truth",
@@ -1008,6 +949,7 @@
           "id": "LL-011",
           "line_range": "#L93-L99",
           "location": "archive",
+          "scope": "",
           "start_line": 93,
           "tier": "TIER3",
           "title": "`Anchored Evidence Packets` (`1\u20133` Line Hunks): Safe for Citations, Insufficient Alone for Blind Code/Doc Mutations",
@@ -1024,6 +966,7 @@
           "id": "LL-012",
           "line_range": "#L101-L110",
           "location": "archive",
+          "scope": "",
           "start_line": 101,
           "tier": "TIER5",
           "title": "Calibrating `audit_skill_hygiene.py` Against False Positives & Structural Blind Spots (Audit Pass 1 $\\rightarrow$ Pass 2)",
@@ -1041,6 +984,7 @@
           "id": "LL-013",
           "line_range": "#L112-L120",
           "location": "archive",
+          "scope": "",
           "start_line": 112,
           "tier": "TIER5",
           "title": "Factoring `always_on` Global Rules into Overlap Scoring & Reverse Directionality (`100%` Turn Tax)",
@@ -1061,6 +1005,7 @@
           "id": "LL-014",
           "line_range": "#L122-L135",
           "location": "archive",
+          "scope": "",
           "start_line": 122,
           "tier": "TIER3",
           "title": "Generative Impact of Skill Trims: Pointer-Hop Token Inversion & Action-Site Salience Loss (`Blind` vs. `Visible` Sandbox Discovery)",
@@ -1080,6 +1025,7 @@
           "id": "LL-015",
           "line_range": "#L137-L142",
           "location": "archive",
+          "scope": "",
           "start_line": 137,
           "tier": "TIER3",
           "title": "Relative `./scripts/` CLI Paths & Isolated Excerpt Link Validation Friction",
@@ -1097,6 +1043,7 @@
           "id": "LL-016",
           "line_range": "#L144-L152",
           "location": "archive",
+          "scope": "",
           "start_line": 144,
           "tier": "TIER5",
           "title": "One-Way Memory Vault Journal vs. Self-Contained Core Operational Files (`Zero Reverse Dependency`)",
@@ -1114,6 +1061,7 @@
           "id": "LL-017",
           "line_range": "#L154-L162",
           "location": "archive",
+          "scope": "",
           "start_line": 154,
           "tier": "TIER3",
           "title": "Project-Scoped `<Project>_Lessons_Learned.md` Ledgers, 3-Tier Containment & `verify_claims.py` Failed-Attempt Quarantine",
@@ -1131,6 +1079,7 @@
           "id": "LL-018",
           "line_range": "#L164-L183",
           "location": "archive",
+          "scope": "",
           "start_line": 164,
           "tier": "TIER5",
           "title": "`Compare-Full (Pro)` System Audit: Unconditional Tier-B Claim Verification, Cross-Brain Scratch Boundaries, `CROSS_ARM_CONTAMINATION` & Fail-Closed Script Hardening",
@@ -1160,6 +1109,7 @@
           "id": "LL-019",
           "line_range": "#L185-L196",
           "location": "archive",
+          "scope": "",
           "start_line": 185,
           "tier": "TIER3",
           "title": "Standalone Zero-Vault / Zero-History Doctrine & Dynamic New-Project Discovery (Closing Hardcoded Project-List Cracks)",
@@ -1178,6 +1128,7 @@
           "id": "LL-020",
           "line_range": "#L198-L224",
           "location": "archive",
+          "scope": "",
           "start_line": 198,
           "tier": "TIER5",
           "title": "Phase 2A\u20133B Clean-Room Construction, Complete Parent-System Flaw Ledger (`PF-01`\u2013`PF-16`) & Touch-2 Sandbox Triangulation (`SBX-20261104_203744-63957361`)",
@@ -1206,6 +1157,7 @@
           "id": "LL-021",
           "line_range": "#L226-L231",
           "location": "archive",
+          "scope": "",
           "start_line": 226,
           "tier": "TIER3",
           "title": "Truth-Oracle Poisoning via Speculative Telemetry Heuristics (`INH-10`, `INH-17`, `INH-23`), Multi-Domain `QUALIFIER_GROUPS` (`27` Groups), & Unspecified Source Clause Suppression",
@@ -1221,6 +1173,7 @@
           "id": "LL-022",
           "line_range": "#L233-L237",
           "location": "archive",
+          "scope": "",
           "start_line": 233,
           "tier": "TIER3",
           "title": "Validator Crash (`rc=2`) Masquerading as `CAUGHT_FAIL_CLOSED` & Fault-Spec Setup Command Precedence (`INH-18`, `INH-39`)",
@@ -1237,6 +1190,7 @@
           "id": "LL-023",
           "line_range": "#L239-L244",
           "location": "archive",
+          "scope": "",
           "start_line": 239,
           "tier": "TIER3",
           "title": "Unanchored Substring Sanitization (`word -> <Project_Alpha>word`), Regex Refactoring Regressions & Spaced SI Unit Exclusion (`INH-01`, `INH-08`, `INH-13`, `INH-25`)",
@@ -1254,6 +1208,7 @@
           "id": "LL-024",
           "line_range": "#L246-L251",
           "location": "archive",
+          "scope": "",
           "start_line": 246,
           "tier": "TIER5",
           "title": "Methodical Pre-Deletion Callback Sweep, CoW Dry-Run Retirement Protocol & Strict Workstation vs. Clean-Room Separation (`Option A1/B1/C1`)",
@@ -1272,6 +1227,7 @@
           "id": "LL-025",
           "line_range": "#L253-L258",
           "location": "archive",
+          "scope": "",
           "start_line": 253,
           "tier": "TIER3",
           "title": "Antigravity Modular Rule `trigger: always_on` Frontmatter vs. Frontmatter-Free `AGENTS.md` / `CLAUDE.md` Stripping",
@@ -1289,6 +1245,7 @@
           "id": "LL-026",
           "line_range": "#L260-L270",
           "location": "archive",
+          "scope": "",
           "start_line": 260,
           "tier": "TIER3",
           "title": "`teach-me` Fast-Path (`24 -> 11` Turns), Shell `.py`-Snooping Closure vs. Deterministic `verify_claims.py` Execution, `WARNING_CONTEXT_CITATION` `[Hint]` & Entity-Isolated `memory/Directory/` Box Trees",
@@ -1307,6 +1264,7 @@
           "id": "LL-028",
           "line_range": "#L272-L283",
           "location": "archive",
+          "scope": "",
           "start_line": 272,
           "tier": "TIER3",
           "title": "`Pairing D \u2014 Full-Spectrum Synthesis`: Dual-Surface `#Lstart-Lend` Script Navigation Maps (`20` Scripts / `261` Symbols + `<Project>_Software.md` Anchors), Single-Pass Unified AST Kernel (`inspect_python_ast_and_map`), & Dual-Mode In-Process / Shared-`SourceIndex` Oracle Batching (`SBX-20261107_164747-0996f501`)",
@@ -1329,6 +1287,7 @@
           "id": "LL-029",
           "line_range": "#L285-L288",
           "location": "archive",
+          "scope": "",
           "start_line": 285,
           "tier": "TIER4",
           "title": "Antigravity Global Rule Injection (`~/.gemini/config/rules/`) in Custom `define_subagent` `stock-baseline` Benchmarks (`Two-Way Benchmark Distortion`)",
@@ -1346,6 +1305,7 @@
           "id": "LL-030",
           "line_range": "#L290-L297",
           "location": "archive",
+          "scope": "",
           "start_line": 290,
           "tier": "TIER3",
           "title": "`inspect_hardware_ecosystem.py` Stdout Middle-Truncation (`14,382B -> 8,162B`), JSON Key Guessing, & Redundant `804`-Line `hw_telemetry.json` Paginated Reads",
@@ -1362,6 +1322,7 @@
           "id": "LL-031",
           "line_range": "#L299-L307",
           "location": "archive",
+          "scope": "",
           "start_line": 299,
           "tier": "TIER3",
           "title": "The CAD Epistemic Boundary (`Structure vs. Engineer Design Intent`), STEP B-Rep Open Partial-Arc Fillets (`R1.50mm` Snap Grooves/Lips vs. Closed `360\u00b0` Cylinders), & `Option 2B-Armored` Separation into `addons/hardware-cad-inspector/`",
@@ -1379,6 +1340,7 @@
           "id": "LL-033",
           "line_range": "#L309-L313",
           "location": "archive",
+          "scope": "",
           "start_line": 309,
           "tier": "TIER3",
           "title": "`verify_claims.py --dump-whitelist` Premature `VRF-...` Receipt Bypass & URL Numeric Token Poisoning",
@@ -1393,6 +1355,7 @@
           "id": "LL-034",
           "line_range": "#L315-L325",
           "location": "archive",
+          "scope": "",
           "start_line": 315,
           "tier": "TIER3",
           "title": "`verify_claims.py` Over-Strict Prose-Grammar Regex Traps vs. Structural Truth (`41`-Turn Decompilation Loop in Round 4)",
@@ -1408,6 +1371,7 @@
           "id": "LL-035",
           "line_range": "#L327-L331",
           "location": "archive",
+          "scope": "",
           "start_line": 327,
           "tier": "TIER3",
           "title": "Closing the `python3 -c \"import verify_claims, inspect; inspect.getsource(...)\"` Backdoor (`39` Snoop Calls in R4) via Runtime Anti-Introspection Guard & Hard `2-Pass` Verification Ceiling",
@@ -1424,6 +1388,7 @@
           "id": "LL-036",
           "line_range": "#L333-L340",
           "location": "archive",
+          "scope": "",
           "start_line": 333,
           "tier": "TIER3",
           "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` (`6` Wasted Turns), Single-Agent Serialized 1-by-1 `read_file` Calls (`7` Turns), & Prompt-Cache TTL Expiry (`+136,766` Uncached Tokens on `T69`)",
@@ -1443,6 +1408,7 @@
           "id": "LL-037",
           "line_range": "#L342-L359",
           "location": "archive",
+          "scope": "",
           "start_line": 342,
           "tier": "TIER3",
           "title": "Round 5 Dueling Sandbox Victory (`37` Turns vs. `Stock R5` `47`; `0` Unbacked Claims vs. `45`), `[TBD_SPECULATIVE_GUESS]` Smuggling Closure, `[Line Text]` + Parallel `edit_file` Batching, & Option C5 Multi-Vector Red-Team Hardening",
@@ -1461,6 +1427,7 @@
           "id": "LL-038",
           "line_range": "#L361-L366",
           "location": "archive",
+          "scope": "",
           "start_line": 361,
           "tier": "TIER3",
           "title": "5-Sprint Stateful Memory Rebuild: 3-Stage Station/Detached Resolution, `TIER0`\u2013`TIER5` Gravity Store, Entity-Partitioned Hybrid Recall, & `script_contracts.json` Preflight Gate (`2026-11-09`)",
@@ -1478,6 +1445,7 @@
           "id": "LL-039",
           "line_range": "#L368-L373",
           "location": "archive",
+          "scope": "",
           "start_line": 368,
           "tier": "TIER3",
           "title": "5-Slot Governance Architecture, `0444` Memory Rule Seal (`governance_seal.json`), `TIER5` Provenance & Recall/Link Hardening (`2026-11-09`)",
@@ -1494,6 +1462,7 @@
           "id": "LL-040",
           "line_range": "#L375-L380",
           "location": "archive",
+          "scope": "",
           "start_line": 375,
           "tier": "TIER3",
           "title": "Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive... (`2026-11-10`)",
@@ -1505,20 +1474,60 @@
           ]
         },
         {
-          "capsule_1line": "[PLAYBOOK] Homunculus Core Script Upgrade, Dual-Repo Clean-Room Sync & v1.1 Governance Re-Seal Sequence -> 1. Run --preflight <script.py> and unlock core (homunculus_paths.py --unlock-core). -> 2. Implement surgical changes, sync AST maps (--sync-maps) and client adapters (--build-repo-adapters), and verify unittest suite + OS Dry-Run (+faults) sandbox. -> 3. Mirror clean-room files to Alchemical3D/Homunculus, log/reinforce lessons...",
+          "capsule_1line": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... -> Added composite --kickstart dedup, banned Model:inherit across all subagents with Workspace:branch for mutating frames, renamed voice /learn to /voice-learn, added --agy-skills-json + non-destructive hooks.json sync, and added Carbon PostToolUse + BROKEN_DOC_LINK_OR_SCRIPT checks (SBX-20261110_162015-7ddf774e) (`build_adapters.py`...",
+          "end_line": 387,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-043",
+          "line_range": "#L382-L387",
+          "location": "archive",
+          "scope": "",
+          "start_line": 382,
+          "tier": "TIER3",
+          "title": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... (`2026-11-10`)",
+          "touched_files": [
+            "audit_portability.py",
+            "audit_skill_hygiene.py",
+            "build_adapters.py",
+            "hooks.json"
+          ]
+        },
+        {
+          "capsule_1line": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... -> Made memory Templates sparse by default behind opt-in --eject-templates, switched per-project Templates creation to lazy on-demand --create-project-template, aligned templates/memory/AGENTS.md with zero-shell read_file Turn-One task triage, pointed render_diagram at Diagram_Palettes.json override discovery, and added fail-closed...",
+          "end_line": 394,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-046",
+          "line_range": "#L389-L394",
+          "location": "archive",
+          "scope": "",
+          "start_line": 389,
+          "tier": "TIER3",
+          "title": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... (`2026-11-11`)",
+          "touched_files": [
+            "AGENTS.md",
+            "Diagram_Palettes.json",
+            "build_adapters.py",
+            "extract_voice_cadence.py",
+            "render_diagram.py",
+            "sync_memory.py"
+          ]
+        },
+        {
+          "capsule_1line": "[PLAYBOOK] Homunculus Core Script Upgrade, Dual-Repo Clean-Room Sync & v1.1 Governance Re-Seal Sequence -> 1. Run `--preflight <script.py>` and open a scoped Ring-0 lease via explicit user `sudo:` prompt + 3-Part Advisory + `homunculus_paths.py --sudo-unlock --files ... --reason ...` (`h_sudo.sh` / `tty_turnkey` or `--remote-turnkey`). -> 2. Implement surgical changes in Copy-on-Write / branch staging, sync AST maps (`--sync-maps`) and...",
           "end_line": 27,
           "file": "Projects/Homunculus/Homunculus_Playbooks.md",
           "id": "PB-HOM-01",
           "line_range": "#L24-L27",
           "location": "playbooks",
+          "scope": "",
           "start_line": 24,
           "tier": "TIER2",
-          "title": "Homunculus Core Script Upgrade, Dual-Repo Clean-Room Sync & v1.1 Governance Re-Seal Sequence (`2026-11-10`)",
+          "title": "Homunculus Core Script Upgrade, Dual-Repo Clean-Room Sync & v1.1 Governance Re-Seal Sequence (`2026-11-13`)",
           "touched_files": [
             "audit_data_boundary.py",
             "audit_portability.py",
             "audit_skill_hygiene.py",
             "homunculus_paths.py",
+            "kernel_seal.json",
             "sync_memory.py",
             "verify_claims.py"
           ]
@@ -1530,6 +1539,7 @@
           "id": "PB-HOM-02",
           "line_range": "#L29-L32",
           "location": "playbooks",
+          "scope": "",
           "start_line": 29,
           "tier": "TIER2",
           "title": "Building or Migrating a Ring-One or Ring-Two Module onto MEMORY_SDK_V1 memory_gateway.py (`2026-11-11`)",
@@ -1543,7 +1553,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 306.1,
+      "proj_avg_doc_len": 303.88,
       "proj_total_docs": 51,
       "project": "Homunculus"
     },
@@ -1555,6 +1565,7 @@
           "governing_lls": [],
           "must_keep": "Preserves explicit glass-transition (`Tg`) and thermal/creep boundaries across all `5` tiers (`PLA` Tg `~55-60 \u00b0C`, `PETG` Tg `~80 \u00b0C`, `ABS`/`ASA` Tg `~100-105 \u00b0C`, `PC` Tg `~145-150 \u00b0C`, `PEEK`/`PEI` ultra-polymers) using `Mode B2` Explanatory Reference Voice.",
           "retired_bloat": "Recommending `PLA` or `PETG` for structural heated-chamber or belt-tensioned CoreXY components where creep or thermal softening occurs below `100 \u00b0C`.",
+          "scope": "",
           "subsystem": "`Filament_Guide.md` (`5` Polymer Tiers)",
           "tier": "TIER1",
           "touched_files": [
@@ -1566,6 +1577,7 @@
           "governing_lls": [],
           "must_keep": "Centralizes reusable shop tooling (`FNIRSI HS-02A`/`Pinecil` heat-set irons, `LDO` hex drivers, `Loctite 222MS`/`243`, `HSS` chucking reamers `2\u201310mm`, `3DO` `FEP` wire) so individual hardware BOMs stay focused on build-specific COTS parts.",
           "retired_bloat": "Duplicating full shop-tool catalogs inside individual hardware repo `BOM.md` files or stripping documented vendor attribution links (`West3D`, `KB-3D`, `Fabreeko`).",
+          "scope": "",
           "subsystem": "`Tools_and_Hardware.md` (Curated Bench Reference)",
           "tier": "TIER1",
           "touched_files": [
@@ -1583,6 +1595,7 @@
           "id": "LL-MT-01",
           "line_range": "#L33-L36",
           "location": "main",
+          "scope": "",
           "start_line": 33,
           "tier": "TIER2",
           "title": "Glass-Transition (`Tg`) Polymer Selection Reference (`Filament_Guide.md`) (`2026-11-05`)",
@@ -1592,20 +1605,21 @@
         },
         {
           "capsule_1line": "Separating Reusable Bench Tooling (`Tools_and_Hardware.md`) from Project COTS BOMs -> Extracted all bench tooling and consumables into `Tools_and_Hardware.md` (`282` verified claims across `Maker-Tools`, `VRF-076c174de9c5`; `Maker-Tools.md`).",
-          "end_line": 41,
-          "file": "Projects/Maker-Tools/Maker-Tools_Lessons_Learned.md",
+          "end_line": 24,
+          "file": "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md",
           "id": "LL-MT-02",
-          "line_range": "#L38-L41",
-          "location": "main",
-          "start_line": 38,
-          "tier": "TIER2",
+          "line_range": "#L19-L24",
+          "location": "archive",
+          "scope": "",
+          "start_line": 19,
+          "tier": "TIER3",
           "title": "Separating Reusable Bench Tooling (`Tools_and_Hardware.md`) from Project COTS BOMs (`2026-11-05`)",
           "touched_files": [
             "Tools_and_Hardware.md"
           ]
         }
       ],
-      "proj_avg_doc_len": 80.5,
+      "proj_avg_doc_len": 79.5,
       "proj_total_docs": 2,
       "project": "Maker-Tools"
     },
@@ -1617,6 +1631,7 @@
           "governing_lls": [],
           "must_keep": "Renders at `https://github.com/Alchemical-3D`; embeds the transparent primary SVG banner from [`Brand`](../Brand/Brand.md), showcases active ecosystem repositories (`Alembic_Toolhead`, `Pneuma_Remote_Air`, `Retort-A`/`B`, `Pestle_Rotational_Bowden`, `Maker-Tools`), and declares `CC BY-NC-SA 4.0` licensing + `https://ko-fi.com/alchemical3d`.",
           "retired_bloat": "Embedding quantitative sub-assembly specifications inside `profile/README.md` that can drift out of sync with downstream hardware repositories (`BOM.md` / `Assembly_Guide.md`).",
+          "scope": "",
           "subsystem": "`profile/README.md` (GitHub Org Storefront)",
           "tier": "TIER1",
           "touched_files": [
@@ -1630,35 +1645,37 @@
       ],
       "lessons": [
         {
-          "capsule_1line": "Canonical `profile/README.md` Path inside `.github` Repository -> Maintained `profile/README.md` as the single living document (`VRF-3b88c1f9d028`, `8` supported claims, `0` unbacked claims; `Organization_Profile.md`).",
+          "capsule_1line": "Keeping Storefront Copy Free of Secondary BOM/Fastener Duplication -> Kept `profile/README.md` scoped to architectural roles, licensing (`CC BY-NC-SA 4.0`), and direct repository links (`Organization_Profile.md`).",
           "end_line": 35,
           "file": "Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md",
-          "id": "LL-OP-01",
+          "id": "LL-OP-02",
           "line_range": "#L32-L35",
           "location": "main",
+          "scope": "",
           "start_line": 32,
-          "tier": "TIER2",
-          "title": "Canonical `profile/README.md` Path inside `.github` Repository (`2026-11-05`)",
-          "touched_files": [
-            "README.md"
-          ]
-        },
-        {
-          "capsule_1line": "Keeping Storefront Copy Free of Secondary BOM/Fastener Duplication -> Kept `profile/README.md` scoped to architectural roles, licensing (`CC BY-NC-SA 4.0`), and direct repository links (`Organization_Profile.md`).",
-          "end_line": 40,
-          "file": "Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md",
-          "id": "LL-OP-02",
-          "line_range": "#L37-L40",
-          "location": "main",
-          "start_line": 37,
           "tier": "TIER2",
           "title": "Keeping Storefront Copy Free of Secondary BOM/Fastener Duplication (`2026-11-05`)",
           "touched_files": [
             "README.md"
           ]
+        },
+        {
+          "capsule_1line": "Canonical `profile/README.md` Path inside `.github` Repository -> Maintained `profile/README.md` as the single living document (`VRF-3b88c1f9d028`, `8` supported claims, `0` unbacked claims; `Organization_Profile.md`).",
+          "end_line": 22,
+          "file": "Projects/Organization_Profile/Archive/Organization_Profile_Lessons_Archive.md",
+          "id": "LL-OP-01",
+          "line_range": "#L19-L22",
+          "location": "archive",
+          "scope": "",
+          "start_line": 19,
+          "tier": "TIER3",
+          "title": "Canonical `profile/README.md` Path inside `.github` Repository (`2026-11-05`)",
+          "touched_files": [
+            "README.md"
+          ]
         }
       ],
-      "proj_avg_doc_len": 77.5,
+      "proj_avg_doc_len": 76.0,
       "proj_total_docs": 2,
       "project": "Organization_Profile"
     },
@@ -1670,6 +1687,7 @@
           "governing_lls": [],
           "must_keep": "Press the lever-pivot `M3x5x4mm` heat-set insert **from the bottom of `pestle_main_body.stl` strictly flush with the bottom face**; brace a wrench flat between support-arm uprights against a table when pressing `(3)` `PC4-M6` fittings; compress the BMG tension spring directly against `[a]_pestle_lever.stl`.",
           "retired_bloat": "Pressing the lever-pivot insert from the top face (pushes melt ridge into lever swing plane); pressing `PC4-M6` collets unbraced (snaps upright arm along Z layers); prying BMG tension spring against lower main-body ears.",
+          "scope": "",
           "subsystem": "Bottom-Entry Lever Pivot Insert & Support-Arm Bracing (`pestle_main_body.stl`, `[a]_pestle_lever.stl`)",
           "tier": "TIER1",
           "touched_files": [
@@ -1683,6 +1701,7 @@
           "governing_lls": [],
           "must_keep": "Mount `BMG` + `LDO` `NEMA 14` (`36STH20-1004AHG-9T`) on the `F5-12M` 3-piece axial thrust bearing (`5mm ID x 12mm OD x 4mm`) so the extruder swivels straight toward [`Alembic_Toolhead`](../Alembic_Toolhead/Alembic_Toolhead.md) (`< 228.6mm` PTFE, `0.95 mm @ 40 mm/s` retraction, `0.280` PA).",
           "retired_bloat": "Fixed frame-mounted Bowden exit angles (`~508mm` PTFE compound S-curves) or silently guessing resolutions to the `4` quarantined table-vs-step fastener/bearing discrepancies in `README.md`.",
+          "scope": "",
           "subsystem": "Swivel Thrust Bearing & Short PTFE Path (`F5-12M`, `< 228.6mm` PTFE)",
           "tier": "TIER1",
           "touched_files": [
@@ -1700,6 +1719,7 @@
           "id": "LL-PST-01",
           "line_range": "#L34-L37",
           "location": "main",
+          "scope": "",
           "start_line": 34,
           "tier": "TIER2",
           "title": "Top-Side Pivot Insert Binding & Cantilevered Support-Arm Shear Fractures",
@@ -1715,6 +1735,7 @@
           "id": "LL-PST-02",
           "line_range": "#L39-L42",
           "location": "main",
+          "scope": "",
           "start_line": 39,
           "tier": "TIER2",
           "title": "Monolithic `README.md` Table-to-Step Drift",
@@ -1731,6 +1752,7 @@
           "id": "LL-PST-03",
           "line_range": "#L44-L48",
           "location": "main",
+          "scope": "",
           "start_line": 44,
           "tier": "TIER2",
           "title": "Rotational Bowden Pivot vs. Fixed Frame Bowden Capstan Drag (`Alembic_Toolhead` Coupled)",
@@ -1740,7 +1762,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 146.67,
+      "proj_avg_doc_len": 144.0,
       "proj_total_docs": 3,
       "project": "Pestle_Rotational_Bowden"
     },
@@ -1757,6 +1779,7 @@
           ],
           "must_keep": "Dual-pump regime (`pump_cool` on `PF7` + `pump_warm` on `PF9`, `cycle_time: 0.03`); `6mm OD` umbilical tubing (`2 meters` in `BOM.md`); Teflon tape on pressure-side `1-8-NPT` threads (`>= 70 kPa`).",
           "retired_bloat": "Assuming a single pump with a pilot-assisted `1-8-NPT` solenoid valve can blend ambient/chamber air or actuate under low pressure differential; guessing pump voltage (`12V` vs. `24V`) or wattage when unlisted in repo docs.",
+          "scope": "",
           "subsystem": "Dual-Pump Architecture & Pneumatic Routing (`Firmware/Pneuma_Control.cfg`, `BOM.md`)",
           "tier": "TIER1",
           "touched_files": [
@@ -1773,6 +1796,7 @@
           ],
           "must_keep": "`Rear_Cover.stl` attaches via `5` `M3x5x4` brass heat-set inserts + `5` `M3x8 SHCS` (`BOM.md:6-10`, `Assembly_Guide.md:30,78`). `Pump_Top_Cover.stl` and `Filter_Top_Cover.stl` are toolless snap-fit / press-fit covers (`Assembly_Guide.md:61,66`).",
           "retired_bloat": "Misinterpreting `16 \u00d7 R1.50mm` open partial-arc snap-fit relief grooves on `Pump_Top_Cover.stl` / `Filter_Top_Cover.stl` as closed `\u00d83.00mm` (`360\u00b0`) M3 fastener holes (`16x M3 screws` hallucination).",
+          "scope": "",
           "subsystem": "Enclosure & Snap-Fit Covers (`Main_Body.stl`, `Rear_Cover.stl`, `Pump_Top_Cover.stl`, `Filter_Top_Cover.stl`)",
           "tier": "TIER1",
           "touched_files": [
@@ -1794,10 +1818,10 @@
           ],
           "must_keep": "`Main_Body.stl` has `8` total `\u00d84.70mm` heat-set pockets (`5` rear cover + `2` table mount + `1` auxiliary boss) and `5 \u00d7 \u00d812.00mm` grommet pass-through ports (`4` top + `1` bottom). `Vacuum_Pump.stl` is a `2`-body COTS reference model (`90.10 \u00d7 124.22 \u00d7 65.50 mm`).",
           "retired_bloat": "Treating `Vacuum_Pump.stl` (`334.62 cm\u00b3`) as a printable part (`Assembly_Guide.md:20`); assuming `Tube_Fitting.stl` exists in `STL/` (`Assembly_Guide.md:54`); or assuming `6` `\u00d812.00mm` ports exist in `Main_Body.stl` just because `BOM.md` lists `6` `TPU_Grommet.stl`.",
-          "subsystem": "COTS Packaging & Port Geometry (`CAD/Pneuma_Remote_Air.step`, `STL/.stl`)",
+          "scope": "",
+          "subsystem": "COTS Packaging & Port Geometry (`CAD/Pneuma_Remote_Air.step`, `STL/*.stl`)",
           "tier": "TIER1",
           "touched_files": [
-            ".stl",
             "Assembly_Guide.md",
             "BOM.md",
             "Main_Body.stl",
@@ -1814,6 +1838,7 @@
           ],
           "must_keep": "Structural enclosure parts (`Main_Body`, `Rear_Cover`, `Pump_Top_Cover`, `Filter_Top_Cover`, `Table_Mount`) use `ABS`/`ASA` (`4` walls, `5` top/bottom layers, `40%` `Grid`/`Gyroid` infill, `0.2mm` layers).",
           "retired_bloat": "Borrowing `40%` structural `ABS`/`ASA` infill/walls onto the `3` `TPU` elastomer vibration-isolation parts (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) or inventing Shore hardness (`95A`/`85A`).",
+          "scope": "",
           "subsystem": "Polymer Separation (`Print_Settings.md`)",
           "tier": "TIER1",
           "touched_files": [
@@ -1823,47 +1848,18 @@
             "TPU_Grommet.stl",
             "Table_Mount_TPU.stl"
           ]
-        },
-        {
-          "governing_lls": [
-            "LL-PNE-04"
-          ],
-          "must_keep": "Part-cooling diaphragm pumps use shutdown_speed: 0 in Pneuma_Control.cfg while hotend heatsink fans ([heater_fan]) remain shutdown_speed: 1 to prevent heat creep",
-          "retired_bloat": "shutdown_speed: 1 on pump_cool and pump_warm in Firmware/Pneuma_Control.cfg",
-          "subsystem": "Pneuma_Control.cfg, README.md",
-          "tier": "TIER1",
-          "touched_files": [
-            "Pneuma_Control.cfg",
-            "Pneuma_Remote_Air.md",
-            "Pneuma_Remote_Air_Hardware.md",
-            "README.md"
-          ]
-        },
-        {
-          "governing_lls": [
-            "LL-PNE-03"
-          ],
-          "must_keep": "Separate structural ABS/ASA/PETG slicer parameters from TPU vibration-isolation elastomer parts and Dual-Pump BOM/Assembly tables",
-          "retired_bloat": "Single-table structural slicer settings without TPU separation or legacy 1/8-NPT solenoid primary BOM rows",
-          "subsystem": "Print_Settings.md, BOM.md, Assembly_Guide.md",
-          "tier": "TIER1",
-          "touched_files": [
-            "Assembly_Guide.md",
-            "BOM.md",
-            "Pneuma_Remote_Air.md",
-            "Print_Settings.md"
-          ]
         }
       ],
       "lessons": [
         {
           "capsule_1line": "Coupled 6mm OD Umbilical & Pressure-Side Sealing (`Alembic_Toolhead` Coupled) -> Seat all `M3x5x4mm` inserts strictly flush, wrap Teflon tape on pressure-side threads, and route the `6mm OD` umbilical with generous sweep radii (`Pneuma_Remote_Air`).",
-          "end_line": 42,
+          "end_line": 40,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-02",
-          "line_range": "#L38-L42",
+          "line_range": "#L36-L40",
           "location": "main",
-          "start_line": 38,
+          "scope": "",
+          "start_line": 36,
           "tier": "TIER2",
           "title": "Coupled 6mm OD Umbilical & Pressure-Side Sealing (`Alembic_Toolhead` Coupled)",
           "touched_files": [
@@ -1873,12 +1869,13 @@
         },
         {
           "capsule_1line": "Anti-Cross-Entity Polymer Borrowing (`TPU` Vibration Isolators vs. `ABS/ASA` Enclosure) -> Graduated into `Verifiable_Accuracy_and_Anti_Hallucination` (`Ban Cross-Entity Borrowing`); TPU parameters remain quarantined as an explicit `[TBD]` in `Pneuma_Remote_Air` until measured.",
-          "end_line": 47,
+          "end_line": 45,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-03",
-          "line_range": "#L44-L47",
+          "line_range": "#L42-L45",
           "location": "main",
-          "start_line": 44,
+          "scope": "",
+          "start_line": 42,
           "tier": "TIER2",
           "title": "Anti-Cross-Entity Polymer Borrowing (`TPU` Vibration Isolators vs. `ABS/ASA` Enclosure)",
           "touched_files": [
@@ -1886,27 +1883,29 @@
           ]
         },
         {
-          "capsule_1line": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard & `#kick_start_time: 0.5` Stall Hazard -> Flagged as a mandatory firmware safety audit item in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware` (`shutdown_speed: 0.0` recommended for fail-safe de-energization unless intentional purge behavior is desired; uncomment `kick_start_time: 0.5` if low-PWM stall occurs).",
-          "end_line": 52,
+          "capsule_1line": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`) -> Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; `Pneuma_Remote_Air`, `Pneuma_Remote_Air_Hardware`).",
+          "end_line": 50,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-04",
-          "line_range": "#L49-L52",
+          "line_range": "#L47-L50",
           "location": "main",
-          "start_line": 49,
+          "scope": "",
+          "start_line": 47,
           "tier": "TIER2",
-          "title": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard & `#kick_start_time: 0.5` Stall Hazard",
+          "title": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)",
           "touched_files": [
             "Pneuma_Control.cfg"
           ]
         },
         {
           "capsule_1line": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation -> Documented in `Pneuma_Remote_Air`'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.",
-          "end_line": 57,
+          "end_line": 55,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-06",
-          "line_range": "#L54-L57",
+          "line_range": "#L52-L55",
           "location": "main",
-          "start_line": 54,
+          "scope": "",
+          "start_line": 52,
           "tier": "TIER2",
           "title": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation",
           "touched_files": [
@@ -1915,12 +1914,13 @@
         },
         {
           "capsule_1line": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift -> Explicitly segregated `Vacuum_Pump.stl` as a non-printed COTS reference model in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware`.",
-          "end_line": 62,
+          "end_line": 60,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-07",
-          "line_range": "#L59-L62",
+          "line_range": "#L57-L60",
           "location": "main",
-          "start_line": 59,
+          "scope": "",
+          "start_line": 57,
           "tier": "TIER2",
           "title": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift",
           "touched_files": [
@@ -1929,12 +1929,13 @@
         },
         {
           "capsule_1line": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count -> Tracked in `Pneuma_Remote_Air` (`[TBD: missing_Tube_Fitting_stl_and_grommet_port_count]`) and `Pneuma_Remote_Air_Hardware`.",
-          "end_line": 67,
+          "end_line": 65,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-08",
-          "line_range": "#L64-L67",
+          "line_range": "#L62-L65",
           "location": "main",
-          "start_line": 64,
+          "scope": "",
+          "start_line": 62,
           "tier": "TIER2",
           "title": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count",
           "touched_files": [
@@ -1944,12 +1945,13 @@
         },
         {
           "capsule_1line": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation -> Documented in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware` so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.",
-          "end_line": 72,
+          "end_line": 70,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-09",
-          "line_range": "#L69-L72",
+          "line_range": "#L67-L70",
           "location": "main",
-          "start_line": 69,
+          "scope": "",
+          "start_line": 67,
           "tier": "TIER2",
           "title": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation",
           "touched_files": [
@@ -1963,6 +1965,7 @@
           "id": "LL-PNE-01",
           "line_range": "#L19-L23",
           "location": "archive",
+          "scope": "",
           "start_line": 19,
           "tier": "TIER5",
           "title": "Why Pneuma Evolved from Single-Pump Solenoid Diversion to Dual-Pump Thermal Regimes",
@@ -1980,6 +1983,7 @@
           "id": "LL-PNE-05",
           "line_range": "#L25-L28",
           "location": "archive",
+          "scope": "",
           "start_line": 25,
           "tier": "TIER3",
           "title": "Open `R1.50mm` Snap-Fit Relief Grooves vs. Closed `\u00d83.00mm` Fastener Holes",
@@ -1994,6 +1998,7 @@
           "id": "PB-ALCH-01",
           "line_range": "#L22-L25",
           "location": "playbooks",
+          "scope": "",
           "start_line": 22,
           "tier": "TIER2",
           "title": "Alchemical-3D Hardware Repository Unification, CAD/Firmware/BOM Reconciliation & Dual-Lesson Reinforcement... (`2026-11-10`)",
@@ -2010,7 +2015,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 157.2,
+      "proj_avg_doc_len": 152.4,
       "proj_total_docs": 10,
       "project": "Pneuma_Remote_Air"
     }
@@ -2020,7 +2025,7 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "c0b2360302b4854a"
+      "sha256": "6a5a049a04418a16"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md": {
       "lines": 118,
@@ -2043,14 +2048,19 @@
       "sha256": "b6c5c3f1edff8115"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Lessons_Learned.md": {
-      "lines": 50,
-      "sections": 2,
-      "sha256": "6b9283da7ef71e56"
+      "lines": 43,
+      "sections": 1,
+      "sha256": "940a30eed2ac60dd"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md": {
       "lines": 41,
       "sections": 0,
       "sha256": "e89b5a8c7d6e4f5e"
+    },
+    "Projects/Alchemical_Web_Docs/Archive/Alchemical_Web_Docs_Lessons_Archive.md": {
+      "lines": 24,
+      "sections": 1,
+      "sha256": "514bb11baafad096"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead.md": {
       "lines": 164,
@@ -2098,29 +2108,34 @@
       "sha256": "820f21013153001a"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
-      "lines": 380,
-      "sections": 38,
-      "sha256": "b1495833e3e14417"
+      "lines": 394,
+      "sections": 40,
+      "sha256": "c4acec89bbe269fd"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 386,
+      "lines": 286,
       "sections": 0,
-      "sha256": "9e63cfc938911ac7"
+      "sha256": "8a41b25236346856"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 244,
-      "sections": 11,
-      "sha256": "88dd9ff31135d356"
+      "lines": 226,
+      "sections": 9,
+      "sha256": "7508bdb0e7f43b0a"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
       "sections": 2,
-      "sha256": "28aeba3f91b643c6"
+      "sha256": "3c51b88caf9deb01"
     },
     "Projects/Homunculus/Homunculus_Software.md": {
-      "lines": 74,
+      "lines": 85,
       "sections": 0,
-      "sha256": "a2d00c6f89654f97"
+      "sha256": "f74e670a5c93c4ba"
+    },
+    "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
+      "lines": 24,
+      "sections": 1,
+      "sha256": "f085eeb3c65c7f15"
     },
     "Projects/Maker-Tools/Maker-Tools.md": {
       "lines": 89,
@@ -2128,14 +2143,19 @@
       "sha256": "e80518c499144263"
     },
     "Projects/Maker-Tools/Maker-Tools_Lessons_Learned.md": {
-      "lines": 50,
-      "sections": 2,
-      "sha256": "a86d04213cf6bc64"
+      "lines": 43,
+      "sections": 1,
+      "sha256": "d2dfe4339e8ba20f"
     },
     "Projects/Maker-Tools/Maker-Tools_Software.md": {
       "lines": 41,
       "sections": 0,
       "sha256": "04315462363f9720"
+    },
+    "Projects/Organization_Profile/Archive/Organization_Profile_Lessons_Archive.md": {
+      "lines": 22,
+      "sections": 1,
+      "sha256": "3bf21a0abe53461b"
     },
     "Projects/Organization_Profile/Organization_Profile.md": {
       "lines": 80,
@@ -2143,9 +2163,9 @@
       "sha256": "56afe69519ddf1f6"
     },
     "Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md": {
-      "lines": 49,
-      "sections": 2,
-      "sha256": "a4af51c843d1895f"
+      "lines": 44,
+      "sections": 1,
+      "sha256": "6e05f4e1b09f9b56"
     },
     "Projects/Organization_Profile/Organization_Profile_Software.md": {
       "lines": 41,
@@ -2183,17 +2203,17 @@
       "sha256": "2c50249ab1cd8be8"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md": {
-      "lines": 72,
+      "lines": 70,
       "sections": 7,
-      "sha256": "e8093b4354ffff41"
+      "sha256": "0b44f37d51c362b3"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md": {
       "lines": 25,
       "sections": 1,
-      "sha256": "1779e000a7d02d83"
+      "sha256": "c9fd0f112f120949"
     }
   },
   "total_docs": 80,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "8e8588188f8bd7fc"
+  "vectors_digest": "28f6da19b4eaab7a"
 }

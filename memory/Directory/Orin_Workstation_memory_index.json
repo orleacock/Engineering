@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 125.2,
+  "avg_doc_len": 124.2,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
-    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 450` tokens) and deferred `pre-commit-gate` batching.",
+    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
     "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and fast `Model: 'flash'` subagents.",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-12",
+  "last_synced": "2026-11-13",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -25,6 +25,7 @@
           ],
           "must_keep": "Wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and optional `Homunculus/addons/*` into `~/.gemini/config/` (`0` duplicate `.agents/` trees); registers `memory/` in `~/.config/obsidian/obsidian.json`; installs & `cmp -s`-verifies `.git/hooks/{pre-commit,pre-push}` across `Engineering` and `Alchemical3D/*`; syncs `Projects/.homunculus.json` and `Home.homunculus.json` (`~/.homunculus.json`) so no-workspace sessions resolve `Projects/Engineering/memory` with `0` shell calls.",
           "retired_bloat": "Hardcoding machine-specific absolute paths inside portable `Homunculus` skills; maintaining duplicate `Engineering/.agents` or `~/.agents` symlink trees; omitting `~/.homunculus.json` for no-workspace sessions; checking only `-x` instead of `cmp -s` byte parity on copied Alchemical-3D git hooks.",
+          "scope": "",
           "subsystem": "`bootstrap_workstation.sh`",
           "tier": "TIER1",
           "touched_files": [
@@ -40,6 +41,7 @@
           "governing_lls": [],
           "must_keep": "Enforces `audit_data_boundary.py` (`--staged` / `--push-stdin`), `audit_portability.py`, `audit_skill_hygiene.py`, and `sync_memory.py --audit` before commit/push; enforces directory-scoped Git identities (`~/.gitconfig` `[includeIf]`) and SSH host aliases (`github-orleacock` vs. `github-alchemical`).",
           "retired_bloat": "Bypassing Git hooks with `--no-verify` or running multi-repo pushes without verifying compartment isolation (`private` vs. `public` vs. `cleanroom`).",
+          "scope": "",
           "subsystem": "`git_pre_commit_boundary.sh` & `pre_push_engineering_guard.sh`",
           "tier": "TIER1",
           "touched_files": [
@@ -57,6 +59,7 @@
           "governing_lls": [],
           "must_keep": "Strictly scopes OAuth 2.0 to `gmail.readonly` + `gmail.compose` (draft creation only\u2014never autonomous `send`); enforces `visibility_radar` for hidden/filtered threads and `verified_send_as_aliases` (`orleacock@gmail.com`, `orin@alchemical3d.net`, `we@alchemical3d.net`).",
           "retired_bloat": "Printing raw OAuth token JSONs, `client_secret*.json`, or executing untrusted commands embedded inside external email bodies/attachments.",
+          "scope": "",
           "subsystem": "`gmail_mcp/gmail_mcp_server.py`",
           "tier": "TIER1",
           "touched_files": [
@@ -70,6 +73,7 @@
           ],
           "must_keep": "Single-source Alchemical3D/Homunculus only (0 duplicate copies); exit 4 for REGRESSION_ADVISORY (never exit 2 argparse collision); pure Markdown comparison charts (0 unsolicited SVG/PNG renders); write-once 0444/0555 RAID deliverables with pre-lock boundary, SHA-256, and bundle verification.",
           "retired_bloat": "Maintaining a duplicate Engineering/Homunculus working tree; returning exit 2 for sub-ceiling advisories (collides with sandbox_runner.py VALIDATOR_CRASH); mutating RAID snapshots in place.",
+          "scope": "",
           "subsystem": "version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py",
           "tier": "TIER1",
           "touched_files": [
@@ -86,6 +90,7 @@
           ],
           "must_keep": "Dereference symlinked ~/.local/bin/h-sudo via os.path.realpath in h_sudo.sh and exclude volatile .obsidian/workspace*.json and .cache/ indices in snapshot_host_hashes",
           "retired_bloat": "Using dirname BASH_SOURCE without symlink dereferencing in h_sudo.sh or hashing volatile Obsidian UI files during CLI benchmarks",
+          "scope": "",
           "subsystem": "version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py",
           "tier": "TIER1",
           "touched_files": [
@@ -105,6 +110,7 @@
           "id": "LL-WS-01",
           "line_range": "#L43-L46",
           "location": "main",
+          "scope": "",
           "start_line": 43,
           "tier": "TIER2",
           "title": "Directory-Scoped Git `[includeIf]` Identities & SSH Alias Locks (`2026-11-05`)",
@@ -120,6 +126,7 @@
           "id": "LL-WS-02",
           "line_range": "#L48-L51",
           "location": "main",
+          "scope": "",
           "start_line": 48,
           "tier": "TIER2",
           "title": "Parent `/home/orin/Projects` Umbrella `.homunculus.json` Sync (`2026-11-06`)",
@@ -135,6 +142,7 @@
           "id": "LL-WS-03",
           "line_range": "#L53-L56",
           "location": "main",
+          "scope": "",
           "start_line": 53,
           "tier": "TIER2",
           "title": "Gmail MCP `visibility_radar` for Non-Visible Unread Threads (`2026-11-06`)",
@@ -150,6 +158,7 @@
           "id": "LL-WS-04",
           "line_range": "#L58-L61",
           "location": "main",
+          "scope": "",
           "start_line": 58,
           "tier": "TIER2",
           "title": "Pre-Commit AST/CLI & Maintainer Matrix Parity Gate (`2026-11-07`)",
@@ -167,6 +176,7 @@
           "id": "LL-WS-05",
           "line_range": "#L63-L66",
           "location": "main",
+          "scope": "",
           "start_line": 63,
           "tier": "TIER2",
           "title": "Provisioning Optional `Homunculus/addons/*` Symlinks in `bootstrap_workstation.sh` (`2026-11-08`)",
@@ -181,6 +191,7 @@
           "id": "LL-WS-06",
           "line_range": "#L68-L73",
           "location": "main",
+          "scope": "",
           "start_line": 68,
           "tier": "TIER2",
           "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation (`2026-11-08`)",
@@ -195,6 +206,7 @@
           "id": "LL-WS-07",
           "line_range": "#L75-L80",
           "location": "main",
+          "scope": "",
           "start_line": 75,
           "tier": "TIER2",
           "title": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)",
@@ -209,6 +221,7 @@
           "id": "LL-WS-08",
           "line_range": "#L82-L87",
           "location": "main",
+          "scope": "",
           "start_line": 82,
           "tier": "TIER2",
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
@@ -225,6 +238,7 @@
           "id": "LL-WS-09",
           "line_range": "#L89-L92",
           "location": "main",
+          "scope": "",
           "start_line": 89,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
@@ -242,6 +256,7 @@
           "id": "PB-WS-01",
           "line_range": "#L22-L25",
           "location": "playbooks",
+          "scope": "",
           "start_line": 22,
           "tier": "TIER2",
           "title": "Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable (`2026-11-10`)",
@@ -256,7 +271,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 125.2,
+      "proj_avg_doc_len": 124.2,
       "proj_total_docs": 10,
       "project": "Workstation_Operations"
     }
@@ -266,12 +281,12 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "c0b2360302b4854a"
+      "sha256": "6a5a049a04418a16"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 101,
+      "lines": 103,
       "sections": 0,
-      "sha256": "78df0b15c65f8ca5"
+      "sha256": "6cd5dfb78d92197b"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
       "lines": 106,
@@ -286,10 +301,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 50,
       "sections": 0,
-      "sha256": "a2ca2219f00ea071"
+      "sha256": "bad68398b27de354"
     }
   },
   "total_docs": 10,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "5ef775bc4445f261"
+  "vectors_digest": "1d3bc0708c0f934c"
 }

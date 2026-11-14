@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.3.0",
+  "engine_version": "0.3.1",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.3.0",
-  "baseline_head_sha": "4bd733d3bd56",
-  "baseline_tree_hash": "5ef00c0786c6",
+  "baseline_tag": "v0.3.1",
+  "baseline_head_sha": "51453f63a444",
+  "baseline_tree_hash": "9567a5fa5732",
   "baseline_file_count": 107,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
   "benchmark_schema_version": "1.0",
   "authoritative_cleanroom_path": "/home/orin/Projects/Alchemical3D/Homunculus",
   "authoritative_remote_url": "git@github-alchemical:Alchemical-3D/Homunculus.git",
-  "updated_at": "2026-11-11",
+  "updated_at": "2026-11-13",
   "digit_trigger_laws": {
     "major": {
       "digit": "X (X.0.0)",
@@ -66,6 +66,15 @@
       "tree_hash": "5ef00c0786c6",
       "trigger_type": "minor",
       "reason": "Homunculus v0.3.0: Ring-0 sudo kernel seal, 3-Ring isolation, MEMORY_SDK_V1 memory_gateway.py multi-lens context/write platform, AST gateway enforcement, and Add-On Memory Integration Playbook"
+    },
+    {
+      "version": "0.3.1",
+      "tag": "v0.3.1",
+      "date": "2026-11-13",
+      "head_sha": "51453f63a444",
+      "tree_hash": "9567a5fa5732",
+      "trigger_type": "patch",
+      "reason": "Homunculus v0.3.1: Teach-me Vision Protocols 1-6/D1-D8, 7-axis CALC vectors, burn-on-use remote turnkeys, and builtin Ring-1 protection"
     }
   ]
 }

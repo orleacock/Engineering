@@ -6,7 +6,7 @@ compartment: "private"
 note_type: "reference"
 authoritative: false
 status: "NON_AUTHORITATIVE_REFERENCE"
-last_synced: "2026-11-11"
+last_synced: "2026-11-13"
 ---
 
 # 📊 Homunculus Version & Standardized Benchmark Ledger (`v0.Y.Z`)
@@ -218,4 +218,12 @@ Part of the [`README.md`](../../README.md) and companion version scorecard for [
 - [COURSE_D_APPROVED_TRADEOFF] Intentional v0.3.0 additions (+259B rules / +252B AGENTS.md within 22.5kB ceiling, +9 v0.3.0 unit tests, +LL-047); Course B rule/adapter byte compaction (~260B) and sync_memory.py tty_turnkey parity queued in Alchemical-3D_Tasks.md for tomorrow.
 
 ---
+
+### Interim Version Provenance Note: v0.3.1 (`51453f63a444` / Merkle Tree `9567a5fa5732` / Git Tree `2ca5ab86e3ec`)
+
+- **Version Tag & Provenance**: Retroactively tagged via `version_manager.py --bump patch` (`107` tracked files, `66 / 66` unit tests `OK`, `SBX-20261112_114304-eb3256c8`, `VRF-0c83f4d8ffe9`, `Sealed: True | Entries: 39 | Leased: 0`).
+- **Why `v0.3.1` Did Not Run `--record-baseline`**: `Homunculus_Lessons_Learned.md` carried `9` `[TIER2]` sections (`LL-041`–`LL-049`), exceeding `ME07`'s `<= 8` `TIER2` ceiling prior to `v0.3.2` graduation (`9 -> 5` unscoped `TIER2`), and `AGENTS.md` grew `+258 B` (`21,778 B -> 22,036 B`, queued in `Task #62`). At `v0.3.2` graduation, `benchmark_homunculus.py --profile full-system-suite --baseline-version v0.3.0 --record-baseline` will pin deltas directly against the last pinned baseline `v0.3.0` (`BMK-20261111_220607-8183c68c`), with full post-mortem details recorded in [`Version_Logs/v0.3.1_Teach_Me_and_Turnkey_Worklog.md`](Version_Logs/v0.3.1_Teach_Me_and_Turnkey_Worklog.md).
+
+---
+
 

@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 163.14,
+  "avg_doc_len": 162.14,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
-    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 450` tokens) and deferred `pre-commit-gate` batching.",
+    "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
     "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and fast `Model: 'flash'` subagents.",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 7$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "NetCom",
-  "last_synced": "2026-11-11",
+  "last_synced": "2026-11-13",
   "projects": {
     "NetCom_Engineering_Assistant": {
       "compartment": "private",
@@ -22,6 +22,7 @@
           "governing_lls": [],
           "must_keep": "Direct Code Interpreter `/mnt/data/` file inspection (`0` Graph indexing latency); `preserve_openxml_extensions()` (`<extLst>` `x14:dataValidations`); deterministic UTF-8 XML builders (`_format_worksheet_xml_bytes`, `SharedStringTable`, `_sort_sheetdata_rows_and_cells`, `validate_openxml_package_integrity`); `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`).",
           "retired_bloat": "Standard `openpyxl.save()` stripping `<extLst>` dropdowns; raw `ElementTree.tostring()` corrupting `xmlns:x14ac`/`mc:Ignorable` headers in Windows Desktop Excel; relying on asynchronous OneDrive Graph RAG for live `.xlsx` cell math.",
+          "scope": "",
           "subsystem": "`Scripts/inspect_nea_workbooks.py` (`NEA-SCR-001`)",
           "tier": "TIER1",
           "touched_files": [
@@ -34,7 +35,8 @@
           "governing_lls": [],
           "must_keep": "Compiles the 6-Agent Modular Specialist Suite under M365 `8,000`-char instruction cap (`semver \"2.2.3\"`, `.txt` Knowledge packs); bundles `SKILL.md` + `scripts/inspect_nea_workbooks.py` at root of each `<skill-name>.zip`.",
           "retired_bloat": "Single monolithic agent prompt (`>8,000` chars); alphanumeric semver (`\"2.0a\"`); packaging `SKILL.md` without `scripts/inspect_nea_workbooks.py` inside `<skill-name>.zip`.",
-          "subsystem": "`Scripts/build_copilot_agents.py` & `Skills//.zip` (`NEA-SCR-002`)",
+          "scope": "",
+          "subsystem": "`Scripts/build_copilot_agents.py` & `Skills/*/*.zip` (`NEA-SCR-002`)",
           "tier": "TIER1",
           "touched_files": [
             "NetCom_Engineering_Assistant.md",
@@ -53,6 +55,7 @@
           "id": "LL-NEA-01",
           "line_range": "#L35-L38",
           "location": "main",
+          "scope": "",
           "start_line": 35,
           "tier": "TIER2",
           "title": "Overcoming M365 Copilot OneDrive Graph Latency & Ephemeral Container Boundaries",
@@ -65,6 +68,7 @@
           "id": "LL-NEA-02",
           "line_range": "#L40-L43",
           "location": "main",
+          "scope": "",
           "start_line": 40,
           "tier": "TIER2",
           "title": "Solving the `8,000`-Char Instruction Cap, `\"2.2.3\"` Semver Lock & `.txt` Knowledge Indexing",
@@ -79,6 +83,7 @@
           "id": "LL-NEA-03",
           "line_range": "#L45-L48",
           "location": "main",
+          "scope": "",
           "start_line": 45,
           "tier": "TIER2",
           "title": "Bundling `scripts/inspect_nea_workbooks.py` Inside Root-Level `<skill-name>.zip` Archives",
@@ -95,6 +100,7 @@
           "id": "LL-NEA-04",
           "line_range": "#L50-L53",
           "location": "main",
+          "scope": "",
           "start_line": 50,
           "tier": "TIER2",
           "title": "Preventing `openpyxl.save()` from Stripping Cross-Sheet `<extLst>` DataValidations",
@@ -109,6 +115,7 @@
           "id": "LL-NEA-05",
           "line_range": "#L55-L58",
           "location": "main",
+          "scope": "",
           "start_line": 55,
           "tier": "TIER2",
           "title": "Context Consolidation (`28` $\\rightarrow$ `5` Tier-1 Files), `Downloads/` Lock & Testbed Decontamination",
@@ -124,6 +131,7 @@
           "id": "LL-NEA-06",
           "line_range": "#L60-L63",
           "location": "main",
+          "scope": "",
           "start_line": 60,
           "tier": "TIER2",
           "title": "Preventing Windows Desktop Excel OpenXML \"File is Corrupt\" Rejections on Generated Multi-Tab Workbooks",
@@ -138,6 +146,7 @@
           "id": "LL-NEA-07",
           "line_range": "#L65-L68",
           "location": "main",
+          "scope": "",
           "start_line": 65,
           "tier": "TIER2",
           "title": "Multi-Media Timesheet OCR Staging, Key Normalization & Non-Target Tab/Page Pruning",
@@ -146,7 +155,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 163.14,
+      "proj_avg_doc_len": 162.14,
       "proj_total_docs": 7,
       "project": "NetCom_Engineering_Assistant"
     }
@@ -156,7 +165,7 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "c0b2360302b4854a"
+      "sha256": "6a5a049a04418a16"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md": {
       "lines": 200,
@@ -176,5 +185,5 @@
   },
   "total_docs": 7,
   "vectors_cache_rel": ".cache/NetCom_scoring_vectors.json",
-  "vectors_digest": "bdefa5b3616e18fb"
+  "vectors_digest": "140781169aaba90e"
 }

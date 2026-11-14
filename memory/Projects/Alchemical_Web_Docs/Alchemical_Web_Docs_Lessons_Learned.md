@@ -3,7 +3,7 @@ project: "Alchemical_Web_Docs"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-08"
+last_synced: "2026-11-13"
 ---
 
 # Alchemical_Web_Docs — Engineering Lessons Learned & Architectural Decisions
@@ -34,13 +34,6 @@ last_synced: "2026-11-08"
 - **Symptom / Trap:** Navigation cards in `docs/index.md:10,23,27` pointed to `https://alchemical-3d.com/{core,retort,pestle}/` while `docs/CNAME` and `mkdocs.yml` served `alchemical3d.net`.
 - **Root Cause:** Legacy domain links remained hardcoded in `docs/index.md` after migrating the GitHub Pages custom domain to `alchemical3d.net`.
 - **Verified Resolution & Permanent Guardrail:** Replaced hardcoded legacy domain links with relative MkDocs page links (`core.md`, `retort.md`, `pestle.md`) and verified `0` broken links via `audit_repo_docs.py` ([`Alchemical_Web_Docs.md`](Alchemical_Web_Docs.md)).
-
-### `LL-AWD-02` [TIER2] — Standardized Showcase Card Framing Across Dark/Light Browser Themes (`2026-11-02`)
-- **Symptom / Trap:** Showcase images (`Award.png`, `alchemical-3d_core.png`, `PestleExploded3.png`, `3dprofilefront.png`) risked inconsistent border/shadow presentation across dark/light browser themes.
-- **Root Cause:** Raw unframed raster images lacked standardized corner radius and drop-shadow alpha margins.
-- **Verified Resolution & Permanent Guardrail:** Verified all showcase cards via `format_image.py --inspect` (`[PASS]`) and `verify_claims.py --fail-on-tbd` (`0` unbacked claims across all `5` Markdown files; [`Alchemical_Web_Docs.md`](Alchemical_Web_Docs.md)).
-
----
 
 ## 2. Architectural Decision Records (`ADR`)
 

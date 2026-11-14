@@ -11,7 +11,7 @@ checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "49f5ae26b415"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-11"
+last_synced: "2026-11-13"
 checkpoint_lessons_digest: "29c3f27d0a0203d3"
 ---
 
@@ -44,6 +44,7 @@ checkpoint_lessons_digest: "29c3f27d0a0203d3"
   - **Multi-Compartment Boundary Guard**: `git_pre_commit_boundary.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) and `pre_push_engineering_guard.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) execute `Homunculus/scripts/audit_data_boundary.py` prior to commits and pushes across `private`, `public`, and `cleanroom` compartments, paired with directory-scoped Git identities (`~/.gitconfig` `[includeIf]`), SSH host aliases (`~/.ssh/config`: `github-orleacock` and `github-alchemical`), and offline Raid snapshots (`/run/media/orin/Raid/Backup Documents/`).
   - **Dual-Account Gmail MCP Server**: `gmail_mcp/gmail_mcp_server.py` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) provides OAuth 2.0 `Read + Create Drafts` access (`gmail.readonly` + `gmail.compose`) with `visibility_radar` and `verified_send_as_aliases` enforcement (`personal` `orleacock@gmail.com` + `alchemical` `orin@alchemical3d.net` / `we@alchemical3d.net`).
   - **Immutable RAID Deliverable Restore Guard (`S1-A`)**: `snapshot_homunculus_version.py` (`build_restore_script`) preserves live `~/.gemini/config/mcp_config.json` (staging redacted snapshot configs to `mcp_config.redacted_reference.json`) and prunes only `Homunculus`/`Engineering`/dangling symlinks in `~/.gemini/config/{rules,skills}`. Because the initial `v0.1.0_2026-11-10_foundation_baseline` RAID deliverable is write-once `0444`-locked (`0` in-place edits permitted), if ever running full-workstation recovery from that specific `v0.1.0` snapshot, invoke the updated `scripts/snapshot_homunculus_version.py` restore template or back up live `~/.gemini/config/mcp_config.json` and non-Homunculus user skills/rules first (its `--restore-engine-only` mode is already unaffected).
+  - **Ring-0 & Memory Governance Human Turnkey (`h_sudo.sh` / `~/.local/bin/h-sudo`)**: Out-of-tree `/dev/tty` human turnkey helper ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) supporting `status`, `unlock [--with-memory] --files ... --reason "..."` (`unlock-all`), `seal [--with-memory] --reason "..."` (`seal-all`), `revoke`, `enroll-turnkeys`, `policy`, `unlock-memory`, and `seal-memory`, sequencing Ring-0 and Memory Governance prompts inside a single interactive command to eliminate multi-line clipboard paste swallowing.
 
 ---
 
@@ -52,13 +53,14 @@ checkpoint_lessons_digest: "29c3f27d0a0203d3"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-11`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: SBX-20261111_204624-cae34931, LL-WS-08`
+- **Last Session Timestamp**: `2026-11-13`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 49f5ae26b415` | `Worktree: untracked` | `Last Verification: version_manager.py:v0.3.1-LOCKED_RELEASE_TAG`
 - **Where We Stopped (Verified State & Context)**:
-  Promoted Homunculus v0.3.0 workstation release: added h_sudo.sh (~/.local/bin/h-sudo with os.path.realpath symlink dereference), installed 0444 workstation tty_turnkey policy, wired OPEN_SUDO_LEASE_COMMIT_BLOCKED + kernel_seal check in git_pre_commit_boundary.sh, and excluded volatile Obsidian UI / .cache files in benchmark_homunculus.py snapshot_host_hashes.
+  Upgraded h_sudo.sh with --with-memory, unlock-all, and seal-all single-command Ring-0 + Memory Governance sequencing (W-4), documented h_sudo.sh in Workstation_Operations.md, and tagged/synced Homunculus v0.3.1 (51453f63a444 / 9567a5fa5732) in homunculus_version.json via version_manager.py.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Configure local Syncthing client pairing when ready
+  1. Run W-2 CoW Wave-1 Pre-Staging for Homunculus v0.3.2
+  2. Execute single-command h_sudo.sh unlock --with-memory and h_sudo.sh seal --with-memory at /dev/tty during v0.3.2 graduation
 <!-- SESSION-HANDOFF:END -->
 
 ---

@@ -3,7 +3,7 @@ project: "Organization_Profile"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-08"
+last_synced: "2026-11-13"
 ---
 
 # Organization_Profile — Engineering Lessons Learned & Architectural Decisions
@@ -28,11 +28,6 @@ last_synced: "2026-11-08"
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `LL-OP-01` | `2026-11-05` | GitHub organization landing pages only render when placed at the exact `profile/README.md` path inside the `.github` repository | Placing `README.md` only at the repository root of `.github` describes the repo itself rather than rendering on the public `https://github.com/Alchemical-3D` organization profile | Maintained `profile/README.md` as the single living document (`VRF-3b88c1f9d028`, `8` supported claims, `0` unbacked claims) | [`Organization_Profile.md`](Organization_Profile.md) |
 | `LL-OP-02` | `2026-11-05` | Duplicating detailed fastener or dimension counts on the organization landing page creates multi-repo maintenance drift whenever a hardware project iterates | High-level storefront copy should route builders to canonical project repositories rather than acting as a secondary BOM | Kept `profile/README.md` scoped to architectural roles, licensing (`CC BY-NC-SA 4.0`), and direct repository links | [`Organization_Profile.md`](Organization_Profile.md) |
-
-### `LL-OP-01` [TIER2] — Canonical `profile/README.md` Path inside `.github` Repository (`2026-11-05`)
-- **Symptom / Trap:** GitHub organization landing pages only render when placed at the exact `profile/README.md` path inside the `.github` repository.
-- **Root Cause:** Placing `README.md` only at the repository root of `.github` describes the repo itself rather than rendering on the public `https://github.com/Alchemical-3D` organization profile.
-- **Verified Resolution & Permanent Guardrail:** Maintained `profile/README.md` as the single living document (`VRF-3b88c1f9d028`, `8` supported claims, `0` unbacked claims; [`Organization_Profile.md`](Organization_Profile.md)).
 
 ### `LL-OP-02` [TIER2] — Keeping Storefront Copy Free of Secondary BOM/Fastener Duplication (`2026-11-05`)
 - **Symptom / Trap:** Duplicating detailed fastener or dimension counts on the organization landing page creates multi-repo maintenance drift whenever a hardware project iterates.

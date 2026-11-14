@@ -25,4 +25,6 @@ memory/.obsidian/workspace-mobile.json
 memory/.trash/
 memory/.cache/*_scoring_vectors.json
 memory/.cache/*_context_fabric.json
+memory/.cache/preflight_state.json
+memory/.cache/hit_telemetry.json
 addon_staging/
