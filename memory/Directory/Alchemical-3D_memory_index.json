@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 238.74,
+  "avg_doc_len": 238.59,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -530,10 +530,11 @@
             "LL-045",
             "LL-047",
             "LL-050",
-            "LL-051"
+            "LL-051",
+            "LL-052"
           ],
-          "must_keep": "Unified `v3:{content_sha}` AST kernel (`inspect_python_ast_and_map` + `--sync-maps`), `script_contracts.json` + `.cache/preflight_state.json`, `os.path.realpath(__file__)` + `prefer_copy`/`.zip` co-bundling, `<=22,500` B `AGENTS.md` + `check_out_of_tree_agents_md_budget` + Claude `permissions.deny` + empty `hooks`, `DEV_JOURNAL_CROSS_BLEED`, `UTF-8/16/32` + `.xlsx/.docx/.3mf` ZIP XML + `git cat-file --batch` + BiDi/Tag boundary scans, `3-Ring` `kernel_seal.json` + `sudo:` (`--sudo-unlock`/`--sudo-seal`, `/dev/tty` challenge + `tty_turnkey` `--remote-turnkey`, `enforced_roots` + `is_temp_fw` symmetry, `_set_file_lock_mode` `has_exec`), `_enforce_gateway_kernel_seal`, `MEMORY_SDK_V1` (`authoritative: false` external promotion + explicit lesson/playbook fields), `SPLASH_EXPOSURE_BLOCKED`, AST `[BYPASSED_MEMORY_GATEWAY]`.; single-process pre-commit.sh + _rg_prefilter_utf8_files (>=16 plain UTF-8 files, 0 SHA-256 hash rules) + stateless zero-write --telemetry-pulse; Opt-in OpenSSH ssh-keygen -Y seal/lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1, local_config/inline, default off, 0 private-key reads via .pub + SSH_AUTH_SOCK) + section-aware LL-[A-Z0-9-]+ scoped/unscoped TIER2 --telemetry-pulse accounting",
-          "retired_bloat": "Never re-add retired `--unlock-core` or `--lock-core`; relying solely on `os.isatty` without `/dev/tty` challenge; falling back to home `sudo_policy.json` bypassing `enforced_roots`; unconditional chmod `+x` on non-executable `.py`; direct `Ring 1/2` `sync_memory` imports or vault writes; exceeding `22,500` B in `AGENTS.md`; `os.path.abspath(__file__)` on symlinks; leaking `LL-xxx` into portable rules/skills; bypassing `--preflight`.; multi-spawn bash pre-commit subshells; stateful JSONL pulse history inside clean-room Homunculus; shared setUpClass memory-vault unittest fixtures; Reading SSH private keys (~/.ssh/id_*, *.pem, *.key) for seal signing or matching only numeric LL-\\d+ lesson IDs in --telemetry-pulse",
+          "must_keep": "Unified `v3:{content_sha}` AST kernel (`inspect_python_ast_and_map` + `--sync-maps`), `script_contracts.json` + `.cache/preflight_state.json`, `os.path.realpath(__file__)` + `prefer_copy`/`.zip` co-bundling, `<=22,500` B `AGENTS.md` + `check_out_of_tree_agents_md_budget` + Claude `permissions.deny` + empty `hooks`, `DEV_JOURNAL_CROSS_BLEED`, `UTF-8/16/32` + `.xlsx/.docx/.3mf` ZIP XML + `git cat-file --batch` + BiDi/Tag boundary scans, `3-Ring` `kernel_seal.json` + `sudo:` (`--sudo-unlock`/`--sudo-seal`, `/dev/tty` challenge + `tty_turnkey` `--remote-turnkey`, `enforced_roots` + `is_temp_fw` symmetry, `_set_file_lock_mode` `has_exec`), `_enforce_gateway_kernel_seal`, `MEMORY_SDK_V1` (`authoritative: false` external promotion + explicit lesson/playbook fields), `SPLASH_EXPOSURE_BLOCKED`, AST `[BYPASSED_MEMORY_GATEWAY]`.; single-process pre-commit.sh + _rg_prefilter_utf8_files (>=16 plain UTF-8 files, 0 SHA-256 hash rules) + stateless zero-write --telemetry-pulse; Opt-in OpenSSH ssh-keygen -Y seal/lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1, local_config/inline, default off, 0 private-key reads via .pub + SSH_AUTH_SOCK) + section-aware LL-[A-Z0-9-]+ scoped/unscoped TIER2 --telemetry-pulse accounting; Pure-JSON SourceIndex cache (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target verify_claims.py --target, per-project Projects/<Project>/Quarantine/ QUARANTINE_NOTE_V1 + memory_gateway.py quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity",
+          "retired_bloat": "Never re-add retired `--unlock-core` or `--lock-core`; relying solely on `os.isatty` without `/dev/tty` challenge; falling back to home `sudo_policy.json` bypassing `enforced_roots`; unconditional chmod `+x` on non-executable `.py`; direct `Ring 1/2` `sync_memory` imports or vault writes; exceeding `22,500` B in `AGENTS.md`; `os.path.abspath(__file__)` on symlinks; leaking `LL-xxx` into portable rules/skills; bypassing `--preflight`.; multi-spawn bash pre-commit subshells; stateful JSONL pulse history inside clean-room Homunculus; shared setUpClass memory-vault unittest fixtures; Reading SSH private keys (~/.ssh/id_*, *.pem, *.key) for seal signing or matching only numeric LL-\\d+ lesson IDs in --telemetry-pulse; Pickle-based oracle caches, top-level <memory_root>/Quarantine/ folders, or counting inert backticked [TBD: <var>] rule examples as open TBDs",
           "scope": "",
           "subsystem": "`scripts/homunculus_paths.py`, `memory_gateway.py`, `build_adapters.py`, `audit_data_boundary.py` & `audit_skill_hygiene.py`",
           "tier": "TIER1",
@@ -606,13 +607,13 @@
       "lessons": [
         {
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 159,
+          "end_line": 160,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L154-L159",
+          "line_range": "#L155-L160",
           "location": "main",
           "scope": "",
-          "start_line": 154,
+          "start_line": 155,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -630,13 +631,13 @@
         },
         {
           "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
-          "end_line": 174,
+          "end_line": 175,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-027",
-          "line_range": "#L161-L174",
+          "line_range": "#L162-L175",
           "location": "main",
           "scope": "",
-          "start_line": 161,
+          "start_line": 162,
           "tier": "TIER0",
           "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
           "touched_files": [
@@ -659,69 +660,14 @@
           ]
         },
         {
-          "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration, D-3A...",
-          "end_line": 181,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-044",
-          "line_range": "#L176-L181",
-          "location": "main",
-          "scope": "",
-          "start_line": 176,
-          "tier": "TIER2",
-          "title": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... (`2026-11-11`)",
-          "touched_files": [
-            "audit_repo_docs.py",
-            "script_contracts.json",
-            "sync_memory.py",
-            "test_project_memory.py"
-          ]
-        },
-        {
-          "capsule_1line": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... -> Added multi-level .homunculus.json umbrella fallback preserving standalone client non-hijack in homunculus_paths.py, expanded entity-isolated AUTO-ROLLUP tables in sync_memory.py with live checkpoints plus entity-safe relative link rewriting, and split zero-shell read_file Turn-1 portfolio triage from --kickstart project work within...",
-          "end_line": 188,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-045",
-          "line_range": "#L183-L188",
-          "location": "main",
-          "scope": "",
-          "start_line": 183,
-          "tier": "TIER2",
-          "title": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... (`2026-11-11`)",
-          "touched_files": [
-            "SKILL.md",
-            "co-engineering-partner.md",
-            "homunculus_paths.py",
-            "sync_memory.py"
-          ]
-        },
-        {
-          "capsule_1line": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... -> Enforce Three-Ring isolation with kernel_seal.json and sudo-only Ring-Zero leases, execute _enforce_gateway_kernel_seal across main and resolve_memory_root in memory_gateway.py, block direct Ring-One and Ring-Two sync_memory imports or vault writes via AST BYPASSED_MEMORY_GATEWAY in audit_skill_hygiene.py, and preserve existing...",
-          "end_line": 195,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-047",
-          "line_range": "#L190-L195",
-          "location": "main",
-          "scope": "",
-          "start_line": 190,
-          "tier": "TIER2",
-          "title": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... (`2026-11-11`)",
-          "touched_files": [
-            "audit_skill_hygiene.py",
-            "homunculus_paths.py",
-            "kernel_seal.json",
-            "memory_gateway.py",
-            "sync_memory.py"
-          ]
-        },
-        {
           "capsule_1line": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... -> Route all teach-me promotions and context seeds exclusively through memory_gateway.py (MEMORY_SDK_V1) with atomic rollback, gate Directory/ sync to promote_document, enforce max(Trigger_Floor, Inline_Tag) + require_depth=True, slice 60-word theory strictly from H2 Section 1, and snap >=14-char compound modifiers before trailing nouns....",
-          "end_line": 203,
+          "end_line": 183,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-048",
-          "line_range": "#L197-L203",
+          "line_range": "#L177-L183",
           "location": "main",
           "scope": "skill:teach-me",
-          "start_line": 197,
+          "start_line": 177,
           "tier": "TIER2",
           "title": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... (`2026-11-12`)",
           "touched_files": [
@@ -734,13 +680,13 @@
         },
         {
           "capsule_1line": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... -> Restrict attest_subagent_execution writes strictly to <study_briefs_root> and /brain/<uuid>/scratch/, block <memory_root>/ in init_brief --out, and strip backticks before FALSE_TBD_KNOWN_IN_SOURCE lookup. (`skills/teach-me/scripts/teach_brief.py` (`Homunculus_Software.md`), `tests/test_teach_me.py` (`Homunculus_Software.md`)...",
-          "end_line": 211,
+          "end_line": 191,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-049",
-          "line_range": "#L205-L211",
+          "line_range": "#L185-L191",
           "location": "main",
           "scope": "skill:teach-me",
-          "start_line": 205,
+          "start_line": 185,
           "tier": "TIER2",
           "title": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... (`2026-11-12`)",
           "touched_files": [
@@ -750,13 +696,13 @@
         },
         {
           "capsule_1line": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... -> Consolidate pre-commit hooks into 1 Python process, pre-filter >=16 plain UTF-8 files via _rg_prefilter_utf8_files (bypassing SHA-256 hash rules, custom regexes, symlinks, ZIPs, UTF-16/32, NUL bytes, and files >16 MB), expose audit_skill_hygiene.py --telemetry-pulse (stateless zero-write) paired with out-of-tree...",
-          "end_line": 218,
+          "end_line": 198,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-050",
-          "line_range": "#L213-L218",
+          "line_range": "#L193-L198",
           "location": "main",
           "scope": "",
-          "start_line": 213,
+          "start_line": 193,
           "tier": "TIER2",
           "title": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... (`2026-11-13`)",
           "touched_files": [
@@ -771,13 +717,13 @@
         },
         {
           "capsule_1line": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... -> Added opt-in OpenSSH ssh-keygen -Y seal and lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1; local_config or inline storage; default off; zero private-key reads via .pub + SSH_AUTH_SOCK + Claude permissions.deny) and upgraded --telemetry-pulse + ME07 to section-aware LL-[A-Z0-9-]+ scoped/unscoped...",
-          "end_line": 223,
+          "end_line": 205,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-051",
-          "line_range": "#L220-L223",
+          "line_range": "#L200-L205",
           "location": "main",
           "scope": "",
-          "start_line": 220,
+          "start_line": 200,
           "tier": "TIER2",
           "title": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... (`2026-11-14`)",
           "touched_files": [
@@ -787,6 +733,24 @@
             "kernel_seal.json",
             "sync_memory.py",
             "test_v030_memory_platform.py"
+          ]
+        },
+        {
+          "capsule_1line": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... -> Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity....",
+          "end_line": 210,
+          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
+          "id": "LL-052",
+          "line_range": "#L207-L210",
+          "location": "main",
+          "scope": "",
+          "start_line": 207,
+          "tier": "TIER2",
+          "title": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... (`2026-11-14`)",
+          "touched_files": [
+            "audit_skill_hygiene.py",
+            "memory_gateway.py",
+            "sync_memory.py",
+            "verify_claims.py"
           ]
         },
         {
@@ -1563,6 +1527,61 @@
           ]
         },
         {
+          "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration, D-3A...",
+          "end_line": 415,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-044",
+          "line_range": "#L410-L415",
+          "location": "archive",
+          "scope": "",
+          "start_line": 410,
+          "tier": "TIER3",
+          "title": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... (`2026-11-11`)",
+          "touched_files": [
+            "audit_repo_docs.py",
+            "script_contracts.json",
+            "sync_memory.py",
+            "test_project_memory.py"
+          ]
+        },
+        {
+          "capsule_1line": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... -> Added multi-level .homunculus.json umbrella fallback preserving standalone client non-hijack in homunculus_paths.py, expanded entity-isolated AUTO-ROLLUP tables in sync_memory.py with live checkpoints plus entity-safe relative link rewriting, and split zero-shell read_file Turn-1 portfolio triage from --kickstart project work within...",
+          "end_line": 422,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-045",
+          "line_range": "#L417-L422",
+          "location": "archive",
+          "scope": "",
+          "start_line": 417,
+          "tier": "TIER3",
+          "title": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... (`2026-11-11`)",
+          "touched_files": [
+            "SKILL.md",
+            "co-engineering-partner.md",
+            "homunculus_paths.py",
+            "sync_memory.py"
+          ]
+        },
+        {
+          "capsule_1line": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... -> Enforce Three-Ring isolation with kernel_seal.json and sudo-only Ring-Zero leases, execute _enforce_gateway_kernel_seal across main and resolve_memory_root in memory_gateway.py, block direct Ring-One and Ring-Two sync_memory imports or vault writes via AST BYPASSED_MEMORY_GATEWAY in audit_skill_hygiene.py, and preserve existing...",
+          "end_line": 429,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-047",
+          "line_range": "#L424-L429",
+          "location": "archive",
+          "scope": "",
+          "start_line": 424,
+          "tier": "TIER3",
+          "title": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... (`2026-11-11`)",
+          "touched_files": [
+            "audit_skill_hygiene.py",
+            "homunculus_paths.py",
+            "kernel_seal.json",
+            "memory_gateway.py",
+            "sync_memory.py"
+          ]
+        },
+        {
           "capsule_1line": "[PLAYBOOK] Homunculus Core Script Upgrade, Dual-Repo Clean-Room Sync & v1.1 Governance Re-Seal Sequence -> 1. Run `--preflight <script.py>` and open a scoped Ring-0 lease via explicit user `sudo:` prompt + 3-Part Advisory + `homunculus_paths.py --sudo-unlock --files ... --reason ...` (`h_sudo.sh` / `tty_turnkey` or `--remote-turnkey`). -> 2. Implement surgical changes in Copy-on-Write / branch staging, sync AST maps (`--sync-maps`) and...",
           "end_line": 27,
           "file": "Projects/Homunculus/Homunculus_Playbooks.md",
@@ -1604,8 +1623,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 301.06,
-      "proj_total_docs": 53,
+      "proj_avg_doc_len": 299.67,
+      "proj_total_docs": 54,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2159,19 +2178,19 @@
       "sha256": "820f21013153001a"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
-      "lines": 408,
-      "sections": 42,
-      "sha256": "b6a27b9fcd355b2f"
+      "lines": 429,
+      "sections": 45,
+      "sha256": "362da66647fbaaf6"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 283,
+      "lines": 284,
       "sections": 0,
-      "sha256": "7c550e0091328688"
+      "sha256": "ef6695574b451b6d"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 228,
-      "sections": 9,
-      "sha256": "7d7f566bce2381ca"
+      "lines": 215,
+      "sections": 7,
+      "sha256": "78bfd987ba944668"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2181,7 +2200,7 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 85,
       "sections": 0,
-      "sha256": "c1b2b4b9ad1160df"
+      "sha256": "9605f8493adeb38f"
     },
     "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
       "lines": 24,
@@ -2264,7 +2283,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 82,
+  "total_docs": 83,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "8904f727704c2ffb"
+  "vectors_digest": "0b15fe98bb421804"
 }

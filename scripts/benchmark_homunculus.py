@@ -24,26 +24,28 @@ Responsibilities:
   Callers       : Developer CLI, `snapshot_homunculus_version.py`, `engineering-sandbox` Track-2 Gate
   Callees       : `version_manager.py`, `Homunculus` CLI Oracles & `unittest` Suite
   Contract      : `scripts/script_contracts.json` [`benchmark_homunculus.py`]
-  CLI Flags     : --profile, --quick-pulse, --record-pulse, --homunculus-dir, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
+  CLI Flags     : --profile, --quick-pulse, --record-pulse, --homunculus-dir, --homunculus-root, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - class MetricRow (#L89-L106)                    | def percentile (#L109-L121)
-    - def snapshot_host_hashes (#L124-L161)          | def run_cmd_timed (#L164-L187)
-    - def probe_bwrap_erofs (#L190-L225)             | def collect_always_on_and_adapter_stats (#L228-L320)
-    - def _parse_unittest_proc (#L323-L339)          | def run_unit_tests (#L342-L418)
-    - def _write_minimal_png (#L421-L436)            | def bench_profile_oracle_claims (#L439-L863)
-    - def bench_profile_memory_engine (#L866-L1198)  | def bench_profile_hygiene_adapters (#L1201-L1350)
-    - def bench_profile_doc_cad_visual (#L1353-L1613) | def _parse_jsonl_trajectory (#L1616-L1714)
-    - def bench_profile_subagent_ab (#L1717-L1843)   | def bench_profile_full_suite (#L1846-L1928)
-    - def build_universal_spine (#L1931-L1974)       | def apply_synthetic_regression (#L1977-L2014)
-    - def evaluate_comparisons (#L2017-L2114)        | def render_regression_autopsy_md (#L2117-L2205)
-    - def _render_table_md (#L2208-L2226)            | def render_markdown_report (#L2229-L2264)
-    - def load_history_maps (#L2267-L2310)           | def update_ledger_and_history (#L2313-L2363)
-    - def main (#L2366-L2611)
+    - class MetricRow (#L91-L108)                    | def percentile (#L111-L123)
+    - def snapshot_host_hashes (#L126-L163)          | def run_cmd_timed (#L166-L189)
+    - def probe_bwrap_erofs (#L192-L227)             | def collect_always_on_and_adapter_stats (#L230-L342)
+    - def _parse_unittest_proc (#L345-L361)          | def _expr_has_call_name (#L364-L376)
+    - def _node_lpt_weight (#L379-L386)              | def _discover_lpt_test_shards (#L389-L463)
+    - def run_unit_tests (#L466-L552)                | def _write_minimal_png (#L555-L570)
+    - def bench_profile_oracle_claims (#L573-L999)   | def bench_profile_memory_engine (#L1002-L1334)
+    - def bench_profile_hygiene_adapters (#L1337-L1486) | def bench_profile_doc_cad_visual (#L1489-L1749)
+    - def _parse_jsonl_trajectory (#L1752-L1850)     | def bench_profile_subagent_ab (#L1853-L1979)
+    - def bench_profile_full_suite (#L1982-L2089)    | def build_universal_spine (#L2092-L2138)
+    - def apply_synthetic_regression (#L2141-L2178)  | def evaluate_comparisons (#L2181-L2278)
+    - def render_regression_autopsy_md (#L2281-L2369) | def _render_table_md (#L2372-L2390)
+    - def render_markdown_report (#L2393-L2428)      | def load_history_maps (#L2431-L2474)
+    - def update_ledger_and_history (#L2477-L2527)   | def main (#L2530-L2783)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
 
 import argparse
+import ast
 import concurrent.futures
 import dataclasses
 import datetime as dt
@@ -237,69 +239,89 @@ def collect_always_on_and_adapter_stats(
     bound_script = homunculus_dir / "scripts" / "audit_data_boundary.py"
     mem_script = homunculus_dir / "skills" / "project-memory" / "scripts" / "sync_memory.py"
 
-    p_hyg, _ = run_cmd_timed(
-        [sys.executable, str(hygiene_script), "--repo-root", str(homunculus_dir), "--json"],
-        latency_bucket=latency_bucket,
-        spawn_counter=spawn_counter,
-    )
+    lat_hyg: list[float] = []
+    lat_port: list[float] = []
+    lat_bound: list[float] = []
+    lat_mem: list[float] = []
+    sp_hyg = [0]
+    sp_port = [0]
+    sp_bound = [0]
+    sp_mem = [0]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        f_hyg = pool.submit(
+            run_cmd_timed,
+            [sys.executable, str(hygiene_script), "--repo-root", str(homunculus_dir), "--json"],
+            latency_bucket=lat_hyg,
+            spawn_counter=sp_hyg,
+        )
+        f_port = pool.submit(
+            run_cmd_timed,
+            [sys.executable, str(port_script), "--repo", str(homunculus_dir), "--json"],
+            latency_bucket=lat_port,
+            spawn_counter=sp_port,
+        )
+        f_bound = pool.submit(
+            run_cmd_timed,
+            [
+                sys.executable,
+                str(bound_script),
+                "--repo",
+                str(homunculus_dir),
+                "--compartment",
+                "cleanroom",
+                "--worktree",
+            ],
+            latency_bucket=lat_bound,
+            spawn_counter=sp_bound,
+        )
+        f_mem = pool.submit(
+            run_cmd_timed,
+            [
+                sys.executable,
+                str(mem_script),
+                "--memory-root",
+                str(memory_root),
+                "--audit",
+                "--verify-checkpoints",
+                "--json",
+            ],
+            latency_bucket=lat_mem,
+            spawn_counter=sp_mem,
+        )
+
+        rules_bytes = 0
+        rules_words = 0
+        per_rule: dict[str, dict[str, int]] = {}
+        for rpath in sorted((homunculus_dir / "rules").glob("*.md")):
+            raw = rpath.read_bytes()
+            txt = raw.decode("utf-8", errors="replace")
+            wcnt = len(re.findall(r"\S+", txt))
+            tcnt = int(round(wcnt * 1.35))
+            rules_bytes += len(raw)
+            rules_words += wcnt
+            per_rule[rpath.name] = {"bytes": len(raw), "words": wcnt, "tokens": tcnt}
+        rules_tokens = int(round(rules_words * 1.35))
+
+        agents_md_path = homunculus_dir / "adapters" / "agents_md" / "AGENTS.md"
+        agents_bytes = len(agents_md_path.read_bytes()) if agents_md_path.is_file() else 0
+        agents_headroom = 22500 - agents_bytes
+
+        claude_md_path = homunculus_dir / "adapters" / "claude_code" / "CLAUDE.md"
+        claude_bytes = len(claude_md_path.read_bytes()) if claude_md_path.is_file() else 0
+
+        p_hyg, _ = f_hyg.result()
+        p_port, _ = f_port.result()
+        p_bound_hom, _ = f_bound.result()
+        p_mem_audit, _ = f_mem.result()
+
+    latency_bucket.extend(lat_hyg + lat_port + lat_bound + lat_mem)
+    spawn_counter[0] += sp_hyg[0] + sp_port[0] + sp_bound[0] + sp_mem[0]
+
     hyg_data = json.loads(p_hyg.stdout) if p_hyg.returncode == 0 and p_hyg.stdout.strip() else {}
-
-    rules_bytes = 0
-    rules_words = 0
-    per_rule: dict[str, dict[str, int]] = {}
-    for rpath in sorted((homunculus_dir / "rules").glob("*.md")):
-        raw = rpath.read_bytes()
-        txt = raw.decode("utf-8", errors="replace")
-        wcnt = len(re.findall(r"\S+", txt))
-        tcnt = int(round(wcnt * 1.35))
-        rules_bytes += len(raw)
-        rules_words += wcnt
-        per_rule[rpath.name] = {"bytes": len(raw), "words": wcnt, "tokens": tcnt}
-    rules_tokens = int(round(rules_words * 1.35))
-
-    agents_md_path = homunculus_dir / "adapters" / "agents_md" / "AGENTS.md"
-    agents_bytes = len(agents_md_path.read_bytes()) if agents_md_path.is_file() else 0
-    agents_headroom = 22500 - agents_bytes
-
-    claude_md_path = homunculus_dir / "adapters" / "claude_code" / "CLAUDE.md"
-    claude_bytes = len(claude_md_path.read_bytes()) if claude_md_path.is_file() else 0
-
-    p_port, _ = run_cmd_timed(
-        [sys.executable, str(port_script), "--repo", str(homunculus_dir), "--json"],
-        latency_bucket=latency_bucket,
-        spawn_counter=spawn_counter,
-    )
     port_data = json.loads(p_port.stdout) if p_port.stdout.strip().startswith("{") else {}
     port_violations = int(port_data.get("violation_count", 0 if p_port.returncode == 0 else 1))
-
-    p_bound_hom, _ = run_cmd_timed(
-        [
-            sys.executable,
-            str(bound_script),
-            "--repo",
-            str(homunculus_dir),
-            "--compartment",
-            "cleanroom",
-            "--worktree",
-        ],
-        latency_bucket=latency_bucket,
-        spawn_counter=spawn_counter,
-    )
     bound_violations = 0 if p_bound_hom.returncode == 0 else max(1, p_bound_hom.stdout.count("  - ["))
-
-    p_mem_audit, _ = run_cmd_timed(
-        [
-            sys.executable,
-            str(mem_script),
-            "--memory-root",
-            str(memory_root),
-            "--audit",
-            "--verify-checkpoints",
-            "--json",
-        ],
-        latency_bucket=latency_bucket,
-        spawn_counter=spawn_counter,
-    )
     mem_audit_data = json.loads(p_mem_audit.stdout) if p_mem_audit.stdout.strip().startswith("{") else {}
     mem_audit_obj = mem_audit_data.get("audit", {})
     gov_seal_ok = p_mem_audit.returncode == 0 and mem_audit_obj.get("status") == "PASS"
@@ -339,23 +361,128 @@ def _parse_unittest_proc(proc: subprocess.CompletedProcess[str]) -> tuple[int, i
     return (passed, max(total, 1))
 
 
+def _expr_has_call_name(node: ast.AST, names: frozenset[str]) -> bool:
+    """Return True if an AST call target references any identifier in `names`."""
+    cur: ast.AST | None = node
+    while cur is not None:
+        if isinstance(cur, ast.Name):
+            return cur.id in names
+        if isinstance(cur, ast.Attribute):
+            if cur.attr in names:
+                return True
+            cur = cur.value
+        else:
+            break
+    return False
+
+
+def _node_lpt_weight(node: ast.AST) -> int:
+    """Estimate test execution weight from line span and subprocess/CLI helper calls."""
+    hot_names = frozenset({"subprocess", "_run", "_clone_framework_git_tree", "run_cli"})
+    lines = max(1, (getattr(node, "end_lineno", None) or getattr(node, "lineno", 1)) - getattr(node, "lineno", 1) + 1)
+    call_hits = sum(
+        1 for sub in ast.walk(node) if isinstance(sub, ast.Call) and _expr_has_call_name(sub.func, hot_names)
+    )
+    return 80 + lines + 60 * call_hits
+
+
+def _discover_lpt_test_shards(test_dir: Path, max_workers: int = 16) -> tuple[list[list[str]], int]:
+    """Build execution-order-safe LPT unittest target shards without importing test modules."""
+    test_files = sorted(test_dir.glob("test_*.py"))
+    units: list[tuple[int, int, str]] = []
+    expected_total = 0
+    order_idx = 0
+
+    for tf in test_files:
+        try:
+            tree = ast.parse(tf.read_text(encoding="utf-8"), filename=str(tf))
+        except (OSError, SyntaxError):
+            mod_name = f"tests.{tf.stem}"
+            units.append((100, order_idx, mod_name))
+            order_idx += 1
+            continue
+
+        mod_name = f"tests.{tf.stem}"
+        mod_funcs = {
+            fn.name for fn in tree.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        top_classes = [node for node in tree.body if isinstance(node, ast.ClassDef)]
+
+        if "setUpModule" in mod_funcs or "tearDownModule" in mod_funcs:
+            mod_test_cnt = 0
+            for cls in top_classes:
+                mod_test_cnt += sum(
+                    1
+                    for m in cls.body
+                    if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name.startswith("test_")
+                )
+            if mod_test_cnt > 0:
+                expected_total += mod_test_cnt
+                units.append((_node_lpt_weight(tree), order_idx, mod_name))
+                order_idx += 1
+            continue
+
+        for cls in top_classes:
+            test_methods = [
+                m
+                for m in cls.body
+                if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name.startswith("test_")
+            ]
+            if not test_methods:
+                continue
+            expected_total += len(test_methods)
+            cls_method_names = {
+                m.name for m in cls.body if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef))
+            }
+            if "setUpClass" in cls_method_names or "tearDownClass" in cls_method_names:
+                units.append((_node_lpt_weight(cls), order_idx, f"{mod_name}.{cls.name}"))
+                order_idx += 1
+            else:
+                for tm in test_methods:
+                    units.append((_node_lpt_weight(tm), order_idx, f"{mod_name}.{cls.name}.{tm.name}"))
+                    order_idx += 1
+
+    if not units:
+        return [], 0
+
+    k = max(1, min(max_workers, len(units), os.cpu_count() or 4))
+    loads = [0] * k
+    buckets: list[list[tuple[int, str]]] = [[] for _ in range(k)]
+    for weight, oidx, target in sorted(units, key=lambda u: (-u[0], u[1])):
+        b_idx = min(range(k), key=lambda i: (loads[i], i))
+        loads[b_idx] += weight
+        buckets[b_idx].append((oidx, target))
+
+    shards_with_first: list[tuple[int, list[str]]] = []
+    for bucket in buckets:
+        if not bucket:
+            continue
+        ordered = sorted(bucket, key=lambda item: item[0])
+        shards_with_first.append((ordered[0][0], [tgt for _, tgt in ordered]))
+    shards_with_first.sort(key=lambda item: item[0])
+    return [targets for _, targets in shards_with_first], expected_total
+
+
 def run_unit_tests(
     homunculus_dir: Path,
     pattern_or_modules: list[str],
     latency_bucket: list[float],
     spawn_counter: list[int],
     forensic_notes: list[str] | None = None,
+    unit_workers_out: list[int] | None = None,
+    max_workers: int = 16,
 ) -> tuple[int, int, float]:
-    """Run targeted or zero-shared-state parallel `unittest` suites and return `(passed_count, total_count, elapsed_ms)`."""
+    """Run targeted or execution-order-safe LPT-sharded parallel `unittest` suites."""
     test_dir = homunculus_dir / "tests"
     if pattern_or_modules == ["ALL"]:
-        test_files = sorted(test_dir.glob("test_*.py"))
-        if test_files:
+        shards, expected_total = _discover_lpt_test_shards(test_dir, max_workers=max_workers)
+        if shards:
             t0 = time.perf_counter()
-            max_workers = min(8, len(test_files), os.cpu_count() or 4)
+            if unit_workers_out is not None:
+                unit_workers_out[:] = [len(shards)]
             with tempfile.TemporaryDirectory(prefix="hom_ut_par_") as par_tmp:
-                def _run_one(idx_tf: tuple[int, Path]) -> tuple[int, int, str]:
-                    idx, tf = idx_tf
+                def _run_shard(idx_targets: tuple[int, list[str]]) -> tuple[int, int, str]:
+                    idx, targets = idx_targets
                     worker_tmp = Path(par_tmp) / f"w_{idx}"
                     worker_home = worker_tmp / "home"
                     worker_tmp.mkdir(parents=True, exist_ok=True)
@@ -373,7 +500,7 @@ def run_unit_tests(
                     env["HOMUNCULUS_SUDO_CONFIG_DIR"] = str(worker_home / ".config" / "homunculus")
                     env["PYTHONDONTWRITEBYTECODE"] = "1"
                     proc = subprocess.run(
-                        [sys.executable, "-B", "-m", "unittest", "discover", "-s", str(test_dir), "-p", tf.name],
+                        [sys.executable, "-B", "-m", "unittest", *targets],
                         cwd=str(homunculus_dir),
                         env=env,
                         capture_output=True,
@@ -388,14 +515,14 @@ def run_unit_tests(
                             for ln in (proc.stdout + "\n" + proc.stderr).splitlines()
                             if ln.strip()
                         ][-4:]
-                        note = f"Unit worker failure ({tf.name}, rc={proc.returncode}, {passed}/{total}): {' | '.join(tail_lines)}"
+                        note = f"Unit shard w_{idx} failure (rc={proc.returncode}, {passed}/{total}, n={len(targets)}): {' | '.join(tail_lines)}"
                     return passed, total, note
 
-                with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
-                    results = list(pool.map(_run_one, enumerate(test_files)))
+                with concurrent.futures.ThreadPoolExecutor(max_workers=len(shards)) as pool:
+                    results = list(pool.map(_run_shard, enumerate(shards)))
 
             elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
-            spawn_counter[0] += len(test_files)
+            spawn_counter[0] += len(shards)
             latency_bucket.append(elapsed_ms)
             total_passed = sum(p for p, _, _ in results)
             total_count = sum(t for _, t, _ in results)
@@ -403,6 +530,13 @@ def run_unit_tests(
                 for _, _, note in results:
                     if note:
                         forensic_notes.append(note)
+            floor_expected = max(expected_total, 76)
+            if total_count < floor_expected:
+                if forensic_notes is not None:
+                    forensic_notes.append(
+                        f"Unit shard coverage shortfall: ran {total_count} < expected {floor_expected}"
+                    )
+                total_passed = min(total_passed, max(0, total_count - 1))
             return (total_passed, max(total_count, 1), elapsed_ms)
         cmd = [sys.executable, "-m", "unittest", "discover", "-s", str(test_dir), "-p", "test_*.py"]
     else:
@@ -520,6 +654,7 @@ def bench_profile_oracle_claims(
                 str(hw_alpha),
                 "--entity",
                 "Client_Alpha",
+                "--no-cache",
                 "--json",
             ],
             latency_bucket=latency_bucket,
@@ -556,6 +691,7 @@ def bench_profile_oracle_claims(
                 str(bom_alpha),
                 str(hw_alpha),
                 "--require-anchors",
+                "--no-cache",
                 "--json",
             ],
             latency_bucket=latency_bucket,
@@ -653,7 +789,7 @@ def bench_profile_oracle_claims(
             encoding="utf-8",
         )
         p_f1, cold_cli_ms_3 = run_cmd_timed(
-            [sys.executable, str(verify_script), "--target", str(f1_draft), "--sources", str(bom_alpha), str(hw_alpha), "--json"],
+            [sys.executable, str(verify_script), "--target", str(f1_draft), "--sources", str(bom_alpha), str(hw_alpha), "--no-cache", "--json"],
             latency_bucket=latency_bucket,
             spawn_counter=spawn_counter,
         )
@@ -1851,16 +1987,39 @@ def bench_profile_full_suite(
     spawn_counter: list[int],
 ) -> dict[str, Any]:
     """Execute Profile 6 (`full-system-suite` — Single-pass 52-test unittest suite + Profiles 1–4 consolidated scorecard)."""
-    p1 = bench_profile_oracle_claims(homunculus_dir, latency_bucket, spawn_counter, skip_unit_tests=True)
-    p2 = bench_profile_memory_engine(homunculus_dir, memory_root, latency_bucket, spawn_counter, skip_unit_tests=True)
-    p3 = bench_profile_hygiene_adapters(homunculus_dir, base_stats, latency_bucket, spawn_counter, skip_unit_tests=True)
-    p4 = bench_profile_doc_cad_visual(homunculus_dir, latency_bucket, spawn_counter, skip_unit_tests=True)
-
-    # Single unified `unittest discover` pass across all test modules (zero duplicate test runs)
+    lat1: list[float] = []
+    lat2: list[float] = []
+    lat3: list[float] = []
+    lat4: list[float] = []
+    lat_ut: list[float] = []
+    sp1, sp2, sp3, sp4, sp_ut = [0], [0], [0], [0], [0]
+    ut_workers_box: list[int] = [0]
     ut_notes: list[str] = []
-    ut_pass, ut_total, ut_ms = run_unit_tests(
-        homunculus_dir, ["ALL"], latency_bucket, spawn_counter, forensic_notes=ut_notes
-    )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
+        f1 = pool.submit(bench_profile_oracle_claims, homunculus_dir, lat1, sp1, skip_unit_tests=True)
+        f2 = pool.submit(bench_profile_memory_engine, homunculus_dir, memory_root, lat2, sp2, skip_unit_tests=True)
+        f3 = pool.submit(bench_profile_hygiene_adapters, homunculus_dir, base_stats, lat3, sp3, skip_unit_tests=True)
+        f4 = pool.submit(bench_profile_doc_cad_visual, homunculus_dir, lat4, sp4, skip_unit_tests=True)
+        f_ut = pool.submit(
+            run_unit_tests,
+            homunculus_dir,
+            ["ALL"],
+            lat_ut,
+            sp_ut,
+            forensic_notes=ut_notes,
+            unit_workers_out=ut_workers_box,
+            max_workers=12,
+        )
+        p1 = f1.result()
+        p2 = f2.result()
+        p3 = f3.result()
+        p4 = f4.result()
+        ut_pass, ut_total, ut_ms = f_ut.result()
+
+    pre_ut_spawns = spawn_counter[0] + sp1[0] + sp2[0] + sp3[0] + sp4[0]
+    spawn_counter[0] = pre_ut_spawns + sp_ut[0]
+    latency_bucket.extend(lat1 + lat2 + lat3 + lat4 + lat_ut)
 
     controls_passed = p1["controls_passed"] + p2["controls_passed"] + p3["controls_passed"] + p4["controls_passed"]
     controls_total = p1["controls_total"] + p2["controls_total"] + p3["controls_total"] + p4["controls_total"]
@@ -1913,6 +2072,8 @@ def bench_profile_full_suite(
         "unit_passed": ut_pass,
         "unit_total": ut_total,
         "unit_elapsed_ms": ut_ms,
+        "oracle_bench_spawns": pre_ut_spawns,
+        "unit_workers": ut_workers_box[0],
         "context_tax_display": f"{total_active_bytes:,} B (3 rules + 9 core SKILL.md files)",
         "context_tax_num": float(total_active_bytes),
         "context_tax_ceiling": "<= 115,000 B (modular sum <= 129,500 B)",
@@ -1955,6 +2116,9 @@ def build_universal_spine(
     p50_ms = percentile(latency_bucket, 50.0)
     p95_ms = percentile(latency_bucket, 95.0)
     traj_disp = prof_res.get("trajectory_summary", "n/a (CLI bench)")
+    unit_workers = int(prof_res.get("unit_workers", 0) or 0)
+    oracle_spawns = int(prof_res.get("oracle_bench_spawns", max(0, spawn_count - unit_workers)) or 0)
+    spawn_disp = f"{oracle_spawns} bench + {unit_workers} ut spawns" if unit_workers > 0 else f"{spawn_count} spawns"
 
     prov_disp = f"{ver_status['effective_version']} ({ver_status['live_head_sha'][:8]} / {ver_status['live_tree_hash'][:8]})"
 
@@ -1970,7 +2134,7 @@ def build_universal_spine(
         MetricRow(9, "S09_subagent_trajectory", "#2 Efficiency", "Subagent Trajectory (Turns / Tokens / Cache %)", traj_disp, None, "traj", "info", "<= Baseline", None, source_locus="sandbox_runner.py"),
         MetricRow(10, "S10_host_mutations_erofs", "#3 Safety", "Live Host Mutations & EROFS Blocks", f"mut: {host_mutations} / erofs: {erofs_blocks}", float(host_mutations), "count", "exact_zero", "mut: 0 / erofs >= 1", 0.0, source_locus="Host Tree SHA-256 + bwrap"),
         MetricRow(11, "S11_boundary_portability_seal", "#3 Safety", "Boundary, Portability & Governance Seal", f"B:{b_viol} / P:{p_viol} / G:{g_seal}", 1.0 if safety_all_ok else 0.0, "pass", "exact_pass", "B:0 / P:0 / G:PASS", 1.0, source_locus="audit_data_boundary.py + audit_portability.py + sync_memory.py"),
-        MetricRow(12, "S12_execution_latency", "#4 Speed", "Execution Latency (p50 / p95 / Total) & Spawns", f"p50: {p50_ms:.0f}ms / p95: {p95_ms:.0f}ms / {suite_total_sec:.2f}s ({spawn_count} spawns)", suite_total_sec, "s", "lower_better", "<= Baseline + 15%", None, advisory_pct=15.0, min_abs_noise=1.5, source_locus="Subprocess Telemetry"),
+        MetricRow(12, "S12_execution_latency", "#4 Speed", "Execution Latency (p50 / p95 / Total) & Spawns", f"p50: {p50_ms:.0f}ms / p95: {p95_ms:.0f}ms / {suite_total_sec:.2f}s ({spawn_disp})", suite_total_sec, "s", "lower_better", "<= Baseline + 15%", None, advisory_pct=15.0, min_abs_noise=1.5, source_locus="Subprocess Telemetry"),
     ]
 
 
@@ -2370,7 +2534,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", choices=PROFILES, default="full-system-suite", help="Standardized benchmark profile to execute.")
     parser.add_argument("--quick-pulse", action="store_true", help="Run stateless Option A telemetry pulse via `audit_skill_hygiene.py --telemetry-pulse`.")
     parser.add_argument("--record-pulse", action="store_true", help="With --quick-pulse, append an `authoritative: false` snapshot to `scripts/telemetry_pulse_history.jsonl`.")
-    parser.add_argument("--homunculus-dir", default=str(DEFAULT_HOMUNCULUS_DIR), help="Path to single-source Homunculus repository.")
+    parser.add_argument(
+        "--homunculus-dir",
+        "--homunculus-root",
+        dest="homunculus_dir",
+        default=str(DEFAULT_HOMUNCULUS_DIR),
+        help="Path to single-source Homunculus repository.",
+    )
     parser.add_argument("--memory-root", default=str(DEFAULT_MEMORY_ROOT), help="Path to Dual-Mode memory vault.")
     parser.add_argument("--version-manifest", default=str(DEFAULT_VERSION_MANIFEST), help="Path to homunculus_version.json.")
     parser.add_argument("--history-jsonl", default=str(DEFAULT_HISTORY_JSONL), help="Path to benchmark_history.jsonl.")
@@ -2569,6 +2739,8 @@ def main(argv: list[str] | None = None) -> int:
         "advisory_count": len(advisories),
         "total_seconds": suite_total_sec,
         "subprocess_spawns": spawn_counter[0],
+        "oracle_bench_spawns": int(prof_res.get("oracle_bench_spawns", spawn_counter[0])),
+        "unit_workers": int(prof_res.get("unit_workers", 0)),
         "erofs_probe": erofs_detail,
         "version_status": ver_status,
         "universal_spine": spine_eval,

@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 122.27,
+  "avg_doc_len": 127.25,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -41,10 +41,11 @@
         {
           "governing_lls": [
             "LL-WS-01",
-            "LL-WS-04"
+            "LL-WS-04",
+            "LL-WS-11"
           ],
-          "must_keep": "Enforces `audit_data_boundary.py` (`--staged` / `--push-stdin`), `audit_portability.py`, `audit_skill_hygiene.py`, and `sync_memory.py --audit` before commit/push; enforces directory-scoped Git identities (`~/.gitconfig` `[includeIf]`) and SSH host aliases (`github-orleacock` vs. `github-alchemical`).",
-          "retired_bloat": "Bypassing Git hooks with `--no-verify` or running multi-repo pushes without verifying compartment isolation (`private` vs. `public` vs. `cleanroom`).",
+          "must_keep": "Enforces `audit_data_boundary.py` (`--staged` / `--push-stdin`), `audit_portability.py`, `audit_skill_hygiene.py`, and `sync_memory.py --audit` before commit/push; enforces directory-scoped Git identities (`~/.gitconfig` `[includeIf]`) and SSH host aliases (`github-orleacock` vs. `github-alchemical`).; Always execute audit_data_boundary.py --staged live (never cached); deduplicate only repeat Stage-X sync_memory.py --audit via verified_fastpath.py SHA-256 fingerprints; maintain relative symlinked Alchemical3D git hooks and non-destructive hooks.json parity",
+          "retired_bloat": "Bypassing Git hooks with `--no-verify` or running multi-repo pushes without verifying compartment isolation (`private` vs. `public` vs. `cleanroom`).; Caching audit_data_boundary.py --staged results, copying static cp -f git hooks into sibling repos, or serializing independent unittest methods in benchmark_homunculus.py",
           "scope": "",
           "subsystem": "`git_pre_commit_boundary.sh` & `pre_push_engineering_guard.sh`",
           "tier": "TIER1",
@@ -54,9 +55,13 @@
             "audit_data_boundary.py",
             "audit_portability.py",
             "audit_skill_hygiene.py",
+            "benchmark_homunculus.py",
+            "bootstrap_workstation.sh",
             "git_pre_commit_boundary.sh",
+            "hooks.json",
             "pre_push_engineering_guard.sh",
-            "sync_memory.py"
+            "sync_memory.py",
+            "verified_fastpath.py"
           ]
         },
         {
@@ -110,29 +115,14 @@
       ],
       "lessons": [
         {
-          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
-          "end_line": 49,
-          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
-          "id": "LL-WS-06",
-          "line_range": "#L44-L49",
-          "location": "main",
-          "scope": "",
-          "start_line": 44,
-          "tier": "TIER2",
-          "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation (`2026-11-08`)",
-          "touched_files": [
-            "bootstrap_workstation.sh"
-          ]
-        },
-        {
           "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc)...",
-          "end_line": 56,
+          "end_line": 50,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-07",
-          "line_range": "#L51-L56",
+          "line_range": "#L45-L50",
           "location": "main",
           "scope": "",
-          "start_line": 51,
+          "start_line": 45,
           "tier": "TIER2",
           "title": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)",
           "touched_files": [
@@ -141,13 +131,13 @@
         },
         {
           "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
-          "end_line": 63,
+          "end_line": 57,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-08",
-          "line_range": "#L58-L63",
+          "line_range": "#L52-L57",
           "location": "main",
           "scope": "",
-          "start_line": 58,
+          "start_line": 52,
           "tier": "TIER2",
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
           "touched_files": [
@@ -158,13 +148,13 @@
         },
         {
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 70,
+          "end_line": 64,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L65-L70",
+          "line_range": "#L59-L64",
           "location": "main",
           "scope": "",
-          "start_line": 65,
+          "start_line": 59,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -176,17 +166,35 @@
         },
         {
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 75,
+          "end_line": 71,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L72-L75",
+          "line_range": "#L66-L71",
           "location": "main",
           "scope": "",
-          "start_line": 72,
+          "start_line": 66,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
             "benchmark_homunculus.py"
+          ]
+        },
+        {
+          "capsule_1line": "Serial file-level unittest sharding bottlenecked full-system-suite at 19.82 seconds, Stage-X memory audits... -> Use execution-order-safe LPT unittest method sharding in benchmark_homunculus.py, deduplicate only Stage-X sync_memory --audit via verified_fastpath.py while keeping audit_data_boundary --staged live, and symlink Alchemical3D git hooks. (`benchmark_homunculus.py` (`Workstation_Operations_Software.md`), `verified_fastpath.py`...",
+          "end_line": 76,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-11",
+          "line_range": "#L73-L76",
+          "location": "main",
+          "scope": "",
+          "start_line": 73,
+          "tier": "TIER2",
+          "title": "Serial file-level unittest sharding bottlenecked full-system-suite at 19.82 seconds, Stage-X memory audits... (`2026-11-14`)",
+          "touched_files": [
+            "benchmark_homunculus.py",
+            "bootstrap_workstation.sh",
+            "git_pre_commit_boundary.sh",
+            "verified_fastpath.py"
           ]
         },
         {
@@ -271,6 +279,21 @@
           ]
         },
         {
+          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
+          "end_line": 49,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
+          "id": "LL-WS-06",
+          "line_range": "#L44-L49",
+          "location": "archive",
+          "scope": "",
+          "start_line": 44,
+          "tier": "TIER3",
+          "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation (`2026-11-08`)",
+          "touched_files": [
+            "bootstrap_workstation.sh"
+          ]
+        },
+        {
           "capsule_1line": "[PLAYBOOK] Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, --lock-core, --lock-memory-rules) and benchmark_homunculus.py --profile full-system-suite. 2. Commit clean worktrees locally and run...",
           "end_line": 25,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md",
@@ -292,8 +315,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 122.27,
-      "proj_total_docs": 11,
+      "proj_avg_doc_len": 127.25,
+      "proj_total_docs": 12,
       "project": "Workstation_Operations"
     }
   },
@@ -305,19 +328,19 @@
       "sha256": "6a5a049a04418a16"
     },
     "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md": {
-      "lines": 42,
-      "sections": 5,
-      "sha256": "66de96f8184a1a22"
+      "lines": 49,
+      "sections": 6,
+      "sha256": "8830f3825aa2e28a"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 103,
+      "lines": 105,
       "sections": 0,
-      "sha256": "c18fea76d0f2ef85"
+      "sha256": "dded455b9b3372a3"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 89,
+      "lines": 90,
       "sections": 5,
-      "sha256": "7ddd45dacb47e029"
+      "sha256": "9c3b964c18390f1f"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -325,12 +348,12 @@
       "sha256": "17beedb38dc0c663"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
-      "lines": 54,
+      "lines": 55,
       "sections": 0,
-      "sha256": "52c8e863e473f40b"
+      "sha256": "214f28079ee427ab"
     }
   },
-  "total_docs": 11,
+  "total_docs": 12,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "c9b19bfb2c12e117"
+  "vectors_digest": "4175fc0b6a356774"
 }

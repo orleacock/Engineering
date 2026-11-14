@@ -27,4 +27,6 @@ memory/.cache/*_scoring_vectors.json
 memory/.cache/*_context_fabric.json
 memory/.cache/preflight_state.json
 memory/.cache/hit_telemetry.json
+memory/.cache/verified_fastpath.json
+.cache/
 addon_staging/

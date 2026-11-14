@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "engine_version": "0.3.4",
+  "engine_version": "0.3.5",
   "release_stage": "development",
   "public_release_target": "1.0.0",
-  "baseline_tag": "v0.3.4",
-  "baseline_head_sha": "3996460a1e68",
-  "baseline_tree_hash": "ef6cefb600c3",
-  "baseline_file_count": 107,
+  "baseline_tag": "v0.3.5",
+  "baseline_head_sha": "68241080d62d",
+  "baseline_tree_hash": "e47c2485977f",
+  "baseline_file_count": 108,
   "contract_schema_version": "1.0",
   "memory_schema_version": "1.1",
   "benchmark_schema_version": "1.0",
@@ -102,6 +102,15 @@
       "tree_hash": "ef6cefb600c3",
       "trigger_type": "patch",
       "reason": "Wave 3 v0.3.4 (C1): opt-in OpenSSH ssh-keygen -Y seal & lease signatures, h-sudo enroll-signer, and section-aware scoped TIER2 pulse accounting"
+    },
+    {
+      "version": "0.3.5",
+      "tag": "v0.3.5",
+      "date": "2026-11-14",
+      "head_sha": "68241080d62d",
+      "tree_hash": "e47c2485977f",
+      "trigger_type": "patch",
+      "reason": "Homunculus v0.3.5: rule/skill/AGENTS.md diet, pure-JSON SourceIndex cache + multi-target verify_claims, parallel boundary/portability pools, and Projects/<P>/Quarantine/ SDK"
     }
   ]
 }

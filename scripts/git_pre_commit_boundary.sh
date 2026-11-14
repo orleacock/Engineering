@@ -4,8 +4,8 @@
 # Dynamically resolves Homunculus root via .homunculus.json or relative Homunculus/ folder (zero hardcoded paths).
 # === DEVELOPER & AI NAVIGATION MAP ===
 #   Owning Module : Parent Workstation Pre-Commit Boundary, Memory & Matrix Parity Gate (`scripts/git_pre_commit_boundary.sh`)
-#   Callees       : `homunculus_paths.py`, `audit_data_boundary.py --staged`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
-#   Section Index : Repo Root (#L12-L19) | Python Discovery (#L21-L29) | Single-Process Gate & AST Matrix Parity (#L32-L249)
+#   Callees       : `homunculus_paths.py`, `audit_data_boundary.py --staged`, `verified_fastpath.py`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
+#   Section Index : Repo Root (#L12-L19) | Python Discovery (#L21-L29) | Single-Process Gate & AST Matrix Parity (#L32-L275)
 # === END NAVIGATION MAP ===
 set -euo pipefail
 
@@ -131,22 +131,48 @@ if mem_dir is None and (repo / "memory").is_dir():
 if mem_script.is_file() and mem_dir is not None and mem_dir.is_dir():
     mem_rel = mem_dir.relative_to(repo).as_posix().rstrip("/")
     if any(p.startswith(f"{mem_rel}/") for p in staged):
-        mem_scripts_dir = str(mem_script.parent)
-        if mem_scripts_dir not in sys.path:
-            sys.path.insert(0, mem_scripts_dir)
-        import sync_memory
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
-            mem_rc = sync_memory.main(["--memory-root", str(mem_dir), "--audit"])
-        if mem_rc:
-            print(
-                f"[BLOCKED] Homunculus pre-commit memory gate failed (run: {python_bin} {mem_script} --memory-root {mem_dir} --audit):",
-                file=sys.stderr,
-            )
-            out = buf.getvalue().rstrip()
-            if out:
-                print(out, file=sys.stderr)
-            sys.exit(1)
+        vf_mod = None
+        for vf_cand in (
+            repo / "scripts" / "verified_fastpath.py",
+            hom_root.parent.parent / "Engineering" / "scripts" / "verified_fastpath.py",
+        ):
+            if vf_cand.is_file():
+                vf_dir = str(vf_cand.parent)
+                if vf_dir not in sys.path:
+                    sys.path.insert(0, vf_dir)
+                import verified_fastpath as _vf_mod
+                vf_mod = _vf_mod
+                break
+
+        fp_hit = False
+        if vf_mod is not None:
+            try:
+                fp_hit = bool(vf_mod.check_memory_audit_fastpath(mem_dir, hom_root, repo_root=repo).get("hit"))
+            except OSError:
+                fp_hit = False
+
+        if not fp_hit:
+            mem_scripts_dir = str(mem_script.parent)
+            if mem_scripts_dir not in sys.path:
+                sys.path.insert(0, mem_scripts_dir)
+            import sync_memory
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                mem_rc = sync_memory.main(["--memory-root", str(mem_dir), "--audit"])
+            if mem_rc:
+                print(
+                    f"[BLOCKED] Homunculus pre-commit memory gate failed (run: {python_bin} {mem_script} --memory-root {mem_dir} --audit):",
+                    file=sys.stderr,
+                )
+                out = buf.getvalue().rstrip()
+                if out:
+                    print(out, file=sys.stderr)
+                sys.exit(1)
+            if vf_mod is not None:
+                try:
+                    vf_mod.record_memory_audit_fastpath(mem_dir, hom_root, repo_root=repo)
+                except OSError:
+                    pass
 
 # Maintainer Script-Skill Interaction Matrix Parity Gate (active when Engineering maintainer matrix exists)
 matrix_path: Path | None = None

@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "8d0c293ad89c"
+tree_hash: "1e3112354095"
 last_synced: "2026-11-14"
 ---
 
@@ -80,6 +80,7 @@ last_synced: "2026-11-14"
 │   │   │   ├── v0.3.2_Unified_Audit_and_Graduation_Worklog.md
 │   │   │   ├── v0.3.3_Wave2_Performance_and_Pulse_Worklog.md
 │   │   │   ├── v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md
+│   │   │   ├── v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md
 │   │   │   └── Version_Logs_and_Artifact_Registry.md
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
@@ -378,7 +379,7 @@ last_synced: "2026-11-14"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 3996460a1e68` | `Tree: 2ca5ab86e3ec`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 68241080d62d` | `Tree: 3ecc837acc9b`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -467,6 +468,7 @@ last_synced: "2026-11-14"
 │   │   └── SKILL.md
 │   ├── skill-architect/
 │   │   ├── references/
+│   │   │   ├── cleanup_and_builder_walkthroughs.md
 │   │   │   └── ring0_sudo_protocol.md
 │   │   ├── scripts/
 │   │   │   └── audit_skill_hygiene.py

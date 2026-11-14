@@ -3,16 +3,16 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 project_type: "software"
-status: "v0.3.4 Wave 3 C1 Staged Awaiting Seal (pre-seal on 43ebac1c849e)"
+status: "v0.3.5 Graduated & OpenSSH-Signed (Efficiency, Fast-Path & Quarantine SDK)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "3996460a1e68"
-tree_hash: "2ca5ab86e3ec"
-checkpoint_head_sha: "3996460a1e68"
-checkpoint_tree_hash: "2ca5ab86e3ec"
+repo_head_sha: "68241080d62d"
+tree_hash: "3ecc837acc9b"
+checkpoint_head_sha: "68241080d62d"
+checkpoint_tree_hash: "3ecc837acc9b"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-14"
-checkpoint_lessons_digest: "54ade180098b3342"
+checkpoint_lessons_digest: "c993a1c19e49998e"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -60,16 +60,16 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; `v0.3.3` tagged at `43ebac1c849e` (`BMK-20261113_230808-9c7213da`) with Wave 3 `C1` (`v0.3.4` opt-in OpenSSH seal/lease signing + scoped-`TIER2` telemetry pulse) staged live across **`107` clean-room tracked files** awaiting human `/dev/tty` seal; verified across `8` `unittest` suites (`76` tests) in [`Homunculus_Software.md`](Homunculus_Software.md) with `0` portability, boundary, or hygiene defects)
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; `v0.3.5` tagged at `68241080d62d` (`e47c2485977f`, `BMK-20261114_161845-a11beccd` `BASELINE_PINNED` at `5.97s`) across **`108` clean-room tracked files** with OpenSSH `kernel_seal.json` (`Leased: 0`); verified across `8` `unittest` suites (`79` tests) in [`Homunculus_Software.md`](Homunculus_Software.md), `SBX-20261114_160422-4bb67bd8` (`VRF-82b882012b0c`), and `SBX-20261114_153225-b191d46c` with `0` portability, boundary, or hygiene defects)
 - **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
 - **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
-- **Clean-Room Module Directories (`107` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills across `Ring 0` kernel skills + `Ring 1` consumer skills, plus `skills/skill-architect/references/ring0_sudo_protocol.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`)
+- **Clean-Room Module Directories (`108` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills across `Ring 0` kernel skills + `Ring 1` consumer skills, plus `skills/skill-architect/references/{ring0_sudo_protocol,cleanup_and_builder_walkthroughs}.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/` including `AGENTS.md` + `Quarantine_Note.md`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`)
 - **CAD & Firmware Directories:** _None (Pure Software / AI Skill & Tooling Suite)_
 - **Standards Applied:** [`Governance_and_Constraint_Architecture`](../../Standards_and_Specs/Governance_and_Constraint_Architecture.md), [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), [`Author_Voice_and_Cadence`](../../Standards_and_Specs/Author_Voice_and_Cadence.md), [`Image_and_Style_Rules`](../../Standards_and_Specs/Image_and_Style_Rules.md), [`Alchemical3D_Color_Template`](../../Templates/Color_Palettes/Alchemical3D_Color_Template.md), [`Homunculus_Talking_Points`](Homunculus_Talking_Points.md), [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 3996460a1e68 | Tree Hash: 2ca5ab86e3ec
+Repository: Homunculus | HEAD SHA: 68241080d62d | Tree Hash: 3ecc837acc9b
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -150,6 +150,7 @@ Repository: Homunculus | HEAD SHA: 3996460a1e68 | Tree Hash: 2ca5ab86e3ec
   skills/project-memory/SKILL.md
   skills/skill-architect/
   skills/skill-architect/references/
+  skills/skill-architect/references/cleanup_and_builder_walkthroughs.md
   skills/skill-architect/references/ring0_sudo_protocol.md
   skills/skill-architect/scripts/
   skills/skill-architect/scripts/audit_skill_hygiene.py
@@ -269,12 +270,12 @@ Repository: Homunculus | HEAD SHA: 3996460a1e68 | Tree Hash: 2ca5ab86e3ec
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-14`
-- **Checkpoint Provenance**: `HEAD SHA: 3996460a1e68` | `Tree Hash: 2ca5ab86e3ec` | `Worktree: clean` | `Last Verification: v0.3.4 (3996460a1e68) + BMK-20261114_115712-942d545c BASELINE_PINNED + 76/76 unittest OK`
+- **Checkpoint Provenance**: `HEAD SHA: 68241080d62d` | `Tree Hash: 3ecc837acc9b` | `Worktree: clean` | `Last Verification: BMK-20261114_161845-a11beccd`
 - **Where We Stopped (Verified State & Context)**:
-  Graduated Homunculus v0.3.4 (3996460a1e68 / ef6cefb600c3) with live OpenSSH seal signing (seal_signing=required, local_config) and pinned Course D baseline BMK-20261114_115712-942d545c; scheduled post-v0.3.4 Speed & Efficiency pass.
+  Graduated Homunculus v0.3.5 (68241080d62d) and pinned baseline BMK-20261114_161845-a11beccd (79/79 unittest OK)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Execute [POST-v0.3.4 SPEED & EFFICIENCY PASS] (v0.3.5)
+  1. Plan separate Parent-AI Sidecar workflow; optional fix for [OPEN-01] homunculus_paths.py Tier-2/3 .cache ancestor filter
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

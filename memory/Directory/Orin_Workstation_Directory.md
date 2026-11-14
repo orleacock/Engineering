@@ -73,7 +73,7 @@ last_synced: "2026-11-14"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 0167224a4e41`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 9a76b6a0b860`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -100,6 +100,7 @@ last_synced: "2026-11-14"
 ├── pre_push_engineering_guard.sh
 ├── snapshot_homunculus_version.py
 ├── telemetry_pulse_history.jsonl
+├── verified_fastpath.py
 └── version_manager.py
 +------------------------------------------------------------+
 ```

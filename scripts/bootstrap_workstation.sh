@@ -54,6 +54,36 @@ ensure_link() {
     fi
 }
 
+ensure_managed_hook_link() {
+    local link_path="$1"
+    local link_target="$2"
+    local expected_real="$3"
+
+    if [[ "$MODE" == "check" ]]; then
+        if [[ ! -L "$link_path" ]] || [[ ! -x "$link_path" ]] || [[ "$(realpath -m "$link_path")" != "$(realpath -m "$expected_real")" ]]; then
+            echo "[FAIL] Managed hook symlink mismatch or non-executable: $link_path (expected -> $expected_real)" >&2
+            errors=$((errors + 1))
+        else
+            echo "[OK]   $link_path -> $(readlink "$link_path")"
+        fi
+    else
+        mkdir -p "$(dirname "$link_path")"
+        if [[ -e "$link_path" && ! -L "$link_path" ]]; then
+            if head -n 5 "$link_path" 2>/dev/null | grep -qE '^# Homunculus (Universal Git|Non-Blocking Git)'; then
+                rm -f "$link_path"
+                ln -sfn "$link_target" "$link_path"
+                echo "[MIGRATE-LINK] $link_path -> $link_target"
+            else
+                echo "[SKIP/WARN] Custom non-Homunculus hook exists at $link_path — refusing to overwrite" >&2
+                errors=$((errors + 1))
+            fi
+            return
+        fi
+        ln -sfn "$link_target" "$link_path"
+        echo "[LINK] $link_path -> $link_target"
+    fi
+}
+
 echo "=== Engineering Workstation Bootstrap (${MODE^^}) ==="
 echo "Repo Root: ${REPO_ROOT}"
 
@@ -80,9 +110,88 @@ if [[ -f "${GMAIL_SKILL_DIR}/SKILL.md" ]]; then
     ensure_link "${GEMINI_CFG}/skills/gmail-workspace-assistant" "../../../Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant" "$GMAIL_SKILL_DIR"
 fi
 
-# 2b. Global Antigravity Lifecycle Hooks (~/.gemini/config/hooks.json)
+# 2b. Global Antigravity Lifecycle Hooks (~/.gemini/config/hooks.json — non-destructive JSON parity)
 if [[ -f "${HOMUNCULUS_DIR}/hooks/hooks.json" ]]; then
-    ensure_link "${GEMINI_CFG}/hooks.json" "../../Projects/Alchemical3D/Homunculus/hooks/hooks.json" "${HOMUNCULUS_DIR}/hooks/hooks.json"
+    python3 -B - "$MODE" "${HOMUNCULUS_DIR}/hooks/hooks.json" "${GEMINI_CFG}/hooks.json" << 'PY' || errors=$((errors + 1))
+import json
+import sys
+from pathlib import Path
+
+mode = sys.argv[1]
+src = Path(sys.argv[2])
+dst = Path(sys.argv[3])
+
+try:
+    src_obj = json.loads(src.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"[FAIL] Could not parse managed source hooks JSON {src}: {exc}", file=sys.stderr)
+    sys.exit(1)
+
+if not isinstance(src_obj, dict):
+    print(f"[FAIL] Managed source hooks JSON must be a JSON object: {src}", file=sys.stderr)
+    sys.exit(1)
+
+if mode == "check":
+    if not dst.exists() or dst.is_symlink():
+        print(f"[FAIL] Missing or symlinked hooks.json (expected regular non-destructive JSON file): {dst}", file=sys.stderr)
+        sys.exit(1)
+    try:
+        dst_obj = json.loads(dst.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"[FAIL] Invalid JSON in {dst}: {exc}", file=sys.stderr)
+        sys.exit(1)
+    if not isinstance(dst_obj, dict):
+        print(f"[FAIL] Non-object JSON in {dst}", file=sys.stderr)
+        sys.exit(1)
+    for k, v in src_obj.items():
+        if k not in dst_obj:
+            print(f"[FAIL] Missing managed hooks.json key '{k}' in {dst}", file=sys.stderr)
+            sys.exit(1)
+        if isinstance(v, list) and isinstance(dst_obj[k], list):
+            for item in v:
+                if item not in dst_obj[k]:
+                    print(f"[FAIL] Missing managed hook entry under '{k}' in {dst}", file=sys.stderr)
+                    sys.exit(1)
+    print(f"[OK]   {dst} (non-destructive JSON in sync)")
+    sys.exit(0)
+
+dst.parent.mkdir(parents=True, exist_ok=True)
+if dst.is_symlink():
+    dst.unlink()
+    print(f"[MIGRATE] Unlinked symlink {dst} -> converting to non-destructive regular JSON file")
+
+if not dst.exists():
+    dst.write_text(json.dumps(src_obj, indent=2) + "\n", encoding="utf-8")
+    print(f"[SYNC] {dst} <- {src} (created regular JSON)")
+    sys.exit(0)
+
+try:
+    dst_obj = json.loads(dst.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"[FAIL] Invalid JSON in {dst} (refusing to overwrite): {exc}", file=sys.stderr)
+    sys.exit(1)
+
+if not isinstance(dst_obj, dict):
+    print(f"[FAIL] Non-object JSON in {dst} (refusing to overwrite)", file=sys.stderr)
+    sys.exit(1)
+
+changed = False
+for k, v in src_obj.items():
+    if k not in dst_obj:
+        dst_obj[k] = v
+        changed = True
+    elif isinstance(dst_obj[k], list) and isinstance(v, list):
+        for item in v:
+            if item not in dst_obj[k]:
+                dst_obj[k].append(item)
+                changed = True
+
+if changed:
+    dst.write_text(json.dumps(dst_obj, indent=2) + "\n", encoding="utf-8")
+    print(f"[SYNC] {dst} (merged managed Homunculus keys non-destructively)")
+else:
+    print(f"[OK]   {dst} (non-destructive JSON already in sync)")
+PY
 fi
 
 # 2bb. Private Engineering Repo Pre-Commit, Pre-Push & Post-Worktree Sync Hooks (.git/hooks/*)
@@ -100,30 +209,24 @@ if [[ -d "${REPO_ROOT}/.git/hooks" ]]; then
     fi
 fi
 
-# 2bc. Public / Org Alchemical-3D Multi-Repo Boundary Hooks (including Alchemical3D/Homunculus)
+# 2bc. Public / Org Alchemical-3D Multi-Repo Boundary Hooks (symlinked to Engineering & Homunculus)
 if [[ -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" && -f "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh" ]]; then
     shopt -s nullglob dotglob
     for alch_repo in "${ALCHEMICAL_DIR}/"*; do
         repo_base="$(basename "$alch_repo")"
         [[ "$repo_base" == "." || "$repo_base" == ".." ]] && continue
         [[ -d "${alch_repo}/.git/hooks" ]] || continue
-        if [[ "$MODE" == "check" ]]; then
-            for pair in "pre-commit:${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" "pre-push:${REPO_ROOT}/scripts/pre_push_engineering_guard.sh"; do
-                hname="${pair%%:*}"
-                src_hook="${pair##*:}"
-                dst_hook="${alch_repo}/.git/hooks/${hname}"
-                if [[ ! -x "$dst_hook" ]] || ! cmp -s "$src_hook" "$dst_hook"; then
-                    echo "[FAIL] Missing or drifted executable hook: ${dst_hook} (expected byte parity with ${src_hook})" >&2
-                    errors=$((errors + 1))
-                else
-                    echo "[OK]   ${dst_hook} (in sync)"
-                fi
+        ensure_managed_hook_link "${alch_repo}/.git/hooks/pre-commit" "../../../../Engineering/scripts/git_pre_commit_boundary.sh" "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh"
+        ensure_managed_hook_link "${alch_repo}/.git/hooks/pre-push" "../../../../Engineering/scripts/pre_push_engineering_guard.sh" "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh"
+        if [[ -f "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh" ]]; then
+            if [[ "$repo_base" == "Homunculus" ]]; then
+                wt_rel_target="../../templates/hooks/post-worktree-sync.sh"
+            else
+                wt_rel_target="../../../Homunculus/templates/hooks/post-worktree-sync.sh"
+            fi
+            for wt_hook in post-checkout post-merge post-rewrite; do
+                ensure_managed_hook_link "${alch_repo}/.git/hooks/${wt_hook}" "$wt_rel_target" "${HOMUNCULUS_DIR}/templates/hooks/post-worktree-sync.sh"
             done
-        else
-            cp -f "${REPO_ROOT}/scripts/git_pre_commit_boundary.sh" "${alch_repo}/.git/hooks/pre-commit"
-            cp -f "${REPO_ROOT}/scripts/pre_push_engineering_guard.sh" "${alch_repo}/.git/hooks/pre-push"
-            chmod +x "${alch_repo}/.git/hooks/pre-commit" "${alch_repo}/.git/hooks/pre-push"
-            echo "[HOOK] Installed pre-commit & pre-push -> ${alch_repo}/.git/hooks/"
         fi
     done
     shopt -u nullglob dotglob
