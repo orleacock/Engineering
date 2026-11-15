@@ -110,6 +110,39 @@ if [[ -f "${GMAIL_SKILL_DIR}/SKILL.md" ]]; then
     ensure_link "${GEMINI_CFG}/skills/gmail-workspace-assistant" "../../../Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant" "$GMAIL_SKILL_DIR"
 fi
 
+# 2ab. Local Workstation-Only Antigravity Plugin (bionic-sidecar)
+BIONIC_PLUGIN_SRC="${REPO_ROOT}/scripts/bionic_sidecar_plugin"
+BIONIC_PLUGIN_DST="${GEMINI_CFG}/plugins/bionic-sidecar"
+AGY_BIN="${AGY_BIN:-$(command -v agy 2>/dev/null || echo "${HOME}/.local/bin/agy")}"
+if [[ -f "${BIONIC_PLUGIN_SRC}/plugin.json" ]]; then
+    if [[ "$MODE" == "check" ]]; then
+        if [[ ! -d "$BIONIC_PLUGIN_DST" ]] || ! diff -rq "$BIONIC_PLUGIN_SRC" "$BIONIC_PLUGIN_DST" >/dev/null 2>&1; then
+            echo "[FAIL] Bionic plugin missing or out of sync: $BIONIC_PLUGIN_DST (expected parity with $BIONIC_PLUGIN_SRC)" >&2
+            errors=$((errors + 1))
+        elif [[ -x "$AGY_BIN" ]] && ! "$AGY_BIN" plugin validate "$BIONIC_PLUGIN_DST" --strict --json >/dev/null 2>&1; then
+            echo "[FAIL] Bionic plugin failed strict validation: $BIONIC_PLUGIN_DST" >&2
+            errors=$((errors + 1))
+        else
+            echo "[OK]   $BIONIC_PLUGIN_DST (plugin in sync & validated)"
+        fi
+    else
+        if [[ -x "$AGY_BIN" ]] && ! "$AGY_BIN" plugin validate "$BIONIC_PLUGIN_SRC" --strict --json >/dev/null 2>&1; then
+            echo "[FAIL] Source Bionic plugin failed strict validation: $BIONIC_PLUGIN_SRC" >&2
+            errors=$((errors + 1))
+        elif [[ -d "$BIONIC_PLUGIN_DST" ]] && diff -rq "$BIONIC_PLUGIN_SRC" "$BIONIC_PLUGIN_DST" >/dev/null 2>&1; then
+            echo "[OK]   $BIONIC_PLUGIN_DST (plugin already in sync)"
+        elif [[ -x "$AGY_BIN" ]]; then
+            "$AGY_BIN" plugin install "$BIONIC_PLUGIN_SRC" >/dev/null
+            echo "[SYNC] $BIONIC_PLUGIN_DST <- $BIONIC_PLUGIN_SRC (via agy plugin install)"
+        else
+            mkdir -p "$(dirname "$BIONIC_PLUGIN_DST")"
+            rm -rf "$BIONIC_PLUGIN_DST"
+            cp -R "$BIONIC_PLUGIN_SRC" "$BIONIC_PLUGIN_DST"
+            echo "[SYNC] $BIONIC_PLUGIN_DST <- $BIONIC_PLUGIN_SRC (copied fallback)"
+        fi
+    fi
+fi
+
 # 2b. Global Antigravity Lifecycle Hooks (~/.gemini/config/hooks.json — non-destructive JSON parity)
 if [[ -f "${HOMUNCULUS_DIR}/hooks/hooks.json" ]]; then
     python3 -B - "$MODE" "${HOMUNCULUS_DIR}/hooks/hooks.json" "${GEMINI_CFG}/hooks.json" << 'PY' || errors=$((errors + 1))

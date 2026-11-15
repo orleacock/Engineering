@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "1e3112354095"
+tree_hash: "4e5efc723324"
 last_synced: "2026-11-14"
 ---
 
@@ -51,6 +51,7 @@ last_synced: "2026-11-14"
 │   │   └── Alchemical_Web_Docs_Software.md
 │   ├── Alembic_Toolhead/
 │   │   ├── Quarantine/
+│   │   │   ├── 2026-11-14_Bionic_Alembic_Diff_Trial.md
 │   │   │   └── Quarantine_README.md
 │   │   ├── Alembic_Toolhead.md
 │   │   ├── Alembic_Toolhead_Hardware.md
@@ -111,6 +112,7 @@ last_synced: "2026-11-14"
 │   │   └── Organization_Profile_Software.md
 │   ├── Pestle_Rotational_Bowden/
 │   │   ├── Quarantine/
+│   │   │   ├── 2026-11-14_Bionic_Pestle_Audit_Trial.md
 │   │   │   └── Quarantine_README.md
 │   │   ├── Pestle_Rotational_Bowden.md
 │   │   ├── Pestle_Rotational_Bowden_Hardware.md

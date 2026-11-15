@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "9a76b6a0b860"
+tree_hash: "e56a65019c6a"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "9a76b6a0b860"
+checkpoint_tree_hash: "e56a65019c6a"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-14"
-checkpoint_lessons_digest: "9bdd5c4c8615b22e"
+checkpoint_lessons_digest: "f6e4b82540ef79f4"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -37,7 +37,7 @@ checkpoint_lessons_digest: "9bdd5c4c8615b22e"
 
 ## 2. Executive Architecture & Locked Specifications
 
-- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent & home umbrella config sync (`umbrella_configs/{Projects,Home}.homunculus.json`), and Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`) for the local engineering workstation (`/home/orin/Projects/Engineering`).
+- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent & home umbrella config sync (`umbrella_configs/{Projects,Home}.homunculus.json`), Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`), and governed LM Studio Bionic local sidecar & `bionic-sidecar` Antigravity plugin (`local_sidecar.py`, `bionic_sidecar/`, `bionic_sidecar_plugin/`) for the local engineering workstation (`/home/orin/Projects/Engineering`).
 - **Primary Repository Path**: `../scripts`
 - **Verified Key Parameters**:
   - **Workstation Bootstrap**: `bootstrap_workstation.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and `Homunculus/addons/*` into `~/.gemini/config/` (`0` duplicate `.agents/` trees), registers `memory/` in `~/.config/obsidian/obsidian.json`, syncs `/home/orin/Projects/{.homunculus.json,.geminiignore}` + `/home/orin/.homunculus.json`, and installs + `cmp -s`-verifies `.git/hooks/{pre-commit,pre-push}` across `/home/orin/Projects/Engineering` and `/home/orin/Projects/Alchemical3D/*`.
@@ -46,6 +46,7 @@ checkpoint_lessons_digest: "9bdd5c4c8615b22e"
   - **Immutable RAID Deliverable Restore Guard (`S1-A`)**: `snapshot_homunculus_version.py` (`build_restore_script`) preserves live `~/.gemini/config/mcp_config.json` (staging redacted snapshot configs to `mcp_config.redacted_reference.json`) and prunes only `Homunculus`/`Engineering`/dangling symlinks in `~/.gemini/config/{rules,skills}`. Because the initial `v0.1.0_2026-11-10_foundation_baseline` RAID deliverable is write-once `0444`-locked (`0` in-place edits permitted), if ever running full-workstation recovery from that specific `v0.1.0` snapshot, invoke the updated `scripts/snapshot_homunculus_version.py` restore template or back up live `~/.gemini/config/mcp_config.json` and non-Homunculus user skills/rules first (its `--restore-engine-only` mode is already unaffected).
   - **Ring-0 & Memory Governance Human Turnkey (`h_sudo.sh` / `~/.local/bin/h-sudo`)**: Out-of-tree `/dev/tty` human turnkey helper ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) supporting `status`, `unlock [--with-memory] --files ... --reason "..."` (`unlock-all`), `seal [--with-memory] --reason "..."` (`seal-all`), `revoke`, `enroll-turnkeys`, `enroll-signer`, `policy`, `unlock-memory`, and `seal-memory`, sequencing Ring-0 and Memory Governance prompts inside a single interactive command to eliminate multi-line clipboard paste swallowing.
   - **Verified Anti-Hallucination Fast-Path Cache (`verified_fastpath.py`)**: Parent-only workstation accelerator ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) storing `VERIFIED_FASTPATH_V1` pure-JSON SHA-256 receipts in `.cache/verified_fastpath.json` (`0600` atomic writes, `EROFS` fallback), wired into `git_pre_commit_boundary.sh` for Stage-X `sync_memory.py --audit` deduplication while keeping `audit_data_boundary.py --staged` strictly live and uncached.
+  - **LM Studio Bionic Local Sidecar (`local_sidecar.py`, `bionic-sidecar` Plugin & `~/.lmstudio/` Containment)**: Loopback-only (`127.0.0.1:1234`) sidecar bridge (`Qwen3.6-35B-A3B` `Q4_K_M`, text-only) running on `ROCm 2.73.0` (bundled `Vulkan 2.73.0` retained untouched as fallback), locked to `0.65` MoE @ `49,152` ctx (`10.045 GiB` VRAM loaded) alongside `CPU-Background` (`--device none` `CCD2`, `0.00 GiB` model VRAM), with `60.0s` `auto` (`AUTO_MAX_ETA_SECONDS`) / `90.0s` `explicit` (`DEFAULT_MAX_ETA_SECONDS`) ETA circuit breakers (`RUN_LOCALLY` vs. `HANDOFF_TO_MAIN_THREAD`). Anchor B wires the `bionic-sidecar` Antigravity plugin (`bionic_sidecar_plugin/plugin.json` `1.0.0`, `bionic_sidecar/bionic_lifecycle_hook.py`, `bionic_sidecar/bionic_mcp_server.py`) exposing `4` MCP tools (`bionic_control`, `bionic_digest`, `bionic_repo_audit`, `bionic_stage_patch`), Turn-1 `PreInvocation` `OFFLINE`/`UNLOADED` remote-startup notices (`900`s idle re-notify, zero `systemMessage.metadata`), `user_confirmed=True` lifecycle gating (`gpu-daily` `49,152` ctx / `cpu-bg` `16,384` ctx), `PreToolUse` `run_command` `:1234`/`lms`/AppImage bypass blocking (`[BIONIC_UTILITY_REQUIRED]`), `_safe_subprocess_cwd` unlinked-`cwd` resilience, and `bootstrap_workstation.sh` plugin sync & strict validation. Enforces `~/.lmstudio/` containment (`logSensitiveData: false`, `webSearchEnabled: false`, `Manual Review` shell gate, single-repo scope, `9` core `Homunculus/skills` symlinks with `gmail-workspace-assistant`, `author-voice-cadence`, and `hardware-cad-inspector` explicitly disabled pending `hardware-cad-inspector` module maturation tracked in `Orin_Workstation_Tasks.md`), routing code drafts to scratch staging and audit notes strictly via `memory_gateway.py quarantine-note` into per-project `Quarantine/` folders.
 
 ---
 
@@ -55,12 +56,14 @@ checkpoint_lessons_digest: "9bdd5c4c8615b22e"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-14`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 9a76b6a0b860` | `Worktree: untracked` | `Last Verification: BMK-20261114_161845-a11beccd`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: e56a65019c6a` | `Worktree: untracked` | `Last Verification: SBX-20261114_223528-01f61a8c, VRF-206f3a685cb2, VRF-14c1b264d998`
 - **Where We Stopped (Verified State & Context)**:
-  Shipped verified_fastpath.py, pinned Homunculus v0.3.5 baseline BMK-20261114_161845-a11beccd, and recorded v0.3.5-post-seal-graduated pulse
+  Completed Anchor B bionic-sidecar Antigravity plugin, live remote drill, unlinked-cwd subprocess hardening, and bootstrap_workstation.sh integration
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Plan separate Parent-AI Sidecar workflow
+  1. Monitor auto (60s) vs explicit (90s) Bionic sidecar telemetry in ~/.cache/homunculus_bionic_plugin/sidecar_usage_telemetry.jsonl during daily engineering work.
+  2. Revisit deferred hardware-cad-inspector read-only sidecar wiring in Tasks/Orin_Workstation_Tasks.md after module maturation.
+- **Open Discussion / Alignment Questions**: Live drill verified Turn-1 UNLOADED notice, user-confirmed gpu-daily remote load (49152 ctx, 10.045 GiB baseline VRAM), explicit [bionic] digest offload, and PreToolUse :1234 bypass block.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -69,7 +72,19 @@ checkpoint_lessons_digest: "9bdd5c4c8615b22e"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 9a76b6a0b860
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: e56a65019c6a
+  bionic_sidecar/
+  bionic_sidecar/bionic_lifecycle_hook.py
+  bionic_sidecar/bionic_mcp_server.py
+  bionic_sidecar_plugin/
+  bionic_sidecar_plugin/rules/
+  bionic_sidecar_plugin/rules/AGENTS.md
+  bionic_sidecar_plugin/skills/
+  bionic_sidecar_plugin/skills/bionic-local-sidecar/
+  bionic_sidecar_plugin/skills/bionic-local-sidecar/SKILL.md
+  bionic_sidecar_plugin/hooks.json
+  bionic_sidecar_plugin/mcp_config.json
+  bionic_sidecar_plugin/plugin.json
   gmail_mcp/
   gmail_mcp/gmail-workspace-assistant/
   gmail_mcp/gmail-workspace-assistant/SKILL.md
@@ -85,6 +100,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 9a76b6a0b860
   git_pre_commit_boundary.sh
   h_sudo.sh
   homunculus_version.json
+  local_sidecar.py
   pre_push_engineering_guard.sh
   snapshot_homunculus_version.py
   telemetry_pulse_history.jsonl
