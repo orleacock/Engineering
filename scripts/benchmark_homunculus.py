@@ -24,7 +24,7 @@ Responsibilities:
   Callers       : Developer CLI, `snapshot_homunculus_version.py`, `engineering-sandbox` Track-2 Gate
   Callees       : `version_manager.py`, `Homunculus` CLI Oracles & `unittest` Suite
   Contract      : `scripts/script_contracts.json` [`benchmark_homunculus.py`]
-  CLI Flags     : --profile, --quick-pulse, --record-pulse, --homunculus-dir, --homunculus-root, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --self-test, --inject-synthetic-regression, --json
+  CLI Flags     : --profile, --quick-pulse, --record-pulse, --homunculus-dir, --homunculus-root, --memory-root, --version-manifest, --history-jsonl, --ledger-md, --baseline-version, --record-baseline, --approve-advisory-reason, --append-ledger, --history-only, --output-md, --label, --transcript, --deliverable-dir, --sources, --model-id, --effort, --self-test, --inject-synthetic-regression, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
     - class MetricRow (#L91-L108)                    | def percentile (#L111-L123)
     - def snapshot_host_hashes (#L126-L163)          | def run_cmd_timed (#L166-L189)
@@ -34,12 +34,12 @@ Responsibilities:
     - def run_unit_tests (#L466-L552)                | def _write_minimal_png (#L555-L570)
     - def bench_profile_oracle_claims (#L573-L999)   | def bench_profile_memory_engine (#L1002-L1334)
     - def bench_profile_hygiene_adapters (#L1337-L1486) | def bench_profile_doc_cad_visual (#L1489-L1749)
-    - def _parse_jsonl_trajectory (#L1752-L1850)     | def bench_profile_subagent_ab (#L1853-L1979)
-    - def bench_profile_full_suite (#L1982-L2089)    | def build_universal_spine (#L2092-L2138)
-    - def apply_synthetic_regression (#L2141-L2178)  | def evaluate_comparisons (#L2181-L2278)
-    - def render_regression_autopsy_md (#L2281-L2369) | def _render_table_md (#L2372-L2390)
-    - def render_markdown_report (#L2393-L2428)      | def load_history_maps (#L2431-L2474)
-    - def update_ledger_and_history (#L2477-L2527)   | def main (#L2530-L2783)
+    - def _parse_jsonl_trajectory (#L1752-L1868)     | def bench_profile_subagent_ab (#L1871-L2016)
+    - def bench_profile_full_suite (#L2019-L2126)    | def build_universal_spine (#L2129-L2175)
+    - def apply_synthetic_regression (#L2178-L2215)  | def evaluate_comparisons (#L2218-L2315)
+    - def render_regression_autopsy_md (#L2318-L2406) | def _render_table_md (#L2409-L2427)
+    - def render_markdown_report (#L2430-L2465)      | def load_history_maps (#L2468-L2511)
+    - def update_ledger_and_history (#L2514-L2564)   | def main (#L2567-L2833)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -1766,6 +1766,8 @@ def _parse_jsonl_trajectory(transcript_path: Path) -> dict[str, Any]:
     arch_dumps = 0
     skills_read: list[str] = []
     oracle_runs = 0
+    model_id = ""
+    effort = ""
 
     ls_re = re.compile(r"(?:^|[;&|]\s*)(?:ls|find|tree)\b|os\.listdir")
     py_snoop_re = re.compile(r"inspect\.getsource|import\s+(?:verify_claims|audit_repo_docs|inspect_hardware_ecosystem|teach_brief)")
@@ -1779,6 +1781,20 @@ def _parse_jsonl_trajectory(transcript_path: Path) -> dict[str, Any]:
             obj = json.loads(raw_line)
         except json.JSONDecodeError:
             continue
+        if isinstance(obj, dict):
+            for mk in ("model", "modelName", "model_id"):
+                mv = obj.get(mk)
+                if mv is not None and str(mv).strip():
+                    model_id = str(mv).strip()
+                    break
+            msg_obj = obj.get("message")
+            if isinstance(msg_obj, dict) and msg_obj.get("model"):
+                model_id = str(msg_obj["model"]).strip()
+            for ek in ("effort", "reasoning_effort"):
+                ev = obj.get(ek)
+                if ev is not None and str(ev).strip():
+                    effort = str(ev).strip()
+                    break
         if obj.get("type") == "PLANNER_RESPONSE":
             planner_turns += 1
             in_tok += int(obj.get("input_tokens") or 0)
@@ -1847,6 +1863,8 @@ def _parse_jsonl_trajectory(transcript_path: Path) -> dict[str, Any]:
         "arch_dumps": arch_dumps,
         "skills_count": len(skills_read),
         "oracle_runs": oracle_runs,
+        "model_id": model_id,
+        "effort": effort,
     }
 
 
@@ -1858,6 +1876,9 @@ def bench_profile_subagent_ab(
     self_test: bool,
     latency_bucket: list[float],
     spawn_counter: list[int],
+    *,
+    model_id: str = "",
+    effort: str = "",
 ) -> dict[str, Any]:
     """Execute Profile 5 (`subagent-ab` — 18 locked metrics for subagent trajectory & deliverable parity)."""
     verify_script = homunculus_dir / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
@@ -1960,6 +1981,17 @@ def bench_profile_subagent_ab(
         MetricRow(18, "SA18_tbd_parity", "#1 Accuracy", "Open [TBD] & [TBD: CONFLICT] Count", f"open: {open_tbd} / conflict: {conflict_tbd}", float(open_tbd), "count", "info", "Tracked", None),
     ]
 
+    resolved_model_id = str(traj.get("model_id") or "").strip() or model_id.strip()
+    resolved_effort = str(traj.get("effort") or "").strip() or effort.strip()
+    model_tag = (
+        f"{resolved_model_id}[{resolved_effort}]"
+        if (resolved_model_id and resolved_effort and f"[{resolved_effort}]" not in resolved_model_id)
+        else (resolved_model_id or "unrecorded")
+    )
+    traj_summary = f"{traj['planner_turns']} T / {traj['total_billed']:,} tok / {traj['cache_ratio']:.1f}%"
+    if resolved_model_id:
+        traj_summary += f" / {model_tag}"
+
     return {
         "controls_passed": 1 if unbacked_total == 0 and hazards == 0 else 0,
         "controls_total": 1,
@@ -1973,7 +2005,12 @@ def bench_profile_subagent_ab(
         "context_tax_num": float(traj["total_billed"]),
         "context_tax_ceiling": "<= Baseline + 5%",
         "context_tax_hard_limit": None,
-        "trajectory_summary": f"{traj['planner_turns']} T / {traj['total_billed']:,} tok / {traj['cache_ratio']:.1f}%",
+        "trajectory_summary": traj_summary,
+        "model_telemetry": {
+            "resolved_model_id": resolved_model_id or None,
+            "resolved_effort": resolved_effort or None,
+            "receipt_tag": model_tag,
+        },
         "rows": rows,
         "forensic_notes": [],
     }
@@ -2559,6 +2596,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--transcript", default="", help="Subagent JSONL transcript path (for `subagent-ab` profile).")
     parser.add_argument("--deliverable-dir", default="", help="Subagent deliverable directory (for `subagent-ab` profile).")
     parser.add_argument("--sources", nargs="*", default=[], help="Authoritative source paths (for `subagent-ab` profile).")
+    parser.add_argument("--model-id", default="", help="Optional model identifier override/tag for trajectory telemetry.")
+    parser.add_argument("--effort", default="", help="Optional reasoning/thinking effort tier override/tag (e.g., low, medium, high, xhigh).")
     parser.add_argument("--self-test", action="store_true", help="Use deterministic synthetic trajectory fixture for `subagent-ab`.")
     parser.add_argument(
         "--inject-synthetic-regression",
@@ -2660,6 +2699,8 @@ def main(argv: list[str] | None = None) -> int:
             args.self_test,
             latency_bucket,
             spawn_counter,
+            model_id=args.model_id,
+            effort=args.effort,
         )
     else:
         prof_res = bench_profile_full_suite(hom_dir, mem_root, base_stats, latency_bucket, spawn_counter)
@@ -2743,6 +2784,15 @@ def main(argv: list[str] | None = None) -> int:
         "unit_workers": int(prof_res.get("unit_workers", 0)),
         "erofs_probe": erofs_detail,
         "version_status": ver_status,
+        "model_telemetry": prof_res.get("model_telemetry")
+        or (
+            {
+                "resolved_model_id": args.model_id.strip() or None,
+                "resolved_effort": args.effort.strip() or None,
+            }
+            if (args.model_id.strip() or args.effort.strip())
+            else {}
+        ),
         "universal_spine": spine_eval,
         "profile_rows": sub_eval,
         "sub_profiles": prof_res.get("sub_profiles", {}),

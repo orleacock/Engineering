@@ -111,12 +111,16 @@ def select_collision_free_sources(repo_root: Path, candidate_paths: list[Path]) 
     repo_res = Path(os.path.expanduser(str(repo_root))).resolve(strict=False)
     in_repo: list[tuple[int, str, Path]] = []
     warnings: list[str] = []
+    seen_exact: set[Path] = set()
 
     for raw in candidate_paths:
         sec_reason = local_sidecar._inspect_path_security(raw)
         if sec_reason:
             raise local_sidecar.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {sec_reason}")
         res = Path(os.path.expanduser(str(raw))).resolve(strict=False)
+        if res in seen_exact:
+            continue
+        seen_exact.add(res)
         if not local_sidecar._is_path_within(res, repo_res):
             warnings.append(f"Excluded out-of-repo source (CROSS_ENTITY guard): {raw}")
             continue
@@ -626,9 +630,9 @@ def _build_chunked_repair_context(
         fb = "\n\n".join(fallback_blocks)[:24000]
         return f"{prompt_str.strip()}\n\n{fb}" if fb else prompt_str.strip()
 
-    # Order files with failing claims FIRST so alphabetical sorting never starves later files (e.g. test_5)
+    # Deduplicate resolved paths across multiple #L slices and order files with failing claims FIRST
     prioritized_files = sorted(
-        validated_files,
+        list(dict.fromkeys(validated_files)),
         key=lambda vf: (0 if (vf.name.lower() in fail_low or any(p == vf.name.lower() for p, _, _ in cited_spans)) else 1),
     )
 
@@ -925,6 +929,182 @@ def _surgical_repair_unbacked_lines(
     }
 
 
+def _run_full_repair_with_guard(
+    *,
+    repair_prompt: str,
+    draft_for_heal: str,
+    vrf_for_heal: dict[str, Any],
+    base_res: dict[str, Any],
+    effective_mode: str,
+    effort_norm: str,
+    max_budget: int,
+    api_url: str,
+    sys_prompt: str,
+    loaded_ctx: int | None,
+    clean_sources: list[Path],
+    verify_claims_path: Path,
+    mem_root: Path | None,
+    cwd_check: Path,
+    tier: str,
+    eta: dict[str, Any],
+    telemetry_cmd: str,
+    project_dir: Path | None = None,
+    sanitize_links: bool = False,
+) -> dict[str, Any]:
+    """Run verify-claims repair with HIGH headroom (>=4096), 1 length continuation, and non-regression guard."""
+    repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
+    repair_tok_cap = min(max(max_budget, 4096), 6144) if effective_mode == "deep" else max_budget
+    repair_timeout = 120.0 if effective_mode == "deep" else 90.0
+
+    t0 = time.perf_counter()
+    res2 = local_sidecar.invoke_chat_completion(
+        api_url=api_url,
+        model_id=local_sidecar.DEFAULT_MODEL_ID,
+        mode=repair_mode,
+        system_prompt=sys_prompt,
+        user_content=repair_prompt,
+        max_tokens=repair_tok_cap,
+        timeout_s=repair_timeout,
+        preflight_checked=True,
+        loaded_ctx=loaded_ctx,
+        allow_high_floor=False,
+    )
+    dt = round(time.perf_counter() - t0, 3)
+    local_sidecar.record_usage_telemetry(
+        {
+            "cmd": telemetry_cmd,
+            "effort": eta["effort"],
+            "invocation_tier": tier,
+            "mode": repair_mode,
+            "est_prompt_tokens": res2["prompt_tokens"],
+            "predicted_eta_s": eta["predicted_eta_s"],
+            "max_eta_seconds": repair_timeout,
+            "tripped": False,
+            "is_retry": True,
+            "prompt_tokens": res2["prompt_tokens"],
+            "completion_tokens": res2["completion_tokens"],
+            "elapsed_s": res2["elapsed_s"],
+            "observed_tg_tok_s": res2["observed_tg_tok_s"],
+            "finish_reason": res2["finish_reason"],
+        }
+    )
+
+    if res2.get("finish_reason") == "length" and str(res2.get("content") or "").strip():
+        t_len0 = time.perf_counter()
+        head_clean, tail_ctx = _prepare_tail_continuation(res2["content"])
+        cont_prompt = (
+            f"{repair_prompt}\n\n"
+            "Your previous repaired response hit the output token limit after completing these lines:\n"
+            f"{tail_ctx}\n\n"
+            "Continue seamlessly starting with the NEXT line immediately after the lines above without repeating prior bullets."
+        )
+        try:
+            res_cont = local_sidecar.invoke_chat_completion(
+                api_url=api_url,
+                model_id=local_sidecar.DEFAULT_MODEL_ID,
+                mode=repair_mode,
+                system_prompt=sys_prompt,
+                user_content=cont_prompt,
+                max_tokens=2048,
+                timeout_s=90.0,
+                preflight_checked=True,
+                loaded_ctx=loaded_ctx,
+                allow_high_floor=False,
+            )
+            dt = round(dt + (time.perf_counter() - t_len0), 3)
+            res2 = {
+                **res2,
+                "prompt_tokens": int(res2.get("prompt_tokens") or 0) + int(res_cont.get("prompt_tokens") or 0),
+                "completion_tokens": int(res2.get("completion_tokens") or 0) + int(res_cont.get("completion_tokens") or 0),
+                "finish_reason": res_cont.get("finish_reason", res2.get("finish_reason")),
+                "content": (
+                    _stitch_tail_continuation(head_clean, res_cont["content"])
+                    if str(res_cont.get("content") or "").strip()
+                    else res2["content"]
+                ),
+            }
+        except Exception:
+            dt = round(dt + (time.perf_counter() - t_len0), 3)
+
+    links_fixed = 0
+    candidate_content = str(res2.get("content") or "")
+    if sanitize_links:
+        candidate_content, links_fixed = sanitize_quarantine_placeholder_links(candidate_content)
+        res2 = {**res2, "content": candidate_content}
+
+    vrf_res2 = _run_verify_claims_check(
+        candidate_content,
+        clean_sources,
+        verify_claims_path,
+        mem_root,
+        cwd_check,
+        project_dir=project_dir,
+    )
+
+    cur_supported = int(vrf_for_heal.get("supported") or 0)
+    cur_unbacked = int(vrf_for_heal.get("unbacked") or 999)
+    rep_supported = int(vrf_res2.get("supported") or 0)
+    rep_unbacked = int(vrf_res2.get("unbacked") or 999)
+
+    passed_vrf = (vrf_res2.get("returncode") == 0) and not (cur_supported >= 2 and rep_supported == 0)
+    non_regressing_improvement = (
+        res2.get("finish_reason") == "stop"
+        and rep_unbacked < cur_unbacked
+        and (cur_supported == 0 or rep_supported >= int(cur_supported * 0.75))
+    )
+    adopt_res2 = bool(candidate_content.strip()) and (passed_vrf or non_regressing_improvement)
+
+    merged_prompt_tok = int(base_res.get("prompt_tokens") or 0) + int(res2.get("prompt_tokens") or 0)
+    merged_comp_tok = int(base_res.get("completion_tokens") or 0) + int(res2.get("completion_tokens") or 0)
+
+    if adopt_res2:
+        merged_res = {
+            **res2,
+            "effort": effort_norm,
+            "mode": effective_mode,
+            "effective_max_tokens": base_res.get("effective_max_tokens", max_budget),
+            "repair_effective_max_tokens": repair_tok_cap,
+            "reasoning_effort": base_res.get("reasoning_effort", res2.get("reasoning_effort")),
+            "repair_mode": repair_mode,
+            "prompt_tokens": merged_prompt_tok,
+            "completion_tokens": merged_comp_tok,
+        }
+        chosen_content = candidate_content
+        chosen_vrf = vrf_res2
+        rejected_reason = None
+    else:
+        merged_res = {
+            **base_res,
+            "content": draft_for_heal,
+            "effort": effort_norm,
+            "mode": effective_mode,
+            "repair_effective_max_tokens": repair_tok_cap,
+            "repair_mode": repair_mode,
+            "repair_rejected_reason": (
+                f"repair_{res2.get('finish_reason', 'unknown')}_"
+                f"supported_{rep_supported}_vs_{cur_supported}_unbacked_{rep_unbacked}_vs_{cur_unbacked}"
+            ),
+            "prompt_tokens": merged_prompt_tok,
+            "completion_tokens": merged_comp_tok,
+        }
+        chosen_content = draft_for_heal
+        chosen_vrf = vrf_for_heal
+        links_fixed = 0
+        rejected_reason = merged_res["repair_rejected_reason"]
+
+    return {
+        "res": merged_res,
+        "content": chosen_content,
+        "vrf_after": chosen_vrf,
+        "vrf_attempt": vrf_res2,
+        "elapsed_s": dt,
+        "adopted": adopt_res2,
+        "verified": bool(adopted := adopt_res2) and passed_vrf,
+        "links_fixed": links_fixed,
+        "rejected_reason": rejected_reason,
+    }
+
+
 def _bionic_digest_sync(
     prompt: str,
     context_files: list[str] | None = None,
@@ -950,7 +1130,7 @@ def _bionic_digest_sync(
         sys_prompt, sys_src = local_sidecar.load_system_prompt()
         repo_root = Path(repo) if repo.strip() else None
         repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-        validated_files, slice_map = local_sidecar.parse_and_validate_context_specs(
+        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_root,
             require_exists=True,
@@ -995,12 +1175,14 @@ def _bionic_digest_sync(
         sys_bytes = len(sys_prompt.encode("utf-8"))
         has_code = local_sidecar.is_code_heavy_payload(validated_files, bool(include_git_diff))
 
-        total_raw_file_bytes = sum(vf.stat().st_size for vf in validated_files) if validated_files else 0
+        unique_files = list(dict.fromkeys(validated_files))
+        any_sliced = any(sl is not None for sl in slice_items)
+        total_raw_file_bytes = sum(vf.stat().st_size for vf in unique_files) if unique_files else 0
         chunk_threshold = 42000 if effective_mode == "deep" else 36000
         use_auto_chunk = (
             effective_mode in {"fast", "deep"}
-            and bool(validated_files)
-            and not slice_map
+            and bool(unique_files)
+            and not any_sliced
             and not include_git_diff
             and total_raw_file_bytes > chunk_threshold
         )
@@ -1355,7 +1537,7 @@ def _bionic_digest_sync(
                 repo_root=repo_resolved,
                 include_git_diff=bool(include_git_diff),
                 sys_prompt=sys_prompt,
-                slice_ranges=slice_map,
+                context_slices=slice_items,
             )
             prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
             eta = local_sidecar._enforce_eta_or_raise(
@@ -1601,62 +1783,41 @@ def _bionic_digest_sync(
                             "1. DELETE any intro or heading sentence so line 1 starts directly with `- `.\n"
                             "2. DELETE any unbacked summary counts echoed from the prompt, uncalculated group totals, or invalid `[CALC: ...]` labels (if `[CALC: ...]` is used, the left side of `=` MUST contain ONLY source-verbatim integers/operators like `[CALC: 4 + 1 + 1 + 2 = 8]` — NEVER variable words like `Total` AND NEVER derived subtotals not literally printed in source lines; expand sums into literal source numbers or omit `[CALC:]` completely).\n"
                             "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; if a cited source slice lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier on that bullet; for QUALIFIED_QUANTITY(...) failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or remove redundant duplicates.\n"
-                            "4. Keep ONLY exact source literals, units, identifiers, and `#Lstart-Lend` anchors present in the context above; insert `[TBD: ...]` for any missing values.\n\n"
+                            "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; insert `[TBD: ...]` for any missing values.\n\n"
                             f"Previous draft:\n{draft_for_heal}\n"
                         )
-                        repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
-                        repair_tok_cap = 2560 if effective_mode == "deep" else max_toks
                         try:
-                            res2 = local_sidecar.invoke_chat_completion(
+                            rep_out = _run_full_repair_with_guard(
+                                repair_prompt=repair_prompt,
+                                draft_for_heal=draft_for_heal,
+                                vrf_for_heal=vrf_for_heal,
+                                base_res=res,
+                                effective_mode=effective_mode,
+                                effort_norm=effort_norm,
+                                max_budget=max_toks,
                                 api_url=api_url,
-                                model_id=local_sidecar.DEFAULT_MODEL_ID,
-                                mode=repair_mode,
-                                system_prompt=sys_prompt,
-                                user_content=repair_prompt,
-                                max_tokens=repair_tok_cap,
-                                timeout_s=90.0,
-                                preflight_checked=True,
+                                sys_prompt=sys_prompt,
                                 loaded_ctx=loaded_ctx,
-                                allow_high_floor=False,
+                                clean_sources=clean_sources,
+                                verify_claims_path=verify_claims_path,
+                                mem_root=mem_root,
+                                cwd_check=cwd_check,
+                                tier=tier,
+                                eta=eta,
+                                telemetry_cmd="bionic_digest_verify_retry",
                             )
-                            heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                            vrf_res2 = _run_verify_claims_check(res2["content"], clean_sources, verify_claims_path, mem_root, cwd_check)
+                            heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
+                            res = rep_out["res"]
                             vrf_res = {
                                 "ran": True,
-                                "returncode": vrf_res2.get("returncode"),
-                                "elapsed_ms": vrf_res2.get("elapsed_ms"),
+                                "returncode": rep_out["vrf_after"].get("returncode"),
+                                "elapsed_ms": rep_out["vrf_after"].get("elapsed_ms"),
                                 "initial": vrf_res,
-                                "after_heal": vrf_res2,
+                                "after_heal": rep_out["vrf_after"],
+                                **({"attempted_heal": rep_out["vrf_attempt"]} if not rep_out["adopted"] else {}),
                             }
-                            res = {
-                                **res2,
-                                "effort": effort_norm,
-                                "mode": effective_mode,
-                                "reasoning_effort": res.get("reasoning_effort", res2.get("reasoning_effort")),
-                                "repair_mode": repair_mode,
-                                "prompt_tokens": int(res.get("prompt_tokens") or 0) + int(res2.get("prompt_tokens") or 0),
-                                "completion_tokens": int(res.get("completion_tokens") or 0) + int(res2.get("completion_tokens") or 0),
-                            }
-                            local_sidecar.record_usage_telemetry(
-                                {
-                                    "cmd": "bionic_digest_verify_retry",
-                                    "effort": eta["effort"],
-                                    "invocation_tier": tier,
-                                    "mode": repair_mode,
-                                    "est_prompt_tokens": res2["prompt_tokens"],
-                                    "predicted_eta_s": eta["predicted_eta_s"],
-                                    "max_eta_seconds": 90.0,
-                                    "tripped": False,
-                                    "is_retry": True,
-                                    "prompt_tokens": res2["prompt_tokens"],
-                                    "completion_tokens": res2["completion_tokens"],
-                                    "elapsed_s": res2["elapsed_s"],
-                                    "observed_tg_tok_s": res2["observed_tg_tok_s"],
-                                    "finish_reason": res2["finish_reason"],
-                                }
-                            )
-                            verify_healed = True
-                            claims_verified = vrf_res2.get("returncode") == 0
+                            verify_healed = bool(rep_out["adopted"])
+                            claims_verified = rep_out["verified"]
                         except Exception as heal_exc:
                             heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
                             heal_error = f"verify_repair_failed: {heal_exc}"
@@ -1922,7 +2083,7 @@ def _bionic_repo_audit_sync(
         if not overwrite and quar_candidate.exists():
             raise RuntimeError(f"Quarantine note already exists (pass overwrite=True to replace): {quar_candidate}")
 
-        validated_files, slice_map = local_sidecar.parse_and_validate_context_specs(
+        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_resolved,
             require_exists=True,
@@ -2002,7 +2163,7 @@ def _bionic_repo_audit_sync(
             repo_root=repo_resolved,
             include_git_diff=bool(include_git_diff),
             sys_prompt=sys_prompt,
-            slice_ranges=slice_map,
+            context_slices=slice_items,
         )
         base_toks = local_sidecar.resolve_effective_max_tokens(effective_mode, max_tokens)
         if max_tokens is None and effective_mode != "cpu-bg":
@@ -2234,60 +2395,34 @@ def _bionic_repo_audit_sync(
                     "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
                     f"Previous draft:\n{draft_for_scrub}\n"
                 )
-                scrub_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
-                scrub_max_toks = min(effective_max_toks, 2560) if effective_mode == "deep" else effective_max_toks
                 try:
-                    res2 = local_sidecar.invoke_chat_completion(
+                    rep_out = _run_full_repair_with_guard(
+                        repair_prompt=scrub_prompt,
+                        draft_for_heal=draft_for_scrub,
+                        vrf_for_heal=vrf_for_scrub,
+                        base_res=res,
+                        effective_mode=effective_mode,
+                        effort_norm=effort_norm,
+                        max_budget=effective_max_toks,
                         api_url=api_url,
-                        model_id=local_sidecar.DEFAULT_MODEL_ID,
-                        mode=scrub_mode,
-                        system_prompt=sys_prompt,
-                        user_content=scrub_prompt,
-                        max_tokens=scrub_max_toks,
-                        timeout_s=90.0,
-                        preflight_checked=True,
+                        sys_prompt=sys_prompt,
                         loaded_ctx=loaded_ctx,
-                        allow_high_floor=False,
-                    )
-                    heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                    local_sidecar.record_usage_telemetry(
-                        {
-                            "cmd": "bionic_repo_audit_verify_retry",
-                            "effort": eta["effort"],
-                            "invocation_tier": tier,
-                            "mode": scrub_mode,
-                            "est_prompt_tokens": res2["prompt_tokens"],
-                            "predicted_eta_s": eta["predicted_eta_s"],
-                            "max_eta_seconds": 90.0,
-                            "tripped": False,
-                            "is_retry": True,
-                            "prompt_tokens": res2["prompt_tokens"],
-                            "completion_tokens": res2["completion_tokens"],
-                            "elapsed_s": res2["elapsed_s"],
-                            "observed_tg_tok_s": res2["observed_tg_tok_s"],
-                            "finish_reason": res2["finish_reason"],
-                        }
-                    )
-                    res = {
-                        **res2,
-                        "effort": effort_norm,
-                        "mode": effective_mode,
-                        "reasoning_effort": res.get("reasoning_effort", res2.get("reasoning_effort")),
-                        "repair_mode": scrub_mode,
-                        "prompt_tokens": int(res.get("prompt_tokens", 0)) + int(res2.get("prompt_tokens", 0)),
-                        "completion_tokens": int(res.get("completion_tokens", 0)) + int(res2.get("completion_tokens", 0)),
-                    }
-                    sanitized_content, links_fixed2 = sanitize_quarantine_placeholder_links(res["content"])
-                    links_fixed += links_fixed2
-                    vrf_final = _run_verify_claims_check(
-                        sanitized_content,
-                        clean_sources,
-                        verify_claims_path,
-                        mem_root,
-                        repo_resolved,
+                        clean_sources=clean_sources,
+                        verify_claims_path=verify_claims_path,
+                        mem_root=mem_root,
+                        cwd_check=repo_resolved,
+                        tier=tier,
+                        eta=eta,
+                        telemetry_cmd="bionic_repo_audit_verify_retry",
                         project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
+                        sanitize_links=True,
                     )
-                    verify_healed = True
+                    heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
+                    res = rep_out["res"]
+                    sanitized_content = rep_out["content"]
+                    links_fixed += int(rep_out["links_fixed"] or 0)
+                    vrf_final = rep_out["vrf_after"]
+                    verify_healed = bool(rep_out["adopted"])
                 except Exception as scrub_exc:
                     heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
                     heal_error = f"audit_verify_scrub_failed: {scrub_exc}"
@@ -2564,7 +2699,7 @@ def _bionic_stage_patch_sync(
         sys_prompt, _ = local_sidecar.load_system_prompt()
         repo_root = Path(repo) if repo.strip() else None
         repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-        validated_files, slice_map = local_sidecar.parse_and_validate_context_specs(
+        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_root,
             require_exists=True,
@@ -2616,7 +2751,7 @@ def _bionic_stage_patch_sync(
             repo_root=repo_resolved,
             include_git_diff=False,
             sys_prompt=sys_prompt,
-            slice_ranges=slice_map,
+            context_slices=slice_items,
         )
         loaded_ctx = srv.get("loaded_context_length")
         max_toks = local_sidecar.resolve_effective_max_tokens(effective_mode, max_tokens)
@@ -3878,6 +4013,117 @@ def run_self_tests() -> dict[str, Any]:
             srv_24.shutdown()
             srv_24.server_close()
     checks.append("v242_chunk_reduce_length_continuation_and_heavy_std_guard")
+
+    # 25. V2.4.3 HIGH repair headroom (>=4096), non-regression guard, & multi-slice same-file preservation
+    with tempfile.TemporaryDirectory() as td_25:
+        td25_p = Path(td_25)
+        r25 = td25_p / "repo25"
+        r25.mkdir()
+        ms25 = r25 / "BOM.md"
+        ms25.write_text(
+            "# BOM\n- Part A: 12 mm\n- filler 3\n- filler 4\n- filler 5\n- filler 6\n- filler 7\n- Part B: 24 V\n",
+            encoding="utf-8",
+        )
+        seen_25: list[dict[str, Any]] = []
+        replies_25 = [
+            (
+                "- Part A: `12 mm` (`BOM.md#L2-L2`)\n"
+                "- Part B: `24 V` (`BOM.md#L8-L8`)\n"
+                "- Extra unbacked leak: `99 A` (`BOM.md#L8-L8`)",
+                "stop",
+            ),
+            # Full repair hits length clip -> continuation hop runs and returns still-failing/gutted draft -> guard MUST keep initial!
+            ("- Short clipped `88 A`", "length"),
+            ("and tail `77 A`", "stop"),
+        ]
+
+        class _V25Handler(BaseHTTPRequestHandler):
+            def log_message(self, fmt: str, *args: Any) -> None:
+                return
+
+            def do_GET(self) -> None:
+                if self.path == "/api/v0/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}
+                elif self.path == "/v1/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
+                body = json.dumps(payload).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                length = int(self.headers.get("Content-Length", "0"))
+                req = json.loads(self.rfile.read(length).decode("utf-8"))
+                seen_25.append(req)
+                txt, fr = replies_25.pop(0) if replies_25 else ("- Part A: `12 mm` (`BOM.md#L2-L2`)", "stop")
+                body = json.dumps(
+                    {
+                        "choices": [{"index": 0, "message": {"role": "assistant", "content": txt}, "finish_reason": fr}],
+                        "usage": {"prompt_tokens": 200, "completion_tokens": 100},
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        srv25 = ThreadingHTTPServer(("127.0.0.1", 0), _V25Handler)
+        import threading as _th25
+
+        th25 = _th25.Thread(target=srv25.serve_forever, daemon=True)
+        th25.start()
+        cache25 = td25_p / "c25"
+        cache25.mkdir()
+        saved25 = {
+            k: os.environ.get(k)
+            for k in (
+                "BIONIC_SIDECAR_API_URL",
+                "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
+                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "BIONIC_SIDECAR_SCORECARD_PATH",
+                "BIONIC_SIDECAR_KV_STATE_PATH",
+                "BIONIC_SIDECAR_JOBS_DIR",
+            )
+        }
+        try:
+            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv25.server_port}/v1"
+            os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache25 / "tel.jsonl")
+            os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache25 / "sc.json")
+            os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache25 / "kv.json")
+            os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache25 / "jobs")
+            res25 = _bionic_digest_sync(
+                prompt="Extract specs from both slices",
+                context_files=[f"{ms25}#L1-L2", f"{ms25}#L8-L8"],
+                repo=str(r25),
+                effort="high",
+                invocation_tier="explicit",
+                verify_claims=True,
+            )
+            assert res25["ok"] is True, f"res25 failed: {res25}"
+            assert [m["label"] for m in res25["context_files"]] == ["BOM.md#L1-L2", "BOM.md#L8-L8"], f"multi-slice dropped: {res25['context_files']}"
+            # Full repair request (2nd call) must get >=4096 tokens under HIGH mode (not clipped 2560!), plus 3rd continuation hop
+            assert len(seen_25) == 3 and int(seen_25[1].get("max_tokens") or 0) >= 4096, f"repair max_tokens too small: {seen_25}"
+            # Clipped/regressed repair must NOT clobber richer initial draft
+            assert "Part A" in res25["completion"]["content"] and "Part B" in res25["completion"]["content"], f"non-regression guard failed: {res25['completion']}"
+            assert res25["completion"]["finish_reason"] == "stop"
+            assert res25["verdict"] == "corrected"
+        finally:
+            for k, v in saved25.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv25.shutdown()
+            srv25.server_close()
+    checks.append("v243_high_repair_headroom_guard_and_multi_slice")
 
     return {
         "schema_version": "BIONIC_MCP_V1",

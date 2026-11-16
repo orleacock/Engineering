@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
 tree_hash: "9de410c2dc8c"
-last_synced: "2026-11-15"
+last_synced: "2026-11-16"
 ---
 
 # 🗂️ `Orin_Workstation` — Directory Lookup Map (`entity: Orin_Workstation`)
@@ -73,7 +73,7 @@ last_synced: "2026-11-15"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: 51268c0b5e71` | `Tree: bb470dc7e4ac`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: cc16e1b7f336` | `Tree: bb470dc7e4ac`)
 - **Repository Location**: `../scripts`
 
 ```text

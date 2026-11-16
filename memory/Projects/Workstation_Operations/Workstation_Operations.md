@@ -5,14 +5,14 @@ compartment: "private"
 project_type: "software"
 status: "active"
 local_path: "../scripts"
-repo_head_sha: "51268c0b5e71"
+repo_head_sha: "cc16e1b7f336"
 tree_hash: "a723ac6ca722"
-checkpoint_head_sha: "51268c0b5e71"
+checkpoint_head_sha: "cc16e1b7f336"
 checkpoint_tree_hash: "a723ac6ca722"
-checkpoint_worktree: "dirty (15 files)"
+checkpoint_worktree: "dirty (11 files)"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-15"
-checkpoint_lessons_digest: "38eae7345375bd24"
+last_synced: "2026-11-16"
+checkpoint_lessons_digest: "fb494ccc5e220537"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -55,13 +55,13 @@ checkpoint_lessons_digest: "38eae7345375bd24"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-15`
-- **Checkpoint Provenance**: `HEAD SHA: 51268c0b5e71` | `Tree Hash: a723ac6ca722` | `Worktree: dirty (15 files)` | `Last Verification: SBX-20261115_212505-c787f842, SBX-20261115_212610-e71371b9, BMK-BIONIC-20261116_005417`
+- **Last Session Timestamp**: `2026-11-16`
+- **Checkpoint Provenance**: `HEAD SHA: cc16e1b7f336` | `Tree Hash: a723ac6ca722` | `Worktree: dirty (11 files)` | `Last Verification: SBX-20261116_081805-cc62b7b4`
 - **Where We Stopped (Verified State & Context)**:
-  Deployed & verified Bionic Local Sidecar V2.4.2 + gpu-daily --parallel 2 + chunked-reduce tail-continuation + >36KB STANDARD sync-guard (20/20 local_sidecar, 24/24 bionic_mcp_server, 13/13 lifecycle_hook, OS Dry-Run SBX-20261115_212505-c787f842 PASS 4/4+2/2, Live 5/5 clean SBX-20261115_212610-e71371b9).
+  Checkpointed Bionic Local Sidecar V2.4.3 (21/21 local_sidecar, 25/25 MCP server, 13/13 hook) and benchmark_homunculus.py --model-id/--effort telemetry (subagent-ab PASS)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Optional client restart to reload in-session MCP server onto latest disk mtime, optional v2.4.2 scorecard-reset, and downstream hardware-cad-inspector or Syncthing backlog in Orin_Workstation_Tasks.md.
+  1. Implement V2.4.4 Bionic job-handling upgrades (mixed-payload chunking on fixed 49152 ctx, async-aware sub-timeouts, chunked ETA calibration, compact defect manifest & continuation headroom)
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -70,7 +70,7 @@ checkpoint_lessons_digest: "38eae7345375bd24"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Engineering | HEAD SHA: 51268c0b5e71 | Tree Hash: a723ac6ca722
+Repository: Engineering | HEAD SHA: cc16e1b7f336 | Tree Hash: a723ac6ca722
   memory/
   memory/Diagrams/
   memory/Diagrams/NEA_v2_Copilot_Execution_Flowchart.md

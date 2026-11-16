@@ -28,42 +28,42 @@ Pure Python 3.10+ standard library (zero third-party packages).
     - def _safe_subprocess_cwd (#L343-L366)          | def _safe_abspath (#L369-L375)
     - def _is_path_within (#L378-L383)               | def _inspect_path_security (#L386-L416)
     - def _find_git_toplevel (#L419-L425)            | def is_code_heavy_payload (#L428-L432)
-    - def parse_and_validate_context_specs (#L435-L453) | def validate_input_paths (#L456-L505)
-    - def validate_staging_dir (#L508-L571)          | def resolve_effective_max_tokens (#L574-L584)
-    - def estimate_eta (#L587-L725)                  | def _http_json_request (#L728-L748)
-    - def _deduplicate_full_context_diff (#L751-L828) | def plan_line_preserving_chunks (#L831-L892)
-    - def pack_chunk_batches (#L895-L947)            | def assemble_prompt_payload (#L950-L1080)
-    - def resolve_default_api_url (#L1083-L1085)     | def _resolve_kv_state_path (#L1088-L1097)
-    - def _pid_alive (#L1100-L1109)                  | def acquire_kv_budget (#L1113-L1221)
-    - def has_active_exclusive_kv_slot (#L1224-L1242) | def invoke_chat_completion (#L1245-L1410)
-    - def extract_staged_code (#L1413-L1423)         | def _read_prompt_arg (#L1426-L1433)
-    - def resolve_max_eta_seconds (#L1436-L1442)     | def _resolve_telemetry_log (#L1445-L1451)
-    - def _resolve_scorecard_path (#L1454-L1463)     | def _resolve_jobs_dir (#L1466-L1475)
-    - def _write_private_json_atomic (#L1478-L1496)  | def _resolve_scorecard_archive_path (#L1499-L1505)
-    - def _seed_counts_from_telemetry (#L1508-L1540) | def compute_scorecard_metrics (#L1543-L1576)
-    - def load_or_init_scorecard (#L1579-L1616)      | def record_call_outcome (#L1619-L1685)
-    - def apply_call_verdict (#L1688-L1737)          | def format_lifetime_scorecard (#L1740-L1758)
-    - def reset_scorecard (#L1761-L1860)             | def estimate_quota_savings (#L1863-L1923)
-    - def record_usage_telemetry (#L1926-L1952)      | def summarize_usage_telemetry (#L1955-L1999)
-    - def probe_server_models (#L2002-L2068)         | def preflight_live_inference (#L2071-L2085)
-    - def _enforce_eta_or_raise (#L2088-L2173)       | def cmd_status (#L2176-L2212)
-    - def cmd_check_eta (#L2215-L2269)               | def cmd_query (#L2272-L2414)
-    - def cmd_audit_to_quarantine (#L2417-L2613)     | def _write_private_staging_file (#L2616-L2625)
-    - def stage_code_artifact (#L2628-L2707)         | def cmd_stage_code (#L2710-L2853)
-    - def build_concrete_model_config (#L2863-L2952) | def _read_hw_counters (#L2955-L2994)
-    - def _probe_lms_daemon (#L2997-L3014)           | def _run_lms_cmd (#L3017-L3030)
-    - def _has_gui_display_socket (#L3033-L3043)     | def _control_plan (#L3046-L3078)
-    - def _control_status (#L3081-L3097)             | def _control_load (#L3100-L3164)
-    - def _control_start_headless (#L3167-L3223)     | def _control_unload (#L3226-L3248)
-    - def _control_stop_server (#L3251-L3265)        | def _safe_job_file (#L3268-L3278)
-    - def submit_async_job (#L3281-L3319)            | def _execute_job_worker (#L3322-L3358)
-    - def get_job_status (#L3361-L3400)              | def list_jobs (#L3403-L3421)
-    - def _normalize_control_cli_action (#L3424-L3427) | def cmd_control (#L3430-L3480)
-    - def cmd_job_worker (#L3483-L3484)              | def cmd_job_status (#L3487-L3490)
-    - def cmd_job_collect (#L3493-L3496)             | def cmd_job_wait (#L3499-L3502)
-    - def cmd_job_list (#L3505-L3508)                | def cmd_verdict (#L3511-L3514)
-    - def run_self_tests (#L3517-L4297)              | def build_parser (#L4300-L4403)
-    - def main (#L4406-L4444)
+    - def parse_and_validate_context_items (#L435-L462) | def parse_and_validate_context_specs (#L465-L477)
+    - def validate_input_paths (#L480-L529)          | def validate_staging_dir (#L532-L595)
+    - def resolve_effective_max_tokens (#L598-L608)  | def estimate_eta (#L611-L749)
+    - def _http_json_request (#L752-L772)            | def _deduplicate_full_context_diff (#L775-L852)
+    - def plan_line_preserving_chunks (#L855-L916)   | def pack_chunk_batches (#L919-L971)
+    - def assemble_prompt_payload (#L974-L1125)      | def resolve_default_api_url (#L1128-L1130)
+    - def _resolve_kv_state_path (#L1133-L1142)      | def _pid_alive (#L1145-L1154)
+    - def acquire_kv_budget (#L1158-L1266)           | def has_active_exclusive_kv_slot (#L1269-L1287)
+    - def invoke_chat_completion (#L1290-L1455)      | def extract_staged_code (#L1458-L1468)
+    - def _read_prompt_arg (#L1471-L1478)            | def resolve_max_eta_seconds (#L1481-L1487)
+    - def _resolve_telemetry_log (#L1490-L1496)      | def _resolve_scorecard_path (#L1499-L1508)
+    - def _resolve_jobs_dir (#L1511-L1520)           | def _write_private_json_atomic (#L1523-L1541)
+    - def _resolve_scorecard_archive_path (#L1544-L1550) | def _seed_counts_from_telemetry (#L1553-L1585)
+    - def compute_scorecard_metrics (#L1588-L1621)   | def load_or_init_scorecard (#L1624-L1661)
+    - def record_call_outcome (#L1664-L1730)         | def apply_call_verdict (#L1733-L1782)
+    - def format_lifetime_scorecard (#L1785-L1803)   | def reset_scorecard (#L1806-L1905)
+    - def estimate_quota_savings (#L1908-L1968)      | def record_usage_telemetry (#L1971-L1997)
+    - def summarize_usage_telemetry (#L2000-L2044)   | def probe_server_models (#L2047-L2113)
+    - def preflight_live_inference (#L2116-L2130)    | def _enforce_eta_or_raise (#L2133-L2218)
+    - def cmd_status (#L2221-L2257)                  | def cmd_check_eta (#L2260-L2314)
+    - def cmd_query (#L2317-L2459)                   | def cmd_audit_to_quarantine (#L2462-L2658)
+    - def _write_private_staging_file (#L2661-L2670) | def stage_code_artifact (#L2673-L2752)
+    - def cmd_stage_code (#L2755-L2898)              | def build_concrete_model_config (#L2908-L2997)
+    - def _read_hw_counters (#L3000-L3039)           | def _probe_lms_daemon (#L3042-L3059)
+    - def _run_lms_cmd (#L3062-L3075)                | def _has_gui_display_socket (#L3078-L3088)
+    - def _control_plan (#L3091-L3123)               | def _control_status (#L3126-L3142)
+    - def _control_load (#L3145-L3209)               | def _control_start_headless (#L3212-L3268)
+    - def _control_unload (#L3271-L3293)             | def _control_stop_server (#L3296-L3310)
+    - def _safe_job_file (#L3313-L3323)              | def submit_async_job (#L3326-L3364)
+    - def _execute_job_worker (#L3367-L3403)         | def get_job_status (#L3406-L3445)
+    - def list_jobs (#L3448-L3466)                   | def _normalize_control_cli_action (#L3469-L3472)
+    - def cmd_control (#L3475-L3525)                 | def cmd_job_worker (#L3528-L3529)
+    - def cmd_job_status (#L3532-L3535)              | def cmd_job_collect (#L3538-L3541)
+    - def cmd_job_wait (#L3544-L3547)                | def cmd_job_list (#L3550-L3553)
+    - def cmd_verdict (#L3556-L3559)                 | def run_self_tests (#L3562-L4364)
+    - def build_parser (#L4367-L4470)                | def main (#L4473-L4511)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -432,13 +432,13 @@ def is_code_heavy_payload(context_files: list[Path], include_git_diff: bool = Fa
     return any(p.suffix.lower() in CODE_CONTEXT_EXTENSIONS for p in context_files)
 
 
-def parse_and_validate_context_specs(
+def parse_and_validate_context_items(
     specs: list[str | Path],
     repo_root: Path | None = None,
     *,
     require_exists: bool = True,
-) -> tuple[list[Path], dict[Path, tuple[int, int]]]:
-    """Validate context specs (supporting `#Lstart-Lend` slices) and return resolved paths + slice map."""
+) -> tuple[list[Path], list[tuple[int, int] | None], dict[Path, tuple[int, int]]]:
+    """Validate context specs (`#Lstart-Lend`), preserving distinct same-file slices while deduplicating exact repeats."""
     raw_paths: list[Path] = []
     parsed_slices: list[tuple[int, int] | None] = []
     for spec in specs:
@@ -446,11 +446,35 @@ def parse_and_validate_context_specs(
         raw_paths.append(p_obj)
         parsed_slices.append(sl)
     validated = validate_input_paths(raw_paths, repo_root=repo_root, require_exists=require_exists)
+    dedup_files: list[Path] = []
+    dedup_slices: list[tuple[int, int] | None] = []
+    seen_pairs: set[tuple[Path, tuple[int, int] | None]] = set()
     slice_map: dict[Path, tuple[int, int]] = {}
     for res_p, sl in zip(validated, parsed_slices):
+        pair = (res_p, sl)
+        if pair in seen_pairs:
+            continue
+        seen_pairs.add(pair)
+        dedup_files.append(res_p)
+        dedup_slices.append(sl)
         if sl is not None:
             slice_map[res_p] = sl
-    return validated, slice_map
+    return dedup_files, dedup_slices, slice_map
+
+
+def parse_and_validate_context_specs(
+    specs: list[str | Path],
+    repo_root: Path | None = None,
+    *,
+    require_exists: bool = True,
+) -> tuple[list[Path], dict[Path, tuple[int, int]]]:
+    """Validate context specs (supporting `#Lstart-Lend` slices) and return resolved paths + slice map."""
+    dedup_files, _slices, slice_map = parse_and_validate_context_items(
+        specs,
+        repo_root=repo_root,
+        require_exists=require_exists,
+    )
+    return dedup_files, slice_map
 
 
 def validate_input_paths(
@@ -954,22 +978,42 @@ def assemble_prompt_payload(
     repo_root: Path | None,
     include_git_diff: bool,
     sys_prompt: str,
-    slice_ranges: dict[Path, tuple[int, int]] | None = None,
+    slice_ranges: dict[Path, tuple[int, int]] | list[tuple[int, int] | None] | None = None,
+    context_slices: list[tuple[int, int] | None] | None = None,
     diff_repo_wide: bool = False,
 ) -> tuple[str, list[dict[str, Any]]]:
     """Assemble bounded line-numbered (and optionally #Lstart-Lend sliced) files + scoped safe git diff."""
     sections: list[str] = [user_prompt.strip()]
     file_meta: list[dict[str, Any]] = []
-    slice_map = slice_ranges or {}
     raw_by_path: dict[Path, str] = {}
+    lines_by_path: dict[Path, list[str]] = {}
+    sliced_paths: set[Path] = set()
+    full_context_paths: set[Path] = set()
 
-    for fpath in context_files:
-        raw_text = fpath.read_text(encoding="utf-8", errors="replace")
-        raw_by_path[fpath] = raw_text
-        all_lines = raw_text.splitlines()
+    if context_slices is not None:
+        if len(context_slices) != len(context_files):
+            raise ValueError("context_slices length must match context_files length")
+        item_pairs = list(zip(context_files, context_slices))
+    elif isinstance(slice_ranges, list):
+        if len(slice_ranges) != len(context_files):
+            raise ValueError("slice_ranges list length must match context_files length")
+        item_pairs = list(zip(context_files, slice_ranges))
+    else:
+        slice_map = slice_ranges or {}
+        item_pairs = [(fp, slice_map.get(fp)) for fp in context_files]
+
+    for fpath, sl in item_pairs:
+        if fpath not in raw_by_path:
+            raw_text = fpath.read_text(encoding="utf-8", errors="replace")
+            raw_by_path[fpath] = raw_text
+            lines_by_path[fpath] = raw_text.splitlines()
+        else:
+            raw_text = raw_by_path[fpath]
+        all_lines = lines_by_path[fpath]
         rel_display = str(fpath.relative_to(repo_root)) if repo_root else fpath.name
-        if fpath in slice_map:
-            start_l, end_l = slice_map[fpath]
+        if sl is not None:
+            sliced_paths.add(fpath)
+            start_l, end_l = sl
             actual_start = min(max(1, start_l), max(1, len(all_lines)))
             sliced = all_lines[actual_start - 1 : end_l]
             actual_end = actual_start + len(sliced) - 1 if sliced else actual_start
@@ -990,6 +1034,7 @@ def assemble_prompt_payload(
                 }
             )
         else:
+            full_context_paths.add(fpath)
             numbered = "\n".join(f"{idx}: {line}" for idx, line in enumerate(all_lines, 1))
             sections.append(f"\n### CONTEXT FILE: {rel_display} ({len(all_lines)} lines)\n{numbered}\n")
             file_meta.append(
@@ -1026,8 +1071,8 @@ def assemble_prompt_payload(
                     for fpath in context_files
                     if _is_path_within(fpath, repo_root)
                 }
-            for fpath in context_files:
-                if fpath not in slice_map and _is_path_within(fpath, repo_root):
+            for fpath in full_context_paths:
+                if fpath not in sliced_paths and _is_path_within(fpath, repo_root):
                     rel_pos = fpath.relative_to(repo_root).as_posix()
                     full_context_rels.add(rel_pos)
                     full_context_texts[rel_pos] = raw_by_path.get(fpath, "")
@@ -2216,7 +2261,7 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
     sys_prompt, _ = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-    validated_files, slice_map = parse_and_validate_context_specs(
+    validated_files, slice_items, _slice_map = parse_and_validate_context_items(
         list(args.context_files or []), repo_root=repo_root, require_exists=True
     )
 
@@ -2232,7 +2277,7 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
             repo_root=repo_resolved,
             include_git_diff=bool(args.include_git_diff),
             sys_prompt=sys_prompt,
-            slice_ranges=slice_map,
+            context_slices=slice_items,
         )
         prompt_bytes = len(sys_prompt.encode("utf-8")) + len(assembled.encode("utf-8"))
 
@@ -2274,7 +2319,7 @@ def cmd_query(args: argparse.Namespace) -> int:
     sys_prompt, sys_src = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-    validated_files, slice_map = parse_and_validate_context_specs(
+    validated_files, slice_items, _slice_map = parse_and_validate_context_items(
         list(args.context_files or []), repo_root=repo_root, require_exists=True
     )
     user_prompt = _read_prompt_arg(args.prompt, args.prompt_file)
@@ -2285,7 +2330,7 @@ def cmd_query(args: argparse.Namespace) -> int:
         repo_root=repo_resolved,
         include_git_diff=bool(args.include_git_diff),
         sys_prompt=sys_prompt,
-        slice_ranges=slice_map,
+        context_slices=slice_items,
     )
     sys_bytes = len(sys_prompt.encode("utf-8"))
     prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
@@ -2419,7 +2464,7 @@ def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
     sys_prompt, sys_src = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-    validated_files, slice_map = parse_and_validate_context_specs(
+    validated_files, slice_items, _slice_map = parse_and_validate_context_items(
         list(args.context_files or []), repo_root=repo_root, require_exists=True
     )
     user_prompt = _read_prompt_arg(args.prompt, args.prompt_file)
@@ -2434,7 +2479,7 @@ def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
         repo_root=repo_resolved,
         include_git_diff=bool(args.include_git_diff),
         sys_prompt=sys_prompt,
-        slice_ranges=slice_map,
+        context_slices=slice_items,
     )
     quar_candidate = Path(args.memory_root) / "Projects" / args.project / "Quarantine" / f"{args.name}.md"
     if not args.overwrite and quar_candidate.exists():
@@ -2714,7 +2759,7 @@ def cmd_stage_code(args: argparse.Namespace) -> int:
     sys_prompt, _ = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-    validated_files, slice_map = parse_and_validate_context_specs(
+    validated_files, slice_items, _slice_map = parse_and_validate_context_items(
         list(args.context_files or []), repo_root=repo_root, require_exists=True
     )
     compare_path = Path(args.compare_against) if args.compare_against else None
@@ -2728,7 +2773,7 @@ def cmd_stage_code(args: argparse.Namespace) -> int:
         repo_root=repo_resolved,
         include_git_diff=bool(args.include_git_diff),
         sys_prompt=sys_prompt,
-        slice_ranges=slice_map,
+        context_slices=slice_items,
     )
     sys_bytes = len(sys_prompt.encode("utf-8"))
     prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
@@ -4288,6 +4333,28 @@ def run_self_tests() -> dict[str, Any]:
     daily_par = daily_load["llm.load.llama.argumentsOverride"]["overrideParameters"][0]
     assert daily_par == {"key": "--parallel", "value": "2"}, f"unexpected gpu-daily parallel cfg: {daily_par}"
     checks.append("v242_exclusive_deep_kv_slot_and_mapper_parallelism")
+
+    # 21. V2.4.3 multi-slice same-file preservation + identical-spec deduplication
+    with tempfile.TemporaryDirectory() as td_ms:
+        ms_file = Path(td_ms) / "multi.py"
+        ms_file.write_text("\n".join(f"val_{i} = {i}" for i in range(1, 31)) + "\n", encoding="utf-8")
+        ms_files, ms_slices, _ = parse_and_validate_context_items(
+            [f"{ms_file}#L2-L5", f"{ms_file}#L2-L5", f"{ms_file}#L18-L21"],
+            repo_root=Path(td_ms),
+            require_exists=True,
+        )
+        assert len(ms_files) == 2 and ms_slices == [(2, 5), (18, 21)], f"unexpected slice dedup: {ms_slices}"
+        ms_asm, ms_meta = assemble_prompt_payload(
+            user_prompt="Inspect both ranges",
+            context_files=ms_files,
+            repo_root=Path(td_ms),
+            include_git_diff=False,
+            sys_prompt="sys",
+            context_slices=ms_slices,
+        )
+        assert [m["label"] for m in ms_meta] == ["multi.py#L2-L5", "multi.py#L18-L21"], f"unexpected meta: {ms_meta}"
+        assert "val_3 = 3" in ms_asm and "val_19 = 19" in ms_asm, "Both non-overlapping same-file slices must appear"
+    checks.append("v243_multi_slice_same_file_preservation")
 
     return {
         "schema_version": SCHEMA_VERSION,
