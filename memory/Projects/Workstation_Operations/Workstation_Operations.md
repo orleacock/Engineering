@@ -5,14 +5,14 @@ compartment: "private"
 project_type: "software"
 status: "active"
 local_path: "../scripts"
-repo_head_sha: "UNTRACKED"
-tree_hash: "e56a65019c6a"
-checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "e56a65019c6a"
-checkpoint_worktree: "untracked"
+repo_head_sha: "51268c0b5e71"
+tree_hash: "a723ac6ca722"
+checkpoint_head_sha: "51268c0b5e71"
+checkpoint_tree_hash: "a723ac6ca722"
+checkpoint_worktree: "dirty (15 files)"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-14"
-checkpoint_lessons_digest: "f6e4b82540ef79f4"
+last_synced: "2026-11-15"
+checkpoint_lessons_digest: "38eae7345375bd24"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -55,15 +55,13 @@ checkpoint_lessons_digest: "f6e4b82540ef79f4"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-14`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: e56a65019c6a` | `Worktree: untracked` | `Last Verification: SBX-20261114_223528-01f61a8c, VRF-206f3a685cb2, VRF-14c1b264d998`
+- **Last Session Timestamp**: `2026-11-15`
+- **Checkpoint Provenance**: `HEAD SHA: 51268c0b5e71` | `Tree Hash: a723ac6ca722` | `Worktree: dirty (15 files)` | `Last Verification: SBX-20261115_212505-c787f842, SBX-20261115_212610-e71371b9, BMK-BIONIC-20261116_005417`
 - **Where We Stopped (Verified State & Context)**:
-  Completed Anchor B bionic-sidecar Antigravity plugin, live remote drill, unlinked-cwd subprocess hardening, and bootstrap_workstation.sh integration
+  Deployed & verified Bionic Local Sidecar V2.4.2 + gpu-daily --parallel 2 + chunked-reduce tail-continuation + >36KB STANDARD sync-guard (20/20 local_sidecar, 24/24 bionic_mcp_server, 13/13 lifecycle_hook, OS Dry-Run SBX-20261115_212505-c787f842 PASS 4/4+2/2, Live 5/5 clean SBX-20261115_212610-e71371b9).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Monitor auto (60s) vs explicit (90s) Bionic sidecar telemetry in ~/.cache/homunculus_bionic_plugin/sidecar_usage_telemetry.jsonl during daily engineering work.
-  2. Revisit deferred hardware-cad-inspector read-only sidecar wiring in Tasks/Orin_Workstation_Tasks.md after module maturation.
-- **Open Discussion / Alignment Questions**: Live drill verified Turn-1 UNLOADED notice, user-confirmed gpu-daily remote load (49152 ctx, 10.045 GiB baseline VRAM), explicit [bionic] digest offload, and PreToolUse :1234 bypass block.
+  1. Optional client restart to reload in-session MCP server onto latest disk mtime, optional v2.4.2 scorecard-reset, and downstream hardware-cad-inspector or Syncthing backlog in Orin_Workstation_Tasks.md.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -72,40 +70,168 @@ checkpoint_lessons_digest: "f6e4b82540ef79f4"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: e56a65019c6a
-  bionic_sidecar/
-  bionic_sidecar/bionic_lifecycle_hook.py
-  bionic_sidecar/bionic_mcp_server.py
-  bionic_sidecar_plugin/
-  bionic_sidecar_plugin/rules/
-  bionic_sidecar_plugin/rules/AGENTS.md
-  bionic_sidecar_plugin/skills/
-  bionic_sidecar_plugin/skills/bionic-local-sidecar/
-  bionic_sidecar_plugin/skills/bionic-local-sidecar/SKILL.md
-  bionic_sidecar_plugin/hooks.json
-  bionic_sidecar_plugin/mcp_config.json
-  bionic_sidecar_plugin/plugin.json
-  gmail_mcp/
-  gmail_mcp/gmail-workspace-assistant/
-  gmail_mcp/gmail-workspace-assistant/SKILL.md
-  gmail_mcp/gmail_mcp_server.py
-  gmail_mcp/README.md
-  gmail_mcp/requirements.txt
-  umbrella_configs/
-  umbrella_configs/Home.homunculus.json
-  umbrella_configs/Projects.homunculus.json
-  benchmark_history.jsonl
-  benchmark_homunculus.py
-  bootstrap_workstation.sh
-  git_pre_commit_boundary.sh
-  h_sudo.sh
-  homunculus_version.json
-  local_sidecar.py
-  pre_push_engineering_guard.sh
-  snapshot_homunculus_version.py
-  telemetry_pulse_history.jsonl
-  verified_fastpath.py
-  version_manager.py
+Repository: Engineering | HEAD SHA: 51268c0b5e71 | Tree Hash: a723ac6ca722
+  memory/
+  memory/Diagrams/
+  memory/Diagrams/NEA_v2_Copilot_Execution_Flowchart.md
+  memory/Diagrams/NEA_v2_Copilot_Execution_Flowchart.svg
+  memory/Diagrams/Project_Ecosystem_Map.canvas
+  memory/Directory/
+  memory/Directory/Alchemical-3D_Decision_Router.md
+  memory/Directory/Alchemical-3D_Directory.md
+  memory/Directory/Alchemical-3D_memory_index.json
+  memory/Directory/Directory_Index.md
+  memory/Directory/governance_audit_log.jsonl
+  memory/Directory/governance_seal.json
+  memory/Directory/NetCom_Decision_Router.md
+  memory/Directory/NetCom_Directory.md
+  memory/Directory/NetCom_memory_index.json
+  memory/Directory/Orin_Workstation_Decision_Router.md
+  memory/Directory/Orin_Workstation_Directory.md
+  memory/Directory/Orin_Workstation_memory_index.json
+  memory/Profile/
+  memory/Profile/Decision_Profile.md
+  memory/Projects/
+  memory/Projects/A3DP_Gantry_Assembly/
+  memory/Projects/A3DP_Gantry_Assembly/Quarantine/
+  memory/Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md
+  memory/Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Hardware.md
+  memory/Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md
+  memory/Projects/Alchemical_Web_Docs/
+  memory/Projects/Alchemical_Web_Docs/Archive/
+  memory/Projects/Alchemical_Web_Docs/Quarantine/
+  memory/Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md
+  memory/Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Lessons_Learned.md
+  memory/Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md
+  memory/Projects/Alembic_Toolhead/
+  memory/Projects/Alembic_Toolhead/Quarantine/
+  memory/Projects/Alembic_Toolhead/Alembic_Toolhead.md
+  memory/Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md
+  memory/Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md
+  memory/Projects/Brand/
+  memory/Projects/Brand/Quarantine/
+  memory/Projects/Brand/Brand.md
+  memory/Projects/Brand/Brand_Lessons_Learned.md
+  memory/Projects/Brand/Brand_Software.md
+  memory/Projects/Extras/
+  memory/Projects/Extras/Quarantine/
+  memory/Projects/Extras/Extras.md
+  memory/Projects/Extras/Extras_Hardware.md
+  memory/Projects/Extras/Extras_Lessons_Learned.md
+  memory/Projects/Homunculus/
+  memory/Projects/Homunculus/Archive/
+  memory/Projects/Homunculus/Quarantine/
+  memory/Projects/Homunculus/Version_Logs/
+  memory/Projects/Homunculus/Homunculus.md
+  memory/Projects/Homunculus/Homunculus_Cleanroom_Promotion_Diff.md
+  memory/Projects/Homunculus/Homunculus_Lessons_Learned.md
+  memory/Projects/Homunculus/Homunculus_Memory_Weight_and_Scoring_Reference.md
+  memory/Projects/Homunculus/Homunculus_Playbooks.md
+  memory/Projects/Homunculus/Homunculus_Script_Skill_Interaction_Matrix.md
+  memory/Projects/Homunculus/Homunculus_Software.md
+  memory/Projects/Homunculus/Homunculus_Stateful_Memory_Deployment_Plan.md
+  memory/Projects/Homunculus/Homunculus_Talking_Points.md
+  memory/Projects/Homunculus/Homunculus_Teach_Me_Sandbox_Dossier.md
+  memory/Projects/Homunculus/Homunculus_Version_and_Benchmark_Ledger.md
+  memory/Projects/Maker-Tools/
+  memory/Projects/Maker-Tools/Archive/
+  memory/Projects/Maker-Tools/Quarantine/
+  memory/Projects/Maker-Tools/Maker-Tools.md
+  memory/Projects/Maker-Tools/Maker-Tools_Lessons_Learned.md
+  memory/Projects/Maker-Tools/Maker-Tools_Software.md
+  memory/Projects/NetCom_Engineering_Assistant/
+  memory/Projects/NetCom_Engineering_Assistant/Quarantine/
+  memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md
+  memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md
+  memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Module_Launchpad.md
+  memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md
+  memory/Projects/Organization_Profile/
+  memory/Projects/Organization_Profile/Archive/
+  memory/Projects/Organization_Profile/Quarantine/
+  memory/Projects/Organization_Profile/Organization_Profile.md
+  memory/Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md
+  memory/Projects/Organization_Profile/Organization_Profile_Software.md
+  memory/Projects/Pestle_Rotational_Bowden/
+  memory/Projects/Pestle_Rotational_Bowden/Quarantine/
+  memory/Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md
+  memory/Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md
+  memory/Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md
+  memory/Projects/Pneuma_Remote_Air/
+  memory/Projects/Pneuma_Remote_Air/Archive/
+  memory/Projects/Pneuma_Remote_Air/Quarantine/
+  memory/Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md
+  memory/Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md
+  memory/Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md
+  memory/Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md
+  memory/Projects/Workstation_Operations/
+  memory/Projects/Workstation_Operations/Archive/
+  memory/Projects/Workstation_Operations/Quarantine/
+  memory/Projects/Workstation_Operations/Workstation_Operations.md
+  memory/Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md
+  memory/Projects/Workstation_Operations/Workstation_Operations_Playbooks.md
+  memory/Projects/Workstation_Operations/Workstation_Operations_Software.md
+  memory/Projects/Projects_Directory.base
+  memory/Standards_and_Specs/
+  memory/Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md
+  memory/Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md
+  memory/Standards_and_Specs/Author_Voice_and_Cadence.md
+  memory/Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md
+  memory/Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md
+  memory/Standards_and_Specs/Fasteners_and_Inserts.md
+  memory/Standards_and_Specs/Governance_and_Constraint_Architecture.md
+  memory/Standards_and_Specs/Image_and_Style_Rules.md
+  memory/Standards_and_Specs/Standards_Index.md
+  memory/Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md
+  memory/Standards_and_Specs/Workspace_Gmail_MCP_Standard.md
+  memory/Tasks/
+  memory/Tasks/Alchemical-3D_Tasks.md
+  memory/Tasks/NetCom_Tasks.md
+  memory/Tasks/Orin_Workstation_Tasks.md
+  memory/Templates/
+  memory/Templates/Color_Palettes/
+  memory/Templates/Color_Palettes/Alchemical3D_Color_Template.md
+  memory/Templates/Color_Palettes/Alchemical3D_Light_Color_Template.md
+  memory/Templates/Color_Palettes/Gruvbox_Local_Color_Template.md
+  memory/Templates/Color_Palettes/NetCom_Corporate_Color_Template.md
+  memory/AGENTS.md
+  memory/README.md
+  NEA_v2.2.3/
+  NEA_v2.2.3/Copilot_Agents/
+  NEA_v2.2.3/Copilot_Agents/NEA_BOM_Builder/
+  NEA_v2.2.3/Copilot_Agents/NEA_BOM_Builder/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_BOM_Builder/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_BOM_Builder/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/NEA_Catalog_Manager/
+  NEA_v2.2.3/Copilot_Agents/NEA_Catalog_Manager/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_Catalog_Manager/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_Catalog_Manager/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/NEA_CRL_Builder/
+  NEA_v2.2.3/Copilot_Agents/NEA_CRL_Builder/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_CRL_Builder/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_CRL_Builder/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/NEA_Package_Reviewer/
+  NEA_v2.2.3/Copilot_Agents/NEA_Package_Reviewer/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_Package_Reviewer/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_Package_Reviewer/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/NEA_Repair_Tool/
+  NEA_v2.2.3/Copilot_Agents/NEA_Repair_Tool/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_Repair_Tool/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_Repair_Tool/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/NEA_Timesheet_Consolidator/
+  NEA_v2.2.3/Copilot_Agents/NEA_Timesheet_Consolidator/Knowledge/
+  NEA_v2.2.3/Copilot_Agents/NEA_Timesheet_Consolidator/Agent_Config.md
+  NEA_v2.2.3/Copilot_Agents/NEA_Timesheet_Consolidator/Instructions.txt
+  NEA_v2.2.3/Copilot_Agents/Agent_Builder_Guide.md
+  NEA_v2.2.3/Scripts/
+  NEA_v2.2.3/Scripts/build_copilot_agents.py
+  NEA_v2.2.3/Scripts/inspect_nea_workbooks.py
+  NEA_v2.2.3/Scripts/package_nea_delivery.py
+  NEA_v2.2.3/Skills/
+  NEA_v2.2.3/Skills/nea-anti-hallucination/
+  NEA_v2.2.3/Skills/nea-anti-hallucination/scripts/
+  NEA_v2.2.3/Skills/nea-anti-hallucination/nea-anti-hallucination.zip
+  NEA_v2.2.3/Skills/nea-anti-hallucination/SKILL.md
+  ... (truncated at 160 entries)
 ```
 <!-- AUTO-TREE:END -->
 

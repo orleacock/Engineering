@@ -51,33 +51,103 @@ TRUSTED_SCRIPT_ROOTS = (
     Path("/home/orin/Projects/Alchemical3D/Homunculus/scripts"),
     Path("/home/orin/Projects/Alchemical3D/Homunculus/skills"),
 )
+TRUSTED_INVOCATION_ROOTS = TRUSTED_SCRIPT_ROOTS + (
+    Path("/home/orin/.gemini/config/skills"),
+    Path("/home/orin/.gemini/config/plugins"),
+)
 GOVERNED_PY_SCRIPTS = frozenset(
     {
         "local_sidecar.py",
         "bionic_lifecycle_hook.py",
         "bionic_mcp_server.py",
+        "benchmark_bionic_sidecar.py",
         "sandbox_runner.py",
         "audit_data_boundary.py",
         "audit_portability.py",
+        "audit_repo_docs.py",
+        "audit_skill_hygiene.py",
+        "memory_gateway.py",
         "sync_memory.py",
         "verify_claims.py",
     }
 )
 LMS_BLOCKED_SUBCMDS = frozenset({"daemon", "server", "load", "unload", "chat"})
+SHELL_WRAPPER_CMDS = frozenset({"sh", "bash", "zsh", "dash", "ksh", "ash", "fish"})
 EXPLICIT_TAG_RE = re.compile(r"\[(local|bionic)\]", re.IGNORECASE)
 PORT_1234_RE = re.compile(
-    r"(?:(?:(?<![\w.])(?:127\.\d{1,3}\.\d{1,3}\.\d{1,3}|localhost|0\.0\.0\.0|::1)(?!\w)|\[::1\])[^\n]{0,40}?\b0*1234\b|(?:^|[\s'\"=/(\[]):0*1234\b)",
+    r"(?:(?:(?<![\w.])(?:127\.\d{1,3}\.\d{1,3}\.\d{1,3}|0177(?:\.0*\d{1,3}){3}|localhost|0\.0\.0\.0|::1|::ffff:127\.0\.0\.1|2130706433|0x7f0{0,4}0*1)(?!\w)|\[::1\]|\[::ffff:127\.0\.0\.1\])[^\n]{0,40}?\b(?:0*1234|0x0*4d2)\b|(?:^|[\s'\"=/(\[]):(0*1234|0x0*4d2)\b)",
     re.IGNORECASE,
 )
 APPIMAGE_RE = re.compile(
     r"(?:(?:lm-studio-bionic|bionic-)[^\s/]*\.appimage\b|/\.lmstudio/apps/bionic/)",
     re.IGNORECASE,
 )
-LMS_BIN_RE = re.compile(r"(?:^|/|\s)lms(?:\s|$)", re.IGNORECASE)
+LMS_BIN_RE = re.compile(r"(?:^|[/\s'\"(=])lms(?:\s|$|['\")])", re.IGNORECASE)
 SIDECAR_SCRIPT_RE = re.compile(
-    r"\b(?:local_sidecar\.py|bionic_lifecycle_hook\.py|bionic_mcp_server\.py)\b",
+    r"\b(?:local_sidecar\.py|bionic_lifecycle_hook\.py|bionic_mcp_server\.py|benchmark_bionic_sidecar\.py)\b",
     re.IGNORECASE,
 )
+
+
+def _read_lifetime_scorecard_banner() -> str:
+    """Read lightweight Bionic scorecard banner with relative usability and epoch delta without mutating host files."""
+    tel_env = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
+    cache_dir = Path(os.path.expanduser(tel_env)).parent if tel_env else (Path.home() / ".cache" / "homunculus_bionic_plugin")
+    sc_path = cache_dir / "bionic_scorecard.json"
+    try:
+        if sc_path.is_file():
+            obj = json.loads(sc_path.read_text(encoding="utf-8"))
+            if isinstance(obj, dict):
+                clean = int(obj.get("clean") or 0)
+                corr = int(obj.get("corrected") or 0)
+                healed = int(obj.get("healed") or 0)
+                total = clean + corr + healed
+                base = f"Bionic Calls = {clean}/{corr} (healed={healed})"
+                prev = obj.get("prev_epoch") if isinstance(obj.get("prev_epoch"), dict) else None
+                if total > 0:
+                    usable_pct = round(100.0 * (clean + healed) / total, 1)
+                    corr_pct = round(100.0 * corr / total, 1)
+                    if prev is not None and "usable_pct" in prev:
+                        prev_lbl = str(prev.get("epoch_label") or "prev")
+                        delta = round(usable_pct - float(prev["usable_pct"]), 1)
+                        return f"{base} [{usable_pct:.1f}% usable, {corr_pct:.1f}% corr | {delta:+.1f}% vs {prev_lbl}]"
+                    return f"{base} [{usable_pct:.1f}% usable, {corr_pct:.1f}% corr]"
+                if prev is not None and "usable_pct" in prev:
+                    prev_lbl = str(prev.get("epoch_label") or "prev")
+                    epoch = str(obj.get("epoch") or "lifetime")
+                    return f"{base} [epoch {epoch}: 0 calls | {prev_lbl}={float(prev['usable_pct']):.1f}% usable]"
+                return base
+        tel_path = Path(os.path.expanduser(tel_env)) if tel_env else (cache_dir / "sidecar_usage_telemetry.jsonl")
+        if tel_path.is_file():
+            clean = 0
+            corr = 0
+            healed = 0
+            for raw in tel_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                if not raw.strip():
+                    continue
+                row = json.loads(raw)
+                if (row.get("tripped") or row.get("finish_reason") == "eta_tripped") and not row.get("http_error") and not row.get("elapsed_s"):
+                    continue
+                cmd_name = str(row.get("cmd") or "")
+                if cmd_name.endswith("_retry") or row.get("is_retry") or row.get("synthetic_fault"):
+                    continue
+                v = str(row.get("verdict") or "").lower()
+                if v == "clean" or (not v and row.get("finish_reason") == "stop"):
+                    clean += 1
+                elif v == "healed":
+                    healed += 1
+                else:
+                    corr += 1
+            total = clean + corr + healed
+            base = f"Bionic Calls = {clean}/{corr} (healed={healed})"
+            if total > 0:
+                usable_pct = round(100.0 * (clean + healed) / total, 1)
+                corr_pct = round(100.0 * corr / total, 1)
+                return f"{base} [{usable_pct:.1f}% usable, {corr_pct:.1f}% corr]"
+            return base
+    except (OSError, json.JSONDecodeError, ValueError):
+        pass
+    return "Bionic Calls = 0/0 (healed=0)"
 
 
 def _validate_loopback(url: str) -> str:
@@ -283,26 +353,29 @@ def evaluate_session_or_invocation(
             )
             steps.append(_build_system_step(sys_msg))
         elif prev_state in {"OFFLINE", "UNLOADED"}:
+            sc_banner = _read_lifetime_scorecard_banner()
             sys_msg = (
                 f"[BIONIC STATE TRANSITION] BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} "
-                "auto_eta=60s explicit_eta=90s. Include a 1-line [BIONIC SIDECAR NOTICE] confirming Bionic is now "
-                f"ONLINE READY (ctx={ctx_disp}) in this response. Offload bounded log/diff/file digests & scratch patches "
+                f"auto_eta=60s explicit_eta=90s | {sc_banner}. Include a 1-line [BIONIC SIDECAR NOTICE] confirming Bionic is now "
+                f"ONLINE READY (ctx={ctx_disp}, {sc_banner}) in this response. Offload bounded log/diff/file digests & scratch patches "
                 "via bionic-sidecar MCP tools or local_sidecar.py; never access 127.0.0.1:1234 or lms directly."
             )
             steps.append(_build_system_step(sys_msg))
         else:
+            sc_banner = _read_lifetime_scorecard_banner()
             sys_msg = (
-                f"BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} auto_eta=60s explicit_eta=90s. "
+                f"BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} auto_eta=60s explicit_eta=90s | {sc_banner}. "
                 "Offload bounded digests & scratch patches via bionic-sidecar MCP tools or local_sidecar.py; "
-                "never access 127.0.0.1:1234 or lms directly. Include [BIONIC SIDECAR NOTICE] in 1 line whenever Bionic is called."
+                f"never access 127.0.0.1:1234 or lms directly. Include [BIONIC SIDECAR NOTICE] ({sc_banner}) whenever Bionic is called."
             )
             steps.append(_build_system_step(sys_msg))
     elif has_explicit_tag and input_sha != prev_sha:
+        sc_banner = _read_lifetime_scorecard_banner()
         if state == "ONLINE_READY":
             sys_msg = (
-                f"[EXPLICIT BIONIC REQUEST] Bionic is ONLINE_READY (ctx={ctx_disp}). Use bionic-sidecar MCP tools "
+                f"[EXPLICIT BIONIC REQUEST] Bionic is ONLINE_READY (ctx={ctx_disp}, {sc_banner}). Use bionic-sidecar MCP tools "
                 "with invocation_tier='explicit' (90s ETA cap), treat outputs as quarantined drafts, and include "
-                "[BIONIC SIDECAR NOTICE]."
+                f"[BIONIC SIDECAR NOTICE] ({sc_banner})."
             )
         else:
             sys_msg = (
@@ -629,9 +702,10 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
                 abs_p.name in GOVERNED_PY_SCRIPTS
                 and res_p.name in GOVERNED_PY_SCRIPTS
                 and any(
-                    _is_within(abs_p, r.resolve(strict=False)) and _is_within(res_p, r.resolve(strict=False))
-                    for r in TRUSTED_SCRIPT_ROOTS
+                    _is_within(abs_p, Path(os.path.normpath(str(r)))) or _is_within(abs_p, r.resolve(strict=False))
+                    for r in TRUSTED_INVOCATION_ROOTS
                 )
+                and any(_is_within(res_p, r.resolve(strict=False)) for r in TRUSTED_SCRIPT_ROOTS)
             ):
                 if res_p.name == "local_sidecar.py":
                     return {
@@ -646,6 +720,15 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
             "reason": (
                 "[BIONIC_UTILITY_REQUIRED] Direct Bionic binary/AppImage execution is blocked; "
                 "use bionic_control / local_sidecar.py control after user confirmation."
+            ),
+        }
+
+    if exe_name in SHELL_WRAPPER_CMDS:
+        return {
+            "decision": "deny",
+            "reason": (
+                f"[BIONIC_UTILITY_REQUIRED] Subshell wrapper '{exe_name}' targeting Bionic/:1234/lms is blocked; "
+                "use bionic_sidecar MCP tools or local_sidecar.py directly."
             ),
         }
 
@@ -949,7 +1032,13 @@ def run_self_tests() -> dict[str, Any]:
                 "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:1234/v1/models')\" # /local_sidecar.py",
                 "python3 -c'import urllib.request' # 127.0.0.1:1234",
                 "python3 -c \"connect(('127.0.0.1', 1234))\"",
+                "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:1234/v1/models')\"",
                 "python3 -Bc \"print(1)\" http://127.0.0.1:1234",
+                "bash -c 'lms daemon status'",
+                "sh -c \"/home/orin/.lmstudio/bin/lms ps\"",
+                "curl -s http://2130706433:1234/v1/models",
+                "curl -s http://0x7f000001:1234/v1/models",
+                "curl -s http://127.0.0.1:0x4d2/v1/models",
                 "python3 /tmp/local_sidecar.py status",
                 "PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status",
                 "env PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status",
@@ -970,6 +1059,7 @@ def run_self_tests() -> dict[str, Any]:
             allow_vectors = [
                 "python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
                 "python3 -B /home/orin/Projects/Engineering/scripts/local_sidecar.py control status --json",
+                "python3 -B /home/orin/Projects/Engineering/scripts/benchmark_bionic_sidecar.py --self-test --json",
                 "timeout 30 python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
                 "nice -n 10 python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
                 "grep 127.0.0.1:1234 /home/orin/Projects/Engineering/scripts/local_sidecar.py",
@@ -985,6 +1075,81 @@ def run_self_tests() -> dict[str, Any]:
             checks.append("pre_tool_use_bypass_enforcement")
             checks.append("python_flag_and_trusted_root_spoof_defense")
             checks.append("wrapper_env_rg_git_and_port_evasion_defense")
+
+            # 4. Lifetime scorecard banner in ONLINE_READY PreInvocation with zero forbidden schema keys
+            tel_tmp = Path(td) / "tel.jsonl"
+            old_tel = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
+            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(tel_tmp)
+            try:
+                tel_tmp.write_text(
+                    json.dumps({"cmd": "query", "finish_reason": "stop", "elapsed_s": 1.2}) + "\n",
+                    encoding="utf-8",
+                )
+                class _ReadyHandler(http.server.BaseHTTPRequestHandler):
+                    def do_GET(self) -> None:  # noqa: N802
+                        body = json.dumps({"data": [{"id": DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}).encode("utf-8")
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.send_header("Content-Length", str(len(body)))
+                        self.end_headers()
+                        self.wfile.write(body)
+
+                    def log_message(self, _fmt: str, *_args: Any) -> None:
+                        return
+
+                srv_on = http.server.HTTPServer(("127.0.0.1", 0), _ReadyHandler)
+                th_on = threading.Thread(target=srv_on.serve_forever, daemon=True)
+                th_on.start()
+                try:
+                    out_on = evaluate_session_or_invocation(
+                        {
+                            "hookEventName": "PreInvocation",
+                            "conversationId": "conv-scorecard",
+                            "lastUserInput": "hello",
+                        },
+                        api_url=f"http://127.0.0.1:{srv_on.server_port}/v1",
+                    )
+                    _validate_hook_response_schema(out_on)
+                    msg = out_on["injectSteps"][0]["systemMessage"]["systemMessage"]
+                    assert "Bionic Calls = 1/0 (healed=0)" in msg, f"missing scorecard banner: {msg}"
+                finally:
+                    srv_on.shutdown()
+                    srv_on.server_close()
+            finally:
+                if old_tel is None:
+                    os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                else:
+                    os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_tel
+            checks.append("online_ready_scorecard_banner")
+
+            # 13. Symlinked ~/.gemini/config governed scripts allowed; /tmp symlink spoofs denied
+            gemini_sync = Path("/home/orin/.gemini/config/skills/project-memory/scripts/sync_memory.py")
+            if gemini_sync.exists() and any(
+                _is_within(gemini_sync.resolve(strict=False), r.resolve(strict=False)) for r in TRUSTED_SCRIPT_ROOTS
+            ):
+                g_res = evaluate_pre_tool_use(
+                    {
+                        "toolCall": {
+                            "name": "run_command",
+                            "args": {"CommandLine": f"python3 -B {gemini_sync} --audit --files local_sidecar.py"},
+                        }
+                    }
+                )
+                assert g_res["decision"] == "allow", f"Expected allow on symlinked skill script: {g_res}"
+            tmp_link = Path(td) / "sync_memory.py"
+            real_sync = Path("/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py")
+            if real_sync.exists():
+                tmp_link.symlink_to(real_sync)
+                s_res = evaluate_pre_tool_use(
+                    {
+                        "toolCall": {
+                            "name": "run_command",
+                            "args": {"CommandLine": f"python3 -B {tmp_link} --audit --files local_sidecar.py"},
+                        }
+                    }
+                )
+                assert s_res["decision"] == "deny", f"Expected deny on /tmp symlink spoof: {s_res}"
+            checks.append("symlinked_gemini_config_governed_scripts_allowed_tmp_denied")
         finally:
             if old_state_dir is None:
                 os.environ.pop("BIONIC_HOOK_STATE_DIR", None)

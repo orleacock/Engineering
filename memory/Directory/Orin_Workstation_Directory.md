@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
 tree_hash: "9de410c2dc8c"
-last_synced: "2026-11-14"
+last_synced: "2026-11-15"
 ---
 
 # 🗂️ `Orin_Workstation` — Directory Lookup Map (`entity: Orin_Workstation`)
@@ -73,7 +73,7 @@ last_synced: "2026-11-14"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: e56a65019c6a`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: 51268c0b5e71` | `Tree: bb470dc7e4ac`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -103,8 +103,10 @@ last_synced: "2026-11-14"
 ├── umbrella_configs/
 │   ├── Home.homunculus.json
 │   └── Projects.homunculus.json
+├── benchmark_bionic_sidecar.py
 ├── benchmark_history.jsonl
 ├── benchmark_homunculus.py
+├── bionic_benchmark_history.jsonl
 ├── bootstrap_workstation.sh
 ├── git_pre_commit_boundary.sh
 ├── h_sudo.sh

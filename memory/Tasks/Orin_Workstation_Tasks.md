@@ -3,7 +3,7 @@ title: "Orin Workstation — Domain Task Umbrella"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-14"
+last_synced: "2026-11-15"
 ---
 
 # 🖥️ Orin_Workstation — Active Engineering Task Umbrella (`Tasks/Orin_Workstation_Tasks.md`)
@@ -19,7 +19,7 @@ last_synced: "2026-11-14"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-14`) | `2` | `0` | Next: Monitor auto (60s) vs explicit (90s) Bionic sidecar telemetry in ~/.cache/homunculus_bionic_plugin/sidecar_usage_telemetry.jsonl... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `51268c0` (`dirty (15 files)`, `2026-11-15`) | `2` | `0` | Next: Optional client restart to reload in-session MCP server onto latest disk mtime, optional v2.4.2 scorecard-reset, and downstream... |
 <!-- AUTO-ROLLUP:END -->
 
 ---
