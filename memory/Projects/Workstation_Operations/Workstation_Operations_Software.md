@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "d612cbd184da"
+inventory_sha256: "5f6f3edb2de8"
 last_synced: "2026-11-16"
 ---
 
@@ -30,7 +30,7 @@ last_synced: "2026-11-16"
 | `verified_fastpath.py` | `Python 3.10+` | Flags: `--record-memory-audit`, `--check-memory-audit`, `--record-vrf`, `--check`, `--targets`, `--sources`, `--receipt`, `--memory-root`, `--homunculus-root`, `--repo`, `--force-fresh`, `--json` — Symbols: `resolve_homunculus_root()` (`#L73-L111`), `resolve_cache_path()` (`#L119-L132`), `compute_memory_audit_fingerprint()` (`#L206-L257`), `record_memory_audit_fastpath()` (`#L260-L292`), `check_memory_audit_fastpath()` (`#L295-L343`), `record_vrf_fastpath()` (`#L387-L445`), `check_fastpath()` (`#L520-L631`), `main()` (`#L634-L715`) | `719` | `7902e75020` |
 | `version_manager.py` | `Python 3.10+` | Flags: `--homunculus-dir`, `--manifest`, `--status`, `--init-baseline`, `--sync-manifest`, `--bump`, `--reason`, `--allow-v1-public-release`, `--rollback`, `--dry-run`, `--json` — Symbols: `compute_content_tree_hash()` (`#L79-L105`), `get_git_state()` (`#L111-L160`), `load_or_create_manifest()` (`#L163-L200`), `resolve_effective_version_status()` (`#L203-L251`), `ensure_git_tag()` (`#L254-L277`), `bump_version()` (`#L280-L352`), `rollback_engine()` (`#L355-L414`), `main()` (`#L417-L556`) | `560` | `5908a68c2a` |
 | `bionic_sidecar/bionic_lifecycle_hook.py` | `Python 3.10+` | Flags: `--self-test`, `--check-command`, `--simulate-event`, `--simulate-state`, `--json` — Symbols: `probe_bionic_state()` (`#L167-L204`), `evaluate_session_or_invocation()` (`#L283-L401`), `evaluate_pre_tool_use()` (`#L630-L750`), `dispatch_hook_payload()` (`#L753-L759`), `run_self_tests()` (`#L835-L1159`), `main()` (`#L1162-L1218`) | `1222` | `4354e69a68` |
-| `bionic_sidecar/bionic_mcp_server.py` | `Python 3.10+` | Flags: `--self-test`, `--status`, `--json` — Symbols: `select_collision_free_sources()` (`#L111-L149`), `sanitize_quarantine_placeholder_links()` (`#L152-L167`), `bionic_control()` (`#L528-L551`), `bionic_digest()` (`#L2064-L2098`), `bionic_repo_audit()` (`#L2639-L2681`), `bionic_stage_patch()` (`#L3134-L3172`), `run_self_tests()` (`#L3179-L4354`), `main()` (`#L4357-L4378`) | `4382` | `60f569dbaf` |
+| `bionic_sidecar/bionic_mcp_server.py` | `Python 3.10+` | Flags: `--self-test`, `--status`, `--json` — Symbols: `select_collision_free_sources()` (`#L118-L156`), `sanitize_quarantine_placeholder_links()` (`#L159-L174`), `bionic_control()` (`#L535-L558`), `bionic_digest()` (`#L2115-L2149`), `bionic_repo_audit()` (`#L2690-L2732`), `bionic_stage_patch()` (`#L3288-L3326`), `run_self_tests()` (`#L3333-L4719`), `main()` (`#L4722-L4743`) | `4747` | `939147f06b` |
 | `gmail_mcp/gmail_mcp_server.py` | `Python 3.10+` | Flags: `--status`, `--import-client-secret`, `--auth`, `--no-browser` — Symbols: `get_config_dir()` (`#L90-L94`), `get_attachment_jail_dir()` (`#L97-L127`), `ensure_secure_dir()` (`#L130-L137`), `verify_secret_file_security()` (`#L140-L156`), `write_secret_json()` (`#L159-L176`), `verify_token_scopes()` (`#L239-L249`), `build_gmail_web_urls()` (`#L473-L481`), `build_draft_payload()` (`#L484-L532`), `resolve_quarantined_attachment_path()` (`#L535-L567`), `main()` (`#L1028-L1045`) | `1049` | `6f37644530` |
 <!-- AUTO-SOFTWARE-MODULES:END -->
 

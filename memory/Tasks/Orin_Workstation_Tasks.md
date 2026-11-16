@@ -19,7 +19,7 @@ last_synced: "2026-11-16"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `5950499` (`dirty (8 files)`, `2026-11-16`) | `3` | `0` | Next: Refresh client MCP session onto V2.4.4 (async_job=True workers already execute V2.4.4 from disk), optional scorecard-reset to... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-16`) | `3` | `0` | Next: Review git diff and commit/push V2.4.5, run bootstrap_workstation.sh to sync plugin docs, and restart host Antigravity MCP session... |
 <!-- AUTO-ROLLUP:END -->
 
 ---

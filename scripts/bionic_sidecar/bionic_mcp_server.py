@@ -59,11 +59,18 @@ else:  # pragma: no cover - stdlib fallback for offline self-tests
             )
 
 
-SERVER_VERSION = "2.4.4"
+SERVER_VERSION = "2.4.5"
 MCP_SYNC_WAIT_CAP_SECONDS = 135.0
 _TRACKED_SERVER_FILES = (Path(__file__).resolve(), Path(local_sidecar.__file__).resolve())
 _BOOT_MTIMES = {p: p.stat().st_mtime for p in _TRACKED_SERVER_FILES if p.is_file()}
 CONCISE_HIGH_THINKING_HINT = local_sidecar.CONCISE_HIGH_THINKING_HINT
+_STAGE_PY_DISCIPLINE_HINT = (
+    "\n\n[PYTHON STAGING RULES: Return ONLY ONE complete ```python ... ``` block with zero extra prose. "
+    "In `--self-test`, verify real functional behavior using fast deterministic synchronous checks "
+    "(non-blocking probes, `<=0.05s` timeouts, or an optional injectable `clock=time.monotonic` callable "
+    "for expiry/timing) — NEVER mutate private attributes (`_store`) in tests and NEVER use wall-clock "
+    "`time.sleep(>=0.1)` or `assert elapsed >= ...`.]"
+)
 
 
 def _check_server_code_stale() -> bool:
@@ -1145,6 +1152,24 @@ def _run_full_repair_with_guard(
     }
 
 
+def _should_trigger_chunked_digest(
+    unsliced_count: int,
+    explicit_slices: list[tuple[Path, int, int]],
+    total_raw_bytes: int,
+    *,
+    chunk_threshold: int,
+    for_sync_guard: bool = False,
+) -> bool:
+    """Return True when payload bytes or multi-file explicit `#L` slice fan-out warrants map-reduce."""
+    if unsliced_count > 0 and total_raw_bytes > chunk_threshold:
+        return True
+    slice_count_floor = 9 if for_sync_guard else 5
+    distinct_slice_files = len({fp for fp, _, _ in explicit_slices})
+    if len(explicit_slices) >= slice_count_floor and distinct_slice_files >= 3:
+        return True
+    return len(explicit_slices) >= 2 and total_raw_bytes > chunk_threshold
+
+
 def _bionic_digest_sync(
     prompt: str,
     context_files: list[str] | None = None,
@@ -1235,9 +1260,13 @@ def _bionic_digest_sync(
         chunk_threshold = 42000 if effective_mode == "deep" else 36000
         use_auto_chunk = (
             effective_mode in {"fast", "deep"}
-            and bool(unsliced_unique)
             and not include_git_diff
-            and total_raw_file_bytes > chunk_threshold
+            and _should_trigger_chunked_digest(
+                len(unsliced_unique),
+                explicit_slices,
+                total_raw_file_bytes,
+                chunk_threshold=chunk_threshold,
+            )
         )
 
         length_healed = False
@@ -1259,7 +1288,18 @@ def _bionic_digest_sync(
             prompt_low = prompt.lower()
             needs_cross_slice_reasoning = effective_mode == "deep" and any(
                 kw in prompt_low
-                for kw in ("compare", "discrepanc", "conflict", "audit", "mismatch", "cross-reference", "diff")
+                for kw in (
+                    "compare",
+                    "discrepanc",
+                    "conflict",
+                    "audit",
+                    "mismatch",
+                    "cross-reference",
+                    "diff",
+                    "contradict",
+                    "inconsisten",
+                    "cross-slice",
+                )
             )
             wave_eta = local_sidecar.estimate_chunked_eta(
                 effective_mode=effective_mode,
@@ -1384,7 +1424,7 @@ def _bionic_digest_sync(
                     repo_root=repo_resolved,
                     include_git_diff=False,
                     sys_prompt=sys_prompt,
-                    slice_ranges={fp: (sl, el) for fp, sl, el in batch_slices},
+                    context_slices=[(sl, el) for _, sl, el in batch_slices],
                 )
                 ch_res = local_sidecar.invoke_chat_completion(
                     api_url=api_url,
@@ -1966,7 +2006,7 @@ def _bionic_digest_sync(
 
 
 def _is_heavy_chunked_sync_candidate(op_label: str, kwargs: dict[str, Any]) -> bool:
-    """Return True when unsliced context files push payload >36 KB (even alongside explicit #L slices) so 135s sync guard applies."""
+    """Return True when chunked payload bytes (>36 KB) or large multi-file `#L` slice fan-out (>=9 slices) risks >135s sync deadline."""
     if op_label != "digest" or bool(kwargs.get("include_git_diff")):
         return False
     raw_files = list(kwargs.get("context_files") or [])
@@ -1974,8 +2014,9 @@ def _is_heavy_chunked_sync_candidate(op_label: str, kwargs: dict[str, Any]) -> b
         return False
     unsliced_bytes = 0
     slice_bytes = 0
-    has_unsliced = False
     seen_unsliced: set[Path] = set()
+    parsed_slices: list[tuple[Path, int, int]] = []
+    lines_cache: dict[Path, list[str]] = {}
     for item in raw_files:
         p, slice_rng = local_sidecar.parse_context_spec(str(item))
         cand = Path(os.path.expanduser(str(p)))
@@ -1986,17 +2027,27 @@ def _is_heavy_chunked_sync_candidate(op_label: str, kwargs: dict[str, Any]) -> b
             if not cand_res.is_file():
                 continue
             if slice_rng is None:
-                has_unsliced = True
                 if cand_res not in seen_unsliced:
                     seen_unsliced.add(cand_res)
                     unsliced_bytes += cand_res.stat().st_size
             else:
-                lines = cand_res.read_text(encoding="utf-8", errors="replace").splitlines()
+                lines = lines_cache.setdefault(
+                    cand_res,
+                    cand_res.read_text(encoding="utf-8", errors="replace").splitlines(),
+                )
                 s_l, e_l = slice_rng
                 slice_bytes += len("\n".join(lines[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8"))
+                parsed_slices.append((cand_res, s_l, e_l))
         except OSError:
             return False
-    return has_unsliced and (unsliced_bytes + slice_bytes) > 36000
+    explicit_slices = [item for item in parsed_slices if item[0] not in seen_unsliced]
+    return _should_trigger_chunked_digest(
+        len(seen_unsliced),
+        explicit_slices,
+        unsliced_bytes + slice_bytes,
+        chunk_threshold=36000,
+        for_sync_guard=True,
+    )
 
 
 async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str, Any]) -> dict[str, Any]:
@@ -2756,6 +2807,90 @@ def _run_smoke_test(
         return {"ran": True, "ok": False, "returncode": None, "output_tail": f"smoke test timed out after 15s: {exc}"}
 
 
+def _detect_sleep_selftest_antipattern(staged_file: Path) -> str | None:
+    """Detect blocking wall-clock time.sleep(>=0.1) or elapsed timing assertions in a failed staged Python file."""
+    if staged_file.suffix.lower() != ".py" or not staged_file.is_file():
+        return None
+    try:
+        src = staged_file.read_text(encoding="utf-8", errors="replace")
+        tree = ast.parse(src)
+    except (OSError, SyntaxError):
+        return None
+    has_blocking_sleep = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and node.args:
+            fn = node.func
+            is_sleep = (isinstance(fn, ast.Attribute) and fn.attr == "sleep") or (
+                isinstance(fn, ast.Name) and fn.id == "sleep"
+            )
+            arg0 = node.args[0]
+            if is_sleep and isinstance(arg0, ast.Constant) and isinstance(arg0.value, (int, float)) and float(arg0.value) >= 0.1:
+                has_blocking_sleep = True
+                break
+    has_elapsed_assert = bool(re.search(r"assert[^\n]*\belapsed\s*>=?", src))
+    if has_blocking_sleep or has_elapsed_assert:
+        return (
+            "[SMOKE_SLEEP_ANTIPATTERN] Replace blocking `time.sleep(>=0.1)` / `elapsed >=` checks with fast "
+            "deterministic synchronous probes or an optional injectable `clock=time.monotonic` callable."
+        )
+    return None
+
+
+def _build_stage_repair_context(
+    validated_files: list[Path],
+    slice_items: list[tuple[int, int] | None],
+    *,
+    repo_resolved: Path | None,
+    sys_prompt: str,
+    max_ctx_bytes: int = 20000,
+) -> str:
+    """Assemble bounded line-numbered context blocks (<=20 KB, prioritizing explicit #L slices) for Pass-2 repair."""
+    if not validated_files:
+        return ""
+    pairs = list(zip(validated_files, slice_items))
+    ordered = sorted(pairs, key=lambda pair: 0 if pair[1] is not None else 1)
+    kept_files: list[Path] = []
+    kept_slices: list[tuple[int, int] | None] = []
+    used_bytes = 0
+    omitted = 0
+    line_cache: dict[Path, list[str]] = {}
+    for fp, sl in ordered:
+        try:
+            if sl is not None:
+                lines = line_cache.setdefault(fp, fp.read_text(encoding="utf-8", errors="replace").splitlines())
+                s_l, e_l = sl
+                blk_b = len("\n".join(lines[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8")) + 128
+            else:
+                blk_b = fp.stat().st_size + 128
+        except OSError:
+            omitted += 1
+            continue
+        if blk_b > max_ctx_bytes or (kept_files and used_bytes + blk_b > max_ctx_bytes):
+            omitted += 1
+            continue
+        kept_files.append(fp)
+        kept_slices.append(sl)
+        used_bytes += blk_b
+    if not kept_files:
+        return (
+            f"\n\n[Note: {omitted} oversized reference context file(s) omitted from Pass-2 repair.]"
+            if omitted
+            else ""
+        )
+    ctx_assembled, _ = local_sidecar.assemble_prompt_payload(
+        user_prompt="",
+        context_files=kept_files,
+        repo_root=repo_resolved,
+        include_git_diff=False,
+        sys_prompt=sys_prompt,
+        context_slices=kept_slices,
+    )
+    ctx_body = ctx_assembled.strip()
+    if omitted:
+        ctx_body += f"\n[Note: {omitted} additional oversized reference file(s) omitted from Pass-2 repair.]"
+    return f"\n\n### AUTHORITATIVE CONTEXT:\n{ctx_body}" if ctx_body else ""
+
+
 def _bionic_stage_patch_sync(
     target_filename: str,
     prompt: str,
@@ -2829,7 +2964,12 @@ def _bionic_stage_patch_sync(
                 ),
             }
 
-        stage_user_prompt = prompt.strip() + (CONCISE_HIGH_THINKING_HINT if effort_norm == "high" else "")
+        is_py_target = target_filename.lower().endswith(".py")
+        stage_user_prompt = prompt.strip()
+        if is_py_target:
+            stage_user_prompt += _STAGE_PY_DISCIPLINE_HINT
+        if effort_norm == "high":
+            stage_user_prompt += CONCISE_HIGH_THINKING_HINT
         assembled, _ = local_sidecar.assemble_prompt_payload(
             user_prompt=stage_user_prompt,
             context_files=validated_files,
@@ -2949,6 +3089,7 @@ def _bionic_stage_patch_sync(
         needs_heal = (receipt["py_compile_ok"] is False) or bool(fence_err1) or (smoke_res.get("ran") and not smoke_res.get("ok"))
 
         if needs_heal:
+            repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
             repair_budget = max(90.0, float(max_eta)) if effective_mode == "deep" else max(60.0, float(max_eta))
             if receipt["py_compile_ok"] is False:
                 diag_err = receipt.get("py_compile_error")
@@ -2956,23 +3097,34 @@ def _bionic_stage_patch_sync(
                 diag_err = fence_err1
             else:
                 diag_err = f"Smoke test failed (exit {smoke_res.get('returncode')}):\n{smoke_res.get('output_tail')}"
+                sleep_warn = _detect_sleep_selftest_antipattern(Path(receipt["staged_file"]))
+                if sleep_warn:
+                    diag_err = f"{diag_err}\n{sleep_warn}"
             faulty_code = local_sidecar.extract_staged_code(res1["content"])
-            repair_prompt = (
-                f"{prompt.strip()}\n\nPrevious draft failed local validation with:\n{diag_err}\n"
-                "Fix the issue cleanly (reconciling implementation and any --self-test assertions with the "
-                "prompt contract; prefer deterministic synchronous assertions over threading/sleep timing "
-                "races unless multithreading was explicitly requested) and return ONLY the complete corrected "
-                "file in one code fence.\n\n"
-                f"Faulty draft:\n```python\n{faulty_code}\n```\n"
+            repair_ctx_block = _build_stage_repair_context(
+                validated_files,
+                slice_items,
+                repo_resolved=repo_resolved,
+                sys_prompt=sys_prompt,
             )
-            if effort_norm == "high":
-                repair_prompt += CONCISE_HIGH_THINKING_HINT + (
-                    "\n[SURGICAL CODE FIX: Inspect only the failing error/traceback above, "
-                    "keep <think> <=200 words, and emit the complete corrected file immediately.]"
-                )
+            fence_lang = "python" if is_py_target else ""
+            repair_prompt = (
+                f"{prompt.strip()}{repair_ctx_block}\n\nPrevious draft failed local validation with:\n{diag_err}\n"
+                "Fix the issue cleanly (reconciling implementation and any `--self-test` assertions with the "
+                "prompt contract and authoritative context above; prefer deterministic synchronous assertions "
+                "or an optional injectable `clock=time.monotonic` callable over private-attribute mutations or "
+                "blocking `time.sleep(>=0.1)` races) and return ONLY the complete corrected file in one code fence.\n\n"
+                f"Faulty draft:\n```{fence_lang}\n{faulty_code}\n```\n"
+            )
+            if repair_mode == "deep":
+                repair_prompt += CONCISE_HIGH_THINKING_HINT
+            repair_prompt += (
+                "\n[SURGICAL CODE FIX: Inspect only the failing error/traceback and context contract above, "
+                "and emit the complete corrected file immediately.]"
+            )
             repair_bytes = sys_bytes + len(repair_prompt.encode("utf-8"))
             repair_eta = local_sidecar.estimate_eta(
-                mode=effective_mode,
+                mode=repair_mode,
                 prompt_bytes=repair_bytes,
                 max_tokens=max_toks,
                 max_eta_seconds=repair_budget,
@@ -2985,6 +3137,7 @@ def _bionic_stage_patch_sync(
                 target_code_bytes=max(1, len(faulty_code.encode("utf-8"))),
             )
             repair_slack_s = 45.0 if effective_mode == "deep" else 30.0
+            repair_timeout_s = 135.0 if repair_mode != "cpu-bg" else 90.0
             if not repair_eta["hard_tripped"] and repair_eta["predicted_eta_s"] <= repair_budget + repair_slack_s:
                 attempts = 2
                 t_heal0 = time.perf_counter()
@@ -2992,14 +3145,15 @@ def _bionic_stage_patch_sync(
                     res2 = local_sidecar.invoke_chat_completion(
                         api_url=api_url,
                         model_id=local_sidecar.DEFAULT_MODEL_ID,
-                        mode=effective_mode,
+                        mode=repair_mode,
                         system_prompt=sys_prompt,
                         user_content=repair_prompt,
                         max_tokens=max_toks,
-                        timeout_s=180.0 if effective_mode == "deep" else 135.0,
+                        timeout_s=repair_timeout_s,
                         preflight_checked=True,
                         loaded_ctx=loaded_ctx,
                         est_prompt_tokens=repair_eta["est_prompt_tokens"],
+                        allow_high_floor=False,
                     )
                     repair_retried = True
                     heal_elapsed_s = round(time.perf_counter() - t_heal0, 3)
@@ -3008,7 +3162,7 @@ def _bionic_stage_patch_sync(
                             "cmd": "bionic_stage_patch_retry",
                             "effort": repair_eta["effort"],
                             "invocation_tier": tier,
-                            "mode": effective_mode,
+                            "mode": repair_mode,
                             "est_prompt_tokens": repair_eta["est_prompt_tokens"],
                             "predicted_eta_s": repair_eta["predicted_eta_s"],
                             "max_eta_seconds": repair_budget,
@@ -4343,6 +4497,217 @@ def run_self_tests() -> dict[str, Any]:
             srv26.shutdown()
             srv26.server_close()
     checks.append("v244_mixed_chunking_compact_manifest_and_guard_parity")
+
+    # 27. V2.4.5 multi-file explicit #L slice-count map-reduce (>=5 slices across >=3 files) + sync guard
+    with tempfile.TemporaryDirectory() as td_27:
+        td27_p = Path(td_27)
+        r27 = td27_p / "repo27"
+        r27.mkdir()
+        mod_slices_27: list[str] = []
+        for idx27 in range(6):
+            mf27 = r27 / f"module_{idx27}.md"
+            mf27.write_text(
+                f"OUTSIDE_TOP_{idx27}\n"
+                f"note {idx27}\n"
+                f"- LIMIT_ALPHA_{idx27} = {100 + idx27}\n"
+                f"- LIMIT_BETA_{idx27} = {200 + idx27}\n"
+                f"OUTSIDE_BOT_{idx27}\n",
+                encoding="utf-8",
+            )
+            mod_slices_27.append(f"{mf27}#L3-L4")
+        single_mod_27 = r27 / "single_mod.md"
+        single_mod_27.write_text(
+            "\n".join(f"- SINGLE_ITEM_{k} = {k}" for k in range(1, 21)) + "\n",
+            encoding="utf-8",
+        )
+        same_file_5_slices = [f"{single_mod_27}#L{1 + k * 2}-L{2 + k * 2}" for k in range(5)]
+
+        assert _is_heavy_chunked_sync_candidate("digest", {"context_files": mod_slices_27, "repo": str(r27)}) is False
+        assert _is_heavy_chunked_sync_candidate(
+            "digest",
+            {"context_files": mod_slices_27 + same_file_5_slices[:3], "repo": str(r27)},
+        ) is True
+
+        seen_27: list[dict[str, Any]] = []
+
+        class _V27Handler(BaseHTTPRequestHandler):
+            def log_message(self, fmt: str, *args: Any) -> None:
+                return
+
+            def do_GET(self) -> None:
+                if self.path == "/api/v0/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
+                elif self.path == "/v1/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
+                body = json.dumps(payload).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                length = int(self.headers.get("Content-Length", "0"))
+                req = json.loads(self.rfile.read(length).decode("utf-8"))
+                u_txt = str((req.get("messages") or [{}, {}])[-1].get("content") or "")
+                seen_27.append({"req": req, "user": u_txt})
+                if "Below are verbatim per-slice extracts" in u_txt:
+                    ans = "\n".join(f"- `LIMIT_ALPHA_{j} = {100 + j}` (`module_{j}.md#L3-L3`)" for j in range(6))
+                elif "module_" in u_txt:
+                    hits = [f"- `LIMIT_ALPHA_{j} = {100 + j}` (`module_{j}.md#L3-L3`)" for j in range(6) if f"module_{j}.md" in u_txt]
+                    ans = "\n".join(hits) if hits else "NONE"
+                else:
+                    ans = "- `SINGLE_ITEM_1 = 1` (`single_mod.md#L1-L1`)"
+                body = json.dumps(
+                    {
+                        "choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 160, "completion_tokens": 45},
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        srv27 = ThreadingHTTPServer(("127.0.0.1", 0), _V27Handler)
+        import threading as _th27
+
+        _th27.Thread(target=srv27.serve_forever, daemon=True).start()
+        cache27 = td27_p / "c27"
+        cache27.mkdir()
+        saved27 = {
+            k: os.environ.get(k)
+            for k in (
+                "BIONIC_SIDECAR_API_URL",
+                "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
+                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "BIONIC_SIDECAR_SCORECARD_PATH",
+                "BIONIC_SIDECAR_KV_STATE_PATH",
+                "BIONIC_SIDECAR_JOBS_DIR",
+            )
+        }
+        try:
+            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv27.server_port}/v1"
+            os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache27 / "tel.jsonl")
+            os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache27 / "sc.json")
+            os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache27 / "kv.json")
+            os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache27 / "jobs")
+
+            res27_multi = _bionic_digest_sync(
+                prompt="Extract EVERY LIMIT_ALPHA_* across modules",
+                context_files=mod_slices_27,
+                repo=str(r27),
+                effort="standard",
+                invocation_tier="explicit",
+                verify_claims=True,
+            )
+            assert res27_multi["ok"] is True and res27_multi["verdict"] == "clean", f"res27_multi failed: {res27_multi}"
+            cmr27 = res27_multi.get("chunked_map_reduce") or {}
+            assert cmr27.get("enabled") is True and cmr27.get("batches") == 2 and cmr27.get("reduced") is True, f"bad cmr27: {cmr27}"
+            for item27 in seen_27:
+                if "Below are verbatim" not in item27["user"] and "module_" in item27["user"]:
+                    assert "OUTSIDE_TOP" not in item27["user"] and "OUTSIDE_BOT" not in item27["user"], "Map batch leaked lines outside #L3-L4"
+
+            res27_same = _bionic_digest_sync(
+                prompt="Extract SINGLE_ITEM_1",
+                context_files=same_file_5_slices,
+                repo=str(r27),
+                effort="standard",
+                invocation_tier="explicit",
+                verify_claims=True,
+            )
+            assert res27_same["ok"] is True and not res27_same.get("chunked_map_reduce"), f"same-file slices should stay unchunked: {res27_same}"
+
+            # 28. V2.4.5 stage_patch Pass-1 .py rules vs .patch, plus fast Pass-2 repair with prioritized #L context & sleep detection
+            schema28 = r27 / "schema.py"
+            schema28.write_text("SCHEMA_TAG = 'SLICE_V2'\nREQ = ('a', 'b')\ndef ok_bound(): return True\n", encoding="utf-8")
+            oversize28 = r27 / "oversize_ref.py"
+            oversize28.write_text("\n".join(f"PAD_{k} = {k}  # filler text for >20KB cap" for k in range(600)) + "\n", encoding="utf-8")
+            assert oversize28.stat().st_size > 21000
+
+            seen_27.clear()
+
+            class _V28Handler(_V27Handler):
+                def do_POST(self) -> None:
+                    length = int(self.headers.get("Content-Length", "0"))
+                    req = json.loads(self.rfile.read(length).decode("utf-8"))
+                    u_txt = str((req.get("messages") or [{}, {}])[-1].get("content") or "")
+                    seen_27.append({"req": req, "user": u_txt})
+                    call_n = len(seen_27)
+                    if call_n == 1:
+                        ans = (
+                            "```python\nimport sys, time\n"
+                            "def run():\n    return 'SLICE_V1'\n"
+                            "if __name__ == '__main__':\n    if '--self-test' in sys.argv:\n"
+                            "        time.sleep(0.5)\n        assert False, 'bad schema'\n```\n"
+                        )
+                    elif call_n == 2:
+                        ans = (
+                            "```python\nimport sys\n"
+                            "SCHEMA_TAG = 'SLICE_V2'\n"
+                            "if __name__ == '__main__':\n    if '--self-test' in sys.argv:\n"
+                            "        assert SCHEMA_TAG == 'SLICE_V2'\n        print('[PASS]')\n```\n"
+                        )
+                    else:
+                        ans = "```diff\n--- a/x.py\n+++ b/x.py\n@@ -1 +1 @@\n-a\n+b\n```\n"
+                    body = json.dumps(
+                        {
+                            "choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}],
+                            "usage": {"prompt_tokens": 140, "completion_tokens": 50},
+                        }
+                    ).encode("utf-8")
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+
+            srv27.RequestHandlerClass = _V28Handler
+            stg28 = r27 / "stg28"
+            stg28.mkdir()
+            res28 = _bionic_stage_patch_sync(
+                target_filename="mod_v245.py",
+                prompt="Implement validator matching schema.py#L1-L3 with --self-test",
+                context_files=[str(oversize28), f"{schema28}#L1-L3"],
+                repo=str(r27),
+                staging_dir=str(stg28),
+                effort="high",
+                invocation_tier="explicit",
+            )
+            assert res28["ok"] is True and res28["verdict"] == "healed" and res28["attempts"] == 2, f"res28 failed: {res28}"
+            assert res28["smoke_test"]["ok"] is True
+            assert len(seen_27) == 2, f"expected 2 stage calls, got {len(seen_27)}"
+            assert "[PYTHON STAGING RULES:" in seen_27[0]["user"] and "clock=time.monotonic" in seen_27[0]["user"], "Pass-1 .py staging rules missing"
+            assert "[HIGH-EFFORT EXECUTION DISCIPLINE:" in seen_27[0]["user"], "Pass-1 HIGH hint missing"
+            assert seen_27[1]["req"].get("reasoning_effort") == "none", f"Pass-2 repair must run in fast mode, got: {seen_27[1]['req'].get('reasoning_effort')}"
+            assert "SCHEMA_TAG = 'SLICE_V2'" in seen_27[1]["user"] and "schema.py#L1-L3" in seen_27[1]["user"], "Prioritized #L context missing from Pass-2"
+            assert "[SMOKE_SLEEP_ANTIPATTERN]" in seen_27[1]["user"], "Sleep antipattern diagnostic missing from Pass-2"
+            assert "oversize_ref.py" not in seen_27[1]["user"], "Oversized full file should be omitted from Pass-2 context"
+            assert "[HIGH-EFFORT EXECUTION DISCIPLINE:" not in seen_27[1]["user"], "HIGH thinking hint should not pollute fast Pass-2"
+
+            res28_patch = _bionic_stage_patch_sync(
+                target_filename="fix.patch",
+                prompt="Generate patch diff",
+                staging_dir=str(stg28),
+                effort="standard",
+            )
+            assert res28_patch["ok"] is True and len(seen_27) == 3
+            assert "[PYTHON STAGING RULES:" not in seen_27[2]["user"], "Non-.py patch target must not receive .py staging rules"
+        finally:
+            for k, v in saved27.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv27.shutdown()
+            srv27.server_close()
+    checks.append("v245_slice_count_mapreduce_and_fast_ctx_stage_repair")
 
     return {
         "schema_version": "BIONIC_MCP_V1",
