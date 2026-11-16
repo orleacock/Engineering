@@ -19,7 +19,7 @@ last_synced: "2026-11-16"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-16`) | `3` | `0` | Next: Review git diff and commit/push V2.4.5, run bootstrap_workstation.sh to sync plugin docs, and restart host Antigravity MCP session... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-16`) | `3` | `0` | Next: Restart host Antigravity MCP session when at home workstation so sync MCP picks up V2.4.5 on boot; optional scorecard-reset to v2.4.5. |
 <!-- AUTO-ROLLUP:END -->
 
 ---

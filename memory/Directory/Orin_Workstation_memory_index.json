@@ -491,7 +491,7 @@
     "Projects/Workstation_Operations/Workstation_Operations.md": {
       "lines": 121,
       "sections": 0,
-      "sha256": "1def717e45a2ee26"
+      "sha256": "cb99bd9b57fc929a"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
       "lines": 142,
@@ -511,5 +511,5 @@
   },
   "total_docs": 20,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "1974bd8dccb78ab8"
+  "vectors_digest": "29a1afeb76dd7158"
 }

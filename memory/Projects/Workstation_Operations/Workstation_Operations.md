@@ -12,7 +12,7 @@ checkpoint_tree_hash: "bb470dc7e4ac"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-16"
-checkpoint_lessons_digest: "80855e442ad570c0"
+checkpoint_lessons_digest: "1426fd5b9663c156"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -56,12 +56,12 @@ checkpoint_lessons_digest: "80855e442ad570c0"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: bb470dc7e4ac` | `Worktree: untracked` | `Last Verification: SBX-20261116_115434-6a8592af / SBX-20261116_120126-ce5a5240`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: bb470dc7e4ac` | `Worktree: untracked` | `Last Verification: BMK-BIONIC-20261116_182322 / SBX-20261116_115434-6a8592af / SBX-20261116_120126-ce5a5240`
 - **Where We Stopped (Verified State & Context)**:
-  Implemented and verified Bionic Sidecar V2.4.5 (Slice-Count Map-Reduce, fast + prioritized #L Pass-2 repair, non-sleep injectable-clock Pass-1 .py rules) in SBX-20261116_115434-6a8592af (4/4 controls, 3/3 +faults) and SBX-20261116_120126-ce5a5240 (live gpu-daily 49152 PASS); working tree staged/ready for review & commit.
+  Committed & pushed Bionic Sidecar V2.4.5 (e51a1ee) and recorded standardized live benchmark BMK-BIONIC-20261116_182322 (v2.4.5-gpu-daily: 23/23 PASS, 12/12 clean/healed, 6.047 GiB free VRAM @ 49152 ctx, 13462.1k cum eq-tok) to bionic_benchmark_history.jsonl.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Review git diff and commit/push V2.4.5, run bootstrap_workstation.sh to sync plugin docs, and restart host Antigravity MCP session when at home workstation.
+  1. Restart host Antigravity MCP session when at home workstation so sync MCP picks up V2.4.5 on boot; optional scorecard-reset to v2.4.5.
 <!-- SESSION-HANDOFF:END -->
 
 ---
