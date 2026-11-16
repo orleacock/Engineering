@@ -5,11 +5,11 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "reference"
 authoritative: false
-status: "NON_AUTHORITATIVE_REFERENCE"
-last_synced: "2026-11-11"
+status: "HISTORICAL_RESOLVED"
+last_synced: "2026-11-16"
 ---
 
-# 🎓 Homunculus `teach-me` Post-Deployment Sandbox & Condition Dossier *(Set Aside for Standalone Session)*
+# 🎓 Homunculus `teach-me` Post-Deployment Sandbox & Condition Dossier *(Historical Staging Record — `TM-COND-01`–`11` Shipped in `v0.3.1`)*
 
 > [!IMPORTANT]
 > **NON-AUTHORITATIVE SESSION STAGING RECORD (`authoritative: false` — DO NOT CITE AS FACT)**: This dossier records the post-deployment empirical sandbox telemetry and `11` condition-indexed findings (`TM-COND-01` through `TM-COND-11`) captured against `skills/teach-me/` (`SKILL.md`, `scripts/teach_brief.py`, `references/brief_authoring_playbook.md`) during the Vector 3 Turn-1 Read-Only Task Triage deployment (`SBX-20261111_110421-e810b0f0`, `VRF-ba0b2d8d5afc`). Per user directive, **zero modifications** were applied to `skills/teach-me/*` in this session; all findings and reproduction conditions are staged here for the upcoming standalone `teach-me` development session. Always treat the live scripts and `SKILL.md` files in [`Homunculus.md`](Homunculus.md) (`Homunculus_Software.md`) as the sole authoritative source of truth.

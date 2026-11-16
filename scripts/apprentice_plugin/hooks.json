@@ -1,16 +1,16 @@
 {
-  "bionic-sidecar-guard": {
+  "apprentice-guard": {
     "SessionStart": [
       {
         "type": "command",
-        "command": "python3 -B /home/orin/Projects/Engineering/scripts/bionic_sidecar/bionic_lifecycle_hook.py",
+        "command": "python3 -B /home/orin/Projects/Engineering/scripts/apprentice/apprentice_lifecycle_hook.py",
         "timeout": 5
       }
     ],
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 -B /home/orin/Projects/Engineering/scripts/bionic_sidecar/bionic_lifecycle_hook.py",
+        "command": "python3 -B /home/orin/Projects/Engineering/scripts/apprentice/apprentice_lifecycle_hook.py",
         "timeout": 5
       }
     ],
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B /home/orin/Projects/Engineering/scripts/bionic_sidecar/bionic_lifecycle_hook.py",
+            "command": "python3 -B /home/orin/Projects/Engineering/scripts/apprentice/apprentice_lifecycle_hook.py",
             "timeout": 5
           }
         ]

@@ -3,7 +3,7 @@ title: "Co-Engineering Decision & Architecture Profile"
 type: "decision-profile"
 tier: "TIER0"
 compartment: "private"
-last_synced: "2026-11-13"
+last_synced: "2026-11-16"
 ---
 
 # 🧭 Co-Engineering Decision & Architecture Profile (`TIER0` Foundational Gravity)
@@ -16,7 +16,7 @@ last_synced: "2026-11-13"
 1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.
 2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.
 3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.
-4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and fast `Model: 'flash'` subagents.
+4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Carbon` on deeper request).
 
 ---
 

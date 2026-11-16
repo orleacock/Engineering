@@ -3,14 +3,14 @@ title: "Gemini Carbon Homunculus Security & Performance Audit (Quarantined Pendi
 project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
-quarantine: true
+quarantine: false
 authoritative: false
-status: "QUARANTINED_PENDING_VALIDATION"
+status: "HISTORICAL_RESOLVED"
 source_conversation_name: "Opencode Auth Login Instructions"
 source_conversation_id: "b4e4ead6-10c1-48ef-aaa7-83bf3c8c1892"
 source_brain_artifact: "/home/orin/.gemini/antigravity-cli/brain/b4e4ead6-10c1-48ef-aaa7-83bf3c8c1892/homunculus_security_and_performance_audit.md"
 source_probe_scratch_dir: "/home/orin/.gemini/antigravity-cli/brain/b4e4ead6-10c1-48ef-aaa7-83bf3c8c1892/scratch/"
-last_synced: "2026-11-12"
+last_synced: "2026-11-16"
 ---
 
 > [!CAUTION]

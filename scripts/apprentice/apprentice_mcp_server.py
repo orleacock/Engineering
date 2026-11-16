@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Fused MCP Server for LM Studio Bionic Local Sidecar (`bionic_mcp_server.py`).
+Fused MCP Server for Apprentice Multi-Backend Local Sidecar (`apprentice_mcp_server.py`).
 
 Uses `MCPServer` via `importlib.util.find_spec("mcp.server")` when invoked under the
 Antigravity MCP venv, with pure Python 3.10+ stdlib compatibility for `--self-test`
 and `--status` diagnostics. Shares all firewalls, ETA circuit breakers, telemetry,
-and `lms` control paths directly from parent `scripts/local_sidecar.py`.
+and `lms` control paths directly from parent `scripts/apprentice_engine.py`.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ SCRIPTS_ROOT = SCRIPT_DIR.parent
 if str(SCRIPTS_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_ROOT))
 
-import local_sidecar  # noqa: E402
+import apprentice_engine  # noqa: E402
 
 _HAS_MCP = (
     importlib.util.find_spec("mcp") is not None
@@ -59,11 +59,11 @@ else:  # pragma: no cover - stdlib fallback for offline self-tests
             )
 
 
-SERVER_VERSION = "2.4.5"
+SERVER_VERSION = "2.5.0"
 MCP_SYNC_WAIT_CAP_SECONDS = 135.0
-_TRACKED_SERVER_FILES = (Path(__file__).resolve(), Path(local_sidecar.__file__).resolve())
+_TRACKED_SERVER_FILES = (Path(__file__).resolve(), Path(apprentice_engine.__file__).resolve())
 _BOOT_MTIMES = {p: p.stat().st_mtime for p in _TRACKED_SERVER_FILES if p.is_file()}
-CONCISE_HIGH_THINKING_HINT = local_sidecar.CONCISE_HIGH_THINKING_HINT
+CONCISE_HIGH_THINKING_HINT = apprentice_engine.CONCISE_HIGH_THINKING_HINT
 _STAGE_PY_DISCIPLINE_HINT = (
     "\n\n[PYTHON STAGING RULES: Return ONLY ONE complete ```python ... ``` block with zero extra prose. "
     "In `--self-test`, verify real functional behavior using fast deterministic synchronous checks "
@@ -98,9 +98,9 @@ LL_WS_12_GUARD = (
 
 
 mcp = MCPServer(
-    name="bionic_sidecar",
+    name="apprentice",
     instructions=(
-        "Governed LM Studio Bionic (Qwen3.6-35B-A3B) sidecar connector for Orin's workstation. "
+        "Governed multi-backend local sidecar connector (LM Studio Bionic, Ollama, llama.cpp, OpenAI-compatible) for Orin's workstation. "
         "Enforces 60s auto / 90s explicit ETA breakers, secret/CAD/4C firewalls, LL-WS-12 audit "
         "protections, collision-free verify_claims source selection, and confirmation-gated remote startup."
     ),
@@ -123,14 +123,14 @@ def select_collision_free_sources(repo_root: Path, candidate_paths: list[Path]) 
     seen_exact: set[Path] = set()
 
     for raw in candidate_paths:
-        sec_reason = local_sidecar._inspect_path_security(raw)
+        sec_reason = apprentice_engine._inspect_path_security(raw)
         if sec_reason:
-            raise local_sidecar.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {sec_reason}")
+            raise apprentice_engine.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {sec_reason}")
         res = Path(os.path.expanduser(str(raw))).resolve(strict=False)
         if res in seen_exact:
             continue
         seen_exact.add(res)
-        if not local_sidecar._is_path_within(res, repo_res):
+        if not apprentice_engine._is_path_within(res, repo_res):
             warnings.append(f"Excluded out-of-repo source (CROSS_ENTITY guard): {raw}")
             continue
         if not res.is_file():
@@ -178,25 +178,25 @@ def _resolve_eta_cap(invocation_tier: str, effort: str = "standard") -> tuple[st
     tier = (invocation_tier or "explicit").strip().lower()
     if tier not in {"auto", "explicit"}:
         raise ValueError(f"Unsupported invocation_tier '{invocation_tier}'; expected 'auto' or 'explicit'.")
-    cap = local_sidecar.AUTO_MAX_ETA_SECONDS if tier == "auto" else local_sidecar.DEFAULT_MAX_ETA_SECONDS
+    cap = apprentice_engine.AUTO_MAX_ETA_SECONDS if tier == "auto" else apprentice_engine.DEFAULT_MAX_ETA_SECONDS
     if (effort or "").strip().lower() == "high":
-        cap = max(cap, local_sidecar.HIGH_EFFORT_SOFT_ETA_SECONDS)
+        cap = max(cap, apprentice_engine.HIGH_EFFORT_SOFT_ETA_SECONDS)
     return tier, cap
 
 
 def _resolve_homunculus_and_memory() -> tuple[Path, Path]:
     hom_env = os.environ.get("HOMUNCULUS_ROOT", "").strip()
     mem_env = os.environ.get("HOMUNCULUS_MEMORY_ROOT", "").strip()
-    hom_root = Path(os.path.expanduser(hom_env)) if hom_env else local_sidecar.DEFAULT_HOMUNCULUS_ROOT
-    mem_root = Path(os.path.expanduser(mem_env)) if mem_env else local_sidecar.DEFAULT_MEMORY_ROOT
+    hom_root = Path(os.path.expanduser(hom_env)) if hom_env else apprentice_engine.DEFAULT_HOMUNCULUS_ROOT
+    mem_root = Path(os.path.expanduser(mem_env)) if mem_env else apprentice_engine.DEFAULT_MEMORY_ROOT
     return hom_root, mem_root
 
 
 def _scorecard_suffix(call_id: str | None = None) -> str:
     try:
-        sc_str = local_sidecar.format_lifetime_scorecard()
+        sc_str = apprentice_engine.format_lifetime_scorecard()
     except Exception:
-        sc_str = "Bionic Calls = 0/0 (healed=0)"
+        sc_str = "Apprentice Calls = 0/0 (healed=0)"
     return f"{sc_str} | call_id={call_id}" if call_id else sc_str
 
 
@@ -208,7 +208,7 @@ def _maybe_apply_prev_verdict(
     if not prev_call_id or not prev_verdict:
         return None
     try:
-        return local_sidecar.apply_call_verdict(prev_call_id, prev_verdict, note=prev_verdict_note)
+        return apprentice_engine.apply_call_verdict(prev_call_id, prev_verdict, note=prev_verdict_note)
     except (KeyError, ValueError, OSError) as exc:
         return {"ok": False, "call_id": prev_call_id, "error": str(exc)}
 
@@ -275,7 +275,7 @@ def _run_verify_claims_check(
         t0 = time.perf_counter()
         vp = subprocess.run(
             cmd,
-            cwd=local_sidecar._safe_subprocess_cwd(cwd_path),
+            cwd=apprentice_engine._safe_subprocess_cwd(cwd_path),
             capture_output=True,
             text=True,
             timeout=45,
@@ -345,8 +345,8 @@ def _firewall_error_response(exc: Exception, op_label: str) -> dict[str, Any]:
             "error": msg,
             "scorecard": sc_str,
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Bionic is currently UNLOADED; ask user confirmation "
-                f"before calling bionic_control(action='load_profile', user_confirmed=True). | {sc_str}"
+                f"[APPRENTICE NOTICE] Bionic is currently UNLOADED; ask user confirmation "
+                f"before calling apprentice_control(action='load_profile', user_confirmed=True). | {sc_str}"
             ),
         }
     return {
@@ -354,7 +354,7 @@ def _firewall_error_response(exc: Exception, op_label: str) -> dict[str, Any]:
         "error_code": "SECURITY_FIREWALL_BLOCKED",
         "error": msg,
         "scorecard": sc_str,
-        "user_notice": f"[BIONIC SIDECAR NOTICE] {op_label} blocked by security firewall. | {sc_str}",
+        "user_notice": f"[APPRENTICE NOTICE] {op_label} blocked by security firewall. | {sc_str}",
     }
 
 
@@ -375,69 +375,69 @@ def _control_action_impl(
         if not job_id:
             raise ValueError("job_id is required for action='job-status'")
         clamped_wait = min(max(0.0, float(wait_seconds)), 60.0)
-        jres = local_sidecar.get_job_status(job_id, wait_seconds=clamped_wait, include_result=False)
+        jres = apprentice_engine.get_job_status(job_id, wait_seconds=clamped_wait, include_result=False)
         sc_str = _scorecard_suffix()
         return {
             **jres,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Job {job_id} status={jres['status']} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Job {job_id} status={jres['status']} | {sc_str}",
         }
     if norm_action == "job-collect":
         if not job_id:
             raise ValueError("job_id is required for action='job-collect'")
         clamped_collect_wait = min(max(0.0, float(wait_seconds)), float(MCP_SYNC_WAIT_CAP_SECONDS))
-        jres = local_sidecar.get_job_status(job_id, wait_seconds=clamped_collect_wait, include_result=True)
+        jres = apprentice_engine.get_job_status(job_id, wait_seconds=clamped_collect_wait, include_result=True)
         sc_str = _scorecard_suffix()
         still_msg = " (still running; call job-collect again with wait_seconds=120)" if jres.get("status") == "running" else ""
         return {
             **jres,
             "waited_seconds": clamped_collect_wait,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Job {job_id} status={jres['status']}{still_msg} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Job {job_id} status={jres['status']}{still_msg} | {sc_str}",
         }
     if norm_action == "job-list":
-        lres = local_sidecar.list_jobs(limit=20)
+        lres = apprentice_engine.list_jobs(limit=20)
         sc_str = _scorecard_suffix()
         return {
             **lres,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Listed {len(lres['jobs'])} sprint jobs | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Listed {len(lres['jobs'])} sprint jobs | {sc_str}",
         }
     if norm_action == "verdict":
         if not call_id or not verdict:
             raise ValueError("call_id and verdict are required for action='verdict'")
-        vres = local_sidecar.apply_call_verdict(call_id, verdict, note=note)
+        vres = apprentice_engine.apply_call_verdict(call_id, verdict, note=note)
         return {
             "ok": True,
             **vres,
             "scorecard": vres["formatted"],
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Recorded verdict '{vres['verdict']}' for {call_id}. | {vres['formatted']}",
+            "user_notice": f"[APPRENTICE NOTICE] Recorded verdict '{vres['verdict']}' for {call_id}. | {vres['formatted']}",
         }
     if norm_action == "scorecard-reset":
         if not user_confirmed:
-            raise local_sidecar.SidecarFirewallError(
-                "[USER_CONFIRMATION_REQUIRED] bionic_control('scorecard-reset') requires user_confirmed=True."
+            raise apprentice_engine.SidecarFirewallError(
+                "[USER_CONFIRMATION_REQUIRED] apprentice_control('scorecard-reset') requires user_confirmed=True."
             )
         lbl = (epoch_label or "v2.3").strip() or "v2.3"
-        rres = local_sidecar.reset_scorecard(archive=True, epoch_label=lbl)
+        rres = apprentice_engine.reset_scorecard(archive=True, epoch_label=lbl)
         return {
             **rres,
             "scorecard": rres["formatted"],
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Reset scorecard to epoch '{rres['epoch']}' "
+                f"[APPRENTICE NOTICE] Reset scorecard to epoch '{rres['epoch']}' "
                 f"(archived previous epoch). | {rres['formatted']}"
             ),
         }
 
-    if profile not in local_sidecar.CONTROL_PROFILES:
-        raise ValueError(f"Unsupported profile '{profile}'; expected one of {tuple(local_sidecar.CONTROL_PROFILES.keys())}")
-    api_url = local_sidecar.validate_loopback_url(local_sidecar.resolve_default_api_url())
-    lms_bin = local_sidecar.DEFAULT_LMS_BIN
-    cfg_path = local_sidecar.DEFAULT_CONCRETE_CFG_PATH
-    appimage_path = local_sidecar.DEFAULT_APPIMAGE_PATH
+    if profile not in apprentice_engine.CONTROL_PROFILES:
+        raise ValueError(f"Unsupported profile '{profile}'; expected one of {tuple(apprentice_engine.CONTROL_PROFILES.keys())}")
+    api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+    lms_bin = apprentice_engine.DEFAULT_LMS_BIN
+    cfg_path = apprentice_engine.DEFAULT_CONCRETE_CFG_PATH
+    appimage_path = apprentice_engine.DEFAULT_APPIMAGE_PATH
 
     if norm_action == "status":
-        res = local_sidecar._control_status(api_url, local_sidecar.DEFAULT_MODEL_ID, lms_bin)
+        res = apprentice_engine._control_status(api_url, apprentice_engine.DEFAULT_MODEL_ID, lms_bin)
         srv = res["server"]
         hw = res["hardware"]
         stale_restart = _check_server_code_stale()
@@ -451,40 +451,40 @@ def _control_action_impl(
             "server_stale_restart_recommended": stale_restart,
             **res,
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Status={state_str} | server=v{SERVER_VERSION} | ctx={srv['loaded_context_length']} | "
+                f"[APPRENTICE NOTICE] Status={state_str} | server=v{SERVER_VERSION} | ctx={srv['loaded_context_length']} | "
                 f"VRAM={hw['vram_used_gib']} GiB (free={hw.get('vram_free_gib')} GiB, GTT={hw.get('gtt_used_gib')} GiB){stale_note} | {sc_fmt}"
             ),
         }
 
     if not user_confirmed:
-        raise local_sidecar.SidecarFirewallError(
-            f"[USER_CONFIRMATION_REQUIRED] bionic_control('{norm_action}') refuses autonomous start/load/unload/stop without user_confirmed=True."
+        raise apprentice_engine.SidecarFirewallError(
+            f"[USER_CONFIRMATION_REQUIRED] apprentice_control('{norm_action}') refuses autonomous start/load/unload/stop without user_confirmed=True."
         )
 
     if norm_action == "start-headless":
-        res = local_sidecar._control_start_headless(api_url, local_sidecar.DEFAULT_MODEL_ID, profile, lms_bin, appimage_path, cfg_path)
+        res = apprentice_engine._control_start_headless(api_url, apprentice_engine.DEFAULT_MODEL_ID, profile, lms_bin, appimage_path, cfg_path)
     elif norm_action == "load":
-        res = local_sidecar._control_load(api_url, local_sidecar.DEFAULT_MODEL_ID, profile, lms_bin, cfg_path)
+        res = apprentice_engine._control_load(api_url, apprentice_engine.DEFAULT_MODEL_ID, profile, lms_bin, cfg_path)
     elif norm_action == "unload":
-        res = local_sidecar._control_unload(api_url, local_sidecar.DEFAULT_MODEL_ID, lms_bin)
+        res = apprentice_engine._control_unload(api_url, apprentice_engine.DEFAULT_MODEL_ID, lms_bin)
     else:
-        res = local_sidecar._control_stop_server(api_url, local_sidecar.DEFAULT_MODEL_ID, lms_bin)
+        res = apprentice_engine._control_stop_server(api_url, apprentice_engine.DEFAULT_MODEL_ID, lms_bin)
 
     sc_str = _scorecard_suffix()
     return {
         "ok": True,
         **res,
         "scorecard": sc_str,
-        "user_notice": f"[BIONIC SIDECAR NOTICE] Executed control action '{norm_action}' (profile={profile}). | {sc_str}",
+        "user_notice": f"[APPRENTICE NOTICE] Executed control action '{norm_action}' (profile={profile}). | {sc_str}",
     }
 
 
 def _ensure_live_process_cwd() -> str:
     """Ensure the MCP process working directory exists even after plugin upgrades."""
-    return local_sidecar._safe_subprocess_cwd()
+    return apprentice_engine._safe_subprocess_cwd()
 
 
-def _bionic_control_sync(
+def _apprentice_control_sync(
     action: str = "status",
     profile: str = "gpu-daily",
     user_confirmed: bool = False,
@@ -509,7 +509,7 @@ def _bionic_control_sync(
             verdict=verdict,
             note=note,
         )
-    except local_sidecar.SidecarFirewallError as exc:
+    except apprentice_engine.SidecarFirewallError as exc:
         if "USER_CONFIRMATION_REQUIRED" in str(exc):
             sc_str = _scorecard_suffix()
             return {
@@ -517,7 +517,7 @@ def _bionic_control_sync(
                 "error_code": "USER_CONFIRMATION_REQUIRED",
                 "error": str(exc),
                 "scorecard": sc_str,
-                "user_notice": f"[BIONIC SIDECAR NOTICE] Action blocked pending explicit user confirmation. | {sc_str}",
+                "user_notice": f"[APPRENTICE NOTICE] Action blocked pending explicit user confirmation. | {sc_str}",
             }
         return _firewall_error_response(exc, "Control")
     except Exception as exc:
@@ -527,12 +527,12 @@ def _bionic_control_sync(
             "error_code": "CONTROL_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Control error: {exc} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Control error: {exc} | {sc_str}",
         }
 
 
 @mcp.tool()
-async def bionic_control(
+async def apprentice_control(
     action: str = "status",
     profile: str = "gpu-daily",
     user_confirmed: bool = False,
@@ -545,7 +545,7 @@ async def bionic_control(
 ) -> dict[str, Any]:
     """Inspect Bionic status, manage async sprint jobs/verdicts/epochs, or execute user-confirmed lifecycle actions."""
     return await asyncio.to_thread(
-        _bionic_control_sync,
+        _apprentice_control_sync,
         action=action,
         profile=profile,
         user_confirmed=user_confirmed,
@@ -558,7 +558,7 @@ async def bionic_control(
     )
 
 
-bionic_control = _bionic_control_sync  # type: ignore[assignment]
+apprentice_control = _apprentice_control_sync  # type: ignore[assignment]
 
 
 def _prepare_tail_continuation(raw_head: str) -> tuple[str, str]:
@@ -885,9 +885,9 @@ def _surgical_repair_unbacked_lines(
     )
     surg_max_toks = min(1800, 260 * len(target_nums) + 200)
     t0 = time.perf_counter()
-    res_surg = local_sidecar.invoke_chat_completion(
+    res_surg = apprentice_engine.invoke_chat_completion(
         api_url=api_url,
-        model_id=local_sidecar.DEFAULT_MODEL_ID,
+        model_id=apprentice_engine.DEFAULT_MODEL_ID,
         mode="fast",
         system_prompt=sys_prompt,
         user_content=surg_prompt,
@@ -898,7 +898,7 @@ def _surgical_repair_unbacked_lines(
         allow_high_floor=False,
     )
     dt = round(time.perf_counter() - t0, 3)
-    local_sidecar.record_usage_telemetry(
+    apprentice_engine.record_usage_telemetry(
         {
             "cmd": f"{cmd_name_prefix}_surgical_verify_retry",
             "effort": eta["effort"],
@@ -1003,9 +1003,9 @@ def _run_full_repair_with_guard(
     repair_timeout = 180.0 if effective_mode == "deep" else 135.0
 
     t0 = time.perf_counter()
-    res2 = local_sidecar.invoke_chat_completion(
+    res2 = apprentice_engine.invoke_chat_completion(
         api_url=api_url,
-        model_id=local_sidecar.DEFAULT_MODEL_ID,
+        model_id=apprentice_engine.DEFAULT_MODEL_ID,
         mode=repair_mode,
         system_prompt=sys_prompt,
         user_content=repair_prompt,
@@ -1016,7 +1016,7 @@ def _run_full_repair_with_guard(
         allow_high_floor=False,
     )
     dt = round(time.perf_counter() - t0, 3)
-    local_sidecar.record_usage_telemetry(
+    apprentice_engine.record_usage_telemetry(
         {
             "cmd": telemetry_cmd,
             "effort": eta["effort"],
@@ -1046,9 +1046,9 @@ def _run_full_repair_with_guard(
             "Continue seamlessly starting with the NEXT line immediately after the lines above without repeating prior bullets."
         )
         try:
-            res_cont = local_sidecar.invoke_chat_completion(
+            res_cont = apprentice_engine.invoke_chat_completion(
                 api_url=api_url,
-                model_id=local_sidecar.DEFAULT_MODEL_ID,
+                model_id=apprentice_engine.DEFAULT_MODEL_ID,
                 mode=repair_mode,
                 system_prompt=sys_prompt,
                 user_content=cont_prompt,
@@ -1170,7 +1170,7 @@ def _should_trigger_chunked_digest(
     return len(explicit_slices) >= 2 and total_raw_bytes > chunk_threshold
 
 
-def _bionic_digest_sync(
+def _apprentice_digest_sync(
     prompt: str,
     context_files: list[str] | None = None,
     repo: str = "",
@@ -1189,13 +1189,13 @@ def _bionic_digest_sync(
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = local_sidecar.resolve_effort_and_mode(effort, mode)
+        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
         tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
-        api_url = local_sidecar.validate_loopback_url(local_sidecar.resolve_default_api_url())
-        sys_prompt, sys_src = local_sidecar.load_system_prompt()
+        api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+        sys_prompt, sys_src = apprentice_engine.load_system_prompt()
         repo_root = Path(repo) if repo.strip() else None
         repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
+        validated_files, slice_items, slice_map = apprentice_engine.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_root,
             require_exists=True,
@@ -1204,8 +1204,8 @@ def _bionic_digest_sync(
             raise ValueError("Prompt must be non-empty.")
 
         if async_job:
-            local_sidecar.preflight_live_inference(api_url, local_sidecar.DEFAULT_MODEL_ID, req_mode)
-            job_info = local_sidecar.submit_async_job(
+            apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
+            job_info = apprentice_engine.submit_async_job(
                 {
                     "kind": "digest",
                     "kwargs": {
@@ -1229,16 +1229,16 @@ def _bionic_digest_sync(
                 "prev_verdict_update": prev_res,
                 "scorecard": sc_str,
                 "user_notice": (
-                    f"[BIONIC SIDECAR NOTICE] Launched async digest sprint {job_info['job_id']} "
-                    f"(effort={effort_norm}, mode={req_mode}). Collect with bionic_control(action='job-collect', job_id='{job_info['job_id']}'). | {sc_str}"
+                    f"[APPRENTICE NOTICE] Launched async digest sprint {job_info['job_id']} "
+                    f"(effort={effort_norm}, mode={req_mode}). Collect with apprentice_control(action='job-collect', job_id='{job_info['job_id']}'). | {sc_str}"
                 ),
             }
 
-        srv, effective_mode = local_sidecar.preflight_live_inference(api_url, local_sidecar.DEFAULT_MODEL_ID, req_mode)
+        srv, effective_mode = apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
         loaded_ctx = srv.get("loaded_context_length")
-        max_toks = local_sidecar.resolve_effective_max_tokens(effective_mode, max_tokens)
+        max_toks = apprentice_engine.resolve_effective_max_tokens(effective_mode, max_tokens)
         sys_bytes = len(sys_prompt.encode("utf-8"))
-        has_code = local_sidecar.is_code_heavy_payload(validated_files, bool(include_git_diff))
+        has_code = apprentice_engine.is_code_heavy_payload(validated_files, bool(include_git_diff))
 
         unsliced_unique = list(dict.fromkeys(fp for fp, sl in zip(validated_files, slice_items) if sl is None))
         unsliced_set = set(unsliced_unique)
@@ -1277,9 +1277,9 @@ def _bionic_digest_sync(
         kept_labeled_blocks: list[str] = []
 
         if use_auto_chunk:
-            unsliced_chunks = local_sidecar.plan_line_preserving_chunks(unsliced_unique, target_chunk_bytes=20000)
+            unsliced_chunks = apprentice_engine.plan_line_preserving_chunks(unsliced_unique, target_chunk_bytes=20000)
             raw_chunks = unsliced_chunks + explicit_slices
-            batches = local_sidecar.pack_chunk_batches(
+            batches = apprentice_engine.pack_chunk_batches(
                 raw_chunks,
                 max_batch_bytes=22000,
                 max_batch_lines=460,
@@ -1301,7 +1301,7 @@ def _bionic_digest_sync(
                     "cross-slice",
                 )
             )
-            wave_eta = local_sidecar.estimate_chunked_eta(
+            wave_eta = apprentice_engine.estimate_chunked_eta(
                 effective_mode=effective_mode,
                 prompt_bytes=len(prompt.encode("utf-8")),
                 sys_prompt_bytes=sys_bytes,
@@ -1323,9 +1323,9 @@ def _bionic_digest_sync(
                     "chunks": len(raw_chunks),
                     "batches": len(batches),
                 }
-                local_sidecar.record_usage_telemetry(
+                apprentice_engine.record_usage_telemetry(
                     {
-                        "cmd": "bionic_digest",
+                        "cmd": "apprentice_digest",
                         "effort": wave_eta["effort"],
                         "invocation_tier": tier,
                         "mode": effective_mode,
@@ -1338,7 +1338,7 @@ def _bionic_digest_sync(
                         "batches": len(batches),
                     }
                 )
-                raise local_sidecar.SidecarEtaTrippedError(
+                raise apprentice_engine.SidecarEtaTrippedError(
                     f"[ETA_CIRCUIT_BREAKER_TRIPPED] Chunked digest ({len(raw_chunks)} slices / {len(batches)} batches / {waves} waves, {total_pred_eta}s) exceeds {max_eta}s cap.",
                     err_eta,
                 )
@@ -1418,7 +1418,7 @@ def _bionic_digest_sync(
                         else min(2048, max(1000, 600 * len(batch_slices)))
                     )
 
-                ch_assembled, _ = local_sidecar.assemble_prompt_payload(
+                ch_assembled, _ = apprentice_engine.assemble_prompt_payload(
                     user_prompt=chunk_prompt,
                     context_files=[fp for fp, _, _ in batch_slices],
                     repo_root=repo_resolved,
@@ -1426,9 +1426,9 @@ def _bionic_digest_sync(
                     sys_prompt=sys_prompt,
                     context_slices=[(sl, el) for _, sl, el in batch_slices],
                 )
-                ch_res = local_sidecar.invoke_chat_completion(
+                ch_res = apprentice_engine.invoke_chat_completion(
                     api_url=api_url,
-                    model_id=local_sidecar.DEFAULT_MODEL_ID,
+                    model_id=apprentice_engine.DEFAULT_MODEL_ID,
                     mode="fast",
                     system_prompt=sys_prompt,
                     user_content=ch_assembled,
@@ -1446,9 +1446,9 @@ def _bionic_digest_sync(
                     chunk_outcomes = list(pool.map(_run_batch, enumerate(batches)))
             except Exception as exc:
                 err_dt = round(time.perf_counter() - t_chunk0, 3)
-                local_sidecar.record_usage_telemetry(
+                apprentice_engine.record_usage_telemetry(
                     {
-                        "cmd": "bionic_digest",
+                        "cmd": "apprentice_digest",
                         "effort": wave_eta["effort"],
                         "invocation_tier": tier,
                         "mode": effective_mode,
@@ -1467,9 +1467,9 @@ def _bionic_digest_sync(
                         "finish_reason": "error",
                     }
                 )
-                local_sidecar.record_call_outcome(
+                apprentice_engine.record_call_outcome(
                     verdict="corrected",
-                    cmd="bionic_digest",
+                    cmd="apprentice_digest",
                     effort=wave_eta["effort"],
                     mode=effective_mode,
                     elapsed_s=err_dt,
@@ -1536,9 +1536,9 @@ def _bionic_digest_sync(
                     )
                     red_allow_high_floor = False
                 try:
-                    red_res = local_sidecar.invoke_chat_completion(
+                    red_res = apprentice_engine.invoke_chat_completion(
                         api_url=api_url,
-                        model_id=local_sidecar.DEFAULT_MODEL_ID,
+                        model_id=apprentice_engine.DEFAULT_MODEL_ID,
                         mode=effective_mode,
                         system_prompt=sys_prompt,
                         user_content=reduce_prompt,
@@ -1572,7 +1572,7 @@ def _bionic_digest_sync(
             assembled = "\n".join(repair_slices[:4]) if repair_slices else prompt.strip()
             wall_tps = round(tot_c_tok / chunk_wall, 2) if chunk_wall > 0 and tot_c_tok > 0 else None
             res = {
-                "model": chunk_outcomes[0][2].get("model", local_sidecar.DEFAULT_MODEL_ID),
+                "model": chunk_outcomes[0][2].get("model", apprentice_engine.DEFAULT_MODEL_ID),
                 "effort": effort_norm,
                 "mode": effective_mode,
                 "reasoning_effort": reduce_reasoning_eff,
@@ -1605,9 +1605,9 @@ def _bionic_digest_sync(
                 "workers": 2,
                 "reduced": reduced_used,
             }
-            local_sidecar.record_usage_telemetry(
+            apprentice_engine.record_usage_telemetry(
                 {
-                    "cmd": "bionic_digest",
+                    "cmd": "apprentice_digest",
                     "effort": effort_norm,
                     "invocation_tier": tier,
                     "mode": effective_mode,
@@ -1639,7 +1639,7 @@ def _bionic_digest_sync(
             elif effort_norm == "high":
                 effective_prompt += CONCISE_HIGH_THINKING_HINT
 
-            assembled, file_meta = local_sidecar.assemble_prompt_payload(
+            assembled, file_meta = apprentice_engine.assemble_prompt_payload(
                 user_prompt=effective_prompt,
                 context_files=validated_files,
                 repo_root=repo_resolved,
@@ -1648,14 +1648,14 @@ def _bionic_digest_sync(
                 context_slices=slice_items,
             )
             prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
-            eta = local_sidecar._enforce_eta_or_raise(
+            eta = apprentice_engine._enforce_eta_or_raise(
                 mode=effective_mode,
                 prompt_bytes=prompt_bytes,
                 max_tokens=max_toks,
                 max_eta_seconds=max_eta,
                 expected_turns=1,
                 force_slow=False,
-                cmd_name="bionic_digest",
+                cmd_name="apprentice_digest",
                 invocation_tier=tier,
                 has_code_context=has_code,
                 loaded_ctx_override=loaded_ctx,
@@ -1666,9 +1666,9 @@ def _bionic_digest_sync(
             )
             t_call0 = time.perf_counter()
             try:
-                res = local_sidecar.invoke_chat_completion(
+                res = apprentice_engine.invoke_chat_completion(
                     api_url=api_url,
-                    model_id=local_sidecar.DEFAULT_MODEL_ID,
+                    model_id=apprentice_engine.DEFAULT_MODEL_ID,
                     mode=effective_mode,
                     system_prompt=sys_prompt,
                     user_content=assembled,
@@ -1680,9 +1680,9 @@ def _bionic_digest_sync(
                 )
             except Exception as exc:
                 err_dt = round(time.perf_counter() - t_call0, 3)
-                local_sidecar.record_usage_telemetry(
+                apprentice_engine.record_usage_telemetry(
                     {
-                        "cmd": "bionic_digest",
+                        "cmd": "apprentice_digest",
                         "effort": eta["effort"],
                         "invocation_tier": tier,
                         "mode": effective_mode,
@@ -1698,9 +1698,9 @@ def _bionic_digest_sync(
                         "finish_reason": "error",
                     }
                 )
-                local_sidecar.record_call_outcome(
+                apprentice_engine.record_call_outcome(
                     verdict="corrected",
-                    cmd="bionic_digest",
+                    cmd="apprentice_digest",
                     effort=eta["effort"],
                     mode=effective_mode,
                     elapsed_s=err_dt,
@@ -1709,9 +1709,9 @@ def _bionic_digest_sync(
                 )
                 raise
 
-            local_sidecar.record_usage_telemetry(
+            apprentice_engine.record_usage_telemetry(
                 {
-                    "cmd": "bionic_digest",
+                    "cmd": "apprentice_digest",
                     "effort": eta["effort"],
                     "invocation_tier": tier,
                     "mode": effective_mode,
@@ -1751,9 +1751,9 @@ def _bionic_digest_sync(
             cont_max_toks = 640 if effective_mode == "cpu-bg" else (3072 if effective_mode == "deep" else 2560)
             cont_timeout_s = 60.0 if effective_mode == "cpu-bg" else (150.0 if effective_mode == "deep" else 120.0)
             try:
-                res_cont = local_sidecar.invoke_chat_completion(
+                res_cont = apprentice_engine.invoke_chat_completion(
                     api_url=api_url,
-                    model_id=local_sidecar.DEFAULT_MODEL_ID,
+                    model_id=apprentice_engine.DEFAULT_MODEL_ID,
                     mode=cont_mode,
                     system_prompt=sys_prompt,
                     user_content=cont_prompt,
@@ -1768,9 +1768,9 @@ def _bionic_digest_sync(
                 heal_error = f"length_continuation_failed: {cont_exc}"
                 break
             heal_elapsed_s += round(time.perf_counter() - t_len0, 3)
-            local_sidecar.record_usage_telemetry(
+            apprentice_engine.record_usage_telemetry(
                 {
-                    "cmd": "bionic_digest_length_retry",
+                    "cmd": "apprentice_digest_length_retry",
                     "effort": eta["effort"],
                     "invocation_tier": tier,
                     "mode": effective_mode,
@@ -1845,7 +1845,7 @@ def _bionic_digest_sync(
                             loaded_ctx=loaded_ctx,
                             tier=tier,
                             eta=eta,
-                            cmd_name_prefix="bionic_digest",
+                            cmd_name_prefix="apprentice_digest",
                         )
                     except Exception:
                         surg = None
@@ -1914,7 +1914,7 @@ def _bionic_digest_sync(
                                 cwd_check=cwd_check,
                                 tier=tier,
                                 eta=eta,
-                                telemetry_cmd="bionic_digest_verify_retry",
+                                telemetry_cmd="apprentice_digest_verify_retry",
                             )
                             heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
                             res = rep_out["res"]
@@ -1944,9 +1944,9 @@ def _bionic_digest_sync(
         if heal_elapsed_s > 0:
             res = {**res, "elapsed_s": total_elapsed_s}
 
-        sc_rec = local_sidecar.record_call_outcome(
+        sc_rec = apprentice_engine.record_call_outcome(
             verdict=verdict,
-            cmd="bionic_digest",
+            cmd="apprentice_digest",
             effort=eta["effort"],
             mode=effective_mode,
             elapsed_s=total_elapsed_s,
@@ -1957,7 +1957,7 @@ def _bionic_digest_sync(
         sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
         out_payload: dict[str, Any] = {
             "ok": True,
-            "schema_version": local_sidecar.SCHEMA_VERSION,
+            "schema_version": apprentice_engine.SCHEMA_VERSION,
             "call_id": sc_rec.get("call_id"),
             "verdict": verdict,
             "effort": eta["effort"],
@@ -1975,16 +1975,16 @@ def _bionic_digest_sync(
             "completion": res,
             "scorecard": sc_fmt,
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Local Bionic ({eta['effort']}/{effective_mode}, {tier}) ran {res['elapsed_s']}s "
+                f"[APPRENTICE NOTICE] Local Bionic ({eta['effort']}/{effective_mode}, {tier}) ran {res['elapsed_s']}s "
                 f"({res['prompt_tokens']} prompt / {res['completion_tokens']} out tok, verdict={verdict}). | {sc_fmt}"
             ),
         }
         if chunk_info is not None:
             out_payload["chunked_map_reduce"] = chunk_info
         return out_payload
-    except local_sidecar.SidecarFirewallError as exc:
+    except apprentice_engine.SidecarFirewallError as exc:
         return _firewall_error_response(exc, "Digest")
-    except local_sidecar.SidecarEtaTrippedError as exc:
+    except apprentice_engine.SidecarEtaTrippedError as exc:
         sc_str = _scorecard_suffix()
         return {
             "ok": False,
@@ -1992,7 +1992,7 @@ def _bionic_digest_sync(
             "error": str(exc),
             "eta_estimate": exc.estimate,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] ETA breaker handed digest back to frontier thread. | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] ETA breaker handed digest back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
         sc_str = _scorecard_suffix()
@@ -2001,7 +2001,7 @@ def _bionic_digest_sync(
             "error_code": "DIGEST_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Digest error: {exc} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Digest error: {exc} | {sc_str}",
         }
 
 
@@ -2018,7 +2018,7 @@ def _is_heavy_chunked_sync_candidate(op_label: str, kwargs: dict[str, Any]) -> b
     parsed_slices: list[tuple[Path, int, int]] = []
     lines_cache: dict[Path, list[str]] = {}
     for item in raw_files:
-        p, slice_rng = local_sidecar.parse_context_spec(str(item))
+        p, slice_rng = apprentice_engine.parse_context_spec(str(item))
         cand = Path(os.path.expanduser(str(p)))
         if not cand.is_absolute() and kwargs.get("repo"):
             cand = Path(os.path.expanduser(str(kwargs["repo"]))) / cand
@@ -2055,7 +2055,7 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
     if bool(kwargs.get("async_job")):
         return await asyncio.to_thread(sync_fn, **kwargs)
     try:
-        effort_norm, _ = local_sidecar.resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
+        effort_norm, _ = apprentice_engine.resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
     except ValueError:
         return await asyncio.to_thread(sync_fn, **kwargs)
     tier_norm = str(kwargs.get("invocation_tier") or "auto").strip().lower()
@@ -2064,7 +2064,7 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
         effort_norm != "high"
         and not explicit_multipass
         and not _is_heavy_chunked_sync_candidate(op_label, kwargs)
-        and not local_sidecar.has_active_exclusive_kv_slot()
+        and not apprentice_engine.has_active_exclusive_kv_slot()
     ):
         return await asyncio.to_thread(sync_fn, **kwargs)
 
@@ -2074,7 +2074,7 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
 
     wait_cap = float(MCP_SYNC_WAIT_CAP_SECONDS)
     jres = await asyncio.to_thread(
-        local_sidecar.get_job_status,
+        apprentice_engine.get_job_status,
         str(sub["job_id"]),
         wait_seconds=wait_cap,
         include_result=True,
@@ -2094,7 +2094,7 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
             "error": str(jres.get("error") or "Background Bionic worker failed"),
             "job_id": sub["job_id"],
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] {op_label} worker {sub['job_id']} failed: {jres.get('error')} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] {op_label} worker {sub['job_id']} failed: {jres.get('error')} | {sc_str}",
         }
     sc_str = _scorecard_suffix()
     tier_lbl = "High-effort" if effort_norm == "high" else "Long-running"
@@ -2104,15 +2104,15 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
         "waited_sync_seconds": wait_cap,
         "scorecard": sc_str,
         "user_notice": (
-            f"[BIONIC SIDECAR NOTICE] {tier_lbl} {op_label} exceeded {wait_cap:.0f}s sync MCP window; "
+            f"[APPRENTICE NOTICE] {tier_lbl} {op_label} exceeded {wait_cap:.0f}s sync MCP window; "
             f"continuing cleanly in background as {sub['job_id']} (do NOT re-submit; collect via "
-            f"bionic_control(action='job-collect', job_id='{sub['job_id']}', wait_seconds=120)). | {sc_str}"
+            f"apprentice_control(action='job-collect', job_id='{sub['job_id']}', wait_seconds=120)). | {sc_str}"
         ),
     }
 
 
 @mcp.tool()
-async def bionic_digest(
+async def apprentice_digest(
     prompt: str,
     context_files: list[str] | None = None,
     repo: str = "",
@@ -2130,7 +2130,7 @@ async def bionic_digest(
     """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (STANDARD/HIGH, async_job & verify_claims)."""
     return await _run_mcp_with_sync_guard(
         "digest",
-        _bionic_digest_sync,
+        _apprentice_digest_sync,
         {
             "prompt": prompt,
             "context_files": context_files,
@@ -2149,8 +2149,8 @@ async def bionic_digest(
     )
 
 
-_mcp_bionic_digest_coro = bionic_digest
-bionic_digest = _bionic_digest_sync  # type: ignore[assignment]
+_mcp_apprentice_digest_coro = apprentice_digest
+apprentice_digest = _apprentice_digest_sync  # type: ignore[assignment]
 
 
 SKIP_SOURCE_DIRS = frozenset(
@@ -2167,12 +2167,12 @@ def _discover_repo_sources(repo_resolved: Path) -> list[Path]:
         rel_parts = cand.relative_to(repo_resolved).parts
         if SKIP_SOURCE_DIRS & set(rel_parts):
             continue
-        if cand.suffix.lower() in exts and not local_sidecar._inspect_path_security(cand):
+        if cand.suffix.lower() in exts and not apprentice_engine._inspect_path_security(cand):
             out.append(cand)
     return out
 
 
-def _bionic_repo_audit_sync(
+def _apprentice_repo_audit_sync(
     repo: str,
     project: str,
     name: str,
@@ -2195,14 +2195,14 @@ def _bionic_repo_audit_sync(
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = local_sidecar.resolve_effort_and_mode(effort, mode)
+        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
         tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
-        api_url = local_sidecar.validate_loopback_url(local_sidecar.resolve_default_api_url())
-        sys_prompt, sys_src = local_sidecar.load_system_prompt()
+        api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+        sys_prompt, sys_src = apprentice_engine.load_system_prompt()
         repo_root = Path(os.path.expanduser(repo))
-        repo_sec = local_sidecar._inspect_path_security(repo_root)
+        repo_sec = apprentice_engine._inspect_path_security(repo_root)
         if repo_sec:
-            raise local_sidecar.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {repo_sec}")
+            raise apprentice_engine.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {repo_sec}")
         repo_resolved = repo_root.resolve(strict=False)
         if not repo_resolved.is_dir():
             raise ValueError(f"Repository directory does not exist: {repo}")
@@ -2218,17 +2218,17 @@ def _bionic_repo_audit_sync(
         if not overwrite and quar_candidate.exists():
             raise RuntimeError(f"Quarantine note already exists (pass overwrite=True to replace): {quar_candidate}")
 
-        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
+        validated_files, slice_items, slice_map = apprentice_engine.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_resolved,
             require_exists=True,
         )
 
         # Fail fast (<50ms) BEFORE spawning subprocesses when Bionic is offline or unloaded
-        srv, effective_mode = local_sidecar.preflight_live_inference(api_url, local_sidecar.DEFAULT_MODEL_ID, req_mode)
+        srv, effective_mode = apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
 
         if async_job:
-            job_info = local_sidecar.submit_async_job(
+            job_info = apprentice_engine.submit_async_job(
                 {
                     "kind": "repo_audit",
                     "kwargs": {
@@ -2256,7 +2256,7 @@ def _bionic_repo_audit_sync(
                 "prev_verdict_update": prev_res,
                 "scorecard": sc_str,
                 "user_notice": (
-                    f"[BIONIC SIDECAR NOTICE] Launched async repo audit sprint {job_info['job_id']} "
+                    f"[APPRENTICE NOTICE] Launched async repo audit sprint {job_info['job_id']} "
                     f"(effort={effort_norm}, mode={effective_mode}). | {sc_str}"
                 ),
             }
@@ -2267,7 +2267,7 @@ def _bionic_repo_audit_sync(
                 return {"ran": False}
             ad_proc = subprocess.run(
                 [sys.executable, "-B", str(audit_docs_path), str(repo_resolved)],
-                cwd=local_sidecar._safe_subprocess_cwd(repo_resolved),
+                cwd=apprentice_engine._safe_subprocess_cwd(repo_resolved),
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -2292,7 +2292,7 @@ def _bionic_repo_audit_sync(
         if audit_docs_res.get("ran") and audit_docs_res.get("output_tail"):
             guarded_prompt += f"\n\n[PRE-PASS audit_repo_docs.py TELEMETRY (exit {audit_docs_res['returncode']})]:\n{audit_docs_res['output_tail'][-1500:]}\n"
 
-        assembled, file_meta = local_sidecar.assemble_prompt_payload(
+        assembled, file_meta = apprentice_engine.assemble_prompt_payload(
             user_prompt=guarded_prompt,
             context_files=validated_files,
             repo_root=repo_resolved,
@@ -2300,7 +2300,7 @@ def _bionic_repo_audit_sync(
             sys_prompt=sys_prompt,
             context_slices=slice_items,
         )
-        base_toks = local_sidecar.resolve_effective_max_tokens(effective_mode, max_tokens)
+        base_toks = apprentice_engine.resolve_effective_max_tokens(effective_mode, max_tokens)
         if max_tokens is None and effective_mode != "cpu-bg":
             effective_max_toks = max(base_toks, 2200 if tier == "explicit" else 1200)
         else:
@@ -2309,15 +2309,15 @@ def _bionic_repo_audit_sync(
         sys_bytes = len(sys_prompt.encode("utf-8"))
         prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
         loaded_ctx = srv.get("loaded_context_length")
-        has_code = local_sidecar.is_code_heavy_payload(validated_files, bool(include_git_diff))
-        eta = local_sidecar._enforce_eta_or_raise(
+        has_code = apprentice_engine.is_code_heavy_payload(validated_files, bool(include_git_diff))
+        eta = apprentice_engine._enforce_eta_or_raise(
             mode=effective_mode,
             prompt_bytes=prompt_bytes,
             max_tokens=effective_max_toks,
             max_eta_seconds=max_eta,
             expected_turns=1,
             force_slow=False,
-            cmd_name="bionic_repo_audit",
+            cmd_name="apprentice_repo_audit",
             invocation_tier=tier,
             has_code_context=has_code,
             loaded_ctx_override=loaded_ctx,
@@ -2328,9 +2328,9 @@ def _bionic_repo_audit_sync(
         )
         t_call0 = time.perf_counter()
         try:
-            res = local_sidecar.invoke_chat_completion(
+            res = apprentice_engine.invoke_chat_completion(
                 api_url=api_url,
-                model_id=local_sidecar.DEFAULT_MODEL_ID,
+                model_id=apprentice_engine.DEFAULT_MODEL_ID,
                 mode=effective_mode,
                 system_prompt=sys_prompt,
                 user_content=assembled,
@@ -2342,9 +2342,9 @@ def _bionic_repo_audit_sync(
             )
         except Exception as exc:
             err_dt = round(time.perf_counter() - t_call0, 3)
-            local_sidecar.record_usage_telemetry(
+            apprentice_engine.record_usage_telemetry(
                 {
-                    "cmd": "bionic_repo_audit",
+                    "cmd": "apprentice_repo_audit",
                     "effort": eta["effort"],
                     "invocation_tier": tier,
                     "mode": effective_mode,
@@ -2360,9 +2360,9 @@ def _bionic_repo_audit_sync(
                     "finish_reason": "error",
                 }
             )
-            local_sidecar.record_call_outcome(
+            apprentice_engine.record_call_outcome(
                 verdict="corrected",
-                cmd="bionic_repo_audit",
+                cmd="apprentice_repo_audit",
                 effort=eta["effort"],
                 mode=effective_mode,
                 elapsed_s=err_dt,
@@ -2371,9 +2371,9 @@ def _bionic_repo_audit_sync(
             )
             raise
 
-        local_sidecar.record_usage_telemetry(
+        apprentice_engine.record_usage_telemetry(
             {
-                "cmd": "bionic_repo_audit",
+                "cmd": "apprentice_repo_audit",
                 "effort": eta["effort"],
                 "invocation_tier": tier,
                 "mode": effective_mode,
@@ -2412,9 +2412,9 @@ def _bionic_repo_audit_sync(
             cont_max_toks = min(3072, max(1536, effective_max_toks // 2))
             cont_timeout_s = 150.0 if effective_mode == "deep" else 120.0
             try:
-                res_cont = local_sidecar.invoke_chat_completion(
+                res_cont = apprentice_engine.invoke_chat_completion(
                     api_url=api_url,
-                    model_id=local_sidecar.DEFAULT_MODEL_ID,
+                    model_id=apprentice_engine.DEFAULT_MODEL_ID,
                     mode=cont_mode,
                     system_prompt=sys_prompt,
                     user_content=cont_prompt,
@@ -2425,9 +2425,9 @@ def _bionic_repo_audit_sync(
                     allow_high_floor=False,
                 )
                 heal_elapsed_s += round(time.perf_counter() - t_len0, 3)
-                local_sidecar.record_usage_telemetry(
+                apprentice_engine.record_usage_telemetry(
                     {
-                        "cmd": "bionic_repo_audit_length_retry",
+                        "cmd": "apprentice_repo_audit_length_retry",
                         "effort": eta["effort"],
                         "invocation_tier": tier,
                         "mode": cont_mode,
@@ -2495,7 +2495,7 @@ def _bionic_repo_audit_sync(
                     loaded_ctx=loaded_ctx,
                     tier=tier,
                     eta=eta,
-                    cmd_name_prefix="bionic_repo_audit",
+                    cmd_name_prefix="apprentice_repo_audit",
                     project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
                     sanitize_links=True,
                 )
@@ -2549,7 +2549,7 @@ def _bionic_repo_audit_sync(
                         cwd_check=repo_resolved,
                         tier=tier,
                         eta=eta,
-                        telemetry_cmd="bionic_repo_audit_verify_retry",
+                        telemetry_cmd="apprentice_repo_audit_verify_retry",
                         project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
                         sanitize_links=True,
                     )
@@ -2568,8 +2568,8 @@ def _bionic_repo_audit_sync(
             res = {**res, "elapsed_s": audit_total_elapsed_s}
         # 4. Write final draft ONCE via memory_gateway.py
         body_text = (
-            f"<!-- local_sidecar provenance: schema={local_sidecar.SCHEMA_VERSION} "
-            f"author=\"LM Studio Bionic ({res['model']}, {res['mode']})\" elapsed_s={res['elapsed_s']} "
+            f"<!-- apprentice provenance: schema={apprentice_engine.SCHEMA_VERSION} "
+            f"author=\"Apprentice Local Backend ({res['model']}, {res['mode']})\" elapsed_s={res['elapsed_s']} "
             f"prompt_tok={res['prompt_tokens']} out_tok={res['completion_tokens']} "
             f"tg_tok_s={res['observed_tg_tok_s']} -->\n\n{sanitized_content}\n"
         )
@@ -2600,7 +2600,7 @@ def _bionic_repo_audit_sync(
                     str(tmp_body),
                     "--json",
                 ],
-                cwd=local_sidecar._safe_subprocess_cwd(),
+                cwd=apprentice_engine._safe_subprocess_cwd(),
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -2623,9 +2623,9 @@ def _bionic_repo_audit_sync(
         else:
             verdict = "clean"
 
-        sc_rec = local_sidecar.record_call_outcome(
+        sc_rec = apprentice_engine.record_call_outcome(
             verdict=verdict,
-            cmd="bionic_repo_audit",
+            cmd="apprentice_repo_audit",
             effort=eta["effort"],
             mode=effective_mode,
             elapsed_s=audit_total_elapsed_s,
@@ -2636,7 +2636,7 @@ def _bionic_repo_audit_sync(
         sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
         return {
             "ok": True,
-            "schema_version": local_sidecar.SCHEMA_VERSION,
+            "schema_version": apprentice_engine.SCHEMA_VERSION,
             "call_id": sc_rec.get("call_id"),
             "verdict": verdict,
             "effort": eta["effort"],
@@ -2659,13 +2659,13 @@ def _bionic_repo_audit_sync(
             "prev_verdict_update": prev_res,
             "scorecard": sc_fmt,
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Quarantined repo audit '{name}' ({eta['effort']}/{effective_mode}) in {res['elapsed_s']}s "
+                f"[APPRENTICE NOTICE] Quarantined repo audit '{name}' ({eta['effort']}/{effective_mode}) in {res['elapsed_s']}s "
                 f"(verdict={verdict}, verify_claims rc={vrf_final.get('returncode')}). | {sc_fmt}"
             ),
         }
-    except local_sidecar.SidecarFirewallError as exc:
+    except apprentice_engine.SidecarFirewallError as exc:
         return _firewall_error_response(exc, "Repo audit")
-    except local_sidecar.SidecarEtaTrippedError as exc:
+    except apprentice_engine.SidecarEtaTrippedError as exc:
         sc_str = _scorecard_suffix()
         return {
             "ok": False,
@@ -2673,7 +2673,7 @@ def _bionic_repo_audit_sync(
             "error": str(exc),
             "eta_estimate": exc.estimate,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Repo audit ETA breaker handed back to frontier thread. | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Repo audit ETA breaker handed back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
         sc_str = _scorecard_suffix()
@@ -2682,12 +2682,12 @@ def _bionic_repo_audit_sync(
             "error_code": "AUDIT_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Repo audit error: {exc} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Repo audit error: {exc} | {sc_str}",
         }
 
 
 @mcp.tool()
-async def bionic_repo_audit(
+async def apprentice_repo_audit(
     repo: str,
     project: str,
     name: str,
@@ -2709,7 +2709,7 @@ async def bionic_repo_audit(
     """Fused repo audit: preflight -> audit_repo_docs -> Bionic sweep -> Quarantine note -> verify_claims Pass 1."""
     return await _run_mcp_with_sync_guard(
         "repo audit",
-        _bionic_repo_audit_sync,
+        _apprentice_repo_audit_sync,
         {
             "repo": repo,
             "project": project,
@@ -2732,8 +2732,8 @@ async def bionic_repo_audit(
     )
 
 
-_mcp_bionic_repo_audit_coro = bionic_repo_audit
-bionic_repo_audit = _bionic_repo_audit_sync  # type: ignore[assignment]
+_mcp_apprentice_repo_audit_coro = apprentice_repo_audit
+apprentice_repo_audit = _apprentice_repo_audit_sync  # type: ignore[assignment]
 
 
 def _check_unclosed_code_fence(raw_text: str) -> str | None:
@@ -2787,11 +2787,11 @@ def _run_smoke_test(
         return {"ran": False, "ok": True}
     clean_args = [str(a) for a in smoke_args]
     if any("\x00" in a for a in clean_args):
-        raise local_sidecar.SidecarFirewallError("[SECURITY_FIREWALL_BLOCKED] Invalid null byte in smoke_test_args.")
+        raise apprentice_engine.SidecarFirewallError("[SECURITY_FIREWALL_BLOCKED] Invalid null byte in smoke_test_args.")
     try:
         proc = subprocess.run(
             [sys.executable, "-B", str(staged_file), *clean_args],
-            cwd=local_sidecar._safe_subprocess_cwd(safe_staging),
+            cwd=apprentice_engine._safe_subprocess_cwd(safe_staging),
             capture_output=True,
             text=True,
             timeout=15,
@@ -2877,7 +2877,7 @@ def _build_stage_repair_context(
             if omitted
             else ""
         )
-    ctx_assembled, _ = local_sidecar.assemble_prompt_payload(
+    ctx_assembled, _ = apprentice_engine.assemble_prompt_payload(
         user_prompt="",
         context_files=kept_files,
         repo_root=repo_resolved,
@@ -2891,13 +2891,13 @@ def _build_stage_repair_context(
     return f"\n\n### AUTHORITATIVE CONTEXT:\n{ctx_body}" if ctx_body else ""
 
 
-def _bionic_stage_patch_sync(
+def _apprentice_stage_patch_sync(
     target_filename: str,
     prompt: str,
     context_files: list[str] | None = None,
     repo: str = "",
     compare_against: str = "",
-    staging_dir: str = str(local_sidecar.DEFAULT_STAGING_DIR),
+    staging_dir: str = str(apprentice_engine.DEFAULT_STAGING_DIR),
     effort: str | None = None,
     mode: str | None = None,
     invocation_tier: str = "auto",
@@ -2912,28 +2912,28 @@ def _bionic_stage_patch_sync(
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = local_sidecar.resolve_effort_and_mode(effort, mode)
+        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
         tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
-        safe_staging = local_sidecar.validate_staging_dir(Path(staging_dir))
-        api_url = local_sidecar.validate_loopback_url(local_sidecar.resolve_default_api_url())
-        sys_prompt, _ = local_sidecar.load_system_prompt()
+        safe_staging = apprentice_engine.validate_staging_dir(Path(staging_dir))
+        api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+        sys_prompt, _ = apprentice_engine.load_system_prompt()
         repo_root = Path(repo) if repo.strip() else None
         repo_resolved = repo_root.resolve(strict=False) if repo_root else None
-        validated_files, slice_items, slice_map = local_sidecar.parse_and_validate_context_items(
+        validated_files, slice_items, slice_map = apprentice_engine.parse_and_validate_context_items(
             list(context_files or []),
             repo_root=repo_root,
             require_exists=True,
         )
         compare_path = Path(compare_against) if compare_against.strip() else None
         if compare_path is not None:
-            local_sidecar.validate_input_paths([compare_path], repo_root=repo_root, require_exists=True)
+            apprentice_engine.validate_input_paths([compare_path], repo_root=repo_root, require_exists=True)
         if not prompt.strip():
             raise ValueError("Prompt must be non-empty.")
 
-        srv, effective_mode = local_sidecar.preflight_live_inference(api_url, local_sidecar.DEFAULT_MODEL_ID, req_mode)
+        srv, effective_mode = apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
 
         if async_job:
-            job_info = local_sidecar.submit_async_job(
+            job_info = apprentice_engine.submit_async_job(
                 {
                     "kind": "stage_patch",
                     "kwargs": {
@@ -2959,7 +2959,7 @@ def _bionic_stage_patch_sync(
                 "prev_verdict_update": prev_res,
                 "scorecard": sc_str,
                 "user_notice": (
-                    f"[BIONIC SIDECAR NOTICE] Launched async stage-patch sprint {job_info['job_id']} "
+                    f"[APPRENTICE NOTICE] Launched async stage-patch sprint {job_info['job_id']} "
                     f"for {target_filename} ({effort_norm}/{effective_mode}). | {sc_str}"
                 ),
             }
@@ -2970,7 +2970,7 @@ def _bionic_stage_patch_sync(
             stage_user_prompt += _STAGE_PY_DISCIPLINE_HINT
         if effort_norm == "high":
             stage_user_prompt += CONCISE_HIGH_THINKING_HINT
-        assembled, _ = local_sidecar.assemble_prompt_payload(
+        assembled, _ = apprentice_engine.assemble_prompt_payload(
             user_prompt=stage_user_prompt,
             context_files=validated_files,
             repo_root=repo_resolved,
@@ -2979,17 +2979,17 @@ def _bionic_stage_patch_sync(
             context_slices=slice_items,
         )
         loaded_ctx = srv.get("loaded_context_length")
-        max_toks = local_sidecar.resolve_effective_max_tokens(effective_mode, max_tokens)
+        max_toks = apprentice_engine.resolve_effective_max_tokens(effective_mode, max_tokens)
         sys_bytes = len(sys_prompt.encode("utf-8"))
         prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
-        eta1 = local_sidecar._enforce_eta_or_raise(
+        eta1 = apprentice_engine._enforce_eta_or_raise(
             mode=effective_mode,
             prompt_bytes=prompt_bytes,
             max_tokens=max_toks,
             max_eta_seconds=max_eta,
             expected_turns=1,
             force_slow=False,
-            cmd_name="bionic_stage_patch",
+            cmd_name="apprentice_stage_patch",
             invocation_tier=tier,
             has_code_context=True,
             loaded_ctx_override=loaded_ctx,
@@ -2999,9 +2999,9 @@ def _bionic_stage_patch_sync(
         )
         t_call0 = time.perf_counter()
         try:
-            res1 = local_sidecar.invoke_chat_completion(
+            res1 = apprentice_engine.invoke_chat_completion(
                 api_url=api_url,
-                model_id=local_sidecar.DEFAULT_MODEL_ID,
+                model_id=apprentice_engine.DEFAULT_MODEL_ID,
                 mode=effective_mode,
                 system_prompt=sys_prompt,
                 user_content=assembled,
@@ -3013,9 +3013,9 @@ def _bionic_stage_patch_sync(
             )
         except Exception as exc:
             err_dt = round(time.perf_counter() - t_call0, 3)
-            local_sidecar.record_usage_telemetry(
+            apprentice_engine.record_usage_telemetry(
                 {
-                    "cmd": "bionic_stage_patch",
+                    "cmd": "apprentice_stage_patch",
                     "effort": eta1["effort"],
                     "invocation_tier": tier,
                     "mode": effective_mode,
@@ -3031,9 +3031,9 @@ def _bionic_stage_patch_sync(
                     "finish_reason": "error",
                 }
             )
-            local_sidecar.record_call_outcome(
+            apprentice_engine.record_call_outcome(
                 verdict="corrected",
-                cmd="bionic_stage_patch",
+                cmd="apprentice_stage_patch",
                 effort=eta1["effort"],
                 mode=effective_mode,
                 elapsed_s=err_dt,
@@ -3042,9 +3042,9 @@ def _bionic_stage_patch_sync(
             )
             raise
 
-        local_sidecar.record_usage_telemetry(
+        apprentice_engine.record_usage_telemetry(
             {
-                "cmd": "bionic_stage_patch",
+                "cmd": "apprentice_stage_patch",
                 "effort": eta1["effort"],
                 "invocation_tier": tier,
                 "mode": effective_mode,
@@ -3065,7 +3065,7 @@ def _bionic_stage_patch_sync(
         fence_err1 = _check_unclosed_code_fence(res1["content"]) or (
             "Response truncated with finish_reason=length." if res1["finish_reason"] != "stop" else None
         )
-        receipt = local_sidecar.stage_code_artifact(
+        receipt = apprentice_engine.stage_code_artifact(
             staging_dir=safe_staging,
             target_filename=target_filename,
             generated_text=res1["content"],
@@ -3100,7 +3100,7 @@ def _bionic_stage_patch_sync(
                 sleep_warn = _detect_sleep_selftest_antipattern(Path(receipt["staged_file"]))
                 if sleep_warn:
                     diag_err = f"{diag_err}\n{sleep_warn}"
-            faulty_code = local_sidecar.extract_staged_code(res1["content"])
+            faulty_code = apprentice_engine.extract_staged_code(res1["content"])
             repair_ctx_block = _build_stage_repair_context(
                 validated_files,
                 slice_items,
@@ -3123,7 +3123,7 @@ def _bionic_stage_patch_sync(
                 "and emit the complete corrected file immediately.]"
             )
             repair_bytes = sys_bytes + len(repair_prompt.encode("utf-8"))
-            repair_eta = local_sidecar.estimate_eta(
+            repair_eta = apprentice_engine.estimate_eta(
                 mode=repair_mode,
                 prompt_bytes=repair_bytes,
                 max_tokens=max_toks,
@@ -3132,7 +3132,7 @@ def _bionic_stage_patch_sync(
                 has_code_context=True,
                 loaded_ctx_override=loaded_ctx,
                 calibrated_output=True,
-                cmd_name="bionic_stage_patch_retry",
+                cmd_name="apprentice_stage_patch_retry",
                 sys_prompt_bytes=sys_bytes,
                 target_code_bytes=max(1, len(faulty_code.encode("utf-8"))),
             )
@@ -3142,9 +3142,9 @@ def _bionic_stage_patch_sync(
                 attempts = 2
                 t_heal0 = time.perf_counter()
                 try:
-                    res2 = local_sidecar.invoke_chat_completion(
+                    res2 = apprentice_engine.invoke_chat_completion(
                         api_url=api_url,
-                        model_id=local_sidecar.DEFAULT_MODEL_ID,
+                        model_id=apprentice_engine.DEFAULT_MODEL_ID,
                         mode=repair_mode,
                         system_prompt=sys_prompt,
                         user_content=repair_prompt,
@@ -3157,9 +3157,9 @@ def _bionic_stage_patch_sync(
                     )
                     repair_retried = True
                     heal_elapsed_s = round(time.perf_counter() - t_heal0, 3)
-                    local_sidecar.record_usage_telemetry(
+                    apprentice_engine.record_usage_telemetry(
                         {
-                            "cmd": "bionic_stage_patch_retry",
+                            "cmd": "apprentice_stage_patch_retry",
                             "effort": repair_eta["effort"],
                             "invocation_tier": tier,
                             "mode": repair_mode,
@@ -3189,7 +3189,7 @@ def _bionic_stage_patch_sync(
                         "prompt_tokens": int(res1.get("prompt_tokens") or 0) + int(res2.get("prompt_tokens") or 0),
                         "completion_tokens": int(res1.get("completion_tokens") or 0) + int(res2.get("completion_tokens") or 0),
                     }
-                    receipt = local_sidecar.stage_code_artifact(
+                    receipt = apprentice_engine.stage_code_artifact(
                         staging_dir=safe_staging,
                         target_filename=target_filename,
                         generated_text=res2["content"],
@@ -3228,9 +3228,9 @@ def _bionic_stage_patch_sync(
             verdict = "clean"
 
         total_dt = round(float(res1["elapsed_s"]) + heal_elapsed_s, 3)
-        sc_rec = local_sidecar.record_call_outcome(
+        sc_rec = apprentice_engine.record_call_outcome(
             verdict=verdict,
-            cmd="bionic_stage_patch",
+            cmd="apprentice_stage_patch",
             effort=eta1["effort"],
             mode=effective_mode,
             elapsed_s=total_dt,
@@ -3257,13 +3257,13 @@ def _bionic_stage_patch_sync(
             "completion_telemetry": receipt.get("telemetry"),
             "scorecard": sc_fmt,
             "user_notice": (
-                f"[BIONIC SIDECAR NOTICE] Staged {target_filename} in scratch "
+                f"[APPRENTICE NOTICE] Staged {target_filename} in scratch "
                 f"(attempts={attempts}, verdict={verdict}, py_compile_ok={receipt['py_compile_ok']}). | {sc_fmt}"
             ),
         }
-    except local_sidecar.SidecarFirewallError as exc:
+    except apprentice_engine.SidecarFirewallError as exc:
         return _firewall_error_response(exc, "Patch staging")
-    except local_sidecar.SidecarEtaTrippedError as exc:
+    except apprentice_engine.SidecarEtaTrippedError as exc:
         sc_str = _scorecard_suffix()
         return {
             "ok": False,
@@ -3271,7 +3271,7 @@ def _bionic_stage_patch_sync(
             "error": str(exc),
             "eta_estimate": exc.estimate,
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Patch staging ETA breaker handed back to frontier thread. | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Patch staging ETA breaker handed back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
         sc_str = _scorecard_suffix()
@@ -3280,18 +3280,18 @@ def _bionic_stage_patch_sync(
             "error_code": "STAGE_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
-            "user_notice": f"[BIONIC SIDECAR NOTICE] Patch staging error: {exc} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Patch staging error: {exc} | {sc_str}",
         }
 
 
 @mcp.tool()
-async def bionic_stage_patch(
+async def apprentice_stage_patch(
     target_filename: str,
     prompt: str,
     context_files: list[str] | None = None,
     repo: str = "",
     compare_against: str = "",
-    staging_dir: str = str(local_sidecar.DEFAULT_STAGING_DIR),
+    staging_dir: str = str(apprentice_engine.DEFAULT_STAGING_DIR),
     effort: str | None = None,
     mode: str | None = None,
     invocation_tier: str = "auto",
@@ -3305,7 +3305,7 @@ async def bionic_stage_patch(
     """Stage isolated scratch code/patch + py_compile + optional smoke check with dedicated 45s self-heal retry."""
     return await _run_mcp_with_sync_guard(
         "stage-patch",
-        _bionic_stage_patch_sync,
+        _apprentice_stage_patch_sync,
         {
             "target_filename": target_filename,
             "prompt": prompt,
@@ -3326,8 +3326,8 @@ async def bionic_stage_patch(
     )
 
 
-_mcp_bionic_stage_patch_coro = bionic_stage_patch
-bionic_stage_patch = _bionic_stage_patch_sync  # type: ignore[assignment]
+_mcp_apprentice_stage_patch_coro = apprentice_stage_patch
+apprentice_stage_patch = _apprentice_stage_patch_sync  # type: ignore[assignment]
 
 
 def run_self_tests() -> dict[str, Any]:
@@ -3363,21 +3363,21 @@ def run_self_tests() -> dict[str, Any]:
     assert "`Checklist`" in cleaned and "`Draft`" in cleaned and "(...)" not in cleaned
     checks.append("placeholder_link_sanitizer")
 
-    # 3. Confirmation gate & profile validation in bionic_control
-    blocked = bionic_control(action="start_headless", profile="gpu-daily", user_confirmed=False)
+    # 3. Confirmation gate & profile validation in apprentice_control
+    blocked = apprentice_control(action="start_headless", profile="gpu-daily", user_confirmed=False)
     assert blocked["ok"] is False and blocked["error_code"] == "USER_CONFIRMATION_REQUIRED"
-    checks.append("bionic_control_confirmation_gate")
+    checks.append("apprentice_control_confirmation_gate")
 
     # 4. 60s auto vs 90s explicit ETA & firewall integration
     assert _resolve_eta_cap("auto") == ("auto", 60.0)
     assert _resolve_eta_cap("explicit") == ("explicit", 90.0)
-    fw_digest = bionic_digest(prompt="check", context_files=["/home/orin/.gemini/config/mcp_config.json"])
+    fw_digest = apprentice_digest(prompt="check", context_files=["/home/orin/.gemini/config/mcp_config.json"])
     assert fw_digest["ok"] is False and fw_digest["error_code"] == "SECURITY_FIREWALL_BLOCKED"
     checks.append("eta_tier_and_mcp_firewall_enforcement")
 
     # 5. Tool discovery check (full MCPServer verification when running in venv)
     tools = _registered_tool_names()
-    expected = {"bionic_control", "bionic_digest", "bionic_repo_audit", "bionic_stage_patch"}
+    expected = {"apprentice_control", "apprentice_digest", "apprentice_repo_audit", "apprentice_stage_patch"}
     assert expected.issubset(set(tools)), f"Missing MCP tools: {expected - set(tools)}"
     checks.append("mcp_tool_registration" if _HAS_MCP else "stdlib_fallback_tool_registration")
 
@@ -3396,7 +3396,7 @@ def run_self_tests() -> dict[str, Any]:
         def do_GET(self) -> None:  # noqa: N802
             if self.path == "/api/v0/models":
                 row = {
-                    "id": local_sidecar.DEFAULT_MODEL_ID,
+                    "id": apprentice_engine.DEFAULT_MODEL_ID,
                     "state": "loaded" if state_box["loaded"] else "not-loaded",
                     "loaded_context_length": state_box["ctx"] if state_box["loaded"] else None,
                 }
@@ -3425,7 +3425,7 @@ def run_self_tests() -> dict[str, Any]:
                 body = json.dumps(
                     {
                         "id": "mock-cmp",
-                        "model": local_sidecar.DEFAULT_MODEL_ID,
+                        "model": apprentice_engine.DEFAULT_MODEL_ID,
                         "choices": [{"index": 0, "message": {"role": "assistant", "content": reply_txt}, "finish_reason": finish_reason}],
                         "usage": {"prompt_tokens": 60, "completion_tokens": 18},
                         "stats": {"tokens_per_second": 42.0},
@@ -3448,16 +3448,16 @@ def run_self_tests() -> dict[str, Any]:
     th.start()
     with tempfile.TemporaryDirectory() as td:
         td_p = Path(td)
-        old_api = os.environ.get("BIONIC_SIDECAR_API_URL")
-        old_tel = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
+        old_api = os.environ.get("APPRENTICE_API_URL")
+        old_tel = os.environ.get("APPRENTICE_TELEMETRY_LOG")
         old_custom_port = os.environ.get("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT")
         telemetry_path = td_p / "telemetry.jsonl"
-        os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv.server_port}/v1"
-        os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(telemetry_path)
+        os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv.server_port}/v1"
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(telemetry_path)
         os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
         try:
-            # 6a. UNLOADED blocks bionic_digest before any POST (anti-JIT)
-            unloaded_res = bionic_digest(prompt="hello", mode="fast", invocation_tier="auto")
+            # 6a. UNLOADED blocks apprentice_digest before any POST (anti-JIT)
+            unloaded_res = apprentice_digest(prompt="hello", mode="fast", invocation_tier="auto")
             assert unloaded_res["ok"] is False
             assert unloaded_res["error_code"] == "BIONIC_UNLOADED_CONFIRMATION_REQUIRED"
             assert state_box["posts"] == 0
@@ -3467,7 +3467,7 @@ def run_self_tests() -> dict[str, Any]:
             state_box["ctx"] = 16384
             big_ctx = td_p / "big_ctx.txt"
             big_ctx.write_text(("alpha beta gamma delta epsilon\n" * 1150), encoding="utf-8")
-            clamp_res = bionic_digest(
+            clamp_res = apprentice_digest(
                 prompt="summarize",
                 context_files=[str(big_ctx)],
                 repo=str(td_p),
@@ -3488,7 +3488,7 @@ def run_self_tests() -> dict[str, Any]:
             orig_f = td_p / "mod.py"
             orig_f.write_text("def ok() -> int:\n    return 0\n", encoding="utf-8")
             stage_dir = td_p / "stage"
-            stage_res = bionic_stage_patch(
+            stage_res = apprentice_stage_patch(
                 target_filename="mod.py",
                 prompt="update function",
                 compare_against=str(orig_f),
@@ -3503,12 +3503,12 @@ def run_self_tests() -> dict[str, Any]:
             assert state_box["posts"] == 2
             tel_rows = [json.loads(line) for line in telemetry_path.read_text(encoding="utf-8").splitlines() if line.strip()]
             assert len(tel_rows) == 3
-            assert [r["cmd"] for r in tel_rows] == ["bionic_digest", "bionic_stage_patch", "bionic_stage_patch_retry"]
+            assert [r["cmd"] for r in tel_rows] == ["apprentice_digest", "apprentice_stage_patch", "apprentice_stage_patch_retry"]
             assert tel_rows[0]["tripped"] is True and tel_rows[0]["mode"] == "cpu-bg"
             assert (telemetry_path.stat().st_mode & 0o777) == 0o600
             assert stage_res["verdict"] == "healed"
             assert isinstance(stage_res.get("completion_telemetry"), dict) and "prompt_tokens" in stage_res["completion_telemetry"]
-            assert "Bionic Calls =" in stage_res["user_notice"]
+            assert "Apprentice Calls =" in stage_res["user_notice"]
             checks.append("stage_patch_syntax_retry_and_telemetry")
 
             # 10. Async MCP tool wrapper verification (coroutine registered on MCPServer, sync callable exposed)
@@ -3516,16 +3516,16 @@ def run_self_tests() -> dict[str, Any]:
                 import inspect
                 tool_mgr = getattr(mcp, "_tool_manager", None)
                 assert tool_mgr is not None
-                for tname in ("bionic_control", "bionic_digest", "bionic_repo_audit", "bionic_stage_patch"):
+                for tname in ("apprentice_control", "apprentice_digest", "apprentice_repo_audit", "apprentice_stage_patch"):
                     tobj = tool_mgr._tools[tname]
                     assert inspect.iscoroutinefunction(tobj.fn), f"{tname} MCP tool must be async coroutine"
             checks.append("mcp_async_wrappers_and_sync_python_compat")
 
-            # 11. HIGH effort (>=4096 floor) + #Lstart-Lend slice + bionic_control verdict downgrade
+            # 11. HIGH effort (>=4096 floor) + #Lstart-Lend slice + apprentice_control verdict downgrade
             slice_file = td_p / "slice_src.py"
             slice_file.write_text("\n".join(f"line_{i} = {i}" for i in range(1, 21)) + "\n", encoding="utf-8")
             state_box["replies"] = ["Slice reviewed cleanly."]
-            high_res = bionic_digest(
+            high_res = apprentice_digest(
                 prompt="Review lines",
                 context_files=[f"{slice_file}#L5-L10"],
                 repo=str(td_p),
@@ -3536,11 +3536,11 @@ def run_self_tests() -> dict[str, Any]:
             assert high_res["effort"] == "high"
             assert high_res["eta_estimate"]["effective_max_tokens"] >= 4096
             assert high_res["call_id"]
-            assert "Bionic Calls =" in high_res["user_notice"]
+            assert "Apprentice Calls =" in high_res["user_notice"]
 
-            vd = bionic_control(action="verdict", call_id=high_res["call_id"], verdict="corrected", note="test_downgrade")
+            vd = apprentice_control(action="verdict", call_id=high_res["call_id"], verdict="corrected", note="test_downgrade")
             assert vd["ok"] is True and vd["verdict"] == "corrected"
-            jlist = bionic_control(action="job-list")
+            jlist = apprentice_control(action="job-list")
             assert jlist["ok"] is True
             checks.append("high_effort_slice_and_verdict_downgrade")
 
@@ -3549,7 +3549,7 @@ def run_self_tests() -> dict[str, Any]:
                 "```python\nimport sys\nsys.exit(1)\n```\n",
                 "```python\nimport sys\nif '--check' in sys.argv:\n    print('OK')\n```\n",
             ]
-            smoke_res = bionic_stage_patch(
+            smoke_res = apprentice_stage_patch(
                 target_filename="smoke_mod.py",
                 prompt="script supporting --check",
                 staging_dir=str(stage_dir),
@@ -3562,19 +3562,19 @@ def run_self_tests() -> dict[str, Any]:
 
             # 13. Async sprint job submit + job-collect round-trip
             state_box["replies"] = ["Async sprint digest complete."]
-            sub_res = bionic_digest(
+            sub_res = apprentice_digest(
                 prompt="async summarize",
                 effort="standard",
                 async_job=True,
             )
             assert sub_res["ok"] is True and sub_res["async_job"] is True
             jid = sub_res["job_id"]
-            col_res = bionic_control(action="job-collect", job_id=jid, wait_seconds=15.0)
+            col_res = apprentice_control(action="job-collect", job_id=jid, wait_seconds=15.0)
             assert col_res["ok"] is True and col_res["status"] == "completed", f"job collect unexpected: {col_res}"
             assert col_res["result"]["completion"]["content"] == "Async sprint digest complete."
             checks.append("async_sprint_submit_and_collect")
 
-            # 14. bionic_repo_audit fails fast BEFORE subprocess work when server becomes unloaded
+            # 14. apprentice_repo_audit fails fast BEFORE subprocess work when server becomes unloaded
             state_box["loaded"] = False
             hom_fake = td_p / "fake_hom"
             mem_fake = td_p / "fake_mem"
@@ -3586,7 +3586,7 @@ def run_self_tests() -> dict[str, Any]:
             os.environ["HOMUNCULUS_ROOT"] = str(hom_fake)
             os.environ["HOMUNCULUS_MEMORY_ROOT"] = str(mem_fake)
             try:
-                fast_fail_audit = bionic_repo_audit(
+                fast_fail_audit = apprentice_repo_audit(
                     repo=str(td_p),
                     project="Demo",
                     name="audit_fast_fail",
@@ -3616,7 +3616,7 @@ def run_self_tests() -> dict[str, Any]:
                 ("- M3x8 SHCS: qty 4 (`BOM.md#L1`)\n- M3x12", "length"),
                 ("- M3x12 BHCS: qty 6 (`BOM.md#L2`)\n", "stop"),
             ]
-            len_res = bionic_digest(
+            len_res = apprentice_digest(
                 prompt="list fasteners",
                 context_files=[str(bom_t)],
                 repo=str(td_p),
@@ -3629,7 +3629,7 @@ def run_self_tests() -> dict[str, Any]:
             assert "report" not in vrf15 and len(json.dumps(vrf15)) <= 220
             checks.append("v23_digest_length_heal_and_compact_verify_receipt")
 
-            # 16. V2.3 bionic_repo_audit verify_claims self-scrub heal -> healed, persistent unbacked -> corrected
+            # 16. V2.3 apprentice_repo_audit verify_claims self-scrub heal -> healed, persistent unbacked -> corrected
             audit_repo = td_p / "demo_repo"
             audit_repo.mkdir()
             (audit_repo / "BOM.md").write_text("| M3x8 SHCS | 4 |\n", encoding="utf-8")
@@ -3639,7 +3639,7 @@ def run_self_tests() -> dict[str, Any]:
                 "---\nproject: Demo\nentity: Demo_Entity\ncompartment: private\n---\n# Demo\n",
                 encoding="utf-8",
             )
-            real_hom = os.environ.get("HOMUNCULUS_ROOT") or str(local_sidecar.DEFAULT_HOMUNCULUS_ROOT)
+            real_hom = os.environ.get("HOMUNCULUS_ROOT") or str(apprentice_engine.DEFAULT_HOMUNCULUS_ROOT)
             os.environ["HOMUNCULUS_ROOT"] = real_hom
             os.environ["HOMUNCULUS_MEMORY_ROOT"] = str(mem_v23)
             try:
@@ -3647,7 +3647,7 @@ def run_self_tests() -> dict[str, Any]:
                     ("- Fastener: 99 M5x40 SHCS (`BOM.md#L1`)\n", "stop"),
                     ("- Fastener: 4 M3x8 SHCS (`BOM.md#L1`)\n", "stop"),
                 ]
-                ra_heal = bionic_repo_audit(
+                ra_heal = apprentice_repo_audit(
                     repo=str(audit_repo),
                     project="Demo",
                     name="audit_heal",
@@ -3662,7 +3662,7 @@ def run_self_tests() -> dict[str, Any]:
                     ("- Fastener: 99 M5x40 SHCS (`BOM.md#L1`)\n", "stop"),
                     ("- Fastener: 88 M5x40 SHCS (`BOM.md#L1`)\n", "stop"),
                 ]
-                ra_bad = bionic_repo_audit(
+                ra_bad = apprentice_repo_audit(
                     repo=str(audit_repo),
                     project="Demo",
                     name="audit_bad",
@@ -3689,7 +3689,7 @@ def run_self_tests() -> dict[str, Any]:
                 "```python\nimport sys\nif __name__ == '__main__':\n    if '--self-test' in sys.argv:\n        sys.exit(1)\n```\n",
                 "```python\nimport sys\nif __name__ == '__main__':\n    if '--self-test' in sys.argv:\n        sys.exit(0)\n```\n",
             ]
-            st_auto = bionic_stage_patch(
+            st_auto = apprentice_stage_patch(
                 target_filename="auto_st.py",
                 prompt="write cli supporting --self-test",
                 staging_dir=str(stage_dir),
@@ -3700,9 +3700,9 @@ def run_self_tests() -> dict[str, Any]:
             checks.append("v23_stage_patch_auto_selftest_smoke_heal")
 
             # 18. V2.3 control scorecard-reset confirmation gate + relative banner
-            rs_deny = bionic_control(action="scorecard-reset", user_confirmed=False)
+            rs_deny = apprentice_control(action="scorecard-reset", user_confirmed=False)
             assert rs_deny["ok"] is False and rs_deny["error_code"] == "USER_CONFIRMATION_REQUIRED"
-            rs_ok = bionic_control(action="scorecard-reset", epoch_label="v2.3-test", user_confirmed=True)
+            rs_ok = apprentice_control(action="scorecard-reset", epoch_label="v2.3-test", user_confirmed=True)
             assert rs_ok["ok"] is True and "epoch v2.3-test: 0 calls" in rs_ok["scorecard"]
             checks.append("v23_control_scorecard_reset_confirmation_and_delta")
 
@@ -3717,7 +3717,7 @@ def run_self_tests() -> dict[str, Any]:
             big19_lines.append("def omega_check(): return 7")
             big19.write_text("\n".join(big19_lines) + "\n", encoding="utf-8")
             n19 = len(big19_lines)
-            chunks19 = local_sidecar.plan_line_preserving_chunks([big19], target_chunk_bytes=22000)
+            chunks19 = apprentice_engine.plan_line_preserving_chunks([big19], target_chunk_bytes=22000)
             assert len(chunks19) >= 2, f"expected >=2 chunks, got {len(chunks19)}"
 
             def _chunk19_reply(req_body: str) -> tuple[str, str]:
@@ -3734,7 +3734,7 @@ def run_self_tests() -> dict[str, Any]:
                 return ("NONE", "stop")
 
             state_box["replies"] = [_chunk19_reply] * (len(chunks19) + 1)
-            ch_res19 = bionic_digest(
+            ch_res19 = apprentice_digest(
                 prompt="Find ALPHA_LIMIT and omega_check in big_mod.py",
                 context_files=[str(big19)],
                 repo=str(td_p),
@@ -3778,7 +3778,7 @@ def run_self_tests() -> dict[str, Any]:
                         if callable(raw_reply):
                             raw_reply = raw_reply(req_body)
                         if isinstance(raw_reply, dict) and "choices" in raw_reply:
-                            body = json.dumps({"id": "mock-cmp", "model": local_sidecar.DEFAULT_MODEL_ID, **raw_reply}).encode("utf-8")
+                            body = json.dumps({"id": "mock-cmp", "model": apprentice_engine.DEFAULT_MODEL_ID, **raw_reply}).encode("utf-8")
                         else:
                             if isinstance(raw_reply, tuple):
                                 reply_txt, finish_reason = str(raw_reply[0]), str(raw_reply[1])
@@ -3787,7 +3787,7 @@ def run_self_tests() -> dict[str, Any]:
                             body = json.dumps(
                                 {
                                     "id": "mock-cmp",
-                                    "model": local_sidecar.DEFAULT_MODEL_ID,
+                                    "model": apprentice_engine.DEFAULT_MODEL_ID,
                                     "choices": [{"index": 0, "message": {"role": "assistant", "content": reply_txt}, "finish_reason": finish_reason}],
                                     "usage": {"prompt_tokens": 60, "completion_tokens": 18},
                                     "stats": {"tokens_per_second": 42.0},
@@ -3803,7 +3803,7 @@ def run_self_tests() -> dict[str, Any]:
 
             srv.RequestHandlerClass = _FlexMockHandler
             state_box["replies"] = [_reasoning_synth_reply, _reasoning_synth_reply]
-            synth_res = bionic_digest(
+            synth_res = apprentice_digest(
                 prompt="list M3 fastener from BOM.md",
                 context_files=[str(bom_t)],
                 repo=str(td_p),
@@ -3813,7 +3813,7 @@ def run_self_tests() -> dict[str, Any]:
             assert synth_res["ok"] is True and synth_res["completion"].get("reasoning_recovered") is True, f"synth recovery failed: {synth_res}"
             assert synth_res["verdict"] == "healed" and synth_res["claims_verified"] is True, f"expected healed verified synth: {synth_res}"
 
-            ctrl_ver = bionic_control(action="status")
+            ctrl_ver = apprentice_control(action="status")
             assert ctrl_ver.get("server_version") == SERVER_VERSION
             assert ctrl_ver.get("server_stale_restart_recommended") is False
 
@@ -3827,7 +3827,7 @@ def run_self_tests() -> dict[str, Any]:
             old_jdir = os.environ.get("BIONIC_SIDECAR_JOBS_DIR")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(jobs_td)
             try:
-                js_wait = bionic_control(action="job-status", job_id="BJOB-testwait", wait_seconds=1.5)
+                js_wait = apprentice_control(action="job-status", job_id="BJOB-testwait", wait_seconds=1.5)
                 assert js_wait["ok"] is True and js_wait["status"] == "completed"
             finally:
                 if old_jdir is None:
@@ -3855,7 +3855,7 @@ def run_self_tests() -> dict[str, Any]:
                 + "\n",
                 encoding="utf-8",
             )
-            os.environ["HOMUNCULUS_ROOT"] = str(os.environ.get("HOMUNCULUS_ROOT") or local_sidecar.DEFAULT_HOMUNCULUS_ROOT)
+            os.environ["HOMUNCULUS_ROOT"] = str(os.environ.get("HOMUNCULUS_ROOT") or apprentice_engine.DEFAULT_HOMUNCULUS_ROOT)
             os.environ["HOMUNCULUS_MEMORY_ROOT"] = str(td_p / "mem_v23")
             try:
                 pass1_bullets = "\n".join(
@@ -3873,7 +3873,7 @@ def run_self_tests() -> dict[str, Any]:
                     (pass1_bullets, "stop"),
                     ("L7: - M5 Roll-In T-Nuts qty `10` `[TBD: pitch]` (`BOM.md#L8`)", "stop"),
                 ]
-                surg_res = bionic_digest(
+                surg_res = apprentice_digest(
                     prompt="list all parts in BOM.md",
                     context_files=[str(surg_repo / "BOM.md")],
                     repo=str(surg_repo),
@@ -3911,7 +3911,7 @@ def run_self_tests() -> dict[str, Any]:
                 )
                 pack_files.append(str(pf))
             assert sum(Path(pf).stat().st_size for pf in pack_files) > 36000
-            os.environ["HOMUNCULUS_ROOT"] = str(local_sidecar.DEFAULT_HOMUNCULUS_ROOT)
+            os.environ["HOMUNCULUS_ROOT"] = str(apprentice_engine.DEFAULT_HOMUNCULUS_ROOT)
             os.environ["HOMUNCULUS_MEMORY_ROOT"] = str(td_p / "mem_v23")
             state_box["posts"] = 0
 
@@ -3932,7 +3932,7 @@ def run_self_tests() -> dict[str, Any]:
 
             state_box["replies"] = [_pack_reply] * 4
             try:
-                pack_res = bionic_digest(
+                pack_res = apprentice_digest(
                     prompt="list all fasteners across part_0..part_3",
                     context_files=pack_files,
                     repo=str(pack_dir),
@@ -3958,13 +3958,13 @@ def run_self_tests() -> dict[str, Any]:
             checks.append("v24_packed_multifile_chunk_batches")
         finally:
             if old_api is None:
-                os.environ.pop("BIONIC_SIDECAR_API_URL", None)
+                os.environ.pop("APPRENTICE_API_URL", None)
             else:
-                os.environ["BIONIC_SIDECAR_API_URL"] = old_api
+                os.environ["APPRENTICE_API_URL"] = old_api
             if old_tel is None:
-                os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
             else:
-                os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_tel
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_tel
             if old_custom_port is None:
                 os.environ.pop("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT", None)
             else:
@@ -3972,7 +3972,7 @@ def run_self_tests() -> dict[str, Any]:
             srv.shutdown()
             srv.server_close()
 
-        # 8. _discover_repo_sources skip dirs (even when repo is nested under .cache/) + bionic_control port firewall
+        # 8. _discover_repo_sources skip dirs (even when repo is nested under .cache/) + apprentice_control port firewall
         src_repo = td_p / ".cache" / "src_filter_repo"
         (src_repo / "node_modules" / "pkg").mkdir(parents=True)
         (src_repo / ".venv" / "lib").mkdir(parents=True)
@@ -3982,19 +3982,19 @@ def run_self_tests() -> dict[str, Any]:
         discovered = _discover_repo_sources(src_repo.resolve())
         assert [p.name for p in discovered] == ["main.py"]
 
-        old_api2 = os.environ.get("BIONIC_SIDECAR_API_URL")
+        old_api2 = os.environ.get("APPRENTICE_API_URL")
         old_cp2 = os.environ.get("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT")
-        os.environ["BIONIC_SIDECAR_API_URL"] = "http://127.0.0.1:2375/v1"
+        os.environ["APPRENTICE_API_URL"] = "http://127.0.0.1:2375/v1"
         os.environ.pop("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT", None)
         try:
-            ctrl_bad_port = bionic_control(action="status")
+            ctrl_bad_port = apprentice_control(action="status")
             assert ctrl_bad_port["ok"] is False
             assert ctrl_bad_port["error_code"] == "SECURITY_FIREWALL_BLOCKED"
         finally:
             if old_api2 is None:
-                os.environ.pop("BIONIC_SIDECAR_API_URL", None)
+                os.environ.pop("APPRENTICE_API_URL", None)
             else:
-                os.environ["BIONIC_SIDECAR_API_URL"] = old_api2
+                os.environ["APPRENTICE_API_URL"] = old_api2
             if old_cp2 is not None:
                 os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = old_cp2
         checks.append("discover_sources_skip_dirs_and_control_port_firewall")
@@ -4005,7 +4005,7 @@ def run_self_tests() -> dict[str, Any]:
         try:
             orig_cwd = os.getcwd()
         except OSError:
-            orig_cwd = local_sidecar._safe_subprocess_cwd()
+            orig_cwd = apprentice_engine._safe_subprocess_cwd()
         try:
             os.chdir(gone_dir)
             try:
@@ -4035,7 +4035,7 @@ def run_self_tests() -> dict[str, Any]:
         class _GuardHandler(http.server.BaseHTTPRequestHandler):
             def do_GET(self) -> None:  # noqa: N802
                 body = json.dumps(
-                    {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}
+                    {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}
                 ).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -4051,7 +4051,7 @@ def run_self_tests() -> dict[str, Any]:
                 body = json.dumps(
                     {
                         "id": "guard-test",
-                        "model": local_sidecar.DEFAULT_MODEL_ID,
+                        "model": apprentice_engine.DEFAULT_MODEL_ID,
                         "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": "- M3x8 SHCS qty `4` (`BOM.md#L2`)"}}],
                         "usage": {"prompt_tokens": 180, "completion_tokens": 16},
                     }
@@ -4068,9 +4068,9 @@ def run_self_tests() -> dict[str, Any]:
         srv_g = http.server.HTTPServer(("127.0.0.1", 0), _GuardHandler)
         threading.Thread(target=srv_g.serve_forever, daemon=True).start()
         env_keys = (
-            "BIONIC_SIDECAR_API_URL",
+            "APPRENTICE_API_URL",
             "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
-            "BIONIC_SIDECAR_TELEMETRY_LOG",
+            "APPRENTICE_TELEMETRY_LOG",
             "BIONIC_SIDECAR_JOBS_DIR",
             "BIONIC_SIDECAR_SCORECARD_PATH",
             "BIONIC_SIDECAR_KV_STATE_PATH",
@@ -4078,16 +4078,16 @@ def run_self_tests() -> dict[str, Any]:
         saved_env = {k: os.environ.get(k) for k in env_keys}
         saved_cap = globals()["MCP_SYNC_WAIT_CAP_SECONDS"]
         try:
-            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv_g.server_port}/v1"
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv_g.server_port}/v1"
             os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
-            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(td_p / "guard242_tel.jsonl")
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(td_p / "guard242_tel.jsonl")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(guard_jobs)
             os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(td_p / "guard242_scorecard.json")
             os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(td_p / "guard242_kv.json")
 
             globals()["MCP_SYNC_WAIT_CAP_SECONDS"] = 3.0
             fast_high = asyncio.run(
-                _mcp_bionic_digest_coro(
+                _mcp_apprentice_digest_coro(
                     prompt="list M3 fastener",
                     context_files=[str(guard_repo / "BOM.md")],
                     repo=str(guard_repo),
@@ -4102,7 +4102,7 @@ def run_self_tests() -> dict[str, Any]:
             guard_state["delay"] = 1.2
             globals()["MCP_SYNC_WAIT_CAP_SECONDS"] = 0.25
             slow_high = asyncio.run(
-                _mcp_bionic_digest_coro(
+                _mcp_apprentice_digest_coro(
                     prompt="list M3 fastener slowly",
                     context_files=[str(guard_repo / "BOM.md")],
                     repo=str(guard_repo),
@@ -4117,7 +4117,7 @@ def run_self_tests() -> dict[str, Any]:
 
             # Wait up to 3.0s transiently for worker completion while also testing job-collect wait clamp
             globals()["MCP_SYNC_WAIT_CAP_SECONDS"] = 5.0
-            collected = bionic_control(action="job-collect", job_id=promoted_jid, wait_seconds=500.0)
+            collected = apprentice_control(action="job-collect", job_id=promoted_jid, wait_seconds=500.0)
             assert collected["ok"] is True and collected["status"] == "completed", f"collect fail: {collected}"
             assert collected["waited_seconds"] == 5.0, f"expected wait_seconds clamped to 5.0: {collected}"
             assert collected["result"]["ok"] is True
@@ -4137,7 +4137,7 @@ def run_self_tests() -> dict[str, Any]:
             )
             globals()["MCP_SYNC_WAIT_CAP_SECONDS"] = 0.2
             t_c0 = time.perf_counter()
-            clamped_run = bionic_control(action="job-collect", job_id="BJOB-guardwait", wait_seconds=500.0)
+            clamped_run = apprentice_control(action="job-collect", job_id="BJOB-guardwait", wait_seconds=500.0)
             assert (time.perf_counter() - t_c0) < 2.0
             assert clamped_run["waited_seconds"] == 0.2 and clamped_run["status"] == "running"
         finally:
@@ -4179,7 +4179,7 @@ def run_self_tests() -> dict[str, Any]:
 
             def do_GET(self) -> None:
                 if self.path == "/api/v0/models":
-                    body = json.dumps({"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}).encode("utf-8")
+                    body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}).encode("utf-8")
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json")
                     self.send_header("Content-Length", str(len(body)))
@@ -4225,15 +4225,15 @@ def run_self_tests() -> dict[str, Any]:
         th_24.start()
         mr_cache = td_mr_p / "mr_cache"
         mr_cache.mkdir()
-        saved_env24 = {k: os.environ.get(k) for k in ("BIONIC_SIDECAR_API_URL", "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT", "BIONIC_SIDECAR_TELEMETRY_LOG", "BIONIC_SIDECAR_SCORECARD_PATH", "BIONIC_SIDECAR_KV_STATE_PATH", "BIONIC_SIDECAR_JOBS_DIR")}
+        saved_env24 = {k: os.environ.get(k) for k in ("APPRENTICE_API_URL", "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT", "APPRENTICE_TELEMETRY_LOG", "BIONIC_SIDECAR_SCORECARD_PATH", "BIONIC_SIDECAR_KV_STATE_PATH", "BIONIC_SIDECAR_JOBS_DIR")}
         try:
-            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv_24.server_port}/v1"
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv_24.server_port}/v1"
             os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
-            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(mr_cache / "tel.jsonl")
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(mr_cache / "tel.jsonl")
             os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(mr_cache / "sc.json")
             os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(mr_cache / "kv.json")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(mr_cache / "jobs")
-            res24 = _bionic_digest_sync(
+            res24 = _apprentice_digest_sync(
                 prompt="Summarize rules in big_rules.md",
                 context_files=[str(big_src)],
                 repo=str(mr_repo),
@@ -4285,9 +4285,9 @@ def run_self_tests() -> dict[str, Any]:
 
             def do_GET(self) -> None:
                 if self.path == "/api/v0/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 57344}]}
                 elif self.path == "/v1/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID}]}
                 else:
                     self.send_response(404)
                     self.end_headers()
@@ -4326,22 +4326,22 @@ def run_self_tests() -> dict[str, Any]:
         saved25 = {
             k: os.environ.get(k)
             for k in (
-                "BIONIC_SIDECAR_API_URL",
+                "APPRENTICE_API_URL",
                 "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
-                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "APPRENTICE_TELEMETRY_LOG",
                 "BIONIC_SIDECAR_SCORECARD_PATH",
                 "BIONIC_SIDECAR_KV_STATE_PATH",
                 "BIONIC_SIDECAR_JOBS_DIR",
             )
         }
         try:
-            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv25.server_port}/v1"
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv25.server_port}/v1"
             os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
-            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache25 / "tel.jsonl")
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(cache25 / "tel.jsonl")
             os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache25 / "sc.json")
             os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache25 / "kv.json")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache25 / "jobs")
-            res25 = _bionic_digest_sync(
+            res25 = _apprentice_digest_sync(
                 prompt="Extract specs from both slices",
                 context_files=[f"{ms25}#L1-L2", f"{ms25}#L8-L8"],
                 repo=str(r25),
@@ -4411,9 +4411,9 @@ def run_self_tests() -> dict[str, Any]:
 
             def do_GET(self) -> None:
                 if self.path == "/api/v0/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
                 elif self.path == "/v1/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID}]}
                 else:
                     self.send_response(404)
                     self.end_headers()
@@ -4460,22 +4460,22 @@ def run_self_tests() -> dict[str, Any]:
         saved26 = {
             k: os.environ.get(k)
             for k in (
-                "BIONIC_SIDECAR_API_URL",
+                "APPRENTICE_API_URL",
                 "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
-                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "APPRENTICE_TELEMETRY_LOG",
                 "BIONIC_SIDECAR_SCORECARD_PATH",
                 "BIONIC_SIDECAR_KV_STATE_PATH",
                 "BIONIC_SIDECAR_JOBS_DIR",
             )
         }
         try:
-            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv26.server_port}/v1"
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv26.server_port}/v1"
             os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
-            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache26 / "tel.jsonl")
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(cache26 / "tel.jsonl")
             os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache26 / "sc.json")
             os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache26 / "kv.json")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache26 / "jobs")
-            res26 = _bionic_digest_sync(
+            res26 = _apprentice_digest_sync(
                 prompt="Audit big_mig.patch and helper.py#L3-L5",
                 context_files=[str(big26), f"{sl26}#L3-L5"],
                 repo=str(r26),
@@ -4536,9 +4536,9 @@ def run_self_tests() -> dict[str, Any]:
 
             def do_GET(self) -> None:
                 if self.path == "/api/v0/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
                 elif self.path == "/v1/models":
-                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                    payload = {"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID}]}
                 else:
                     self.send_response(404)
                     self.end_headers()
@@ -4583,23 +4583,23 @@ def run_self_tests() -> dict[str, Any]:
         saved27 = {
             k: os.environ.get(k)
             for k in (
-                "BIONIC_SIDECAR_API_URL",
+                "APPRENTICE_API_URL",
                 "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
-                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "APPRENTICE_TELEMETRY_LOG",
                 "BIONIC_SIDECAR_SCORECARD_PATH",
                 "BIONIC_SIDECAR_KV_STATE_PATH",
                 "BIONIC_SIDECAR_JOBS_DIR",
             )
         }
         try:
-            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv27.server_port}/v1"
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv27.server_port}/v1"
             os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
-            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache27 / "tel.jsonl")
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(cache27 / "tel.jsonl")
             os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache27 / "sc.json")
             os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache27 / "kv.json")
             os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache27 / "jobs")
 
-            res27_multi = _bionic_digest_sync(
+            res27_multi = _apprentice_digest_sync(
                 prompt="Extract EVERY LIMIT_ALPHA_* across modules",
                 context_files=mod_slices_27,
                 repo=str(r27),
@@ -4614,7 +4614,7 @@ def run_self_tests() -> dict[str, Any]:
                 if "Below are verbatim" not in item27["user"] and "module_" in item27["user"]:
                     assert "OUTSIDE_TOP" not in item27["user"] and "OUTSIDE_BOT" not in item27["user"], "Map batch leaked lines outside #L3-L4"
 
-            res27_same = _bionic_digest_sync(
+            res27_same = _apprentice_digest_sync(
                 prompt="Extract SINGLE_ITEM_1",
                 context_files=same_file_5_slices,
                 repo=str(r27),
@@ -4671,7 +4671,7 @@ def run_self_tests() -> dict[str, Any]:
             srv27.RequestHandlerClass = _V28Handler
             stg28 = r27 / "stg28"
             stg28.mkdir()
-            res28 = _bionic_stage_patch_sync(
+            res28 = _apprentice_stage_patch_sync(
                 target_filename="mod_v245.py",
                 prompt="Implement validator matching schema.py#L1-L3 with --self-test",
                 context_files=[str(oversize28), f"{schema28}#L1-L3"],
@@ -4691,7 +4691,7 @@ def run_self_tests() -> dict[str, Any]:
             assert "oversize_ref.py" not in seen_27[1]["user"], "Oversized full file should be omitted from Pass-2 context"
             assert "[HIGH-EFFORT EXECUTION DISCIPLINE:" not in seen_27[1]["user"], "HIGH thinking hint should not pollute fast Pass-2"
 
-            res28_patch = _bionic_stage_patch_sync(
+            res28_patch = _apprentice_stage_patch_sync(
                 target_filename="fix.patch",
                 prompt="Generate patch diff",
                 staging_dir=str(stg28),
@@ -4710,7 +4710,7 @@ def run_self_tests() -> dict[str, Any]:
     checks.append("v245_slice_count_mapreduce_and_fast_ctx_stage_repair")
 
     return {
-        "schema_version": "BIONIC_MCP_V1",
+        "schema_version": "APPRENTICE_MCP_V1",
         "status": "PASS",
         "mcp_library_active": _HAS_MCP,
         "tools_registered": sorted(tools),
@@ -4720,7 +4720,7 @@ def run_self_tests() -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Antigravity MCP Server for LM Studio Bionic Sidecar")
+    parser = argparse.ArgumentParser(description="Antigravity MCP Server for Apprentice Multi-Backend Local Sidecar")
     parser.add_argument("--self-test", action="store_true", help="Run deterministic offline MCP server self-tests")
     parser.add_argument("--status", action="store_true", help="Print Bionic control status JSON and exit")
     parser.add_argument("--json", action="store_true", help="Emit indented JSON output")
@@ -4730,13 +4730,13 @@ def main(argv: list[str] | None = None) -> int:
         try:
             res = run_self_tests()
         except Exception as exc:
-            err_payload = {"schema_version": "BIONIC_MCP_V1", "status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+            err_payload = {"schema_version": "APPRENTICE_MCP_V1", "status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
             print(json.dumps(err_payload, indent=2) if args.json else f"[MCP_SELF_TEST_FAIL] {err_payload['error']}", file=sys.stderr)
             return 3
         print(json.dumps(res, indent=2) if args.json else f"[PASS] {res['tests_run']} MCP server tests passed")
         return 0
     if args.status:
-        print(json.dumps(bionic_control(action="status"), indent=2))
+        print(json.dumps(apprentice_control(action="status"), indent=2))
         return 0
 
     mcp.run(transport="stdio")

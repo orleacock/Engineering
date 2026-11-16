@@ -4,7 +4,7 @@ parent_note: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "lessons_learned"
-last_synced: "2026-11-14"
+last_synced: "2026-11-16"
 ---
 
 # 🧠 Homunculus — AI Co-Engineering & Architecture Lessons Learned (`Homunculus_Lessons_Learned`)
@@ -44,7 +44,7 @@ flowchart LR
 > [!IMPORTANT]
 > **Sectional Rebuild Protocol (`Chesterton's Fence` + `Anti-Bloat Graveyard` — Query via `sync_memory.py --project Homunculus --invariants [<subsystem>]`)**:
 > Before performing a **sectional rebuild** or major refactor of any `Homunculus` script, rule, or skill, read that subsystem's row and subsection below first. Every rebuild must:
-> 1. **Preserve 100% of `[MUST-KEEP INVARIANTS]`** (so solved bugs in `LL-001`–`LL-036` never regress); and
+> 1. **Preserve 100% of `[MUST-KEEP INVARIANTS]`** (so solved bugs in `LL-001`–`LL-047` never regress); and
 > 2. **Exclude 100% of `[RETIRED BLOAT & ANTI-PATTERNS]`** (so over-engineered heuristics and turn-wasting traps are never re-introduced).
 
 <!-- SUBSYSTEM-INVARIANTS:START -->
@@ -151,6 +151,7 @@ flowchart LR
 | **`LL-050`** (`TIER2`) | Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... | `scripts/audit_data_boundary.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `templates/hooks/pre-commit.sh` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) (`SBX-20261113_212856-5f119836 / BMK-20261113_212923-f8ab1f59`) | Consolidate pre-commit hooks into 1 Python process, pre-filter >=16 plain UTF-8 files via _rg_prefilter_utf8_files... |
 | **`LL-051`** (`TIER2`) | Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... | scripts/homunculus_paths.py, skills/project-memory/scripts/sync_memory.py, skills/skill-architect/scripts/audit_skill_hygiene.py, tests/test_v030_memory_platform.py (SBX-20261114_101413-c32af7d0) | Added opt-in OpenSSH ssh-keygen -Y seal and lease signatures (homunculus.kernel.v1, homunculus.governance.v1... |
 | **`LL-052`** (`TIER2`) | Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... | `skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `scripts/memory_gateway.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) (`SBX-20261114_153225-b191d46c`) | Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target... |
+| **`LL-053`** (`TIER2`) | Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... | `scripts/homunculus_paths.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/engineering-sandbox/scripts/sandbox_runner.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/teach-me/scripts/teach_brief.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) (`SBX-20261116_152151-07f6b24f / 82/82 OK`) | Defer remote turnkey burn until post-sign success via defer_turnkey_burn=True across homunculus_paths.py and... |
 
 ### `LL-032` [TIER0] — Change Governance (`Option 1C`: `"Ask Before Coding Heuristics"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)
 - **Symptom / Trap:** Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this created recursive complexity where fixes generated new false positives (`creating as much work as we fix, or more`).
@@ -211,5 +212,13 @@ flowchart LR
 
 ---
 
+### `LL-053` [TIER2] — Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... (`2026-11-16`)
+- **Scope:** `script:homunculus_paths`
+- **Symptom / Trap:** Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache ancestor CoW clones via absolute parts, and format_model_receipt_tag hid [medium]/[xhigh] via substring check
+- **Root Cause:** _require_interactive_tty_if_needed burned turnkeys before OpenSSH signing, _is_ignored_ring_artifact inspected absolute p.parts instead of p.relative_to(fw_root), and format_model_receipt_tag checked effort not in base instead of f'[{effort}]' not in base
+- **Verified Resolution & Permanent Guardrail:** Defer remote turnkey burn until post-sign success via defer_turnkey_burn=True across homunculus_paths.py and seal_memory_governance(), evaluate .cache ignores relative to fw_root, pass resolved_effort into format_model_receipt_tag, and seal BUILTIN_RING1 updates via h-sudo seal (`scripts/homunculus_paths.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/engineering-sandbox/scripts/sandbox_runner.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](Homunculus_Software.md)), `skills/teach-me/scripts/teach_brief.py` ([`Homunculus_Software.md`](Homunculus_Software.md)) (`SBX-20261116_152151-07f6b24f / 82/82 OK`)).
+
+---
+
 ## 3. Parent-System Validation & Clean-Room Construction Status
-All foundational architecture validations (`LL-001`–`LL-038`), the Subsystem-Indexed Sectional Rebuild Blueprints (`Sections 1.2 A–G`), the `Pairing D — Full-Spectrum Synthesis` script/skill navigation and AST kernel upgrade (`SBX-20261107_164747-0996f501`), the Round 1–5 `Homunculus` vs. `Stock` Dueling Sandbox + Option C5 Red-Team hardening, and the 5-Sprint Stateful Memory Rebuild (`37/37` unit tests OK; `SBX-20261109_120538-a29c8228`) are logged and tracked here (with historical construction logs archived under `TIER5` in [`Archive/Homunculus_Lessons_Archive.md`](Archive/Homunculus_Lessons_Archive.md)).
+All foundational architecture validations (`LL-001`–`LL-047`), the Subsystem-Indexed Sectional Rebuild Blueprints (`Sections 1.2 A–G`), the `Pairing D — Full-Spectrum Synthesis` script/skill navigation and AST kernel upgrade (`SBX-20261107_164747-0996f501`), the Round 1–5 `Homunculus` vs. `Stock` Dueling Sandbox + Option C5 Red-Team hardening, and the 5-Sprint Stateful Memory Rebuild (`37/37` unit tests OK; `SBX-20261109_120538-a29c8228`) are logged and tracked here (with historical construction logs archived under `TIER5` in [`Archive/Homunculus_Lessons_Archive.md`](Archive/Homunculus_Lessons_Archive.md)).

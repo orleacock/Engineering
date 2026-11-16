@@ -1,6 +1,6 @@
 {
-  "last_sealed": "2026-11-14",
-  "latest_audit_entry_sha256": "d53aa6ee6b5e204f4aa442c89a54e72f7e60963d650bc3460251921caefcbd2d",
+  "last_sealed": "2026-11-16",
+  "latest_audit_entry_sha256": "f907e10dbffe442ad3fd01a74b35cde35143643937dbb72e9ed28eded14a7ad6",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -103,8 +103,9 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "92dadfd0d9db5a25ebf0536d10eabc0d649999e70ecf2fe8ba9bfd38a1cd2998",
+      "block_sha256": "393012e1d95363ec2712bd5da70a1b40572aa36047354a1e395ea7d5f296f74c",
       "row_hashes": [
+        "13f238bb077a0ebe",
         "22267a13be2c390c",
         "4d9f01bf1e6801ff",
         "a8ee72806664d295",
@@ -115,14 +116,14 @@
   },
   "protected_files": {
     "AGENTS.md": "20a0e6f65bf49d162e3e5851443e83779b44fcc544cbf18c6aca920bc9df2736",
-    "Profile/Decision_Profile.md": "6a5a049a04418a162ce05c8046486733ce20d7ab189b44222a01be8b8dbadfaf",
+    "Profile/Decision_Profile.md": "829be433d8606a42951ce2eb5779005f34073cca79c0c7e43011e43d2320c405",
     "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md": "572018467687b7d783fbd31383259d48d01e04a959db330bd22b6449899dae6f",
     "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "cd996a33e1add47b81a7300b7acec3febc2da01140a64e3fb99b8cd2e44971b8",
     "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "e3fe3db7b12b4cf780306a4064538217c72c97003823f759a0366e3d21bbcdc4",
     "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
     "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
-    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "fb518986d0cf6e2bb58df09f69b258a2aa3b0d5930ce03354f6eba0b51afb5da",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "7bfb834a56db468f0e8a1c81d418855b739934f34a599c83d450e9a863f85e38",
     "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
     "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
     "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "d4f42737346d60abf21990a65a1384310e897348011ae2e929b3c2b3c61da679",
@@ -155,8 +156,18 @@
     ],
     "Pneuma_Remote_Air": [
       "b3aee92c757ab6cef173"
+    ],
+    "Workstation_Operations": [
+      "05c60d9ff9fc3fcc4cf8",
+      "3391ad91903410bb6016",
+      "6374d179c507afbc3aa7",
+      "6b12c0f83514f4c4ce49",
+      "9b3c940c2984dd648d3b",
+      "c1b004594466e4fe4a19",
+      "cb99d6f998c01cccd206",
+      "faaf43b6e88c43034644"
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "f2818dc8d68628d6addc99a911b4346d4950e67ec761c2b297e8728d6797f28b"
+  "seal_root_sha256": "ead1e1a1e965f00970a3dcb0c0f577dcb83397170210e1f04d7f6467a88c647f"
 }

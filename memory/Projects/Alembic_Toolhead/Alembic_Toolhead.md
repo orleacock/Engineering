@@ -5,13 +5,14 @@ compartment: "public"
 project_type: "hardware"
 status: "Alpha"
 local_path: "/home/orin/Projects/Alchemical3D/Alembic_Toolhead"
-repo_head_sha: "3ff29ce51139"
+repo_head_sha: "43ead679c0b0"
 tree_hash: "13b0feafb257"
-checkpoint_head_sha: "3ff29ce51139"
-checkpoint_tree_hash: "71ea081ef196"
-checkpoint_worktree: "dirty (8 files)"
+checkpoint_head_sha: "43ead679c0b0"
+checkpoint_tree_hash: "13b0feafb257"
+checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-10"
+last_synced: "2026-11-16"
+checkpoint_lessons_digest: "b93136db87a387ee"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -44,7 +45,7 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Alembic_Toolhead
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 13b0feafb257
+Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
   Images/
   Images/formatted_assembly_images/
   Images/formatted_assembly_images/bend_tool_combined.png
@@ -115,18 +116,19 @@ Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 13b0feafb257
 ## ⚠️ Paramount Assembly Hazards & Mechanical "Whys" (`Mode B1` Anchors)
 - **Aluminum (`~1.2 Nm`) vs. Printed Plastic Torque Split (`HEAD:Assembly_Guide.md`):** Milled aluminum carriage, `A3DP FXD` extruder, and hotend mounting plate accept `~1.2 Nm` (`10.6 in-lbs`), whereas all 3D-printed parts **must not** be overtightened—stop turning immediately once plastic begins compressing to avoid crushing pneumatic O-ring seats or cracking layers.
 - **Anaerobic Threadlocker Chemical Hazard ([`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md)):** Never allow liquid or vapor threadlocker (`Loctite 222MS` / `Loctite 243`) to contact `ABS`, `ASA`, or `PC` printed parts; it causes rapid chemical stress-cracking.
-- **Tube Bending Spacing & Internal Mandrel (`HEAD:Assembly_Guide.md`):** Maintain `5–10mm` initial spacing between `Bend_Tool_Base.stl` and `Bend_Tool_Lever.stl` to prevent jig fracture and let the `5mm OD x 3mm ID` tube wrap cleanly; insert a `2.8mm` plastic welding rod (`<3mm` mandrel) if needed to prevent wall collapse, and compute bend start offset as `(distance from Lower_Body tube passthrough to heatblock edge) / 2`.
-- **Pneumatic `9x2` O-Ring Seal Alignment (`HEAD:Assembly_Guide.md`):** Seat the upper `9x2` O-ring into the intake groove *before* threading the `PC4-M10` fitting, and align the central `9x2` O-ring on the manifold prior to vertical tie-down (`65mm M3 BHCS`) so compressed air cannot leak.
+- **Tube Bending Spacing & Internal Mandrel (`Assembly_Guide.md`):** Maintain `5–10mm` initial spacing between `Bend_Tool_Base.stl` and `Bend_Tool_Lever.stl` to prevent jig fracture and let the `5mm OD x 3mm ID` tube wrap cleanly; insert a `2.8mm` plastic welding rod or `2.85mm` filament (`<3mm` mandrel) if needed to prevent wall collapse, and compute bend start offset as `(distance from Lower_Body tube passthrough to heatblock edge) / 2`.
+- **Pneumatic `9x2` O-Ring Seal Alignment (`Assembly_Guide.md`):** Seat the first `9x2` O-ring into the intake groove *before* threading the `PC4-M10` fitting, and align the second `9x2` O-ring between `Intake` and `Manifold_Frame` prior to vertical tie-down (`2 × 65mm M3 SHCS`) so compressed air cannot leak.
 - **`5°` Tube Toe-In vs. Nozzle Bed-Crash Clearance (`HEAD:Assembly_Guide.md`):** Rotate aluminum tubes `~5°` inward so the airflow vertex converges directly beneath the nozzle tip while keeping tube ends strictly above the nozzle face plane to prevent part/frame strikes.
 - **Grub-Screw Tube Clamping (`HEAD:Assembly_Guide.md`):** Snug `M3` grub screws in `Lower_Body` just enough to lock tube rotation without crushing the `3mm ID` aluminum bore.
 
 ## 📐 Verified Specs, COTS Hardware & Print Matrix
 - **CAD Telemetry ([`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md)):** `20` STEP files | `14` STL meshes (all `14` STLs `MATCH (<=0.2mm)` STEP↔STL parity) | Total closed-mesh geometric volume `105.74 cm³`. Dedicated hotend fan baffles for `Takoto` (`Fan_Baffle_Takoto.stl`) and `Dragon` (`Fan_Baffle_Dragon.stl`), plus `Dragon-MZE` BDsensor retainer/shim (`Sensor_Retainer_Dragon-MZE.stl`, `Shim_56_BDsensor_Dragon-MZE.stl`, `3.60mm` thick vs. `Shim_06mm_BDsensor.stl` `0.60mm`).
-- **Committed `HEAD` (`3ff29ce`) Fasteners & Seals (`HEAD:BOM.md`):**
-  - `~4` `M3x5x4mm` brass heat-set inserts (`Intake_6mmOD` `Ø4.70mm`×2, `Pnuematic_Strain_Relief` `Ø4.70mm`×4, `Lower_Body` `Ø5.00mm`×4 in CAD)
-  - `~2` `M3 x 65mm` Cap/Button Head vertical tie-bolts (`65mm M3 BHCS` in `HEAD:Assembly_Guide.md` Fig. 8)
-  - `~8` `M3 x 8mm` general assembly screws, `~2` `M3 x 20mm` strain-relief screws, `~2` `M3 x 24mm` front fan-baffle/manifold screws, `~2` `M3 x 0.5 x 4mm` cup-point grub screws
-  - `2` `9x2` (`23/64 x 5/64"`) O-rings, `2` `5mm OD x 3mm ID` aluminum tubes (`~55mm` length), `1` `PC4-M10` fitting, `1` `6mm OD x 4mm ID` cooling tube
+- **Reconciled Fasteners & Seals (`BOM.md` & `Assembly_Guide.md`, `2026-11-16`):**
+  - `~4` `M3x5x4mm` brass heat-set inserts (`2` in `Intake` + `2` in `Pnuematic_Strain_Relief.stl`, `4` total; `Lower_Body` `Ø5.00mm`×4 and `Pnuematic_Strain_Relief` `Ø4.70mm`×4 bores in CAD)
+  - `~2` `M3 x 65mm SHCS` vertical tie-bolts through `Lower_Body` → `Manifold_Frame` → `Intake` (`Fig. 8`)
+  - `~8` `M3 x 8mm SHCS` general assembly screws (`4` for carriage mount—`2` front + `2` rear sides—and `2` for `Chainflex` umbilical clamp, plus spares)
+  - `~2` `M3 x 20mm` strain-relief screws (`Fig. 4`), `~2` `M3 x 24mm BHCS` front fan-baffle/manifold screws (`Fig. 11`), `~2` `M3 x 0.5 x 4mm` cup-point grub screws (`Fig. 7`)
+  - `2` `9x2` (`23/64 x 5/64"`) O-rings (`1` under `PC4-M10` on top of `Intake`, and `1` between `Intake` and `Manifold_Frame`; no third O-ring), `2` `5mm OD x 3mm ID` aluminum tubes (`~55mm` length), `1` `PC4-M10` fitting, `1` `6mm OD x 4mm ID` cooling tube
   - Optional BDsensor hardware: `~2` `M2` (`3.5mm x 3mm`) heat-sets, `~1` `M2 x 10mm BHCS`, `~1` `M2 x 8mm BHCS`
 - **Verified Electronics & Motion COTS (`HEAD:BOM.md`):** `A3DP FXD` extruder (`NEMA 14`), `Takoto` or `Dragon` hotend, `2510` `24V` ball-bearing axial heatbreak fan (toolless snap housing), `Igus Chainflex cable` (`cf9-05-04`) CAN/wiring umbilical, standard PTFE filament Bowden tube, optional `BDsensor`.
 - **Verified Structural Print Matrix (`HEAD:Print_Settings.md`):** `ABS`, `ASA`, or `PC` (`0.4mm` nozzle) | `0.2mm` layer height | `0.4mm - 0.45mm` extrusion width | `4` minimum wall perimeters | `5` top / `5` bottom solid layers | `40%` infill (`Grid`, `Gyroid`, or `Rectilinear`) | `None` supports.
@@ -141,9 +143,9 @@ Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 13b0feafb257
 > [!WARNING]
 > Figures inside this ledger are quarantined by `verify_claims.py` and must be resolved with the author before committing `Alembic_Toolhead`.
 
-- **Git & Provenance Baseline:** `main:dirty(8)` vs. clean `HEAD` commit `3ff29ce` (`audit_repo_docs.py`: `0` formatting load-bearing errors, `5` missing AI footers).
-- **`[TBD: CONFLICT — clean HEAD:BOM.md (3ff29ce) vs unstaged dirty BOM.md]`:** Unstaged `BOM.md` altered fastener rows relative to committed `3ff29ce`—changing `M3x8` qty (`~8` vs `2`), removing `M3x24mm` (`~2`), removing `M3` grub screws (`~2`, despite Step 1 requiring grub screws!), removing optional `M2` BDsensor inserts/screws, and adding `(2) M3x10mm SHCS` + `(2) M3 hex nuts`, while unstaged `Assembly_Guide.md` also introduced `2.85mm` filament mandrel wording not in `3ff29ce`.
-- **`[TBD: step_only_parts_disposition]`:** `4` STEP files in `STEP_Files/` (`Intake_6mmOD.step`, `Belt_Clamp_9mm.step`, `PC4-M10 Bowden Pass-Through.step`, `Pnuematic_Fitting_6mmOD.step`) have no matching `.stl` in `STL_Files/` (confirm which are COTS reference models vs. printable parts needing STL export, and add `Dragon-MZE` STLs to `BOM.md`).
+- **Git & Provenance Baseline (`2026-11-16`):** `main:clean` at commit `43ead67` (`audit_repo_docs.py`: `0` load-bearing issues, `0` isolated warnings; `format_image.py --inspect`: `3/3` hero PNGs `[PASS]`; `verify_claims.py --fail-on-tbd`: `0` unbacked claims / `0` open `[TBD]` offenders across all `5` docs (`VRF-d59804719911`, `VRF-cba1b9f1bbcb`); `audit_data_boundary.py`: `BOUNDARY_CLEAN`; `0` open blocking `[TBD]`s).
+- **Resolved `BOM.md` / `Assembly_Guide.md` Reconciliation (`43ead67`, `2026-11-16`):** Reconciled and committed all `8` files (`BOM.md` fasteners matched `HEAD`; verified `2` O-rings total, `4` `M3x5x4mm` inserts, `(2) M3x65mm SHCS`, `(4) M3x8mm SHCS` carriage mount + `(2) M3x8mm SHCS` Chainflex clamp, `(2) M3x24mm BHCS`, generic BDsensor shim height wording, `2.85mm` filament mandrel retained, `Tg` numbers removed, `Belt_Clamp_9mm.step` silently optional, `Alembic_Toolhead_V201 - PC4-M10 Bowden Pass-Through.step` & `Alembic_Toolhead_V201 - Pnuematic_Fitting_6mmOD.step` COTS references documented in `BOM.md`, `Dragon-MZE` STLs present, and standard AI transparency footers appended to all `5` docs).
+- **Optional Home Follow-Up (`Intake_6mmOD` STL):** `Alembic_Toolhead_V201 - Intake_6mmOD.step` (`17.00 × 20.00 × 57.20 mm`) is listed in `BOM.md` (`Qty 1`, covered by STEP); verify from home workstation whether the standalone Intake STL is merged inside `Pnuematic_Strain_Relief.stl` or upload standalone STL to `STL_Files/` when convenient.
 
 ## 🎯 Active Tasks
 *(Transcluded live from `### Alembic_Toolhead` in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md))*
@@ -152,13 +154,11 @@ Repository: Alembic_Toolhead | HEAD SHA: 3ff29ce51139 | Tree Hash: 13b0feafb257
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-05`
-- **Checkpoint Provenance**: `HEAD SHA: 3ff29ce51139` | `Tree Hash: 71ea081ef196` | `Worktree: ('dirty (8 files)', ['M ALPHA_&_DIRECTION.md', 'M Assembly_Guide.md', 'M BOM.md', 'M Images/full_images/alembic_angle_down.png', 'M Images/full_images/alembic_angle_up.png', 'M Images/full_images/alembic_face.png', 'M Print_Settings.md', 'M README.md'])` | `Last Verification: Transplanted from verified Memory v2 baseline`
+- **Last Session Timestamp**: `2026-11-16`
+- **Checkpoint Provenance**: `HEAD SHA: 43ead679c0b0` | `Tree Hash: 13b0feafb257` | `Worktree: clean` | `Last Verification: VRF-d59804719911,VRF-cba1b9f1bbcb`
 - **Where We Stopped (Verified State & Context)**:
-  - Transplanted `Alembic_Toolhead` dossier into native Homunculus Dual-Mode Memory (`entity: Alchemical-3D`, `compartment: public`, `project_type: hardware`). All verified specifications, hazards, and open `[TBD]` ledgers preserved verbatim.
-- **Active Project State Ledger & Blockers**:
-  - See `## 🔍 Provenance Status & Open [TBD] / [CONFLICT] Ledger` above and active tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md).
+  Pushed Alembic_Toolhead reconciliation and formatted hero cards (3ff29ce..43ead67) to origin/main
+- **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run `python3 skills/project-memory/scripts/sync_memory.py --project Alembic_Toolhead --kickstart` to verify repository provenance.
-  2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Alembic_Toolhead).
+  1. Review deployed GitHub formatting; optional home check on standalone Intake STL vs Pnuematic_Strain_Relief.stl
 <!-- SESSION-HANDOFF:END -->

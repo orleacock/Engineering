@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Homunculus LM Studio Bionic Local Sidecar Bridge (`local_sidecar.py`).
+Apprentice Multi-Backend Local Sidecar Engine (`apprentice_engine.py`).
 
 Parent-only workstation sidecar harness (strictly outside clean-room `Homunculus`).
 Routes vetted, bounded local tasks to LM Studio Bionic (`Qwen3.6-35B-A3B`) over
@@ -15,56 +15,57 @@ loopback HTTP (`127.0.0.1:1234/v1`) while enforcing:
 Pure Python 3.10+ standard library (zero third-party packages).
 
 === DEVELOPER & AI NAVIGATION MAP ===
-  Owning Module : Workstation Operations (`scripts/local_sidecar.py`)
-  Callers       : Antigravity main thread, `bionic_mcp_server.py`, `sandbox_runner.py`
+  Owning Module : Apprentice Sidecar (`scripts/apprentice_engine.py`)
+  Callers       : Antigravity main thread, `apprentice_mcp_server.py`, `sandbox_runner.py`
   Callees       : Stdlib + `lms` CLI + `Homunculus/scripts/memory_gateway.py`
-  Contract      : `scripts/script_contracts.json` [`local_sidecar.py`]
-  CLI Flags     : --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
+  Contract      : `scripts/script_contracts.json` [`apprentice_engine.py`]
+  CLI Flags     : --backend, --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
                   status, check-eta, query, audit-to-quarantine, stage-code, control, self-test
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_effort_and_mode (#L259-L271)       | def parse_context_spec (#L274-L284)
-    - class SidecarFirewallError (#L287-L288)        | class SidecarEtaTrippedError (#L291-L296)
-    - def load_system_prompt (#L299-L310)            | def validate_loopback_url (#L313-L341)
-    - def _safe_subprocess_cwd (#L344-L367)          | def _safe_abspath (#L370-L376)
-    - def _is_path_within (#L379-L384)               | def _inspect_path_security (#L387-L417)
-    - def _find_git_toplevel (#L420-L426)            | def is_code_heavy_payload (#L429-L433)
-    - def parse_and_validate_context_items (#L436-L463) | def parse_and_validate_context_specs (#L466-L478)
-    - def validate_input_paths (#L481-L530)          | def validate_staging_dir (#L533-L596)
-    - def resolve_effective_max_tokens (#L599-L609)  | def estimate_eta (#L612-L750)
-    - def _http_json_request (#L753-L773)            | def _deduplicate_full_context_diff (#L776-L853)
-    - def plan_line_preserving_chunks (#L856-L917)   | def pack_chunk_batches (#L920-L972)
-    - def estimate_chunked_eta (#L975-L1022)         | def assemble_prompt_payload (#L1025-L1176)
-    - def resolve_default_api_url (#L1179-L1181)     | def _resolve_kv_state_path (#L1184-L1193)
-    - def _pid_alive (#L1196-L1205)                  | def acquire_kv_budget (#L1209-L1320)
-    - def has_active_exclusive_kv_slot (#L1323-L1341) | def invoke_chat_completion (#L1344-L1513)
-    - def extract_staged_code (#L1516-L1526)         | def _read_prompt_arg (#L1529-L1536)
-    - def resolve_max_eta_seconds (#L1539-L1545)     | def _resolve_telemetry_log (#L1548-L1554)
-    - def _resolve_scorecard_path (#L1557-L1566)     | def _resolve_jobs_dir (#L1569-L1578)
-    - def _write_private_json_atomic (#L1581-L1599)  | def _resolve_scorecard_archive_path (#L1602-L1608)
-    - def _seed_counts_from_telemetry (#L1611-L1643) | def compute_scorecard_metrics (#L1646-L1679)
-    - def load_or_init_scorecard (#L1682-L1719)      | def record_call_outcome (#L1722-L1788)
-    - def apply_call_verdict (#L1791-L1840)          | def format_lifetime_scorecard (#L1843-L1861)
-    - def reset_scorecard (#L1864-L1963)             | def estimate_quota_savings (#L1966-L2026)
-    - def record_usage_telemetry (#L2029-L2055)      | def summarize_usage_telemetry (#L2058-L2102)
-    - def probe_server_models (#L2105-L2171)         | def preflight_live_inference (#L2174-L2188)
-    - def _enforce_eta_or_raise (#L2191-L2276)       | def cmd_status (#L2279-L2315)
-    - def cmd_check_eta (#L2318-L2372)               | def cmd_query (#L2375-L2517)
-    - def cmd_audit_to_quarantine (#L2520-L2716)     | def _write_private_staging_file (#L2719-L2728)
-    - def stage_code_artifact (#L2731-L2810)         | def cmd_stage_code (#L2813-L2956)
-    - def build_concrete_model_config (#L2966-L3055) | def _read_hw_counters (#L3058-L3097)
-    - def _probe_lms_daemon (#L3100-L3117)           | def _run_lms_cmd (#L3120-L3133)
-    - def _has_gui_display_socket (#L3136-L3146)     | def _control_plan (#L3149-L3181)
-    - def _control_status (#L3184-L3200)             | def _control_load (#L3203-L3267)
-    - def _control_start_headless (#L3270-L3326)     | def _control_unload (#L3329-L3351)
-    - def _control_stop_server (#L3354-L3368)        | def _safe_job_file (#L3371-L3381)
-    - def submit_async_job (#L3384-L3422)            | def _execute_job_worker (#L3425-L3461)
-    - def get_job_status (#L3464-L3503)              | def list_jobs (#L3506-L3524)
-    - def _normalize_control_cli_action (#L3527-L3530) | def cmd_control (#L3533-L3583)
-    - def cmd_job_worker (#L3586-L3587)              | def cmd_job_status (#L3590-L3593)
-    - def cmd_job_collect (#L3596-L3599)             | def cmd_job_wait (#L3602-L3605)
-    - def cmd_job_list (#L3608-L3611)                | def cmd_verdict (#L3614-L3617)
-    - def run_self_tests (#L3620-L4448)              | def build_parser (#L4451-L4554)
-    - def main (#L4557-L4595)
+    - def resolve_backend_adapter (#L159-L183)       | def migrate_legacy_bionic_cache (#L186-L248)
+    - def resolve_effort_and_mode (#L386-L398)       | def parse_context_spec (#L401-L411)
+    - class SidecarFirewallError (#L414-L415)        | class SidecarEtaTrippedError (#L418-L423)
+    - def load_system_prompt (#L426-L437)            | def validate_loopback_url (#L440-L471)
+    - def _safe_subprocess_cwd (#L474-L497)          | def _safe_abspath (#L500-L506)
+    - def _is_path_within (#L509-L514)               | def _inspect_path_security (#L517-L547)
+    - def _find_git_toplevel (#L550-L556)            | def is_code_heavy_payload (#L559-L563)
+    - def parse_and_validate_context_items (#L566-L593) | def parse_and_validate_context_specs (#L596-L608)
+    - def validate_input_paths (#L611-L660)          | def validate_staging_dir (#L663-L726)
+    - def resolve_effective_max_tokens (#L729-L739)  | def estimate_eta (#L742-L880)
+    - def _http_json_request (#L883-L903)            | def _deduplicate_full_context_diff (#L906-L983)
+    - def plan_line_preserving_chunks (#L986-L1047)  | def pack_chunk_batches (#L1050-L1102)
+    - def estimate_chunked_eta (#L1105-L1152)        | def assemble_prompt_payload (#L1155-L1306)
+    - def resolve_default_api_url (#L1309-L1320)     | def _resolve_kv_state_path (#L1323-L1332)
+    - def _pid_alive (#L1335-L1344)                  | def acquire_kv_budget (#L1348-L1459)
+    - def has_active_exclusive_kv_slot (#L1462-L1480) | def invoke_chat_completion (#L1483-L1652)
+    - def extract_staged_code (#L1655-L1665)         | def _read_prompt_arg (#L1668-L1675)
+    - def resolve_max_eta_seconds (#L1678-L1684)     | def _resolve_telemetry_log (#L1687-L1697)
+    - def _resolve_scorecard_path (#L1700-L1716)     | def _resolve_jobs_dir (#L1719-L1735)
+    - def _write_private_json_atomic (#L1738-L1756)  | def _resolve_scorecard_archive_path (#L1759-L1765)
+    - def _seed_counts_from_telemetry (#L1768-L1800) | def compute_scorecard_metrics (#L1803-L1836)
+    - def load_or_init_scorecard (#L1839-L1876)      | def record_call_outcome (#L1879-L1945)
+    - def apply_call_verdict (#L1948-L1997)          | def format_lifetime_scorecard (#L2000-L2018)
+    - def reset_scorecard (#L2021-L2120)             | def estimate_quota_savings (#L2123-L2183)
+    - def record_usage_telemetry (#L2186-L2212)      | def summarize_usage_telemetry (#L2215-L2259)
+    - def probe_server_models (#L2262-L2365)         | def preflight_live_inference (#L2368-L2382)
+    - def _enforce_eta_or_raise (#L2385-L2470)       | def cmd_status (#L2473-L2509)
+    - def cmd_check_eta (#L2512-L2566)               | def cmd_query (#L2569-L2711)
+    - def cmd_audit_to_quarantine (#L2714-L2910)     | def _write_private_staging_file (#L2913-L2922)
+    - def stage_code_artifact (#L2925-L3004)         | def cmd_stage_code (#L3007-L3150)
+    - def build_concrete_model_config (#L3160-L3249) | def _read_hw_counters (#L3252-L3291)
+    - def _probe_lms_daemon (#L3294-L3311)           | def _run_lms_cmd (#L3314-L3327)
+    - def _has_gui_display_socket (#L3330-L3340)     | def _control_plan (#L3343-L3375)
+    - def _control_status (#L3378-L3394)             | def _control_load (#L3397-L3461)
+    - def _control_start_headless (#L3464-L3520)     | def _control_unload (#L3523-L3545)
+    - def _control_stop_server (#L3548-L3562)        | def _safe_job_file (#L3565-L3575)
+    - def submit_async_job (#L3578-L3616)            | def _execute_job_worker (#L3619-L3655)
+    - def get_job_status (#L3658-L3697)              | def list_jobs (#L3700-L3718)
+    - def _normalize_control_cli_action (#L3721-L3724) | def cmd_control (#L3727-L3777)
+    - def cmd_job_worker (#L3780-L3781)              | def cmd_job_status (#L3784-L3787)
+    - def cmd_job_collect (#L3790-L3793)             | def cmd_job_wait (#L3796-L3799)
+    - def cmd_job_list (#L3802-L3805)                | def cmd_verdict (#L3808-L3811)
+    - def run_self_tests (#L3814-L4711)              | def build_parser (#L4714-L4819)
+    - def main (#L4822-L4860)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -92,10 +93,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "LOCAL_SIDECAR_V1"
-TELEMETRY_SCHEMA = "SIDECAR_TELEMETRY_V2"
+SCHEMA_VERSION = "APPRENTICE_ENGINE_V1"
+TELEMETRY_SCHEMA = "APPRENTICE_TELEMETRY_V2"
 ETA_CALIBRATION_VERSION = "ETA_CAL_V2_4_4"
-SCORECARD_SCHEMA = "BIONIC_SCORECARD_V1"
+SCORECARD_SCHEMA = "APPRENTICE_SCORECARD_V1"
+VALID_BACKENDS = ("auto", "bionic", "ollama", "llamacpp", "openai_compat")
+DEFAULT_BACKEND = "bionic"
 DEFAULT_API_URL = "http://127.0.0.1:1234/v1"
 DEFAULT_MODEL_ID = "qwen3.6-35b-a3b"
 AUTO_MAX_ETA_SECONDS = 60.0
@@ -106,19 +109,143 @@ KV_SAFETY_GUARD_TOKENS = 1024
 DEFAULT_SYSTEM_PROMPT_PATH = Path("/home/orin/.lmstudio/homunculus_sidecar_system_prompt.md")
 DEFAULT_HOMUNCULUS_ROOT = Path("/home/orin/Projects/Alchemical3D/Homunculus")
 DEFAULT_MEMORY_ROOT = Path("/home/orin/Projects/Engineering/memory")
-DEFAULT_STAGING_DIR = Path("/tmp/homunculus_sidecar_staging")
+DEFAULT_STAGING_DIR = Path("/tmp/apprentice_staging")
 DEFAULT_LMS_BIN = Path("/home/orin/.lmstudio/bin/lms")
 DEFAULT_APPIMAGE_PATH = Path("/home/orin/.lmstudio/LM-Studio-Bionic-current.AppImage")
 DEFAULT_CONCRETE_CFG_PATH = Path(
     "/home/orin/.lmstudio/apps/bionic/.internal/user-concrete-model-default-config/"
     "lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf.json"
 )
-DEFAULT_CACHE_DIR = Path.home() / ".cache" / "homunculus_bionic_plugin"
-DEFAULT_TELEMETRY_LOG = DEFAULT_CACHE_DIR / "sidecar_usage_telemetry.jsonl"
-DEFAULT_SCORECARD_PATH = DEFAULT_CACHE_DIR / "bionic_scorecard.json"
-DEFAULT_SCORECARD_ARCHIVE_PATH = DEFAULT_CACHE_DIR / "bionic_scorecard_archive.jsonl"
+LEGACY_BIONIC_CACHE_DIR = Path.home() / ".cache" / "homunculus_bionic_plugin"
+DEFAULT_CACHE_DIR = Path.home() / ".cache" / "apprentice_plugin"
+DEFAULT_TELEMETRY_LOG = DEFAULT_CACHE_DIR / "apprentice_usage_telemetry.jsonl"
+DEFAULT_SCORECARD_PATH = DEFAULT_CACHE_DIR / "apprentice_scorecard.json"
+DEFAULT_SCORECARD_ARCHIVE_PATH = DEFAULT_CACHE_DIR / "apprentice_scorecard_archive.jsonl"
 DEFAULT_KV_STATE_PATH = DEFAULT_CACHE_DIR / "kv_pool_state.json"
 DEFAULT_JOBS_DIR = DEFAULT_CACHE_DIR / "jobs"
+
+BACKEND_ADAPTERS: dict[str, dict[str, Any]] = {
+    "bionic": {
+        "display_name": "LM Studio Bionic",
+        "default_url": "http://127.0.0.1:1234/v1",
+        "probe_mode": "lmstudio_v0_with_v1_fallback",
+        "supports_lms_lifecycle": True,
+        "supports_profiles": True,
+    },
+    "ollama": {
+        "display_name": "Ollama Loopback",
+        "default_url": "http://127.0.0.1:11434/v1",
+        "probe_mode": "ollama_ps_and_tags",
+        "supports_lms_lifecycle": False,
+        "supports_profiles": False,
+    },
+    "llamacpp": {
+        "display_name": "llama.cpp Server",
+        "default_url": "http://127.0.0.1:8080/v1",
+        "probe_mode": "openai_v1_models",
+        "supports_lms_lifecycle": False,
+        "supports_profiles": False,
+    },
+    "openai_compat": {
+        "display_name": "Generic OpenAI-Compatible Loopback",
+        "default_url": "http://127.0.0.1:1234/v1",
+        "probe_mode": "openai_v1_models",
+        "supports_lms_lifecycle": False,
+        "supports_profiles": False,
+    },
+}
+
+
+def resolve_backend_adapter(backend: str = "auto", api_url: str | None = None) -> dict[str, Any]:
+    """Resolve pluggable local inference backend metadata cleanly from explicit name, env, or URL port."""
+    raw = (backend or "").strip().lower()
+    if raw in ("", "auto"):
+        env_b = (os.environ.get("APPRENTICE_BACKEND") or os.environ.get("BIONIC_SIDECAR_BACKEND") or "").strip().lower()
+        if env_b and env_b != "auto":
+            raw = env_b
+        elif api_url:
+            try:
+                port = urllib.parse.urlparse(api_url).port
+            except Exception:
+                port = None
+            if port == 11434:
+                raw = "ollama"
+            elif port == 8080:
+                raw = "llamacpp"
+            else:
+                raw = DEFAULT_BACKEND
+        else:
+            raw = DEFAULT_BACKEND
+    if raw not in BACKEND_ADAPTERS:
+        raise ValueError(f"Unsupported backend '{backend}'; choose from {', '.join(VALID_BACKENDS)}")
+    spec = dict(BACKEND_ADAPTERS[raw])
+    spec["id"] = raw
+    return spec
+
+
+def migrate_legacy_bionic_cache(
+    legacy_dir: Path | None = None,
+    target_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Idempotently preserve historical ~/.cache/apprentice_plugin/ telemetry/scorecards into ~/.cache/apprentice_plugin/."""
+    import shutil as _shutil
+
+    if os.environ.get("APPRENTICE_SKIP_LEGACY_MIGRATE", "").strip() == "1":
+        return {"migrated": [], "skipped": True}
+    src_root = legacy_dir or LEGACY_BIONIC_CACHE_DIR
+    dst_root = target_dir or DEFAULT_CACHE_DIR
+    if not src_root.is_dir():
+        return {"migrated": [], "skipped": False, "source_missing": True}
+    dst_root.mkdir(parents=True, exist_ok=True)
+    try:
+        os.chmod(dst_root, 0o700)
+    except OSError:
+        pass
+    migrated: list[str] = []
+    sc_src = src_root / "bionic_scorecard.json"
+    sc_dst = dst_root / "apprentice_scorecard.json"
+    if sc_src.is_file() and not sc_dst.is_file():
+        try:
+            sc_obj = json.loads(sc_src.read_text(encoding="utf-8"))
+            if isinstance(sc_obj, dict):
+                sc_obj.setdefault("migrated_from", str(sc_src))
+                sc_obj["schema_version"] = SCORECARD_SCHEMA
+                _write_private_json_atomic(sc_dst, sc_obj)
+                migrated.append("apprentice_scorecard.json")
+        except (OSError, json.JSONDecodeError):
+            pass
+    file_pairs = (
+        ("bionic_scorecard_archive.jsonl", "apprentice_scorecard_archive.jsonl"),
+        ("sidecar_usage_telemetry.jsonl", "apprentice_usage_telemetry.jsonl"),
+    )
+    for old_name, new_name in file_pairs:
+        s_f = src_root / old_name
+        d_f = dst_root / new_name
+        if s_f.is_file() and not d_f.is_file():
+            try:
+                _shutil.copy2(s_f, d_f)
+                os.chmod(d_f, 0o600)
+                migrated.append(new_name)
+            except OSError:
+                pass
+    jobs_src = src_root / "jobs"
+    jobs_dst = dst_root / "jobs"
+    if jobs_src.is_dir():
+        jobs_dst.mkdir(parents=True, exist_ok=True)
+        try:
+            os.chmod(jobs_dst, 0o700)
+        except OSError:
+            pass
+        for j_f in jobs_src.glob("*.json"):
+            dst_j = jobs_dst / j_f.name
+            if j_f.is_file() and not dst_j.is_file():
+                try:
+                    _shutil.copy2(j_f, dst_j)
+                    os.chmod(dst_j, 0o600)
+                    migrated.append(f"jobs/{j_f.name}")
+                except OSError:
+                    pass
+    return {"migrated": migrated, "skipped": False, "source": str(src_root), "target": str(dst_root)}
 VRAM_USED_SYSFS = Path("/sys/class/drm/card1/device/mem_info_vram_used")
 VRAM_TOTAL_SYSFS = Path("/sys/class/drm/card1/device/mem_info_vram_total")
 GTT_USED_SYSFS = Path("/sys/class/drm/card1/device/mem_info_gtt_used")
@@ -333,10 +460,13 @@ def validate_loopback_url(api_url: str) -> str:
         raise SidecarFirewallError(
             f"[SECURITY_FIREWALL_BLOCKED] Malformed loopback port rejected: {api_url}"
         ) from exc
-    allow_custom = os.environ.get("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT") == "1"
-    if port is None or (port != 1234 and not allow_custom):
+    allow_custom = (
+        os.environ.get("APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT") == "1"
+        or os.environ.get("BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT") == "1"
+    )
+    if port is None or (port not in (1234, 11434, 8080) and not allow_custom):
         raise SidecarFirewallError(
-            f"[SECURITY_FIREWALL_BLOCKED] Loopback port '{port}' rejected; only Bionic port 1234 is permitted: {api_url}"
+            f"[SECURITY_FIREWALL_BLOCKED] Loopback port '{port}' rejected; permitted backend ports are 1234 (bionic), 11434 (ollama), 8080 (llamacpp): {api_url}"
         )
     return raw
 
@@ -561,7 +691,7 @@ def validate_staging_dir(staging_dir: Path) -> Path:
             if (parent / ".git").exists():
                 raise SidecarFirewallError(
                     f"[SECURITY_FIREWALL_BLOCKED] stage-code refuses git-tracked directory {candidate} "
-                    f"(repo root {parent}); use /tmp/<subdir>, ~/.cache/homunculus_bionic_plugin, or brain scratch/."
+                    f"(repo root {parent}); use /tmp/<subdir>, ~/.cache/apprentice_plugin, or brain scratch/."
                 )
 
     tmp_abs = Path(os.path.abspath(tempfile.gettempdir()))
@@ -591,7 +721,7 @@ def validate_staging_dir(staging_dir: Path) -> Path:
     if not (_is_allowed_stage_candidate(raw_abs) and _is_allowed_stage_candidate(resolved)):
         raise SidecarFirewallError(
             f"[SECURITY_FIREWALL_BLOCKED] stage-code path {raw_abs} outside allowlist "
-            "(/tmp/<subdir>, ~/.cache/homunculus_bionic_plugin, or brain/*/scratch/)."
+            "(/tmp/<subdir>, ~/.cache/apprentice_plugin, or brain/*/scratch/)."
         )
     return resolved
 
@@ -996,7 +1126,7 @@ def estimate_chunked_eta(
         has_code_context=has_code_context,
         loaded_ctx_override=loaded_ctx_override,
         calibrated_output=False,
-        cmd_name="bionic_digest",
+        cmd_name="apprentice_digest",
         sys_prompt_bytes=sys_prompt_bytes,
     )
     if batch_count <= 1:
@@ -1176,18 +1306,27 @@ def assemble_prompt_payload(
     return full_user_content, file_meta
 
 
-def resolve_default_api_url() -> str:
-    """Resolve optional loopback API URL override from environment or default."""
-    return os.environ.get("BIONIC_SIDECAR_API_URL", "").strip() or DEFAULT_API_URL
+def resolve_default_api_url(backend: str = "auto") -> str:
+    """Resolve optional loopback API URL override from environment or backend default."""
+    env_url = (
+        os.environ.get("APPRENTICE_API_URL", "").strip()
+        or (os.environ.get("APPRENTICE_API_URL", "") or os.environ.get("BIONIC_SIDECAR_API_URL", "")).strip()
+    )
+    if env_url:
+        return env_url
+    try:
+        return str(resolve_backend_adapter(backend).get("default_url") or DEFAULT_API_URL)
+    except ValueError:
+        return DEFAULT_API_URL
 
 
 def _resolve_kv_state_path(kv_path: Path | None = None) -> Path:
     if kv_path is not None:
         return kv_path
-    env_p = os.environ.get("BIONIC_SIDECAR_KV_STATE_PATH", "").strip()
+    env_p = (os.environ.get("APPRENTICE_KV_STATE_PATH", "") or os.environ.get("BIONIC_SIDECAR_KV_STATE_PATH", "")).strip()
     if env_p:
         return Path(os.path.expanduser(env_p))
-    tel_env = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
+    tel_env = (os.environ.get("APPRENTICE_TELEMETRY_LOG", "") or os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "")).strip()
     if tel_env:
         return Path(os.path.expanduser(tel_env)).parent / "kv_pool_state.json"
     return DEFAULT_KV_STATE_PATH
@@ -1548,33 +1687,51 @@ def resolve_max_eta_seconds(args: argparse.Namespace) -> float:
 def _resolve_telemetry_log(log_path: Path | None = None) -> Path:
     if log_path is not None:
         return log_path
-    env_p = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
+    env_p = (
+        os.environ.get("APPRENTICE_TELEMETRY_LOG", "").strip()
+        or (os.environ.get("APPRENTICE_TELEMETRY_LOG", "") or os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "")).strip()
+    )
     if env_p:
         return Path(os.path.expanduser(env_p))
+    migrate_legacy_bionic_cache()
     return DEFAULT_TELEMETRY_LOG
 
 
 def _resolve_scorecard_path(scorecard_path: Path | None = None) -> Path:
     if scorecard_path is not None:
         return scorecard_path
-    env_p = os.environ.get("BIONIC_SIDECAR_SCORECARD_PATH", "").strip()
+    env_p = (
+        os.environ.get("APPRENTICE_SCORECARD_PATH", "").strip()
+        or os.environ.get("BIONIC_SIDECAR_SCORECARD_PATH", "").strip()
+    )
     if env_p:
         return Path(os.path.expanduser(env_p))
-    tel_env = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
+    tel_env = (
+        os.environ.get("APPRENTICE_TELEMETRY_LOG", "").strip()
+        or (os.environ.get("APPRENTICE_TELEMETRY_LOG", "") or os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "")).strip()
+    )
     if tel_env:
-        return Path(os.path.expanduser(tel_env)).parent / "bionic_scorecard.json"
+        return Path(os.path.expanduser(tel_env)).parent / "apprentice_scorecard.json"
+    migrate_legacy_bionic_cache()
     return DEFAULT_SCORECARD_PATH
 
 
 def _resolve_jobs_dir(jobs_dir: Path | None = None) -> Path:
     if jobs_dir is not None:
         return jobs_dir
-    env_p = os.environ.get("BIONIC_SIDECAR_JOBS_DIR", "").strip()
+    env_p = (
+        os.environ.get("APPRENTICE_JOBS_DIR", "").strip()
+        or os.environ.get("BIONIC_SIDECAR_JOBS_DIR", "").strip()
+    )
     if env_p:
         return Path(os.path.expanduser(env_p))
-    tel_env = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
+    tel_env = (
+        os.environ.get("APPRENTICE_TELEMETRY_LOG", "").strip()
+        or (os.environ.get("APPRENTICE_TELEMETRY_LOG", "") or os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "")).strip()
+    )
     if tel_env:
         return Path(os.path.expanduser(tel_env)).parent / "jobs"
+    migrate_legacy_bionic_cache()
     return DEFAULT_JOBS_DIR
 
 
@@ -1605,7 +1762,7 @@ def _resolve_scorecard_archive_path(
 ) -> Path:
     if archive_path is not None:
         return archive_path
-    return _resolve_scorecard_path(scorecard_path).parent / "bionic_scorecard_archive.jsonl"
+    return _resolve_scorecard_path(scorecard_path).parent / "apprentice_scorecard_archive.jsonl"
 
 
 def _seed_counts_from_telemetry(log_path: Path) -> dict[str, int]:
@@ -1849,7 +2006,7 @@ def format_lifetime_scorecard(
     """Render canonical Bionic scorecard string plus relative usability and epoch delta."""
     sc = sc_obj if isinstance(sc_obj, dict) else load_or_init_scorecard(scorecard_path, telemetry_log)
     m = compute_scorecard_metrics(sc)
-    base = f"Bionic Calls = {m['clean']}/{m['corrected']} (healed={m['healed']})"
+    base = f"Apprentice Calls = {m['clean']}/{m['corrected']} (healed={m['healed']})"
     if m["total_calls"] > 0:
         if m["delta_usable_pct_vs_prev"] is not None and m["prev_epoch"]:
             prev_lbl = str(m["prev_epoch"].get("epoch_label") or "prev")
@@ -2107,14 +2264,19 @@ def probe_server_models(
     *,
     model_id: str = DEFAULT_MODEL_ID,
     timeout_s: float = 5.0,
+    backend: str = "auto",
 ) -> dict[str, Any]:
-    """Query Bionic /api/v0/models (falling back to /v1/models on 404) for exact loaded state."""
+    """Query configured loopback backend (`bionic`, `ollama`, `llamacpp`, `openai_compat`) for loaded model state."""
     validated_v1 = validate_loopback_url(api_url)
+    adapter = resolve_backend_adapter(backend, validated_v1)
     root_url = validated_v1[:-3] if validated_v1.endswith("/v1") else validated_v1
     loaded_models: list[str] = []
     downloaded_unloaded_models: list[str] = []
     loaded_context_length: int | None = None
-    probe_source = f"{root_url}/api/v0/models"
+    probe_mode = str(adapter.get("probe_mode") or "lmstudio_v0_with_v1_fallback")
+    probe_source = f"{root_url}/api/v0/models" if probe_mode == "lmstudio_v0_with_v1_fallback" else (
+        f"{root_url}/api/ps" if probe_mode == "ollama_ps_and_tags" else f"{validated_v1}/models"
+    )
 
     def _consume_rows(rows: list[Any], *, default_state: str) -> None:
         nonlocal loaded_context_length
@@ -2130,37 +2292,69 @@ def probe_server_models(
             else:
                 downloaded_unloaded_models.append(mid)
 
-    try:
-        data = _http_json_request(probe_source, timeout_s=timeout_s)
-        _consume_rows(list(data.get("data") or []), default_state="not-loaded")
-    except RuntimeError as exc:
-        if "HTTP 404 " in str(exc):
-            probe_source = f"{validated_v1}/models"
+    def _err_payload(err_msg: str, src_url: str) -> dict[str, Any]:
+        return {
+            "backend": adapter["id"],
+            "reachable": False,
+            "error": err_msg,
+            "probe_source": src_url,
+            "loaded_models": [],
+            "downloaded_unloaded_models": [],
+            "target_model_loaded": False,
+            "loaded_context_length": None,
+        }
+
+    if probe_mode == "ollama_ps_and_tags":
+        try:
+            ps_data = _http_json_request(f"{root_url}/api/ps", timeout_s=timeout_s)
+            for row in list(ps_data.get("models") or []):
+                if isinstance(row, dict) and (row.get("name") or row.get("model")):
+                    mid = str(row.get("name") or row.get("model"))
+                    loaded_models.append(mid)
+                    if mid == model_id and row.get("context_length") is not None:
+                        loaded_context_length = int(row["context_length"])
             try:
-                data = _http_json_request(probe_source, timeout_s=timeout_s)
-                _consume_rows(list(data.get("data") or []), default_state="not-loaded")
-            except RuntimeError as exc2:
-                return {
-                    "reachable": False,
-                    "error": str(exc2),
-                    "probe_source": probe_source,
-                    "loaded_models": [],
-                    "downloaded_unloaded_models": [],
-                    "target_model_loaded": False,
-                    "loaded_context_length": None,
-                }
-        else:
-            return {
-                "reachable": False,
-                "error": str(exc),
-                "probe_source": probe_source,
-                "loaded_models": [],
-                "downloaded_unloaded_models": [],
-                "target_model_loaded": False,
-                "loaded_context_length": None,
-            }
+                tags_data = _http_json_request(f"{root_url}/api/tags", timeout_s=timeout_s)
+                for row in list(tags_data.get("models") or []):
+                    if isinstance(row, dict) and (row.get("name") or row.get("model")):
+                        mid = str(row.get("name") or row.get("model"))
+                        if mid not in loaded_models:
+                            downloaded_unloaded_models.append(mid)
+            except RuntimeError:
+                pass
+        except RuntimeError as exc:
+            if "HTTP 404 " in str(exc):
+                probe_source = f"{validated_v1}/models"
+                try:
+                    data = _http_json_request(probe_source, timeout_s=timeout_s)
+                    _consume_rows(list(data.get("data") or []), default_state="loaded")
+                except RuntimeError as exc2:
+                    return _err_payload(str(exc2), probe_source)
+            else:
+                return _err_payload(str(exc), probe_source)
+    elif probe_mode == "openai_v1_models":
+        try:
+            data = _http_json_request(probe_source, timeout_s=timeout_s)
+            _consume_rows(list(data.get("data") or []), default_state="loaded")
+        except RuntimeError as exc:
+            return _err_payload(str(exc), probe_source)
+    else:
+        try:
+            data = _http_json_request(probe_source, timeout_s=timeout_s)
+            _consume_rows(list(data.get("data") or []), default_state="not-loaded")
+        except RuntimeError as exc:
+            if "HTTP 404 " in str(exc):
+                probe_source = f"{validated_v1}/models"
+                try:
+                    data = _http_json_request(probe_source, timeout_s=timeout_s)
+                    _consume_rows(list(data.get("data") or []), default_state="not-loaded")
+                except RuntimeError as exc2:
+                    return _err_payload(str(exc2), probe_source)
+            else:
+                return _err_payload(str(exc), probe_source)
 
     return {
+        "backend": adapter["id"],
         "reachable": True,
         "error": None,
         "probe_source": probe_source,
@@ -2277,7 +2471,7 @@ def _enforce_eta_or_raise(
 
 
 def cmd_status(args: argparse.Namespace) -> int:
-    api_url = validate_loopback_url(args.api_url or resolve_default_api_url())
+    api_url = validate_loopback_url(args.api_url or resolve_default_api_url(getattr(args, "backend", "auto")))
     sys_prompt, sys_src = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     probe = probe_server_models(api_url, model_id=args.model, timeout_s=5.0)
     sc_str = format_lifetime_scorecard()
@@ -2373,7 +2567,7 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
 
 
 def cmd_query(args: argparse.Namespace) -> int:
-    api_url = validate_loopback_url(args.api_url or resolve_default_api_url())
+    api_url = validate_loopback_url(args.api_url or resolve_default_api_url(getattr(args, "backend", "auto")))
     sys_prompt, sys_src = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
@@ -2518,7 +2712,7 @@ def cmd_query(args: argparse.Namespace) -> int:
 
 
 def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
-    api_url = validate_loopback_url(args.api_url or resolve_default_api_url())
+    api_url = validate_loopback_url(args.api_url or resolve_default_api_url(getattr(args, "backend", "auto")))
     sys_prompt, sys_src = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
@@ -2650,7 +2844,7 @@ def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
     )
 
     body_text = (
-        f"<!-- local_sidecar provenance: schema={SCHEMA_VERSION} author=\"LM Studio Bionic ({res['model']}, {res['mode']})\" "
+        f"<!-- apprentice provenance: schema={SCHEMA_VERSION} author=\"Apprentice Local Backend ({res['model']}, {res['mode']})\" "
         f"elapsed_s={res['elapsed_s']} prompt_tok={res['prompt_tokens']} "
         f"out_tok={res['completion_tokens']} tg_tok_s={res['observed_tg_tok_s']} -->\n\n"
         f"{res['content']}\n"
@@ -2813,7 +3007,7 @@ def stage_code_artifact(
 def cmd_stage_code(args: argparse.Namespace) -> int:
     # Validate staging target and firewall BEFORE calling loopback inference (fail closed offline!)
     safe_staging = validate_staging_dir(Path(args.staging_dir))
-    api_url = validate_loopback_url(args.api_url or resolve_default_api_url())
+    api_url = validate_loopback_url(args.api_url or resolve_default_api_url(getattr(args, "backend", "auto")))
     sys_prompt, _ = load_system_prompt(Path(args.system_prompt) if getattr(args, "system_prompt", None) else None)
     repo_root = Path(args.repo) if args.repo else None
     repo_resolved = repo_root.resolve(strict=False) if repo_root else None
@@ -3382,7 +3576,7 @@ def _safe_job_file(job_id: str, jobs_dir: Path | None = None) -> Path:
 
 
 def submit_async_job(job_spec: dict[str, Any], *, jobs_dir: Path | None = None) -> dict[str, Any]:
-    """Spawn a detached Bionic background job cleanly inside ~/.cache/homunculus_bionic_plugin/jobs/."""
+    """Spawn a detached Bionic background job cleanly inside ~/.cache/apprentice_plugin/jobs/."""
     jdir = _resolve_jobs_dir(jobs_dir)
     jdir.mkdir(parents=True, exist_ok=True)
     os.chmod(jdir, 0o700)
@@ -3432,17 +3626,17 @@ def _execute_job_worker(job_file: Path) -> int:
     kwargs = dict(spec.get("kwargs") or {})
     kwargs["async_job"] = False
 
-    mcp_path = Path(__file__).resolve().parent / "bionic_sidecar" / "bionic_mcp_server.py"
+    mcp_path = Path(__file__).resolve().parent / "apprentice" / "apprentice_mcp_server.py"
     try:
-        mod_spec = importlib.util.spec_from_file_location("bionic_mcp_server", str(mcp_path))
+        mod_spec = importlib.util.spec_from_file_location("apprentice_mcp_server", str(mcp_path))
         if mod_spec is None or mod_spec.loader is None:
             raise RuntimeError(f"Could not load {mcp_path}")
         mcp_mod = importlib.util.module_from_spec(mod_spec)
         mod_spec.loader.exec_module(mcp_mod)
         fn_map = {
-            "digest": mcp_mod.bionic_digest,
-            "repo_audit": mcp_mod.bionic_repo_audit,
-            "stage_patch": mcp_mod.bionic_stage_patch,
+            "digest": mcp_mod.apprentice_digest,
+            "repo_audit": mcp_mod.apprentice_repo_audit,
+            "stage_patch": mcp_mod.apprentice_stage_patch,
         }
         if kind not in fn_map:
             raise ValueError(f"Unsupported async job kind: {kind}")
@@ -3532,7 +3726,7 @@ def _normalize_control_cli_action(action: str) -> str:
 
 def cmd_control(args: argparse.Namespace) -> int:
     action_norm = _normalize_control_cli_action(args.action)
-    api_url = validate_loopback_url(args.api_url or resolve_default_api_url())
+    api_url = validate_loopback_url(args.api_url or resolve_default_api_url(getattr(args, "backend", "auto")))
     lms_bin = Path(getattr(args, "lms_bin", str(DEFAULT_LMS_BIN)))
     cfg_path = Path(getattr(args, "concrete_cfg_path", str(DEFAULT_CONCRETE_CFG_PATH)))
     appimage_path = DEFAULT_APPIMAGE_PATH
@@ -4255,7 +4449,7 @@ def run_self_tests() -> dict[str, Any]:
         sys_prompt_bytes=2350,
         max_tokens=800,
         calibrated_output=True,
-        cmd_name="bionic_stage_patch",
+        cmd_name="apprentice_stage_patch",
     )
     assert eta_stg_small["est_output_tokens"] < 120, f"expected compact stage out <120: {eta_stg_small}"
     eta_retry_small = estimate_eta(
@@ -4264,7 +4458,7 @@ def run_self_tests() -> dict[str, Any]:
         sys_prompt_bytes=2350,
         max_tokens=2048,
         calibrated_output=True,
-        cmd_name="bionic_stage_patch_retry",
+        cmd_name="apprentice_stage_patch_retry",
         target_code_bytes=30,
     )
     assert eta_retry_small["est_output_tokens"] < 80, f"expected retry out <80: {eta_retry_small}"
@@ -4286,10 +4480,10 @@ def run_self_tests() -> dict[str, Any]:
             tlog23.write_text(
                 "\n".join(
                     [
-                        json.dumps({"cmd": "bionic_stage_patch", "verdict": "healed", "elapsed_s": 2.0}),
-                        json.dumps({"cmd": "bionic_stage_patch_retry", "is_retry": True, "finish_reason": "length", "elapsed_s": 1.0}),
-                        json.dumps({"cmd": "bionic_digest", "synthetic_fault": True, "finish_reason": "length", "elapsed_s": 0.4}),
-                        json.dumps({"cmd": "bionic_digest", "finish_reason": "length", "elapsed_s": 5.0}),
+                        json.dumps({"cmd": "apprentice_stage_patch", "verdict": "healed", "elapsed_s": 2.0}),
+                        json.dumps({"cmd": "apprentice_stage_patch_retry", "is_retry": True, "finish_reason": "length", "elapsed_s": 1.0}),
+                        json.dumps({"cmd": "apprentice_digest", "synthetic_fault": True, "finish_reason": "length", "elapsed_s": 0.4}),
+                        json.dumps({"cmd": "apprentice_digest", "finish_reason": "length", "elapsed_s": 5.0}),
                     ]
                 )
                 + "\n",
@@ -4318,7 +4512,7 @@ def run_self_tests() -> dict[str, Any]:
             assert rst["ok"] is True and rst["previous_epoch"]["usable_pct"] == 50.0, f"bad archive prev: {rst}"
             assert _resolve_scorecard_archive_path().is_file()
             assert "epoch v2.3: 0 calls" in format_lifetime_scorecard()
-            record_call_outcome(verdict="clean", cmd="bionic_digest", elapsed_s=1.5)
+            record_call_outcome(verdict="clean", cmd="apprentice_digest", elapsed_s=1.5)
             fmt_after = format_lifetime_scorecard()
             assert "100.0% usable, 0.0% corr | +50.0% vs pre-v2.3" in fmt_after, f"bad rel fmt: {fmt_after}"
             rst_same = reset_scorecard(archive=True, epoch_label="v2.3")
@@ -4364,8 +4558,8 @@ def run_self_tests() -> dict[str, Any]:
             paths_in_b = [item[0] for item in b24]
             assert len(paths_in_b) == len(set(paths_in_b)), f"duplicate file in same batch: {b24}"
 
-    eta_deep_short = estimate_eta(mode="deep", prompt_bytes=2200, calibrated_output=True, cmd_name="bionic_digest")
-    eta_deep_long = estimate_eta(mode="deep", prompt_bytes=28000, calibrated_output=True, cmd_name="bionic_digest")
+    eta_deep_short = estimate_eta(mode="deep", prompt_bytes=2200, calibrated_output=True, cmd_name="apprentice_digest")
+    eta_deep_long = estimate_eta(mode="deep", prompt_bytes=28000, calibrated_output=True, cmd_name="apprentice_digest")
     assert eta_deep_short["est_output_tokens"] < eta_deep_long["est_output_tokens"]
     assert eta_deep_short["predicted_eta_s"] < 60.0, f"short deep eta still over-predicted: {eta_deep_short}"
     checks.append("v2_4_chunk_packing_eta_scaling_and_tok_s_fields")
@@ -4440,6 +4634,75 @@ def run_self_tests() -> dict[str, Any]:
     assert chk_high["predicted_eta_s"] > chk_std["predicted_eta_s"], f"expected cross-slice high eta > std: {chk_high}"
     checks.append("v244_kv_wait_telemetry_and_chunked_eta_calibration")
 
+    # 22. Multi-backend adapter resolution & Ollama / OpenAI-compat probe checks
+    import http.server as _http_srv
+    import threading as _threading
+
+    assert resolve_backend_adapter("ollama")["id"] == "ollama"
+    assert resolve_backend_adapter("auto", "http://127.0.0.1:11434/v1")["id"] == "ollama"
+    assert resolve_backend_adapter("auto", "http://127.0.0.1:8080/v1")["id"] == "llamacpp"
+    assert resolve_backend_adapter("auto", "http://127.0.0.1:1234/v1")["id"] == "bionic"
+
+    class _MultiBackendMock(_http_srv.BaseHTTPRequestHandler):
+        def do_GET(self) -> None:  # noqa: N802
+            if self.path == "/api/ps":
+                body = json.dumps({"models": [{"name": "qwen2.5:14b", "context_length": 32768}]}).encode("utf-8")
+            elif self.path == "/api/tags":
+                body = json.dumps({"models": [{"name": "qwen2.5:14b"}, {"name": "llama3.2:latest"}]}).encode("utf-8")
+            elif self.path == "/v1/models":
+                body = json.dumps({"data": [{"id": "local-gguf"}]}).encode("utf-8")
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args: object) -> None:
+            return
+
+    _mb_srv = _http_srv.HTTPServer(("127.0.0.1", 0), _MultiBackendMock)
+    _mb_thr = _threading.Thread(target=_mb_srv.serve_forever, daemon=True)
+    _mb_thr.start()
+    _old_custom_port = os.environ.get("APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT")
+    os.environ["APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+    try:
+        _mb_url = f"http://127.0.0.1:{_mb_srv.server_address[1]}/v1"
+        _ol_res = probe_server_models(_mb_url, model_id="qwen2.5:14b", backend="ollama", timeout_s=2.0)
+        assert _ol_res["reachable"] and _ol_res["backend"] == "ollama" and _ol_res["target_model_loaded"]
+        assert "llama3.2:latest" in _ol_res["downloaded_unloaded_models"]
+        assert _ol_res["loaded_context_length"] == 32768
+        _oa_res = probe_server_models(_mb_url, model_id="local-gguf", backend="openai_compat", timeout_s=2.0)
+        assert _oa_res["reachable"] and _oa_res["backend"] == "openai_compat" and _oa_res["target_model_loaded"]
+    finally:
+        if _old_custom_port is None:
+            os.environ.pop("APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT", None)
+        else:
+            os.environ["APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT"] = _old_custom_port
+        _mb_srv.shutdown()
+        _mb_srv.server_close()
+    checks.append("apprentice_multi_backend_adapter_probe")
+
+    # 23. Legacy Bionic -> Apprentice cache & scorecard migration
+    with tempfile.TemporaryDirectory() as _mig_tmp:
+        _leg_dir = Path(_mig_tmp) / "homunculus_bionic_plugin"
+        _app_dir = Path(_mig_tmp) / "apprentice_plugin"
+        _leg_dir.mkdir(parents=True)
+        (_leg_dir / "bionic_scorecard.json").write_text(
+            json.dumps({"schema_version": "BIONIC_SCORECARD_V1", "epoch": "v2.4", "clean": 26, "corrected": 7, "healed": 8, "next_seq": 242}),
+            encoding="utf-8",
+        )
+        (_leg_dir / "sidecar_usage_telemetry.jsonl").write_text(json.dumps({"cmd": "bionic_digest", "verdict": "clean"}) + "\n", encoding="utf-8")
+        _mig_res = migrate_legacy_bionic_cache(_leg_dir, _app_dir)
+        assert "apprentice_scorecard.json" in _mig_res["migrated"]
+        assert "apprentice_usage_telemetry.jsonl" in _mig_res["migrated"]
+        _sc_mig = json.loads((_app_dir / "apprentice_scorecard.json").read_text(encoding="utf-8"))
+        assert _sc_mig["clean"] == 26 and _sc_mig["healed"] == 8 and _sc_mig["schema_version"] == SCORECARD_SCHEMA
+    checks.append("apprentice_legacy_bionic_cache_migration")
+
     return {
         "schema_version": SCHEMA_VERSION,
         "status": "PASS",
@@ -4450,12 +4713,14 @@ def run_self_tests() -> dict[str, Any]:
 
 def build_parser() -> argparse.ArgumentParser:
     common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--backend", choices=VALID_BACKENDS, default="auto")
     common.add_argument("--api-url", default=None)
     common.add_argument("--model", default=DEFAULT_MODEL_ID)
     common.add_argument("--system-prompt", default=None)
     common.add_argument("--json", action="store_true")
 
     common_sub = argparse.ArgumentParser(add_help=False)
+    common_sub.add_argument("--backend", choices=VALID_BACKENDS, default=argparse.SUPPRESS)
     common_sub.add_argument("--api-url", default=argparse.SUPPRESS)
     common_sub.add_argument("--model", default=argparse.SUPPRESS)
     common_sub.add_argument("--system-prompt", default=argparse.SUPPRESS)

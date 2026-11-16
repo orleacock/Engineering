@@ -4,10 +4,14 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
 note_type: "reference"
-last_synced: "2026-11-09"
+authoritative: false
+status: "HISTORICAL_SUPERSEDED"
+last_synced: "2026-11-16"
 ---
 
-# Action Plan: Stateful, Decision-First & Multi-Way Portable Memory Engine
+# Action Plan: Stateful, Decision-First & Multi-Way Portable Memory Engine *(Completed `v0.1.0`–`v0.3.5` Architecture Blueprint)*
+
+> **Historical Blueprint (`authoritative: false`)**: Completed implementation plan preserved per `W-5` non-destructive preservation rules; all Stateful Memory `v1.1` sprints are shipped in live `Homunculus`. Consult [`Homunculus.md`](Homunculus.md) and [`Homunculus_Software.md`](Homunculus_Software.md) for current authoritative state.
 
 Part of [`Homunculus.md`](Homunculus.md) • Companion to [`Homunculus_Cleanroom_Promotion_Diff.md`](Homunculus_Cleanroom_Promotion_Diff.md) & [`Homunculus_Lessons_Learned.md`](Homunculus_Lessons_Learned.md)
 

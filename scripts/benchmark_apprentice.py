@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-Bionic Local Sidecar Standardized Benchmark & Regression Suite (`benchmark_bionic_sidecar.py`).
+Apprentice Multi-Backend Standardized Benchmark & Regression Suite (`benchmark_apprentice.py`).
 
 Governing Priority Law:
     1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed
 
 Runs deterministic offline firewall/resilience checks and live LM Studio Bionic
 (`qwen3.6-35b-a3b`) inference/concurrency benchmarks under a fixed metric schema so
-future revisions compare cleanly against a pinned baseline (`bionic_benchmark_history.jsonl`).
+future revisions compare cleanly against a pinned baseline (`apprentice_benchmark_history.jsonl`).
 
 Usage:
-    python3 -B scripts/benchmark_bionic_sidecar.py --mode offline --json
-    python3 -B scripts/benchmark_bionic_sidecar.py --mode all --label baseline --record-baseline
-    python3 -B scripts/benchmark_bionic_sidecar.py --mode all --compare-baseline --output-md report.md
+    python3 -B scripts/benchmark_apprentice.py --mode offline --json
+    python3 -B scripts/benchmark_apprentice.py --mode all --label baseline --record-baseline
+    python3 -B scripts/benchmark_apprentice.py --mode all --compare-baseline --output-md report.md
 """
 from __future__ import annotations
 
@@ -35,20 +35,20 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 ENGINEERING_ROOT = SCRIPT_DIR.parent
 DEFAULT_HOMUNCULUS_ROOT = ENGINEERING_ROOT.parent / "Alchemical3D" / "Homunculus"
 DEFAULT_ALCHEMICAL_ROOT = ENGINEERING_ROOT.parent / "Alchemical3D"
-DEFAULT_HISTORY_JSONL = SCRIPT_DIR / "bionic_benchmark_history.jsonl"
+DEFAULT_HISTORY_JSONL = SCRIPT_DIR / "apprentice_benchmark_history.jsonl"
 AGY_VENV_PYTHON = Path("/home/orin/.local/share/agy-gmail/venv/bin/python")
 VERIFY_CLAIMS_SCRIPT = DEFAULT_HOMUNCULUS_ROOT / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
 
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
-if str(SCRIPT_DIR / "bionic_sidecar") not in sys.path:
-    sys.path.insert(0, str(SCRIPT_DIR / "bionic_sidecar"))
+if str(SCRIPT_DIR / "apprentice") not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR / "apprentice"))
 
-import bionic_lifecycle_hook  # noqa: E402
-import bionic_mcp_server  # noqa: E402
-import local_sidecar  # noqa: E402
+import apprentice_lifecycle_hook  # noqa: E402
+import apprentice_mcp_server  # noqa: E402
+import apprentice_engine  # noqa: E402
 
-SCHEMA_VERSION = "BIONIC_BENCH_V2"
+SCHEMA_VERSION = "APPRENTICE_BENCH_V2"
 
 
 @dataclasses.dataclass
@@ -73,7 +73,7 @@ def _run_subprocess(cmd: list[str], *, timeout_s: int = 60) -> tuple[int, float,
     t0 = time.perf_counter()
     proc = subprocess.run(
         cmd,
-        cwd=local_sidecar._safe_subprocess_cwd(),
+        cwd=apprentice_engine._safe_subprocess_cwd(),
         capture_output=True,
         text=True,
         timeout=timeout_s,
@@ -134,9 +134,9 @@ def _compute_o5_eta_metric(telemetry_log: Path) -> BenchMetric:
                 row = json.loads(raw)
             except json.JSONDecodeError:
                 continue
-            if row.get("telemetry_schema") != local_sidecar.TELEMETRY_SCHEMA:
+            if row.get("telemetry_schema") != apprentice_engine.TELEMETRY_SCHEMA:
                 continue
-            if row.get("eta_cal_version") != local_sidecar.ETA_CALIBRATION_VERSION:
+            if row.get("eta_cal_version") != apprentice_engine.ETA_CALIBRATION_VERSION:
                 continue
             if (
                 not row.get("tripped")
@@ -174,9 +174,9 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     # O1: Built-in unit self-test suites
     py_mcp = str(AGY_VENV_PYTHON) if AGY_VENV_PYTHON.is_file() else sys.executable
     self_test_cmds = [
-        ("local_sidecar", [sys.executable, "-B", str(SCRIPT_DIR / "local_sidecar.py"), "--self-test"]),
-        ("bionic_lifecycle_hook", [sys.executable, "-B", str(SCRIPT_DIR / "bionic_sidecar" / "bionic_lifecycle_hook.py"), "--self-test"]),
-        ("bionic_mcp_server", [py_mcp, "-B", str(SCRIPT_DIR / "bionic_sidecar" / "bionic_mcp_server.py"), "--self-test"]),
+        ("apprentice_engine", [sys.executable, "-B", str(SCRIPT_DIR / "apprentice_engine.py"), "--self-test"]),
+        ("apprentice_lifecycle_hook", [sys.executable, "-B", str(SCRIPT_DIR / "apprentice" / "apprentice_lifecycle_hook.py"), "--self-test"]),
+        ("apprentice_mcp_server", [py_mcp, "-B", str(SCRIPT_DIR / "apprentice" / "apprentice_mcp_server.py"), "--self-test"]),
     ]
     suites_passed = 0
     suite_times: dict[str, float] = {}
@@ -214,23 +214,23 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
             try:
                 fn(*args, **kwargs)
                 return False
-            except local_sidecar.SidecarFirewallError:
+            except apprentice_engine.SidecarFirewallError:
                 return True
 
-        core_cases.append(("non_loopback_url", _expect_fw(local_sidecar.validate_loopback_url, "https://evil.example.com/v1")))
-        core_cases.append(("raw_step_cad", _expect_fw(local_sidecar.validate_input_paths, [td_p / "part.step"])))
-        core_cases.append(("env_secret_file", _expect_fw(local_sidecar.validate_input_paths, [td_p / ".env.prod"])))
-        core_cases.append(("repo_4c_escape", _expect_fw(local_sidecar.validate_input_paths, [td_p / "outside.md"], repo_root=ENGINEERING_ROOT)))
-        core_cases.append(("protected_staging_dir", _expect_fw(local_sidecar.validate_staging_dir, SCRIPT_DIR)))
+        core_cases.append(("non_loopback_url", _expect_fw(apprentice_engine.validate_loopback_url, "https://evil.example.com/v1")))
+        core_cases.append(("raw_step_cad", _expect_fw(apprentice_engine.validate_input_paths, [td_p / "part.step"])))
+        core_cases.append(("env_secret_file", _expect_fw(apprentice_engine.validate_input_paths, [td_p / ".env.prod"])))
+        core_cases.append(("repo_4c_escape", _expect_fw(apprentice_engine.validate_input_paths, [td_p / "outside.md"], repo_root=ENGINEERING_ROOT)))
+        core_cases.append(("protected_staging_dir", _expect_fw(apprentice_engine.validate_staging_dir, SCRIPT_DIR)))
 
-        eta_trip = local_sidecar.estimate_eta(mode="fast", prompt_bytes=180000, max_tokens=1200, max_eta_seconds=60.0)
+        eta_trip = apprentice_engine.estimate_eta(mode="fast", prompt_bytes=180000, max_tokens=1200, max_eta_seconds=60.0)
         core_cases.append(("auto_60s_eta_trip", bool(eta_trip.get("tripped"))))
 
-        ctrl_res = bionic_mcp_server.bionic_control(action="start-headless", profile="gpu-daily", user_confirmed=False)
+        ctrl_res = apprentice_mcp_server.apprentice_control(action="start-headless", profile="gpu-daily", user_confirmed=False)
         core_cases.append(("control_requires_confirm", ctrl_res.get("error_code") == "USER_CONFIRMATION_REQUIRED"))
 
-        h1 = bionic_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "curl http://127.0.0.1:1234/v1/models"}}})
-        h2 = bionic_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "echo hi && python3 local_sidecar.py status"}}})
+        h1 = apprentice_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "curl http://127.0.0.1:1234/v1/models"}}})
+        h2 = apprentice_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "echo hi && python3 apprentice_engine.py status"}}})
         core_cases.append(("hook_blocks_1234", h1.get("decision") == "deny"))
         core_cases.append(("hook_blocks_shell_chain", h2.get("decision") == "deny"))
 
@@ -266,7 +266,7 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
         (repo / ".env").write_text("KEY=SECRET_LEAK_TOKEN\n", encoding="utf-8")
         (repo / "part.step").write_text("CARTESIAN_POINT('',(0,0,0));\n", encoding="utf-8")
         try:
-            diff_payload, _ = local_sidecar.assemble_prompt_payload(
+            diff_payload, _ = apprentice_engine.assemble_prompt_payload(
                 user_prompt="check",
                 context_files=[repo / "README.md"],
                 repo_root=repo,
@@ -275,26 +275,26 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
             )
             ext_cases.append(("git_diff_blocks_env", "SECRET_LEAK_TOKEN" not in diff_payload))
             ext_cases.append(("git_diff_blocks_step", "CARTESIAN_POINT" not in diff_payload))
-        except local_sidecar.SidecarFirewallError:
+        except apprentice_engine.SidecarFirewallError:
             ext_cases.append(("git_diff_blocks_env", True))
             ext_cases.append(("git_diff_blocks_step", True))
 
     mixed_blocked = False
     try:
-        local_sidecar.validate_input_paths(
+        apprentice_engine.validate_input_paths(
             [
-                SCRIPT_DIR / "local_sidecar.py",
+                SCRIPT_DIR / "apprentice_engine.py",
                 DEFAULT_ALCHEMICAL_ROOT / "A3DP_Gantry_Assembly" / "BOM.md",
             ],
             repo_root=None,
             require_exists=True,
         )
-    except local_sidecar.SidecarFirewallError:
+    except apprentice_engine.SidecarFirewallError:
         mixed_blocked = True
     ext_cases.append(("cross_repo_4c_without_repo", mixed_blocked))
 
-    h_lms_q = bionic_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "bash -c 'lms daemon status'"}}})
-    h_dec_ip = bionic_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "curl http://2130706433:1234/v1/models"}}})
+    h_lms_q = apprentice_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "bash -c 'lms daemon status'"}}})
+    h_dec_ip = apprentice_lifecycle_hook.evaluate_pre_tool_use({"hookEventName": "PreToolUse", "toolCall": {"name": "run_command", "args": {"CommandLine": "curl http://2130706433:1234/v1/models"}}})
     ext_cases.append(("hook_blocks_quoted_lms", h_lms_q.get("decision") == "deny"))
     ext_cases.append(("hook_blocks_decimal_ip", h_dec_ip.get("decision") == "deny"))
 
@@ -315,23 +315,23 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     )
 
     # O4: Resilience checks (truncated fence + daemon timeout handling)
-    extracted = local_sidecar.extract_staged_code("```python\nimport os\ndef f():\n    return 1\n")
+    extracted = apprentice_engine.extract_staged_code("```python\nimport os\ndef f():\n    return 1\n")
     fence_clean = not extracted.lstrip().startswith("```")
 
-    orig_probe = local_sidecar._probe_lms_daemon
-    orig_run = local_sidecar._run_lms_cmd
+    orig_probe = apprentice_engine._probe_lms_daemon
+    orig_run = apprentice_engine._run_lms_cmd
     timeout_handled = False
     try:
-        local_sidecar._probe_lms_daemon = lambda *a, **k: {"available": True, "running": False, "summary": "timed out"}
+        apprentice_engine._probe_lms_daemon = lambda *a, **k: {"available": True, "running": False, "summary": "timed out"}
         def _raise_to(*a, **k):
             raise subprocess.TimeoutExpired(cmd=["lms", "daemon", "up"], timeout=30.0)
-        local_sidecar._run_lms_cmd = _raise_to
+        apprentice_engine._run_lms_cmd = _raise_to
         try:
-            local_sidecar._control_start_headless(
+            apprentice_engine._control_start_headless(
                 "http://127.0.0.1:1234/v1",
                 "qwen3.6-35b-a3b",
                 "gpu-daily",
-                local_sidecar.DEFAULT_LMS_BIN,
+                apprentice_engine.DEFAULT_LMS_BIN,
                 Path("/nonexistent/appimage"),
                 Path("/tmp/nonexistent_cfg.json"),
             )
@@ -340,8 +340,8 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
         except subprocess.TimeoutExpired:
             timeout_handled = False
     finally:
-        local_sidecar._probe_lms_daemon = orig_probe
-        local_sidecar._run_lms_cmd = orig_run
+        apprentice_engine._probe_lms_daemon = orig_probe
+        apprentice_engine._run_lms_cmd = orig_run
 
     resilience_score = int(fence_clean) + int(timeout_handled)
     forensics["resilience_cases"] = {"truncated_fence_stripped": fence_clean, "daemon_timeout_caught": timeout_handled}
@@ -363,7 +363,7 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     metrics.append(_compute_o5_eta_metric(telemetry_log))
 
     # O6: Soft ETA overrun separation, HIGH >=4096 floor, and HTTP error telemetry isolation
-    soft_est = local_sidecar.estimate_eta(
+    soft_est = apprentice_engine.estimate_eta(
         mode="fast",
         prompt_bytes=0,
         prompt_tokens_override=46000,
@@ -373,21 +373,21 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
         loaded_ctx_override=57344,
     )
     soft_ok = bool(soft_est.get("soft_eta_exceeded")) and not bool(soft_est.get("hard_tripped"))
-    floor_ok = local_sidecar.resolve_effective_max_tokens("deep", 1024) == 4096
+    floor_ok = apprentice_engine.resolve_effective_max_tokens("deep", 1024) == 4096
     err_logged = False
     with tempfile.TemporaryDirectory(prefix="bionic_bench_o6_") as td_o6:
-        old_t6 = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
+        old_t6 = os.environ.get("APPRENTICE_TELEMETRY_LOG")
         t6 = Path(td_o6) / "tel.jsonl"
-        os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(t6)
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(t6)
         try:
-            local_sidecar.record_usage_telemetry({"cmd": "query", "http_error": True, "elapsed_s": 0.4, "finish_reason": "error"})
-            sc6 = local_sidecar.load_or_init_scorecard()
+            apprentice_engine.record_usage_telemetry({"cmd": "query", "http_error": True, "elapsed_s": 0.4, "finish_reason": "error"})
+            sc6 = apprentice_engine.load_or_init_scorecard()
             err_logged = sc6["corrected"] == 1 and t6.is_file()
         finally:
             if old_t6 is None:
-                os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
             else:
-                os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_t6
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t6
     o6_score = int(soft_ok) + int(floor_ok) + int(err_logged)
     forensics["O6"] = {"soft_ok": soft_ok, "floor_ok": floor_ok, "err_logged": err_logged}
     metrics.append(
@@ -407,21 +407,21 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     # O7: Lifetime scorecard seed, healed classification, slow_self_heal (>45s), & idempotent verdict
     o7_ok = False
     with tempfile.TemporaryDirectory(prefix="bionic_bench_o7_") as td_o7:
-        old_t7 = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
+        old_t7 = os.environ.get("APPRENTICE_TELEMETRY_LOG")
         t7 = Path(td_o7) / "tel.jsonl"
-        os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(t7)
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(t7)
         try:
             t7.write_text(json.dumps({"cmd": "query", "finish_reason": "stop", "elapsed_s": 2.0}) + "\n", encoding="utf-8")
-            rec_h = local_sidecar.record_call_outcome(verdict="healed", cmd="stage-code", effort="high", mode="deep", elapsed_s=10.0, heal_elapsed_s=48.0)
-            rec_c = local_sidecar.record_call_outcome(verdict="clean", cmd="query", effort="standard", mode="fast", elapsed_s=3.0)
-            v1 = local_sidecar.apply_call_verdict(rec_c["call_id"], "corrected", note="o7")
-            v2 = local_sidecar.apply_call_verdict(rec_c["call_id"], "corrected", note="o7_repeat")
+            rec_h = apprentice_engine.record_call_outcome(verdict="healed", cmd="stage-code", effort="high", mode="deep", elapsed_s=10.0, heal_elapsed_s=48.0)
+            rec_c = apprentice_engine.record_call_outcome(verdict="clean", cmd="query", effort="standard", mode="fast", elapsed_s=3.0)
+            v1 = apprentice_engine.apply_call_verdict(rec_c["call_id"], "corrected", note="o7")
+            v2 = apprentice_engine.apply_call_verdict(rec_c["call_id"], "corrected", note="o7_repeat")
             o7_ok = (rec_h["slow_self_heal"] is True and rec_h["healed"] == 1 and v1["clean"] == 1 and v1["corrected"] == 1 and v2["corrected"] == 1)
         finally:
             if old_t7 is None:
-                os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
             else:
-                os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_t7
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t7
     metrics.append(
         BenchMetric(
             id="O7_scorecard_and_healed",
@@ -437,27 +437,27 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     )
 
     # O8: Context slice parsing, KV budget lockfile guard, & gpu-max hardware config
-    p_sl, rng_sl = local_sidecar.parse_context_spec("/tmp/demo.py#L12-L40")
+    p_sl, rng_sl = apprentice_engine.parse_context_spec("/tmp/demo.py#L12-L40")
     slice_ok = (p_sl == Path("/tmp/demo.py") and rng_sl == (12, 40))
-    cfg_max = local_sidecar.build_concrete_model_config("gpu-max")
+    cfg_max = apprentice_engine.build_concrete_model_config("gpu-max")
     fmax = {f["key"]: f["value"] for f in cfg_max["load"]["fields"]}
     cfg_ok = (fmax.get("llm.load.contextLength") == 57344 and fmax.get("llm.load.numCpuExpertLayersRatio") == 0.52)
     kv_ok = False
     with tempfile.TemporaryDirectory(prefix="bionic_bench_o8_") as td_o8:
-        old_t8 = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
-        os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(Path(td_o8) / "tel.jsonl")
+        old_t8 = os.environ.get("APPRENTICE_TELEMETRY_LOG")
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(Path(td_o8) / "tel.jsonl")
         try:
-            with local_sidecar.acquire_kv_budget(40000, loaded_ctx=57344, timeout_s=0.15):
+            with apprentice_engine.acquire_kv_budget(40000, loaded_ctx=57344, timeout_s=0.15):
                 try:
-                    with local_sidecar.acquire_kv_budget(20000, loaded_ctx=57344, timeout_s=0.1):
+                    with apprentice_engine.acquire_kv_budget(20000, loaded_ctx=57344, timeout_s=0.1):
                         kv_ok = False
                 except RuntimeError:
                     kv_ok = True
         finally:
             if old_t8 is None:
-                os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
             else:
-                os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_t8
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t8
     o8_score = int(slice_ok) + int(cfg_ok) + int(kv_ok)
     metrics.append(
         BenchMetric(
@@ -474,11 +474,11 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     )
 
     # O9: V2.3 graduation guards (lean headless prompt, chunk continuity, reset confirm gate, epoch delta, AST auto --self-test, verify default)
-    sys_txt, sys_src = local_sidecar.load_system_prompt()
+    sys_txt, sys_src = apprentice_engine.load_system_prompt()
     headless_prompt_lean = (sys_src == "headless_api_v2_3") and (len(sys_txt.encode("utf-8")) <= 1050)
 
-    ls_path = SCRIPT_DIR / "local_sidecar.py"
-    ls_chunks = local_sidecar.plan_line_preserving_chunks([ls_path], target_chunk_bytes=22000)
+    ls_path = SCRIPT_DIR / "apprentice_engine.py"
+    ls_chunks = apprentice_engine.plan_line_preserving_chunks([ls_path], target_chunk_bytes=22000)
     ls_nlines = len(ls_path.read_text(encoding="utf-8", errors="replace").splitlines())
     chunk_line_continuity = bool(
         len(ls_chunks) >= 6
@@ -487,26 +487,26 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
         and all(ls_chunks[i][2] + 1 == ls_chunks[i + 1][1] for i in range(len(ls_chunks) - 1))
     )
 
-    rs_blk = bionic_mcp_server.bionic_control(action="scorecard-reset", user_confirmed=False)
+    rs_blk = apprentice_mcp_server.apprentice_control(action="scorecard-reset", user_confirmed=False)
     scorecard_reset_confirm_gate = rs_blk.get("error_code") == "USER_CONFIRMATION_REQUIRED"
 
     scorecard_epoch_delta = False
     with tempfile.TemporaryDirectory(prefix="bionic_bench_o9_") as td_o9:
-        old_t9 = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
-        os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(Path(td_o9) / "tel.jsonl")
+        old_t9 = os.environ.get("APPRENTICE_TELEMETRY_LOG")
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(Path(td_o9) / "tel.jsonl")
         try:
             for _ in range(3):
-                local_sidecar.record_call_outcome(verdict="clean", cmd="query", elapsed_s=1.0)
-            local_sidecar.record_call_outcome(verdict="corrected", cmd="query", elapsed_s=1.0)
-            local_sidecar.reset_scorecard(epoch_label="v2.3-o9")
-            local_sidecar.record_call_outcome(verdict="clean", cmd="query", elapsed_s=1.0)
-            fmt_o9 = local_sidecar.format_lifetime_scorecard()
+                apprentice_engine.record_call_outcome(verdict="clean", cmd="query", elapsed_s=1.0)
+            apprentice_engine.record_call_outcome(verdict="corrected", cmd="query", elapsed_s=1.0)
+            apprentice_engine.reset_scorecard(epoch_label="v2.3-o9")
+            apprentice_engine.record_call_outcome(verdict="clean", cmd="query", elapsed_s=1.0)
+            fmt_o9 = apprentice_engine.format_lifetime_scorecard()
             scorecard_epoch_delta = ("+25.0% vs pre-v2.3" in fmt_o9) and ("100.0% usable" in fmt_o9)
         finally:
             if old_t9 is None:
-                os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
+                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
             else:
-                os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = old_t9
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t9
 
     auto_selftest_ast_detect = False
     with tempfile.TemporaryDirectory(prefix="bionic_bench_st_") as td_st:
@@ -515,11 +515,11 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
             "import sys\nif __name__ == '__main__':\n    if '--self-test' in sys.argv:\n        sys.exit(0)\n",
             encoding="utf-8",
         )
-        eff_st, auto_st = bionic_mcp_server._resolve_effective_smoke_args(st_py, None)
+        eff_st, auto_st = apprentice_mcp_server._resolve_effective_smoke_args(st_py, None)
         auto_selftest_ast_detect = (eff_st == ["--self-test"]) and (auto_st is True)
 
     default_verify_claims_on = (
-        inspect.signature(bionic_mcp_server._bionic_digest_sync).parameters["verify_claims"].default is True
+        inspect.signature(apprentice_mcp_server._apprentice_digest_sync).parameters["verify_claims"].default is True
     )
     o9_checks = {
         "headless": headless_prompt_lean,
@@ -553,8 +553,8 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
     metrics: list[BenchMetric] = []
     forensics: dict[str, Any] = {}
 
-    api_url = local_sidecar.validate_loopback_url(local_sidecar.resolve_default_api_url())
-    srv = local_sidecar.probe_server_models(api_url, model_id=local_sidecar.DEFAULT_MODEL_ID, timeout_s=3.0)
+    api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+    srv = apprentice_engine.probe_server_models(api_url, model_id=apprentice_engine.DEFAULT_MODEL_ID, timeout_s=3.0)
     if not srv["reachable"] or not srv["target_model_loaded"]:
         raise RuntimeError(
             f"[BIONIC_NOT_READY] Live benchmark requires ONLINE_READY Bionic at {api_url}; "
@@ -573,7 +573,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         staging_dir.mkdir(mode=0o700)
 
         # L1a: Clean BOM standard fast digest + verify_claims
-        r_std = bionic_mcp_server.bionic_digest(
+        r_std = apprentice_mcp_server.apprentice_digest(
             prompt=(
                 "Extract every fastener item, size, and quantity from BOM.md as a compact bullet list. "
                 "Cite exact BOM.md#Lstart-Lend anchors for every row. Never guess or expand acronyms."
@@ -640,7 +640,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         )
 
         # L1b: Clean BOM compact terse fast digest + verify_claims
-        r_cmp = bionic_mcp_server.bionic_digest(
+        r_cmp = apprentice_mcp_server.apprentice_digest(
             prompt=(
                 "Return ONLY a compact markdown list (`- <item>: qty <N> (`BOM.md#L<line>`)`) of threaded fasteners, "
                 "pins, and shims in BOM.md. Zero preamble, zero notes, zero excluded-items section."
@@ -670,7 +670,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         )
 
         # L2: HIGH effort mode reliability & claim accuracy (>=4096 token budget, zero length clipping)
-        r_deep = bionic_mcp_server.bionic_digest(
+        r_deep = apprentice_mcp_server.apprentice_digest(
             prompt="Extract threaded fasteners and quantities from BOM.md with BOM.md#Lstart-Lend anchors.",
             context_files=[str(a3dp_bom)],
             repo=str(a3dp_repo),
@@ -711,7 +711,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         )
 
         # L3: Scoped diff efficiency (Alembic_Toolhead BOM.md + include_git_diff=True)
-        r_diff = bionic_mcp_server.bionic_digest(
+        r_diff = apprentice_mcp_server.apprentice_digest(
             prompt=(
                 "List ONLY Section 2 fastener and hardware changes in BOM.md vs git HEAD "
                 "as a compact bullet list citing BOM.md#Lstart-Lend. "
@@ -740,8 +740,8 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             )
         )
 
-        # L4: bionic_stage_patch code generation + py_compile + execution
-        r_stg = bionic_mcp_server.bionic_stage_patch(
+        # L4: apprentice_stage_patch code generation + py_compile + execution
+        r_stg = apprentice_mcp_server.apprentice_stage_patch(
             target_filename="bench_helper.py",
             prompt=(
                 "Write a Python 3.10+ script (<45 lines) with `clamp_eta(val: float) -> float` clamping to "
@@ -763,7 +763,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             BenchMetric(
                 id="L4_stage_patch_s",
                 pillar="4. Speed",
-                name="bionic_stage_patch synthesis + py_compile time",
+                name="apprentice_stage_patch synthesis + py_compile time",
                 value=float(stg_tel.get("elapsed_s") or 0.0),
                 unit="s",
                 target="<= 20.0s",
@@ -777,14 +777,14 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         t_par0 = time.perf_counter()
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
             f1 = pool.submit(
-                bionic_mcp_server.bionic_digest,
+                apprentice_mcp_server.apprentice_digest,
                 prompt="Reply with exactly one line: SLOT_1_OK",
                 mode="fast",
                 invocation_tier="auto",
                 max_tokens=32,
             )
             f2 = pool.submit(
-                bionic_mcp_server.bionic_digest,
+                apprentice_mcp_server.apprentice_digest,
                 prompt="Reply with exactly one line: SLOT_2_OK",
                 mode="fast",
                 invocation_tier="auto",
@@ -813,9 +813,9 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             )
         )
 
-        # L7: Async sprint parallel overlap via base bionic_digest(async_job=True) + bionic_control(job-collect)
+        # L7: Async sprint parallel overlap via base apprentice_digest(async_job=True) + apprentice_control(job-collect)
         t_async0 = time.perf_counter()
-        sub_job = bionic_mcp_server.bionic_digest(
+        sub_job = apprentice_mcp_server.apprentice_digest(
             prompt="Summarize top 3 fastener families in BOM.md citing BOM.md#Lstart-Lend.",
             context_files=[f"{a3dp_bom}#L1-L40"],
             repo=str(a3dp_repo),
@@ -830,7 +830,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             t_fw0 = time.perf_counter()
             time.sleep(1.5)  # Simulated parallel frontier reasoning before hitting critical stop point
             frontier_work_s = round(time.perf_counter() - t_fw0, 3)
-            col_res = bionic_mcp_server.bionic_control(action="job-collect", job_id=sub_job["job_id"], wait_seconds=60.0)
+            col_res = apprentice_mcp_server.apprentice_control(action="job-collect", job_id=sub_job["job_id"], wait_seconds=60.0)
             job_res = col_res.get("result") or {}
             bionic_dt = float(((job_res.get("completion") or {}).get("elapsed_s")) or 0.0)
             overlap_ok = bool(
@@ -862,15 +862,15 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             )
         )
 
-        # L8: Live bionic_stage_patch self-heal (inject broken attempt 1 draft, verify real Qwen GPU repair attempt 2)
-        orig_invoke = local_sidecar.invoke_chat_completion
+        # L8: Live apprentice_stage_patch self-heal (inject broken attempt 1 draft, verify real Qwen GPU repair attempt 2)
+        orig_invoke = apprentice_engine.invoke_chat_completion
         injected_box = {"done": False}
 
         def _inject_broken_first_draft(*args, **kwargs):
             if not injected_box["done"]:
                 injected_box["done"] = True
                 return {
-                    "model": local_sidecar.DEFAULT_MODEL_ID,
+                    "model": apprentice_engine.DEFAULT_MODEL_ID,
                     "mode": kwargs.get("mode", "fast"),
                     "reasoning_effort": "none",
                     "prompt_tokens": 120,
@@ -883,9 +883,9 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
                 }
             return orig_invoke(*args, **kwargs)
 
-        local_sidecar.invoke_chat_completion = _inject_broken_first_draft
+        apprentice_engine.invoke_chat_completion = _inject_broken_first_draft
         try:
-            r_heal = bionic_mcp_server.bionic_stage_patch(
+            r_heal = apprentice_mcp_server.apprentice_stage_patch(
                 target_filename="self_heal_demo.py",
                 prompt=(
                     "Write a Python 3.10+ function `add_one(x: int) -> int` returning x + 1, "
@@ -897,7 +897,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
                 smoke_test_args=[],
             )
         finally:
-            local_sidecar.invoke_chat_completion = orig_invoke
+            apprentice_engine.invoke_chat_completion = orig_invoke
         forensics["L8"] = {k: v for k, v in r_heal.items() if k != "completion"}
         l8_ok = bool(r_heal.get("ok") and r_heal.get("verdict") == "healed" and r_heal.get("py_compile_ok") and (r_heal.get("smoke_test") or {}).get("ok"))
         metrics.append(
@@ -915,8 +915,8 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         )
 
         # L9: gpu-max VRAM/GTT desktop headroom verification
-        hw_now = local_sidecar._read_hw_counters()
-        srv_now = local_sidecar.probe_server_models(api_url, model_id=local_sidecar.DEFAULT_MODEL_ID, timeout_s=3.0)
+        hw_now = apprentice_engine._read_hw_counters()
+        srv_now = apprentice_engine.probe_server_models(api_url, model_id=apprentice_engine.DEFAULT_MODEL_ID, timeout_s=3.0)
         vfree = float(hw_now.get("vram_free_gib") or 0.0)
         gused = float(hw_now.get("gtt_used_gib") if hw_now.get("gtt_used_gib") is not None else 99.0)
         lctx = int(srv_now.get("loaded_context_length") or 0)
@@ -937,7 +937,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
         )
 
         # L10: Live V2.3 graduation vectors (TV-1 length heal, TV-4 >45k chunked digest, TV-5 auto --self-test heal)
-        r_tv1 = bionic_mcp_server.bionic_digest(
+        r_tv1 = apprentice_mcp_server.apprentice_digest(
             prompt=(
                 "List all fastener rows in BOM.md as compact markdown bullets citing exact "
                 "BOM.md#Lstart-Lend anchors for every row. Never guess or expand acronyms."
@@ -956,13 +956,13 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             and c_tv1.get("finish_reason") == "stop"
         )
 
-        r_tv4 = bionic_mcp_server.bionic_digest(
+        r_tv4 = apprentice_mcp_server.apprentice_digest(
             prompt=(
                 "Find the exact top-level assignment or `def` lines of `HEADLESS_API_SYSTEM_PROMPT`, "
-                "`plan_line_preserving_chunks`, and `reset_scorecard` in local_sidecar.py (ignore call sites and docstring index). "
-                "Return ONLY 3 compact bullets (`- `<symbol>`: `local_sidecar.py#L<start>-L<end>``). Zero preamble."
+                "`plan_line_preserving_chunks`, and `reset_scorecard` in apprentice_engine.py (ignore call sites and docstring index). "
+                "Return ONLY 3 compact bullets (`- `<symbol>`: `apprentice_engine.py#L<start>-L<end>``). Zero preamble."
             ),
-            context_files=[str(SCRIPT_DIR / "local_sidecar.py")],
+            context_files=[str(SCRIPT_DIR / "apprentice_engine.py")],
             repo=str(ENGINEERING_ROOT),
             effort="standard",
             invocation_tier="explicit",
@@ -976,14 +976,14 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             and r_tv4.get("verdict") in {"clean", "healed"}
         )
 
-        orig_invoke_5 = local_sidecar.invoke_chat_completion
+        orig_invoke_5 = apprentice_engine.invoke_chat_completion
         inj5_box = {"done": False}
 
         def _inject_bad_selftest_once(*args, **kwargs):
             if not inj5_box["done"]:
                 inj5_box["done"] = True
                 return {
-                    "model": local_sidecar.DEFAULT_MODEL_ID,
+                    "model": apprentice_engine.DEFAULT_MODEL_ID,
                     "mode": kwargs.get("mode", "fast"),
                     "reasoning_effort": "none",
                     "prompt_tokens": 110,
@@ -1000,9 +1000,9 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
                 }
             return orig_invoke_5(*args, **kwargs)
 
-        local_sidecar.invoke_chat_completion = _inject_bad_selftest_once
+        apprentice_engine.invoke_chat_completion = _inject_bad_selftest_once
         try:
-            r_tv5 = bionic_mcp_server.bionic_stage_patch(
+            r_tv5 = apprentice_mcp_server.apprentice_stage_patch(
                 target_filename="auto_selftest_demo.py",
                 prompt=(
                     "Write Python 3.10+ `clamp_non_neg(x: int) -> int` returning `max(0, x)` "
@@ -1016,7 +1016,7 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
                 smoke_test_args=None,
             )
         finally:
-            local_sidecar.invoke_chat_completion = orig_invoke_5
+            apprentice_engine.invoke_chat_completion = orig_invoke_5
         tv5_ok = bool(
             r_tv5.get("ok")
             and r_tv5.get("verdict") == "healed"
@@ -1122,7 +1122,7 @@ def main() -> int:
     parser.add_argument("--mode", choices=("offline", "live", "all"), default="offline")
     parser.add_argument("--label", default="candidate")
     parser.add_argument("--history-jsonl", default=str(DEFAULT_HISTORY_JSONL))
-    parser.add_argument("--telemetry-log", default=str(local_sidecar.DEFAULT_TELEMETRY_LOG))
+    parser.add_argument("--telemetry-log", default=str(apprentice_engine.DEFAULT_TELEMETRY_LOG))
     parser.add_argument("--record-baseline", action="store_true")
     parser.add_argument("--append-history", action="store_true")
     parser.add_argument("--compare-baseline", action="store_true")
@@ -1133,7 +1133,7 @@ def main() -> int:
 
     if args.self_test:
         res = run_self_tests()
-        print(json.dumps(res, indent=2) if args.json else "[PASS] benchmark_bionic_sidecar self-tests passed")
+        print(json.dumps(res, indent=2) if args.json else "[PASS] benchmark_apprentice self-tests passed")
         return 0
 
     tel_path = Path(os.path.expanduser(args.telemetry_log))
@@ -1150,8 +1150,8 @@ def main() -> int:
         # Refresh O5_eta_mape after live runs so it measures fresh V2 telemetry, and add Q1 quota savings
         fresh_o5 = _compute_o5_eta_metric(tel_path)
         metrics = [fresh_o5 if m.id == "O5_eta_mape" else m for m in metrics]
-        q_res = local_sidecar.estimate_quota_savings(tel_path)
-        sc_live = local_sidecar.load_or_init_scorecard(telemetry_log=tel_path)
+        q_res = apprentice_engine.estimate_quota_savings(tel_path)
+        sc_live = apprentice_engine.load_or_init_scorecard(telemetry_log=tel_path)
         forensics["quota_savings"] = q_res
         forensics["lifetime_scorecard"] = sc_live
         b_eff = q_res["by_effort"]
@@ -1177,7 +1177,7 @@ def main() -> int:
         )
 
     now_utc = dt.datetime.now(dt.timezone.utc)
-    run_id = f"BMK-BIONIC-{now_utc.strftime('%Y%m%d_%H%M%S')}"
+    run_id = f"BMK-APPRENTICE-{now_utc.strftime('%Y%m%d_%H%M%S')}"
     run_obj = {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,

@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 238.59,
+  "avg_doc_len": 238.26,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
     "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
-    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and fast `Model: 'flash'` subagents.",
+    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Carbon` on deeper request).",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-14",
+  "last_synced": "2026-11-16",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -607,13 +607,13 @@
       "lessons": [
         {
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 160,
+          "end_line": 161,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L155-L160",
+          "line_range": "#L156-L161",
           "location": "main",
           "scope": "",
-          "start_line": 155,
+          "start_line": 156,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -631,13 +631,13 @@
         },
         {
           "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
-          "end_line": 175,
+          "end_line": 176,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-027",
-          "line_range": "#L162-L175",
+          "line_range": "#L163-L176",
           "location": "main",
           "scope": "",
-          "start_line": 162,
+          "start_line": 163,
           "tier": "TIER0",
           "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
           "touched_files": [
@@ -661,13 +661,13 @@
         },
         {
           "capsule_1line": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... -> Route all teach-me promotions and context seeds exclusively through memory_gateway.py (MEMORY_SDK_V1) with atomic rollback, gate Directory/ sync to promote_document, enforce max(Trigger_Floor, Inline_Tag) + require_depth=True, slice 60-word theory strictly from H2 Section 1, and snap >=14-char compound modifiers before trailing nouns....",
-          "end_line": 183,
+          "end_line": 184,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-048",
-          "line_range": "#L177-L183",
+          "line_range": "#L178-L184",
           "location": "main",
           "scope": "skill:teach-me",
-          "start_line": 177,
+          "start_line": 178,
           "tier": "TIER2",
           "title": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... (`2026-11-12`)",
           "touched_files": [
@@ -680,13 +680,13 @@
         },
         {
           "capsule_1line": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... -> Restrict attest_subagent_execution writes strictly to <study_briefs_root> and /brain/<uuid>/scratch/, block <memory_root>/ in init_brief --out, and strip backticks before FALSE_TBD_KNOWN_IN_SOURCE lookup. (`skills/teach-me/scripts/teach_brief.py` (`Homunculus_Software.md`), `tests/test_teach_me.py` (`Homunculus_Software.md`)...",
-          "end_line": 191,
+          "end_line": 192,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-049",
-          "line_range": "#L185-L191",
+          "line_range": "#L186-L192",
           "location": "main",
           "scope": "skill:teach-me",
-          "start_line": 185,
+          "start_line": 186,
           "tier": "TIER2",
           "title": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... (`2026-11-12`)",
           "touched_files": [
@@ -696,13 +696,13 @@
         },
         {
           "capsule_1line": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... -> Consolidate pre-commit hooks into 1 Python process, pre-filter >=16 plain UTF-8 files via _rg_prefilter_utf8_files (bypassing SHA-256 hash rules, custom regexes, symlinks, ZIPs, UTF-16/32, NUL bytes, and files >16 MB), expose audit_skill_hygiene.py --telemetry-pulse (stateless zero-write) paired with out-of-tree...",
-          "end_line": 198,
+          "end_line": 199,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-050",
-          "line_range": "#L193-L198",
+          "line_range": "#L194-L199",
           "location": "main",
           "scope": "",
-          "start_line": 193,
+          "start_line": 194,
           "tier": "TIER2",
           "title": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... (`2026-11-13`)",
           "touched_files": [
@@ -717,13 +717,13 @@
         },
         {
           "capsule_1line": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... -> Added opt-in OpenSSH ssh-keygen -Y seal and lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1; local_config or inline storage; default off; zero private-key reads via .pub + SSH_AUTH_SOCK + Claude permissions.deny) and upgraded --telemetry-pulse + ME07 to section-aware LL-[A-Z0-9-]+ scoped/unscoped...",
-          "end_line": 205,
+          "end_line": 206,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-051",
-          "line_range": "#L200-L205",
+          "line_range": "#L201-L206",
           "location": "main",
           "scope": "",
-          "start_line": 200,
+          "start_line": 201,
           "tier": "TIER2",
           "title": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... (`2026-11-14`)",
           "touched_files": [
@@ -737,13 +737,13 @@
         },
         {
           "capsule_1line": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... -> Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity....",
-          "end_line": 210,
+          "end_line": 213,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-052",
-          "line_range": "#L207-L210",
+          "line_range": "#L208-L213",
           "location": "main",
           "scope": "",
-          "start_line": 207,
+          "start_line": 208,
           "tier": "TIER2",
           "title": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... (`2026-11-14`)",
           "touched_files": [
@@ -751,6 +751,24 @@
             "memory_gateway.py",
             "sync_memory.py",
             "verify_claims.py"
+          ]
+        },
+        {
+          "capsule_1line": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... -> Defer remote turnkey burn until post-sign success via defer_turnkey_burn=True across homunculus_paths.py and seal_memory_governance(), evaluate .cache ignores relative to fw_root, pass resolved_effort into format_model_receipt_tag, and seal BUILTIN_RING1 updates via h-sudo seal (`scripts/homunculus_paths.py` (`Homunculus_Software.md`)...",
+          "end_line": 219,
+          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
+          "id": "LL-053",
+          "line_range": "#L215-L219",
+          "location": "main",
+          "scope": "script:homunculus_paths",
+          "start_line": 215,
+          "tier": "TIER2",
+          "title": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... (`2026-11-16`)",
+          "touched_files": [
+            "homunculus_paths.py",
+            "sandbox_runner.py",
+            "sync_memory.py",
+            "teach_brief.py"
           ]
         },
         {
@@ -1623,8 +1641,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 299.67,
-      "proj_total_docs": 54,
+      "proj_avg_doc_len": 298.05,
+      "proj_total_docs": 55,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2095,7 +2113,7 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "6a5a049a04418a16"
+      "sha256": "829be433d8606a42"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md": {
       "lines": 118,
@@ -2135,7 +2153,7 @@
     "Projects/Alembic_Toolhead/Alembic_Toolhead.md": {
       "lines": 164,
       "sections": 0,
-      "sha256": "871ed875b4643c87"
+      "sha256": "3663d80daa223ac1"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md": {
       "lines": 88,
@@ -2180,17 +2198,17 @@
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
       "lines": 429,
       "sections": 45,
-      "sha256": "362da66647fbaaf6"
+      "sha256": "6bb5899dca84efa8"
     },
     "Projects/Homunculus/Homunculus.md": {
       "lines": 284,
       "sections": 0,
-      "sha256": "ef6695574b451b6d"
+      "sha256": "bbf837191c5725d3"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 215,
-      "sections": 7,
-      "sha256": "78bfd987ba944668"
+      "lines": 224,
+      "sections": 8,
+      "sha256": "56af07de5bc24dc4"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2200,7 +2218,7 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 85,
       "sections": 0,
-      "sha256": "9605f8493adeb38f"
+      "sha256": "88624ff1968801af"
     },
     "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
       "lines": 24,
@@ -2283,7 +2301,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 83,
+  "total_docs": 84,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "0b15fe98bb421804"
+  "vectors_digest": "c3149370464fc401"
 }

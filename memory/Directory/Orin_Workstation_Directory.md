@@ -73,7 +73,7 @@ last_synced: "2026-11-16"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: bb470dc7e4ac`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 69c006bb976d`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -82,14 +82,14 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 
 ./
-├── bionic_sidecar/
-│   ├── bionic_lifecycle_hook.py
-│   └── bionic_mcp_server.py
-├── bionic_sidecar_plugin/
+├── apprentice/
+│   ├── apprentice_lifecycle_hook.py
+│   └── apprentice_mcp_server.py
+├── apprentice_plugin/
 │   ├── rules/
 │   │   └── AGENTS.md
 │   ├── skills/
-│   │   └── bionic-local-sidecar/
+│   │   └── apprentice/
 │   │       └── SKILL.md
 │   ├── hooks.json
 │   ├── mcp_config.json
@@ -103,15 +103,15 @@ last_synced: "2026-11-16"
 ├── umbrella_configs/
 │   ├── Home.homunculus.json
 │   └── Projects.homunculus.json
-├── benchmark_bionic_sidecar.py
+├── apprentice_benchmark_history.jsonl
+├── apprentice_engine.py
+├── benchmark_apprentice.py
 ├── benchmark_history.jsonl
 ├── benchmark_homunculus.py
-├── bionic_benchmark_history.jsonl
 ├── bootstrap_workstation.sh
 ├── git_pre_commit_boundary.sh
 ├── h_sudo.sh
 ├── homunculus_version.json
-├── local_sidecar.py
 ├── pre_push_engineering_guard.sh
 ├── snapshot_homunculus_version.py
 ├── telemetry_pulse_history.jsonl

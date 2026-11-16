@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "bionic_sidecar": {
+    "sidecar": {
       "command": "/home/orin/.local/share/agy-gmail/venv/bin/python",
       "args": [
         "-B",
-        "/home/orin/Projects/Engineering/scripts/bionic_sidecar/bionic_mcp_server.py"
+        "/home/orin/Projects/Engineering/scripts/apprentice/apprentice_mcp_server.py"
       ]
     }
   }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Antigravity Lifecycle Hook for LM Studio Bionic Sidecar (`bionic_lifecycle_hook.py`).
+Antigravity Lifecycle Hook for Apprentice Multi-Backend Sidecar (`apprentice_lifecycle_hook.py`).
 
 Pure Python 3.10+ stdlib handler for `SessionStart`, `PreInvocation`, and `PreToolUse`:
   - `SessionStart`: Marks `pending_turn1_notice=True` without emitting pre-prompt steps.
@@ -10,7 +10,7 @@ Pure Python 3.10+ stdlib handler for `SessionStart`, `PreInvocation`, and `PreTo
     or `terminationBehavior`) so `agy` renders cleanly without proto reflection panics.
   - `PreToolUse` (`run_command`): Hard-denies raw `:1234` HTTP clients, direct Bionic
     AppImage launches, shell-chained `:1234` smuggling, and raw `lms` lifecycle/chat
-    bypasses so `local_sidecar.py` / `bionic_sidecar` MCP governance always applies.
+    bypasses so `apprentice_engine.py` / `apprentice` MCP governance always applies.
 """
 from __future__ import annotations
 
@@ -57,10 +57,10 @@ TRUSTED_INVOCATION_ROOTS = TRUSTED_SCRIPT_ROOTS + (
 )
 GOVERNED_PY_SCRIPTS = frozenset(
     {
-        "local_sidecar.py",
-        "bionic_lifecycle_hook.py",
-        "bionic_mcp_server.py",
-        "benchmark_bionic_sidecar.py",
+        "apprentice_engine.py",
+        "apprentice_lifecycle_hook.py",
+        "apprentice_mcp_server.py",
+        "benchmark_apprentice.py",
         "sandbox_runner.py",
         "audit_data_boundary.py",
         "audit_portability.py",
@@ -73,7 +73,7 @@ GOVERNED_PY_SCRIPTS = frozenset(
 )
 LMS_BLOCKED_SUBCMDS = frozenset({"daemon", "server", "load", "unload", "chat"})
 SHELL_WRAPPER_CMDS = frozenset({"sh", "bash", "zsh", "dash", "ksh", "ash", "fish"})
-EXPLICIT_TAG_RE = re.compile(r"\[(local|bionic)\]", re.IGNORECASE)
+EXPLICIT_TAG_RE = re.compile(r"\[(local|bionic|apprentice|ollama|llamacpp)\]", re.IGNORECASE)
 PORT_1234_RE = re.compile(
     r"(?:(?:(?<![\w.])(?:127\.\d{1,3}\.\d{1,3}\.\d{1,3}|0177(?:\.0*\d{1,3}){3}|localhost|0\.0\.0\.0|::1|::ffff:127\.0\.0\.1|2130706433|0x7f0{0,4}0*1)(?!\w)|\[::1\]|\[::ffff:127\.0\.0\.1\])[^\n]{0,40}?\b(?:0*1234|0x0*4d2)\b|(?:^|[\s'\"=/(\[]):(0*1234|0x0*4d2)\b)",
     re.IGNORECASE,
@@ -84,16 +84,16 @@ APPIMAGE_RE = re.compile(
 )
 LMS_BIN_RE = re.compile(r"(?:^|[/\s'\"(=])lms(?:\s|$|['\")])", re.IGNORECASE)
 SIDECAR_SCRIPT_RE = re.compile(
-    r"\b(?:local_sidecar\.py|bionic_lifecycle_hook\.py|bionic_mcp_server\.py|benchmark_bionic_sidecar\.py)\b",
+    r"\b(?:apprentice_engine\.py|apprentice_lifecycle_hook\.py|apprentice_mcp_server\.py|benchmark_apprentice\.py)\b",
     re.IGNORECASE,
 )
 
 
 def _read_lifetime_scorecard_banner() -> str:
     """Read lightweight Bionic scorecard banner with relative usability and epoch delta without mutating host files."""
-    tel_env = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "").strip()
-    cache_dir = Path(os.path.expanduser(tel_env)).parent if tel_env else (Path.home() / ".cache" / "homunculus_bionic_plugin")
-    sc_path = cache_dir / "bionic_scorecard.json"
+    tel_env = (os.environ.get("APPRENTICE_TELEMETRY_LOG", "") or os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG", "")).strip()
+    cache_dir = Path(os.path.expanduser(tel_env)).parent if tel_env else (Path.home() / ".cache" / "apprentice_plugin")
+    sc_path = cache_dir / "apprentice_scorecard.json"
     try:
         if sc_path.is_file():
             obj = json.loads(sc_path.read_text(encoding="utf-8"))
@@ -102,7 +102,7 @@ def _read_lifetime_scorecard_banner() -> str:
                 corr = int(obj.get("corrected") or 0)
                 healed = int(obj.get("healed") or 0)
                 total = clean + corr + healed
-                base = f"Bionic Calls = {clean}/{corr} (healed={healed})"
+                base = f"Apprentice Calls = {clean}/{corr} (healed={healed})"
                 prev = obj.get("prev_epoch") if isinstance(obj.get("prev_epoch"), dict) else None
                 if total > 0:
                     usable_pct = round(100.0 * (clean + healed) / total, 1)
@@ -117,7 +117,7 @@ def _read_lifetime_scorecard_banner() -> str:
                     epoch = str(obj.get("epoch") or "lifetime")
                     return f"{base} [epoch {epoch}: 0 calls | {prev_lbl}={float(prev['usable_pct']):.1f}% usable]"
                 return base
-        tel_path = Path(os.path.expanduser(tel_env)) if tel_env else (cache_dir / "sidecar_usage_telemetry.jsonl")
+        tel_path = Path(os.path.expanduser(tel_env)) if tel_env else (cache_dir / "apprentice_usage_telemetry.jsonl")
         if tel_path.is_file():
             clean = 0
             corr = 0
@@ -139,7 +139,7 @@ def _read_lifetime_scorecard_banner() -> str:
                 else:
                     corr += 1
             total = clean + corr + healed
-            base = f"Bionic Calls = {clean}/{corr} (healed={healed})"
+            base = f"Apprentice Calls = {clean}/{corr} (healed={healed})"
             if total > 0:
                 usable_pct = round(100.0 * (clean + healed) / total, 1)
                 corr_pct = round(100.0 * corr / total, 1)
@@ -147,7 +147,7 @@ def _read_lifetime_scorecard_banner() -> str:
             return base
     except (OSError, json.JSONDecodeError, ValueError):
         pass
-    return "Bionic Calls = 0/0 (healed=0)"
+    return "Apprentice Calls = 0/0 (healed=0)"
 
 
 def _validate_loopback(url: str) -> str:
@@ -205,13 +205,13 @@ def probe_bionic_state(
 
 
 def _resolve_state_dir() -> Path:
-    env_dir = os.environ.get("BIONIC_HOOK_STATE_DIR", "").strip()
+    env_dir = (os.environ.get("APPRENTICE_HOOK_STATE_DIR", "") or os.environ.get("BIONIC_HOOK_STATE_DIR", "")).strip()
     if env_dir:
         return Path(os.path.expanduser(env_dir))
     plugin_data = os.environ.get("PLUGIN_DATA", "").strip()
     if plugin_data:
         return Path(os.path.expanduser(plugin_data)) / "hook_state"
-    return Path.home() / ".cache" / "homunculus_bionic_plugin" / "hook_state"
+    return Path.home() / ".cache" / "apprentice_plugin" / "hook_state"
 
 
 def _state_file_path(conversation_id: str) -> Path:
@@ -330,9 +330,9 @@ def evaluate_session_or_invocation(
             sys_msg = (
                 "[MANDATORY USER-VISIBLE NOTICE FOR THIS TURN] "
                 "BIONIC_STATE=OFFLINE (127.0.0.1:1234 unreachable, 0 GiB sidecar VRAM). "
-                "In your final user-facing reply for this turn (skip only if running as an internal subagent without bionic_control), "
+                "In your final user-facing reply for this turn (skip only if running as an internal subagent without apprentice_control), "
                 "you MUST include a visible callout at the top of your response:\n"
-                '> **[BIONIC SIDECAR NOTICE]** Local Bionic (`Qwen3.6-35B-A3B`) is currently **OFFLINE** (`127.0.0.1:1234` stopped, `0 GiB` VRAM). '
+                '> **[APPRENTICE NOTICE]** Local Bionic (`Qwen3.6-35B-A3B`) is currently **OFFLINE** (`127.0.0.1:1234` stopped, `0 GiB` VRAM). '
                 'Reply **"turn on Bionic"** (`gpu-daily`, 49k ctx) or **"turn on Bionic cpu-bg"** if you would like me to start it remotely for you.\n'
                 "(If calling exit_plan_mode, carry this mandatory notice into the plan's final user response.) "
                 "Never auto-start Bionic without explicit user confirmation (user_confirmed=True), even if [bionic]/[local] appears on Turn 1, "
@@ -343,9 +343,9 @@ def evaluate_session_or_invocation(
             sys_msg = (
                 "[MANDATORY USER-VISIBLE NOTICE FOR THIS TURN] "
                 "BIONIC_STATE=UNLOADED (127.0.0.1:1234 server running, qwen3.6-35b-a3b not loaded — 0 GiB model VRAM). "
-                "In your final user-facing reply for this turn (skip only if running as an internal subagent without bionic_control), "
+                "In your final user-facing reply for this turn (skip only if running as an internal subagent without apprentice_control), "
                 "you MUST include a visible callout at the top of your response:\n"
-                '> **[BIONIC SIDECAR NOTICE]** Local Bionic (`Qwen3.6-35B-A3B`) is currently **UNLOADED** (`127.0.0.1:1234` up, `0 GiB` model VRAM). '
+                '> **[APPRENTICE NOTICE]** Local Bionic (`Qwen3.6-35B-A3B`) is currently **UNLOADED** (`127.0.0.1:1234` up, `0 GiB` model VRAM). '
                 'Reply **"turn on Bionic"** (`gpu-daily`, 49k ctx / ~10 GiB VRAM) or **"turn on Bionic cpu-bg"** if you would like me to load it remotely for you.\n'
                 "(If calling exit_plan_mode, carry this mandatory notice into the plan's final user response.) "
                 "Never auto-load Bionic without explicit user confirmation (user_confirmed=True), even if [bionic]/[local] appears on Turn 1, "
@@ -355,32 +355,32 @@ def evaluate_session_or_invocation(
         elif prev_state in {"OFFLINE", "UNLOADED"}:
             sc_banner = _read_lifetime_scorecard_banner()
             sys_msg = (
-                f"[BIONIC STATE TRANSITION] BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} "
-                f"auto_eta=60s explicit_eta=90s | {sc_banner}. Include a 1-line [BIONIC SIDECAR NOTICE] confirming Bionic is now "
+                f"[APPRENTICE STATE TRANSITION] BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} "
+                f"auto_eta=60s explicit_eta=90s | {sc_banner}. Include a 1-line [APPRENTICE NOTICE] confirming Bionic is now "
                 f"ONLINE READY (ctx={ctx_disp}, {sc_banner}) in this response. Offload bounded log/diff/file digests & scratch patches "
-                "via bionic-sidecar MCP tools or local_sidecar.py; never access 127.0.0.1:1234 or lms directly."
+                "via apprentice MCP tools or apprentice_engine.py; never access 127.0.0.1:1234 or lms directly."
             )
             steps.append(_build_system_step(sys_msg))
         else:
             sc_banner = _read_lifetime_scorecard_banner()
             sys_msg = (
                 f"BIONIC_STATE=ONLINE_READY model={DEFAULT_MODEL_ID} ctx={ctx_disp} auto_eta=60s explicit_eta=90s | {sc_banner}. "
-                "Offload bounded digests & scratch patches via bionic-sidecar MCP tools or local_sidecar.py; "
-                f"never access 127.0.0.1:1234 or lms directly. Include [BIONIC SIDECAR NOTICE] ({sc_banner}) whenever Bionic is called."
+                "Offload bounded digests & scratch patches via apprentice MCP tools or apprentice_engine.py; "
+                f"never access 127.0.0.1:1234 or lms directly. Include [APPRENTICE NOTICE] ({sc_banner}) whenever Bionic is called."
             )
             steps.append(_build_system_step(sys_msg))
     elif has_explicit_tag and input_sha != prev_sha:
         sc_banner = _read_lifetime_scorecard_banner()
         if state == "ONLINE_READY":
             sys_msg = (
-                f"[EXPLICIT BIONIC REQUEST] Bionic is ONLINE_READY (ctx={ctx_disp}, {sc_banner}). Use bionic-sidecar MCP tools "
+                f"[EXPLICIT APPRENTICE REQUEST] Bionic is ONLINE_READY (ctx={ctx_disp}, {sc_banner}). Use apprentice MCP tools "
                 "with invocation_tier='explicit' (90s ETA cap), treat outputs as quarantined drafts, and include "
-                f"[BIONIC SIDECAR NOTICE] ({sc_banner})."
+                f"[APPRENTICE NOTICE] ({sc_banner})."
             )
         else:
             sys_msg = (
-                f"[EXPLICIT BIONIC REQUEST] Bionic is currently {state}. Inform the user and ask confirmation "
-                "before calling bionic_control(user_confirmed=True)."
+                f"[EXPLICIT APPRENTICE REQUEST] Bionic is currently {state}. Inform the user and ask confirmation "
+                "before calling apprentice_control(user_confirmed=True)."
             )
         steps.append(_build_system_step(sys_msg))
 
@@ -476,7 +476,7 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
     while idx < n:
         bad_env = _is_unsafe_env_assign(tokens[idx])
         if bad_env:
-            return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsafe environment override '{bad_env}=' blocked on Bionic/governed command."
+            return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsafe environment override '{bad_env}=' blocked on Bionic/governed command."
         if re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*", tokens[idx]):
             idx += 1
             continue
@@ -499,7 +499,7 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
                     or tok.startswith(("-S", "--split-string=", "-i"))
                     or (tok.startswith("-") and not tok.startswith("--") and ("S" in tok[1:] or "i" in tok[1:]))
                 ):
-                    return "", "", [], "[BIONIC_UTILITY_REQUIRED] 'env -S'/'env -i' wrapper blocked on Bionic/governed command."
+                    return "", "", [], "[APPRENTICE_UTILITY_REQUIRED] 'env -S'/'env -i' wrapper blocked on Bionic/governed command."
                 if tok in {"-u", "--unset", "-C", "--chdir"}:
                     idx += 2
                     continue
@@ -507,10 +507,10 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
                     idx += 1
                     continue
                 if tok.startswith("-"):
-                    return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsupported 'env' option '{tok}' blocked."
+                    return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsupported 'env' option '{tok}' blocked."
                 bad_inner = _is_unsafe_env_assign(tok)
                 if bad_inner:
-                    return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsafe 'env {bad_inner}=' blocked on Bionic/governed command."
+                    return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsafe 'env {bad_inner}=' blocked on Bionic/governed command."
                 if re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*", tok):
                     idx += 1
                     continue
@@ -531,10 +531,10 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
                     idx += 1
                     continue
                 if tok.startswith("-"):
-                    return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsupported 'timeout' option '{tok}' blocked."
+                    return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsupported 'timeout' option '{tok}' blocked."
                 break
             if idx >= n or tokens[idx].startswith("-"):
-                return "", "", [], "[BIONIC_UTILITY_REQUIRED] Incomplete 'timeout' wrapper blocked."
+                return "", "", [], "[APPRENTICE_UTILITY_REQUIRED] Incomplete 'timeout' wrapper blocked."
             idx += 1
         elif exe == "nice":
             if idx < n and tokens[idx] in {"-n", "--adjustment"}:
@@ -542,7 +542,7 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
             elif idx < n and (tokens[idx].startswith(("--adjustment=", "-n")) or re.match(r"^-\d+$", tokens[idx])):
                 idx += 1
             elif idx < n and tokens[idx].startswith("-"):
-                return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsupported 'nice' option '{tokens[idx]}' blocked."
+                return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsupported 'nice' option '{tokens[idx]}' blocked."
         elif exe == "stdbuf":
             while idx < n:
                 tok = tokens[idx]
@@ -553,13 +553,13 @@ def _unwrap_command_tokens(tokens: list[str]) -> tuple[str, str, list[str], str 
                     idx += 1
                     continue
                 if tok.startswith("-"):
-                    return "", "", [], f"[BIONIC_UTILITY_REQUIRED] Unsupported 'stdbuf' option '{tok}' blocked."
+                    return "", "", [], f"[APPRENTICE_UTILITY_REQUIRED] Unsupported 'stdbuf' option '{tok}' blocked."
                 break
 
     if idx < n:
         return Path(tokens[idx]).name.lower(), tokens[idx], tokens[idx + 1 :], None
     if saw_wrapper:
-        return "", "", [], "[BIONIC_UTILITY_REQUIRED] Incomplete wrapper invocation on Bionic target blocked."
+        return "", "", [], "[APPRENTICE_UTILITY_REQUIRED] Incomplete wrapper invocation on Bionic target blocked."
     return "", "", [], None
 
 
@@ -640,8 +640,8 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         return {
             "decision": "deny",
             "reason": (
-                "[BIONIC_UTILITY_REQUIRED] Unchained single-command invocations only when referencing "
-                "Bionic/:1234/lms; use bionic_sidecar MCP tools or local_sidecar.py directly."
+                "[APPRENTICE_UTILITY_REQUIRED] Unchained single-command invocations only when referencing "
+                "local backend/:1234/lms; use apprentice MCP tools or apprentice_engine.py directly."
             ),
         }
 
@@ -650,7 +650,7 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
     except ValueError:
         return {
             "decision": "deny",
-            "reason": "[BIONIC_UTILITY_REQUIRED] Unparseable shell quoting on Bionic/:1234/lms command rejected.",
+            "reason": "[APPRENTICE_UTILITY_REQUIRED] Unparseable shell quoting on local backend/:1234/lms command rejected.",
         }
     if not tokens:
         return {"decision": "allow"}
@@ -665,7 +665,7 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         if exe_name == "rg" and _rg_has_unsafe_exec_flags(rest):
             return {
                 "decision": "deny",
-                "reason": "[BIONIC_UTILITY_REQUIRED] 'rg --pre'/'--pre-glob' execution blocked on Bionic target.",
+                "reason": "[APPRENTICE_UTILITY_REQUIRED] 'rg --pre'/'--pre-glob' execution blocked on Bionic target.",
             }
         return {"decision": "allow"}
 
@@ -676,7 +676,7 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         if _git_has_unsafe_exec_flags(rest):
             return {
                 "decision": "deny",
-                "reason": "[BIONIC_UTILITY_REQUIRED] Unsafe git config/ext-diff/exec-path flags blocked.",
+                "reason": "[APPRENTICE_UTILITY_REQUIRED] Unsafe git config/ext-diff/exec-path flags blocked.",
             }
         if _git_subcommand(rest) in GIT_SAFE_READONLY_SUBCMDS:
             return {"decision": "allow"}
@@ -707,10 +707,10 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
                 )
                 and any(_is_within(res_p, r.resolve(strict=False)) for r in TRUSTED_SCRIPT_ROOTS)
             ):
-                if res_p.name == "local_sidecar.py":
+                if res_p.name == "apprentice_engine.py":
                     return {
                         "decision": "allow",
-                        "reason": "[BIONIC SIDECAR NOTICE] Governed execution via local_sidecar.py.",
+                        "reason": "[APPRENTICE NOTICE] Governed execution via apprentice_engine.py.",
                     }
                 return {"decision": "allow"}
 
@@ -718,8 +718,8 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         return {
             "decision": "deny",
             "reason": (
-                "[BIONIC_UTILITY_REQUIRED] Direct Bionic binary/AppImage execution is blocked; "
-                "use bionic_control / local_sidecar.py control after user confirmation."
+                "[APPRENTICE_UTILITY_REQUIRED] Direct Bionic binary/AppImage execution is blocked; "
+                "use apprentice_control / apprentice_engine.py control after user confirmation."
             ),
         }
 
@@ -727,8 +727,8 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         return {
             "decision": "deny",
             "reason": (
-                f"[BIONIC_UTILITY_REQUIRED] Subshell wrapper '{exe_name}' targeting Bionic/:1234/lms is blocked; "
-                "use bionic_sidecar MCP tools or local_sidecar.py directly."
+                f"[APPRENTICE_UTILITY_REQUIRED] Subshell wrapper '{exe_name}' targeting local backend/:1234/lms is blocked; "
+                "use apprentice MCP tools or apprentice_engine.py directly."
             ),
         }
 
@@ -736,16 +736,16 @@ def evaluate_pre_tool_use(payload: dict[str, Any]) -> dict[str, Any]:
         return {
             "decision": "deny",
             "reason": (
-                "[BIONIC_UTILITY_REQUIRED] Direct 'lms' CLI invocation is blocked; "
-                "use bionic_control MCP tool or local_sidecar.py control."
+                "[APPRENTICE_UTILITY_REQUIRED] Direct 'lms' CLI invocation is blocked; "
+                "use apprentice_control MCP tool or apprentice_engine.py control."
             ),
         }
 
     return {
         "decision": "deny",
         "reason": (
-            "[BIONIC_UTILITY_REQUIRED] Direct access to 127.0.0.1:1234 or Bionic binaries is blocked; "
-            "route calls through bionic_sidecar MCP tools or local_sidecar.py."
+            "[APPRENTICE_UTILITY_REQUIRED] Direct access to 127.0.0.1:1234 or Bionic binaries is blocked; "
+            "route calls through apprentice MCP tools or apprentice_engine.py."
         ),
     }
 
@@ -914,7 +914,7 @@ def run_self_tests() -> dict[str, Any]:
                 msg_up = r_up["injectSteps"][0]["systemMessage"]["systemMessage"]
                 assert "BIONIC_STATE=ONLINE_READY" in msg_up
                 assert "ctx=49152" in msg_up
-                assert "[BIONIC SIDECAR NOTICE]" in msg_up
+                assert "[APPRENTICE NOTICE]" in msg_up
                 checks.append("state_flip_unloaded_to_online_ready")
 
                 # Explicit [bionic] tag on steady ONLINE_READY injects reminder once per input
@@ -923,7 +923,7 @@ def run_self_tests() -> dict[str, Any]:
                     api_url=live_api,
                 )
                 _validate_hook_response_schema(r_tag)
-                assert "EXPLICIT BIONIC REQUEST" in r_tag["injectSteps"][0]["systemMessage"]["systemMessage"]
+                assert "EXPLICIT APPRENTICE REQUEST" in r_tag["injectSteps"][0]["systemMessage"]["systemMessage"]
                 r_tag_repeat = dispatch_hook_payload(
                     {"hookEventName": "PreInvocation", "conversationId": "conv-webapp-2", "lastUserInput": "[bionic] summarize log"},
                     api_url=live_api,
@@ -970,7 +970,7 @@ def run_self_tests() -> dict[str, Any]:
                     api_url=live_api,
                 )
                 _validate_hook_response_schema(r_p2)
-                assert "EXPLICIT BIONIC REQUEST" in r_p2["injectSteps"][0]["systemMessage"]["systemMessage"]
+                assert "EXPLICIT APPRENTICE REQUEST" in r_p2["injectSteps"][0]["systemMessage"]["systemMessage"]
                 checks.append("turn1_session_start_pre_invocation_dedup")
 
                 # Resumed SessionStart on UNLOADED schedules notice for next PreInvocation
@@ -1023,13 +1023,13 @@ def run_self_tests() -> dict[str, Any]:
                 "curl -s http://127.0.0.1:01234/v1/models",
                 "/home/orin/.lmstudio/LM-Studio-Bionic-current.AppImage --ozone-platform-hint=auto",
                 "timeout 30 /home/orin/.lmstudio/LM-Studio-Bionic-current.AppImage --headless",
-                "python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status && curl http://localhost:1234/v1/models",
-                "python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status & curl http://127.0.0.1:1234/v1/models",
+                "python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status && curl http://localhost:1234/v1/models",
+                "python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status & curl http://127.0.0.1:1234/v1/models",
                 "bash -c 'cat </dev/tcp/127.0.0.1/1234'",
                 "/home/orin/.lmstudio/bin/lms load qwen3.6-35b-a3b -y",
             ]
             spoof_deny_vectors = [
-                "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:1234/v1/models')\" # /local_sidecar.py",
+                "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:1234/v1/models')\" # /apprentice_engine.py",
                 "python3 -c'import urllib.request' # 127.0.0.1:1234",
                 "python3 -c \"connect(('127.0.0.1', 1234))\"",
                 "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:1234/v1/models')\"",
@@ -1039,9 +1039,9 @@ def run_self_tests() -> dict[str, Any]:
                 "curl -s http://2130706433:1234/v1/models",
                 "curl -s http://0x7f000001:1234/v1/models",
                 "curl -s http://127.0.0.1:0x4d2/v1/models",
-                "python3 /tmp/local_sidecar.py status",
-                "PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status",
-                "env PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status",
+                "python3 /tmp/apprentice_engine.py status",
+                "PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status",
+                "env PYTHONPATH=/tmp python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status",
                 "env -S 'curl http://127.0.0.1:1234/v1/models'",
                 "nc 127.0.0.1 1234",
                 "nc 127.0.0.2 -p 8888 1234",
@@ -1050,24 +1050,24 @@ def run_self_tests() -> dict[str, Any]:
                 "git clone http://127.0.0.1:1234/repo /tmp/x",
                 "git -C /home/orin/Projects/Engineering -c diff.external=/tmp/evil.sh diff 127.0.0.1:1234",
                 "git --exec-path=/tmp status 127.0.0.1:1234",
-                "rg --pre sh -e 127.0.0.1:1234 /home/orin/Projects/Engineering/scripts/local_sidecar.py",
+                "rg --pre sh -e 127.0.0.1:1234 /home/orin/Projects/Engineering/scripts/apprentice_engine.py",
             ]
             for dcmd in deny_vectors + spoof_deny_vectors:
                 d_res = evaluate_pre_tool_use({"toolCall": {"name": "run_command", "args": {"CommandLine": dcmd}}})
                 assert d_res["decision"] == "deny", f"Expected deny on {dcmd}"
 
             allow_vectors = [
-                "python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
-                "python3 -B /home/orin/Projects/Engineering/scripts/local_sidecar.py control status --json",
-                "python3 -B /home/orin/Projects/Engineering/scripts/benchmark_bionic_sidecar.py --self-test --json",
-                "timeout 30 python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
-                "nice -n 10 python3 /home/orin/Projects/Engineering/scripts/local_sidecar.py status --json",
-                "grep 127.0.0.1:1234 /home/orin/Projects/Engineering/scripts/local_sidecar.py",
-                "cat /home/orin/Projects/Engineering/scripts/local_sidecar.py",
+                "python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status --json",
+                "python3 -B /home/orin/Projects/Engineering/scripts/apprentice_engine.py control status --json",
+                "python3 -B /home/orin/Projects/Engineering/scripts/benchmark_apprentice.py --self-test --json",
+                "timeout 30 python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status --json",
+                "nice -n 10 python3 /home/orin/Projects/Engineering/scripts/apprentice_engine.py status --json",
+                "grep 127.0.0.1:1234 /home/orin/Projects/Engineering/scripts/apprentice_engine.py",
+                "cat /home/orin/Projects/Engineering/scripts/apprentice_engine.py",
                 "pytest test.py:1234",
                 "git -C /home/orin/Projects/Engineering status --short",
                 "git -C /home/orin/Projects/Engineering log -n 1 --grep 127.0.0.1:1234",
-                "git -C /home/orin/Projects/Engineering add /home/orin/Projects/Engineering/scripts/local_sidecar.py",
+                "git -C /home/orin/Projects/Engineering add /home/orin/Projects/Engineering/scripts/apprentice_engine.py",
             ]
             for acmd in allow_vectors:
                 a_res = evaluate_pre_tool_use({"toolCall": {"name": "run_command", "args": {"CommandLine": acmd}}})
@@ -1111,7 +1111,7 @@ def run_self_tests() -> dict[str, Any]:
                     )
                     _validate_hook_response_schema(out_on)
                     msg = out_on["injectSteps"][0]["systemMessage"]["systemMessage"]
-                    assert "Bionic Calls = 1/0 (healed=0)" in msg, f"missing scorecard banner: {msg}"
+                    assert "Apprentice Calls = 1/0 (healed=0)" in msg, f"missing scorecard banner: {msg}"
                 finally:
                     srv_on.shutdown()
                     srv_on.server_close()
@@ -1131,7 +1131,7 @@ def run_self_tests() -> dict[str, Any]:
                     {
                         "toolCall": {
                             "name": "run_command",
-                            "args": {"CommandLine": f"python3 -B {gemini_sync} --audit --files local_sidecar.py"},
+                            "args": {"CommandLine": f"python3 -B {gemini_sync} --audit --files apprentice_engine.py"},
                         }
                     }
                 )
@@ -1144,7 +1144,7 @@ def run_self_tests() -> dict[str, Any]:
                     {
                         "toolCall": {
                             "name": "run_command",
-                            "args": {"CommandLine": f"python3 -B {tmp_link} --audit --files local_sidecar.py"},
+                            "args": {"CommandLine": f"python3 -B {tmp_link} --audit --files apprentice_engine.py"},
                         }
                     }
                 )
@@ -1156,7 +1156,7 @@ def run_self_tests() -> dict[str, Any]:
             else:
                 os.environ["BIONIC_HOOK_STATE_DIR"] = old_state_dir
 
-    return {"schema_version": "BIONIC_HOOK_V1", "status": "PASS", "tests_run": len(checks), "checks": checks}
+    return {"schema_version": "APPRENTICE_HOOK_V1", "status": "PASS", "tests_run": len(checks), "checks": checks}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1182,7 +1182,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             res = run_self_tests()
         except Exception as exc:
-            err_payload = {"schema_version": "BIONIC_HOOK_V1", "status": "FAIL", "error": str(exc)}
+            err_payload = {"schema_version": "APPRENTICE_HOOK_V1", "status": "FAIL", "error": str(exc)}
             print(json.dumps(err_payload, indent=2) if args.json else f"[FAIL] {exc}", file=sys.stderr)
             return 2
         print(json.dumps(res, indent=2) if args.json else f"[PASS] {res['tests_run']} hook tests passed")
@@ -1211,7 +1211,7 @@ def main(argv: list[str] | None = None) -> int:
         out = dispatch_hook_payload(payload)
     except Exception as exc:
         if event == "PreToolUse":
-            out = {"decision": "deny", "reason": f"[BIONIC_UTILITY_REQUIRED] Hook internal error: {exc}"}
+            out = {"decision": "deny", "reason": f"[APPRENTICE_UTILITY_REQUIRED] Hook internal error: {exc}"}
         else:
             out = {}
     print(json.dumps(out))

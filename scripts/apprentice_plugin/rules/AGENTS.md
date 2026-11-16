@@ -1,0 +1,6 @@
+# Apprentice Multi-Backend Sidecar Routing
+
+- Never call `127.0.0.1:1234`, integer/hex loopback encodings, Bionic AppImage, or `lms` lifecycle commands directly; route local offloads via `apprentice` MCP tools (`apprentice_control`, `apprentice_digest`, `apprentice_repo_audit`, `apprentice_stage_patch`) or `apprentice_engine.py`, and include a 1-line `[APPRENTICE NOTICE]` with `Apprentice Calls = <clean>/<corrected> (healed=<healed>) [...]` whenever Apprentice is opened, loaded, or called.
+- Whenever a `<SYSTEM_MESSAGE>` reports `OFFLINE` or `UNLOADED`, include the `[APPRENTICE NOTICE]` banner in your user-facing response offering to load/start the active backend remotely via `apprentice_control` (`gpu-max`, `gpu-daily`, or `cpu-bg`) upon user confirmation.
+- Offload with two effort tiers (`effort="standard"` daily bounded offload / `effort="high"` deep synthesis & map-reduce), pass `#Lstart-Lend` context slices when inspecting focused sections, keep `verify_claims=True` default, and use `async_job=True` + `apprentice_control(action="job-status"|"job-collect")` for long tasks.
+- Record verdicts via `apprentice_control(action="verdict", ...)` or `prev_call_id`/`prev_verdict`, never reset epochs (`scorecard-reset`) without `user_confirmed=True`, and verify drafts before promoting past `Quarantine/`.

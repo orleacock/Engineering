@@ -3,12 +3,12 @@ title: "Claude Sonnet Memory Retrieval & Weight-and-Balance Audit — Rev 3 (Qua
 project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
-quarantine: true
+quarantine: false
 authoritative: false
-status: "QUARANTINED_PENDING_VALIDATION"
+status: "HISTORICAL_RESOLVED"
 source_brain_artifact: "/home/orin/.gemini/antigravity-cli/brain/e41eebf7-644b-43e6-99e9-e36580ebbce0/Memory_Retrieval_Weight_Balance_Audit.md"
 source_probe_scratch_dir: "/home/orin/.gemini/antigravity-cli/brain/e41eebf7-644b-43e6-99e9-e36580ebbce0/scratch/"
-last_synced: "2026-11-12"
+last_synced: "2026-11-16"
 ---
 
 > [!CAUTION]
