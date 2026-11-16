@@ -5,14 +5,14 @@ compartment: "private"
 project_type: "software"
 status: "active"
 local_path: "../scripts"
-repo_head_sha: "cc16e1b7f336"
+repo_head_sha: "595049972ad7"
 tree_hash: "a723ac6ca722"
-checkpoint_head_sha: "cc16e1b7f336"
+checkpoint_head_sha: "595049972ad7"
 checkpoint_tree_hash: "a723ac6ca722"
-checkpoint_worktree: "dirty (11 files)"
+checkpoint_worktree: "dirty (8 files)"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-16"
-checkpoint_lessons_digest: "fb494ccc5e220537"
+checkpoint_lessons_digest: "ebbff38391e3c45b"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -56,12 +56,12 @@ checkpoint_lessons_digest: "fb494ccc5e220537"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: cc16e1b7f336` | `Tree Hash: a723ac6ca722` | `Worktree: dirty (11 files)` | `Last Verification: SBX-20261116_081805-cc62b7b4`
+- **Checkpoint Provenance**: `HEAD SHA: 595049972ad7` | `Tree Hash: a723ac6ca722` | `Worktree: dirty (8 files)` | `Last Verification: SBX-20261116_095531-74b156cf / SBX-20261116_094936-7f9998bd`
 - **Where We Stopped (Verified State & Context)**:
-  Checkpointed Bionic Local Sidecar V2.4.3 (21/21 local_sidecar, 25/25 MCP server, 13/13 hook) and benchmark_homunculus.py --model-id/--effort telemetry (subagent-ab PASS)
+  Deployed Bionic Sidecar V2.4.4 (local_sidecar 22/22, MCP server 26/26, hook 13/13, SBX-20261116_095531-74b156cf dry-run PASS, SBX-20261116_094936-7f9998bd live gpu-daily 5/5 clean)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Implement V2.4.4 Bionic job-handling upgrades (mixed-payload chunking on fixed 49152 ctx, async-aware sub-timeouts, chunked ETA calibration, compact defect manifest & continuation headroom)
+  1. Refresh client MCP session onto V2.4.4 (async_job=True workers already execute V2.4.4 from disk), optional scorecard-reset to v2.4.4, and consolidate Workstation_Operations TIER2 ledger
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -70,7 +70,7 @@ checkpoint_lessons_digest: "fb494ccc5e220537"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Engineering | HEAD SHA: cc16e1b7f336 | Tree Hash: a723ac6ca722
+Repository: Engineering | HEAD SHA: 595049972ad7 | Tree Hash: a723ac6ca722
   memory/
   memory/Diagrams/
   memory/Diagrams/NEA_v2_Copilot_Execution_Flowchart.md

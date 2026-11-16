@@ -19,7 +19,7 @@ last_synced: "2026-11-16"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `cc16e1b` (`dirty (11 files)`, `2026-11-16`) | `3` | `0` | Next: Implement V2.4.4 Bionic job-handling upgrades (mixed-payload chunking on fixed 49152 ctx, async-aware sub-timeouts, chunked ETA... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `5950499` (`dirty (8 files)`, `2026-11-16`) | `3` | `0` | Next: Refresh client MCP session onto V2.4.4 (async_job=True workers already execute V2.4.4 from disk), optional scorecard-reset to... |
 <!-- AUTO-ROLLUP:END -->
 
 ---

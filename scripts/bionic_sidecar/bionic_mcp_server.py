@@ -59,7 +59,7 @@ else:  # pragma: no cover - stdlib fallback for offline self-tests
             )
 
 
-SERVER_VERSION = "2.4.2"
+SERVER_VERSION = "2.4.4"
 MCP_SYNC_WAIT_CAP_SECONDS = 135.0
 _TRACKED_SERVER_FILES = (Path(__file__).resolve(), Path(local_sidecar.__file__).resolve())
 _BOOT_MTIMES = {p: p.stat().st_mtime for p in _TRACKED_SERVER_FILES if p.is_file()}
@@ -85,6 +85,8 @@ LL_WS_12_GUARD = (
     "3. Never expand hardware/fastener acronyms (e.g., BHCS/SHCS) beyond words written in source files.\n"
     "4. Never emit affiliate query parameters (`?affp=`, `dt_id=`, `aff_id=`) or placeholder `[label](...)` links.\n"
     "5. Insert explicit `[TBD: <specific_missing_spec>]` whenever counts, sizes, or ratings are absent.\n"
+    "6. NEVER cite lines inside YAML frontmatter (`---`...`---`); start citations after closing `---`.\n"
+    "7. When inspecting a `.patch`/`.diff` without downstream repo files in context, cite ONLY the `.patch` file's own `#L` line numbers (<= its total lines).\n"
 )
 
 
@@ -205,7 +207,7 @@ def _maybe_apply_prev_verdict(
 
 
 _VERIFY_ALLOWED_EXTS = frozenset(
-    {".md", ".py", ".cfg", ".json", ".toml", ".yaml", ".yml", ".csv", ".txt", ".sh", ".ini"}
+    {".md", ".py", ".cfg", ".json", ".toml", ".yaml", ".yml", ".csv", ".txt", ".sh", ".ini", ".patch", ".diff"}
 )
 _NON_AUTH_DIR_PARTS = frozenset({"quarantine", "study_briefs", "addon_staging"})
 _NON_AUTH_FILENAMES = frozenset({"lessons_learned_template.md", "project_playbooks.md"})
@@ -298,7 +300,7 @@ def _run_verify_claims_check(
         }
         if vp.returncode != 0:
             if report.get("unbacked_claims"):
-                res["unbacked_claims"] = report["unbacked_claims"][:8]
+                res["unbacked_claims"] = report["unbacked_claims"][:20]
             elif vp.stdout.strip() or vp.stderr.strip():
                 res["stdout_tail"] = ((vp.stdout or "") + "\n" + (vp.stderr or "")).strip()[-800:]
         return res
@@ -613,6 +615,35 @@ def _extract_anchor_spans(text: str) -> list[tuple[str, int, int]]:
     return spans
 
 
+def _format_compact_verify_failures(vrf_res: dict[str, Any], *, max_chars: int = 2800) -> str:
+    """Summarize unbacked verify_claims items grouped by line number without repeating bulky line_text blobs."""
+    raw_list = list(vrf_res.get("unbacked_claims") or [])
+    if not raw_list:
+        tail = str(vrf_res.get("stdout_tail") or "verification failed").strip()
+        return tail[-max_chars:]
+    by_line: dict[str, list[str]] = {}
+    order: list[str] = []
+    for item in raw_list:
+        if isinstance(item, dict):
+            ln_key = f"L{item.get('line')}" if item.get("line") is not None else "L?"
+            t_lbl = str(item.get("type") or "UNBACKED").strip()
+            c_txt = str(item.get("claim") or "").strip().replace("\n", " ")
+            if len(c_txt) > 120:
+                c_txt = c_txt[:117] + "..."
+            entry = f"[{t_lbl}] {c_txt}" if c_txt else f"[{t_lbl}]"
+        else:
+            ln_key = "L?"
+            entry = str(item).strip().replace("\n", " ")[:160]
+        if ln_key not in by_line:
+            by_line[ln_key] = []
+            order.append(ln_key)
+        if entry not in by_line[ln_key]:
+            by_line[ln_key].append(entry)
+    lines_out = [f"{ln_k}: " + " | ".join(by_line[ln_k]) for ln_k in order]
+    joined = "\n".join(lines_out)
+    return joined[:max_chars] if len(joined) > max_chars else joined
+
+
 def _build_chunked_repair_context(
     prompt_str: str,
     draft_text: str,
@@ -621,13 +652,20 @@ def _build_chunked_repair_context(
     fallback_blocks: list[str],
     unbacked_claims: list[Any] | None = None,
 ) -> str:
-    """Extract compact +/-16 line windows around cited #L anchors (<=32 KB), prioritizing flagged files first."""
-    fail_blob = "\n".join(json.dumps(u) if isinstance(u, dict) else str(u) for u in (unbacked_claims or []))
+    """Extract compact +/-16 line windows around cited #L anchors (<=36 KB), prioritizing flagged files first."""
+    fail_blob = "\n".join(
+        (
+            f"L{u.get('line')}: [{u.get('type')}] {u.get('claim')}"
+            if isinstance(u, dict)
+            else str(u)
+        )
+        for u in (unbacked_claims or [])
+    )
     fail_low = fail_blob.lower()
     cited_spans = _extract_anchor_spans(draft_text) + _extract_anchor_spans(fail_blob)
 
     if not cited_spans and not fail_low:
-        fb = "\n\n".join(fallback_blocks)[:24000]
+        fb = "\n\n".join(fallback_blocks)[:28000]
         return f"{prompt_str.strip()}\n\n{fb}" if fb else prompt_str.strip()
 
     # Deduplicate resolved paths across multiple #L slices and order files with failing claims FIRST
@@ -637,7 +675,7 @@ def _build_chunked_repair_context(
     )
 
     slices_out: list[str] = [prompt_str.strip()]
-    budget_bytes = 32000
+    budget_bytes = 36000
     used_bytes = len(slices_out[0].encode("utf-8"))
     for vf in prioritized_files:
         vf_low = vf.name.lower()
@@ -673,7 +711,7 @@ def _build_chunked_repair_context(
             used_bytes += blk_b
 
     if len(slices_out) == 1:
-        fb = "\n\n".join(fallback_blocks)[:24000]
+        fb = "\n\n".join(fallback_blocks)[:28000]
         if fb:
             slices_out.append(fb)
     return "\n".join(slices_out)
@@ -698,11 +736,11 @@ def _surgical_repair_unbacked_lines(
     project_dir: Path | None = None,
     sanitize_links: bool = False,
 ) -> dict[str, Any] | None:
-    """Repair ONLY the specific failing lines on 1..6 unbacked claims while preserving all verified draft lines."""
+    """Repair ONLY the specific failing lines on 1..12 unbacked claims across <=8 draft lines while preserving verified lines."""
     unbacked_list = list(vrf_res.get("unbacked_claims") or [])
     draft_lines = draft_text.splitlines()
     non_empty_count = sum(1 for ln in draft_lines if ln.strip())
-    if non_empty_count < 6 or int(vrf_res.get("supported") or 0) < 4 or not (1 <= len(unbacked_list) <= 6):
+    if non_empty_count < 6 or int(vrf_res.get("supported") or 0) < 4 or not (1 <= len(unbacked_list) <= 12):
         return None
 
     target_nums: list[int] = []
@@ -740,7 +778,7 @@ def _surgical_repair_unbacked_lines(
         else:
             fail_text_blobs.append(str(u))
 
-    if not target_nums:
+    if not target_nums or len(target_nums) > 8:
         return None
 
     target_nums.sort()
@@ -749,7 +787,7 @@ def _surgical_repair_unbacked_lines(
         1 not in seen_nums
         and first_ln
         and not first_ln.startswith(("- ", "* ", "#", "|", "["))
-        and len(target_nums) < 7
+        and len(target_nums) < 8
     ):
         _add_line(1)
         target_nums.sort()
@@ -759,7 +797,7 @@ def _surgical_repair_unbacked_lines(
     flagged_low = flagged_text.lower()
 
     slice_blocks: list[str] = []
-    slice_budget = 14000
+    slice_budget = 20000
     used_slice_bytes = 0
     cand_files = context_sources or clean_sources
     for vf in cand_files:
@@ -820,7 +858,7 @@ def _surgical_repair_unbacked_lines(
                 used_slice_bytes += blk_b
 
     flagged_block = "\n".join(f"L{n}: {draft_lines[n - 1]}" for n in target_nums)
-    fail_detail = "\n".join(fail_text_blobs)[:1400]
+    fail_detail = _format_compact_verify_failures(vrf_res, max_chars=2200)
     surg_prompt = (
         "SURGICAL LINE REPAIR: Fix ONLY the numbered draft lines below that failed claim verification.\n"
         "Output ONLY one line per flagged line number in the exact format:\n"
@@ -829,7 +867,7 @@ def _surgical_repair_unbacked_lines(
         "L<number>: DELETE\n\n"
         "CRITICAL REPAIR RULES:\n"
         "1. Output ONLY `L<n>: ...` replacements for the listed line numbers — ZERO unchanged lines, ZERO extra prose.\n"
-        "2. Use ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors verbatim from SOURCE SLICES below.\n"
+        "2. Use ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors verbatim from SOURCE SLICES below (NEVER cite YAML frontmatter lines `---`...`---` or external `#L` files not in SOURCE SLICES; cite `.patch` `#L` lines <= patch line count).\n"
         "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; replace missing specs with `[TBD: <missing_spec>]`.\n"
         "4. In `[CALC: ...]`, the left of `=` MUST contain ONLY source-verbatim numbers/operators (NEVER words like `Total` or unprinted subtotals) — or omit `[CALC:]`.\n"
         "5. If a cited source line lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier in that bullet.\n"
@@ -838,7 +876,7 @@ def _surgical_repair_unbacked_lines(
         f"Flagged draft lines:\n{flagged_block}\n\n"
         + "\n".join(slice_blocks)
     )
-    surg_max_toks = min(900, 220 * len(target_nums) + 160)
+    surg_max_toks = min(1800, 260 * len(target_nums) + 200)
     t0 = time.perf_counter()
     res_surg = local_sidecar.invoke_chat_completion(
         api_url=api_url,
@@ -847,7 +885,7 @@ def _surgical_repair_unbacked_lines(
         system_prompt=sys_prompt,
         user_content=surg_prompt,
         max_tokens=surg_max_toks,
-        timeout_s=45.0,
+        timeout_s=120.0,
         preflight_checked=True,
         loaded_ctx=loaded_ctx,
         allow_high_floor=False,
@@ -861,12 +899,13 @@ def _surgical_repair_unbacked_lines(
             "mode": "fast",
             "est_prompt_tokens": res_surg["prompt_tokens"],
             "predicted_eta_s": 0.0,
-            "max_eta_seconds": 45.0,
+            "max_eta_seconds": 120.0,
             "tripped": False,
             "is_retry": True,
             "prompt_tokens": res_surg["prompt_tokens"],
             "completion_tokens": res_surg["completion_tokens"],
             "elapsed_s": res_surg["elapsed_s"],
+            "kv_wait_s": res_surg.get("kv_wait_s", 0.0),
             "observed_tg_tok_s": res_surg["observed_tg_tok_s"],
             "finish_reason": res_surg["finish_reason"],
         }
@@ -954,7 +993,7 @@ def _run_full_repair_with_guard(
     """Run verify-claims repair with HIGH headroom (>=4096), 1 length continuation, and non-regression guard."""
     repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
     repair_tok_cap = min(max(max_budget, 4096), 6144) if effective_mode == "deep" else max_budget
-    repair_timeout = 120.0 if effective_mode == "deep" else 90.0
+    repair_timeout = 180.0 if effective_mode == "deep" else 135.0
 
     t0 = time.perf_counter()
     res2 = local_sidecar.invoke_chat_completion(
@@ -984,6 +1023,7 @@ def _run_full_repair_with_guard(
             "prompt_tokens": res2["prompt_tokens"],
             "completion_tokens": res2["completion_tokens"],
             "elapsed_s": res2["elapsed_s"],
+            "kv_wait_s": res2.get("kv_wait_s", 0.0),
             "observed_tg_tok_s": res2["observed_tg_tok_s"],
             "finish_reason": res2["finish_reason"],
         }
@@ -1006,7 +1046,7 @@ def _run_full_repair_with_guard(
                 system_prompt=sys_prompt,
                 user_content=cont_prompt,
                 max_tokens=2048,
-                timeout_s=90.0,
+                timeout_s=135.0,
                 preflight_checked=True,
                 loaded_ctx=loaded_ctx,
                 allow_high_floor=False,
@@ -1175,14 +1215,27 @@ def _bionic_digest_sync(
         sys_bytes = len(sys_prompt.encode("utf-8"))
         has_code = local_sidecar.is_code_heavy_payload(validated_files, bool(include_git_diff))
 
-        unique_files = list(dict.fromkeys(validated_files))
-        any_sliced = any(sl is not None for sl in slice_items)
-        total_raw_file_bytes = sum(vf.stat().st_size for vf in unique_files) if unique_files else 0
+        unsliced_unique = list(dict.fromkeys(fp for fp, sl in zip(validated_files, slice_items) if sl is None))
+        unsliced_set = set(unsliced_unique)
+        explicit_slices = [
+            (fp, sl[0], sl[1])
+            for fp, sl in zip(validated_files, slice_items)
+            if sl is not None and fp not in unsliced_set
+        ]
+        unsliced_raw_bytes = sum(vf.stat().st_size for vf in unsliced_unique) if unsliced_unique else 0
+        slice_raw_bytes = 0
+        if explicit_slices:
+            _lines_cache: dict[Path, list[str]] = {}
+            for fp_s, s_l, e_l in explicit_slices:
+                if fp_s not in _lines_cache:
+                    _lines_cache[fp_s] = fp_s.read_text(encoding="utf-8", errors="replace").splitlines()
+                all_l = _lines_cache[fp_s]
+                slice_raw_bytes += len("\n".join(all_l[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8"))
+        total_raw_file_bytes = unsliced_raw_bytes + slice_raw_bytes
         chunk_threshold = 42000 if effective_mode == "deep" else 36000
         use_auto_chunk = (
             effective_mode in {"fast", "deep"}
-            and bool(unique_files)
-            and not any_sliced
+            and bool(unsliced_unique)
             and not include_git_diff
             and total_raw_file_bytes > chunk_threshold
         )
@@ -1195,38 +1248,40 @@ def _bionic_digest_sync(
         kept_labeled_blocks: list[str] = []
 
         if use_auto_chunk:
-            raw_chunks = local_sidecar.plan_line_preserving_chunks(validated_files, target_chunk_bytes=20000)
+            unsliced_chunks = local_sidecar.plan_line_preserving_chunks(unsliced_unique, target_chunk_bytes=20000)
+            raw_chunks = unsliced_chunks + explicit_slices
             batches = local_sidecar.pack_chunk_batches(
                 raw_chunks,
                 max_batch_bytes=22000,
                 max_batch_lines=460,
                 max_slices_per_batch=4,
             )
-            waves = max(1, math.ceil(len(batches) / 2))
-            avg_batch_bytes = sys_bytes + int(total_raw_file_bytes / max(1, len(batches))) + len(prompt.encode("utf-8")) + 350
-            wave_eta = local_sidecar.estimate_eta(
-                mode="fast",
-                prompt_bytes=avg_batch_bytes,
-                max_tokens=220,
+            prompt_low = prompt.lower()
+            needs_cross_slice_reasoning = effective_mode == "deep" and any(
+                kw in prompt_low
+                for kw in ("compare", "discrepanc", "conflict", "audit", "mismatch", "cross-reference", "diff")
+            )
+            wave_eta = local_sidecar.estimate_chunked_eta(
+                effective_mode=effective_mode,
+                prompt_bytes=len(prompt.encode("utf-8")),
+                sys_prompt_bytes=sys_bytes,
+                total_payload_bytes=total_raw_file_bytes,
+                batch_count=len(batches),
                 max_eta_seconds=max_eta,
-                expected_turns=1,
                 has_code_context=has_code,
                 loaded_ctx_override=loaded_ctx,
-                calibrated_output=False,
-                cmd_name="bionic_digest",
-                sys_prompt_bytes=sys_bytes,
+                needs_cross_slice_reasoning=needs_cross_slice_reasoning,
             )
-            reduce_reserve = 12.0 if (effective_mode == "deep" and len(batches) > 1) else (8.0 if len(batches) > 1 else 0.0)
-            total_pred_eta = round(waves * float(wave_eta["predicted_eta_s"]) + reduce_reserve, 2)
-            if total_pred_eta > max_eta:
+            waves = int(wave_eta["waves"])
+            total_pred_eta = float(wave_eta["predicted_eta_s"])
+            chunk_soft_over = bool(wave_eta.get("soft_eta_exceeded"))
+            if total_pred_eta > max_eta and effective_mode == "cpu-bg":
                 err_eta = {
                     **wave_eta,
-                    "predicted_eta_s": total_pred_eta,
                     "tripped": True,
                     "hard_tripped": True,
                     "chunks": len(raw_chunks),
                     "batches": len(batches),
-                    "waves": waves,
                 }
                 local_sidecar.record_usage_telemetry(
                     {
@@ -1251,15 +1306,27 @@ def _bionic_digest_sync(
             chunk_counts: dict[Path, int] = {}
             for ch_path, _, _ in raw_chunks:
                 chunk_counts[ch_path] = chunk_counts.get(ch_path, 0) + 1
-            file_meta = [
-                {
-                    "path": str(vf),
-                    "label": str(vf.relative_to(repo_resolved)) if repo_resolved else vf.name,
-                    "bytes": vf.stat().st_size,
-                    "chunks": chunk_counts.get(vf, 0),
-                }
-                for vf in validated_files
-            ]
+            file_meta = []
+            for vf, sl in zip(validated_files, slice_items):
+                rel_l = str(vf.relative_to(repo_resolved)) if repo_resolved else vf.name
+                if sl is not None and vf not in unsliced_set:
+                    file_meta.append(
+                        {
+                            "path": str(vf),
+                            "label": f"{rel_l}#L{sl[0]}-L{sl[1]}",
+                            "slice": [sl[0], sl[1]],
+                            "chunks": 1,
+                        }
+                    )
+                elif sl is None:
+                    file_meta.append(
+                        {
+                            "path": str(vf),
+                            "label": rel_l,
+                            "bytes": vf.stat().st_size,
+                            "chunks": chunk_counts.get(vf, 0),
+                        }
+                    )
             base_chunk_max_toks = (
                 min(1800, max(600, max_toks // 3))
                 if effective_mode == "deep"
@@ -1326,7 +1393,7 @@ def _bionic_digest_sync(
                     system_prompt=sys_prompt,
                     user_content=ch_assembled,
                     max_tokens=batch_max_toks,
-                    timeout_s=min(max_eta + 30.0, 120.0),
+                    timeout_s=min(max(max_eta + 60.0, 150.0), 210.0),
                     preflight_checked=True,
                     loaded_ctx=loaded_ctx,
                     allow_high_floor=False,
@@ -1375,11 +1442,13 @@ def _bionic_digest_sync(
             repair_slices: list[str] = []
             tot_p_tok = 0
             tot_c_tok = 0
+            tot_kv_wait_s = 0.0
             all_stop = True
             chunks_truncated_count = 0
             for _idx, _span_lbl, ch_res, ch_asm in chunk_outcomes:
                 tot_p_tok += int(ch_res.get("prompt_tokens") or 0)
                 tot_c_tok += int(ch_res.get("completion_tokens") or 0)
+                tot_kv_wait_s += float(ch_res.get("kv_wait_s") or 0.0)
                 if ch_res.get("finish_reason") != "stop":
                     all_stop = False
                     chunks_truncated_count += 1
@@ -1394,11 +1463,6 @@ def _bionic_digest_sync(
             reduce_prompt_used = ""
             final_finish = "stop" if all_stop else "length"
             if reduced_used:
-                prompt_low = prompt.lower()
-                needs_cross_slice_reasoning = effective_mode == "deep" and any(
-                    kw in prompt_low
-                    for kw in ("compare", "discrepanc", "conflict", "audit", "mismatch", "cross-reference", "diff")
-                )
                 reduce_prompt = (
                     f"{prompt.strip()}\n\n"
                     "Below are verbatim per-slice extracts from the target file(s). "
@@ -1439,7 +1503,7 @@ def _bionic_digest_sync(
                         system_prompt=sys_prompt,
                         user_content=reduce_prompt,
                         max_tokens=red_max_toks,
-                        timeout_s=240.0 if needs_cross_slice_reasoning else 90.0,
+                        timeout_s=240.0 if needs_cross_slice_reasoning else 150.0,
                         preflight_checked=True,
                         loaded_ctx=loaded_ctx,
                         allow_high_floor=red_allow_high_floor,
@@ -1448,6 +1512,7 @@ def _bionic_digest_sync(
                     reduce_reasoning_eff = str(red_res.get("reasoning_effort") or ("high" if needs_cross_slice_reasoning else "none"))
                     tot_p_tok += int(red_res.get("prompt_tokens") or 0)
                     tot_c_tok += int(red_res.get("completion_tokens") or 0)
+                    tot_kv_wait_s += float(red_res.get("kv_wait_s") or 0.0)
                     if red_res.get("reasoning_recovered"):
                         length_healed = True
                     red_txt = str(red_res.get("content") or "").strip()
@@ -1475,6 +1540,7 @@ def _bionic_digest_sync(
                 "prompt_tokens": tot_p_tok,
                 "completion_tokens": tot_c_tok,
                 "elapsed_s": chunk_wall,
+                "kv_wait_s": round(tot_kv_wait_s, 3),
                 "decode_tok_s": None,
                 "wall_tok_s": wall_tps,
                 "observed_tg_tok_s": wall_tps,
@@ -1487,7 +1553,8 @@ def _bionic_digest_sync(
                 **wave_eta,
                 "predicted_eta_s": total_pred_eta,
                 "effort": effort_norm,
-                "soft_eta_exceeded": False,
+                "soft_eta_exceeded": chunk_soft_over,
+                "soft_eta_advisory": chunk_soft_over,
                 "chunks": len(raw_chunks),
                 "batches": len(batches),
             }
@@ -1508,13 +1575,14 @@ def _bionic_digest_sync(
                     "predicted_eta_s": total_pred_eta,
                     "max_eta_seconds": max_eta,
                     "tripped": False,
-                    "soft_eta_exceeded": False,
+                    "soft_eta_exceeded": chunk_soft_over,
                     "is_chunked": True,
                     "chunks": len(raw_chunks),
                     "batches": len(batches),
                     "prompt_tokens": tot_p_tok,
                     "completion_tokens": tot_c_tok,
                     "elapsed_s": chunk_wall,
+                    "kv_wait_s": round(tot_kv_wait_s, 3),
                     "observed_tg_tok_s": res["observed_tg_tok_s"],
                     "finish_reason": res["finish_reason"],
                 }
@@ -1616,6 +1684,7 @@ def _bionic_digest_sync(
                     "prompt_tokens": res["prompt_tokens"],
                     "completion_tokens": res["completion_tokens"],
                     "elapsed_s": res["elapsed_s"],
+                    "kv_wait_s": res.get("kv_wait_s", 0.0),
                     "observed_tg_tok_s": res["observed_tg_tok_s"],
                     "finish_reason": res["finish_reason"],
                 }
@@ -1627,7 +1696,8 @@ def _bionic_digest_sync(
 
         cont_hops = 0
         cont_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
-        while res["finish_reason"] == "length" and res["content"].strip() and cont_hops < 2 and heal_elapsed_s < 45.0:
+        cont_budget_s = 120.0 if effective_mode == "deep" else 75.0
+        while res["finish_reason"] == "length" and res["content"].strip() and cont_hops < 2 and heal_elapsed_s < cont_budget_s:
             cont_hops += 1
             t_len0 = time.perf_counter()
             head_clean, tail_ctx = _prepare_tail_continuation(res["content"])
@@ -1638,7 +1708,8 @@ def _bionic_digest_sync(
                 "Continue seamlessly starting with the NEXT item/line immediately after the lines above. "
                 "Do NOT repeat items already listed. Use compact single-line `- ` bullets citing exact `#Lstart-Lend` anchors and verbatim source literals only; zero preamble."
             )
-            cont_max_toks = 640 if effective_mode == "cpu-bg" else 1536
+            cont_max_toks = 640 if effective_mode == "cpu-bg" else (3072 if effective_mode == "deep" else 2560)
+            cont_timeout_s = 60.0 if effective_mode == "cpu-bg" else (150.0 if effective_mode == "deep" else 120.0)
             try:
                 res_cont = local_sidecar.invoke_chat_completion(
                     api_url=api_url,
@@ -1647,7 +1718,7 @@ def _bionic_digest_sync(
                     system_prompt=sys_prompt,
                     user_content=cont_prompt,
                     max_tokens=cont_max_toks,
-                    timeout_s=90.0,
+                    timeout_s=cont_timeout_s,
                     preflight_checked=True,
                     loaded_ctx=loaded_ctx,
                     allow_high_floor=False,
@@ -1665,13 +1736,14 @@ def _bionic_digest_sync(
                     "mode": effective_mode,
                     "est_prompt_tokens": res_cont["prompt_tokens"],
                     "predicted_eta_s": 0.0,
-                    "max_eta_seconds": 60.0,
+                    "max_eta_seconds": cont_timeout_s,
                     "tripped": False,
                     "is_retry": True,
                     "hop": cont_hops,
                     "prompt_tokens": res_cont["prompt_tokens"],
                     "completion_tokens": res_cont["completion_tokens"],
                     "elapsed_s": res_cont["elapsed_s"],
+                    "kv_wait_s": res_cont.get("kv_wait_s", 0.0),
                     "observed_tg_tok_s": res_cont["observed_tg_tok_s"],
                     "finish_reason": res_cont["finish_reason"],
                 }
@@ -1762,9 +1834,7 @@ def _bionic_digest_sync(
                             vrf_for_heal = surg["vrf_after"]
 
                     if claims_verified is not True:
-                        fail_detail = json.dumps(
-                            vrf_for_heal.get("unbacked_claims") or vrf_for_heal.get("stdout_tail") or "verification failed"
-                        )[:1500]
+                        fail_detail = _format_compact_verify_failures(vrf_for_heal, max_chars=2800)
                         repair_ctx = (
                             _build_chunked_repair_context(
                                 prompt,
@@ -1783,7 +1853,7 @@ def _bionic_digest_sync(
                             "1. DELETE any intro or heading sentence so line 1 starts directly with `- `.\n"
                             "2. DELETE any unbacked summary counts echoed from the prompt, uncalculated group totals, or invalid `[CALC: ...]` labels (if `[CALC: ...]` is used, the left side of `=` MUST contain ONLY source-verbatim integers/operators like `[CALC: 4 + 1 + 1 + 2 = 8]` — NEVER variable words like `Total` AND NEVER derived subtotals not literally printed in source lines; expand sums into literal source numbers or omit `[CALC:]` completely).\n"
                             "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; if a cited source slice lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier on that bullet; for QUALIFIED_QUANTITY(...) failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or remove redundant duplicates.\n"
-                            "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; insert `[TBD: ...]` for any missing values.\n\n"
+                            "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines) instead of missing external files; insert `[TBD: ...]` for missing values.\n\n"
                             f"Previous draft:\n{draft_for_heal}\n"
                         )
                         try:
@@ -1896,38 +1966,52 @@ def _bionic_digest_sync(
 
 
 def _is_heavy_chunked_sync_candidate(op_label: str, kwargs: dict[str, Any]) -> bool:
-    """Return True for un-sliced STANDARD digests >36 KB so multi-batch map-reduce gets 135s auto-async guard."""
+    """Return True when unsliced context files push payload >36 KB (even alongside explicit #L slices) so 135s sync guard applies."""
     if op_label != "digest" or bool(kwargs.get("include_git_diff")):
         return False
     raw_files = list(kwargs.get("context_files") or [])
     if not raw_files:
         return False
-    total_bytes = 0
+    unsliced_bytes = 0
+    slice_bytes = 0
+    has_unsliced = False
+    seen_unsliced: set[Path] = set()
     for item in raw_files:
         p, slice_rng = local_sidecar.parse_context_spec(str(item))
-        if slice_rng is not None:
-            return False
         cand = Path(os.path.expanduser(str(p)))
         if not cand.is_absolute() and kwargs.get("repo"):
             cand = Path(os.path.expanduser(str(kwargs["repo"]))) / cand
+        cand_res = cand.resolve(strict=False)
         try:
-            if cand.is_file():
-                total_bytes += cand.stat().st_size
+            if not cand_res.is_file():
+                continue
+            if slice_rng is None:
+                has_unsliced = True
+                if cand_res not in seen_unsliced:
+                    seen_unsliced.add(cand_res)
+                    unsliced_bytes += cand_res.stat().st_size
+            else:
+                lines = cand_res.read_text(encoding="utf-8", errors="replace").splitlines()
+                s_l, e_l = slice_rng
+                slice_bytes += len("\n".join(lines[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8"))
         except OSError:
             return False
-    return total_bytes > 36000
+    return has_unsliced and (unsliced_bytes + slice_bytes) > 36000
 
 
 async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str, Any]) -> dict[str, Any]:
-    """Run MCP tool synchronously unless HIGH/exclusive/heavy-chunked load risks >135s MCP client timeout; auto-promote cleanly."""
+    """Run MCP tool synchronously unless HIGH/exclusive/heavy-chunked/explicit multi-pass load risks >135s MCP timeout."""
     if bool(kwargs.get("async_job")):
         return await asyncio.to_thread(sync_fn, **kwargs)
     try:
         effort_norm, _ = local_sidecar.resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
     except ValueError:
         return await asyncio.to_thread(sync_fn, **kwargs)
+    tier_norm = str(kwargs.get("invocation_tier") or "auto").strip().lower()
+    explicit_multipass = op_label in ("repo_audit", "stage_patch") and tier_norm == "explicit"
     if (
         effort_norm != "high"
+        and not explicit_multipass
         and not _is_heavy_chunked_sync_candidate(op_label, kwargs)
         and not local_sidecar.has_active_exclusive_kv_slot()
     ):
@@ -2251,6 +2335,7 @@ def _bionic_repo_audit_sync(
                 "prompt_tokens": res["prompt_tokens"],
                 "completion_tokens": res["completion_tokens"],
                 "elapsed_s": res["elapsed_s"],
+                "kv_wait_s": res.get("kv_wait_s", 0.0),
                 "observed_tg_tok_s": res["observed_tg_tok_s"],
                 "finish_reason": res["finish_reason"],
             }
@@ -2273,7 +2358,8 @@ def _bionic_repo_audit_sync(
                 "Do NOT repeat completed items. Cite exact `#Lstart-Lend` anchors and verbatim source literals only. Zero preamble."
             )
             cont_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
-            cont_max_toks = min(1536, max(768, effective_max_toks // 2))
+            cont_max_toks = min(3072, max(1536, effective_max_toks // 2))
+            cont_timeout_s = 150.0 if effective_mode == "deep" else 120.0
             try:
                 res_cont = local_sidecar.invoke_chat_completion(
                     api_url=api_url,
@@ -2282,7 +2368,7 @@ def _bionic_repo_audit_sync(
                     system_prompt=sys_prompt,
                     user_content=cont_prompt,
                     max_tokens=cont_max_toks,
-                    timeout_s=90.0,
+                    timeout_s=cont_timeout_s,
                     preflight_checked=True,
                     loaded_ctx=loaded_ctx,
                     allow_high_floor=False,
@@ -2296,12 +2382,13 @@ def _bionic_repo_audit_sync(
                         "mode": cont_mode,
                         "est_prompt_tokens": res_cont["prompt_tokens"],
                         "predicted_eta_s": 0.0,
-                        "max_eta_seconds": 90.0,
+                        "max_eta_seconds": cont_timeout_s,
                         "tripped": False,
                         "is_retry": True,
                         "prompt_tokens": res_cont["prompt_tokens"],
                         "completion_tokens": res_cont["completion_tokens"],
                         "elapsed_s": res_cont["elapsed_s"],
+                        "kv_wait_s": res_cont.get("kv_wait_s", 0.0),
                         "observed_tg_tok_s": res_cont["observed_tg_tok_s"],
                         "finish_reason": res_cont["finish_reason"],
                     }
@@ -2383,16 +2470,14 @@ def _bionic_repo_audit_sync(
                     vrf_for_scrub = surg["vrf_after"]
 
             if not scrub_done:
-                fail_detail = json.dumps(
-                    vrf_for_scrub.get("unbacked_claims") or vrf_for_scrub.get("stdout_tail") or "verification failed"
-                )[:1500]
+                fail_detail = _format_compact_verify_failures(vrf_for_scrub, max_chars=2800)
                 scrub_prompt = (
                     f"{assembled}\n\n"
                     f"Your previous audit draft failed deterministic claim verification:\n{fail_detail}\n"
                     "CRITICAL REPAIR RULES:\n"
                     "1. DELETE any intro sentence (such as 'Based on ...') and delete any unbacked prompt summary counts or uncalculated group totals.\n"
                     "2. Rewrite accurately using ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present verbatim in the files above (any `[CALC: ...]` tag MUST have pure numeric arithmetic using literal source numbers on the left of `=`, NEVER words like `Total` or derived subtotals).\n"
-                    "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
+                    "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines); for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
                     f"Previous draft:\n{draft_for_scrub}\n"
                 )
                 try:
@@ -2832,6 +2917,7 @@ def _bionic_stage_patch_sync(
                 "prompt_tokens": res1["prompt_tokens"],
                 "completion_tokens": res1["completion_tokens"],
                 "elapsed_s": res1["elapsed_s"],
+                "kv_wait_s": res1.get("kv_wait_s", 0.0),
                 "observed_tg_tok_s": res1["observed_tg_tok_s"],
                 "finish_reason": res1["finish_reason"],
             }
@@ -2863,7 +2949,7 @@ def _bionic_stage_patch_sync(
         needs_heal = (receipt["py_compile_ok"] is False) or bool(fence_err1) or (smoke_res.get("ran") and not smoke_res.get("ok"))
 
         if needs_heal:
-            repair_budget = max(60.0, float(max_eta)) if effective_mode == "deep" else min(45.0, float(max_eta))
+            repair_budget = max(90.0, float(max_eta)) if effective_mode == "deep" else max(60.0, float(max_eta))
             if receipt["py_compile_ok"] is False:
                 diag_err = receipt.get("py_compile_error")
             elif fence_err1:
@@ -2898,7 +2984,8 @@ def _bionic_stage_patch_sync(
                 sys_prompt_bytes=sys_bytes,
                 target_code_bytes=max(1, len(faulty_code.encode("utf-8"))),
             )
-            if not repair_eta["hard_tripped"] and repair_eta["predicted_eta_s"] <= repair_budget + 30.0:
+            repair_slack_s = 45.0 if effective_mode == "deep" else 30.0
+            if not repair_eta["hard_tripped"] and repair_eta["predicted_eta_s"] <= repair_budget + repair_slack_s:
                 attempts = 2
                 t_heal0 = time.perf_counter()
                 try:
@@ -2909,7 +2996,7 @@ def _bionic_stage_patch_sync(
                         system_prompt=sys_prompt,
                         user_content=repair_prompt,
                         max_tokens=max_toks,
-                        timeout_s=min(max(repair_budget + 45.0, 120.0), 260.0),
+                        timeout_s=180.0 if effective_mode == "deep" else 135.0,
                         preflight_checked=True,
                         loaded_ctx=loaded_ctx,
                         est_prompt_tokens=repair_eta["est_prompt_tokens"],
@@ -2931,6 +3018,7 @@ def _bionic_stage_patch_sync(
                             "prompt_tokens": res2["prompt_tokens"],
                             "completion_tokens": res2["completion_tokens"],
                             "elapsed_s": res2["elapsed_s"],
+                            "kv_wait_s": res2.get("kv_wait_s", 0.0),
                             "observed_tg_tok_s": res2["observed_tg_tok_s"],
                             "finish_reason": res2["finish_reason"],
                         }
@@ -4125,6 +4213,137 @@ def run_self_tests() -> dict[str, Any]:
             srv25.server_close()
     checks.append("v243_high_repair_headroom_guard_and_multi_slice")
 
+    # 26. V2.4.4 mixed unsliced+sliced auto-chunking (preserving explicit #L slices) + compact verify manifest
+    with tempfile.TemporaryDirectory() as td_26:
+        td26_p = Path(td_26)
+        r26 = td26_p / "repo26"
+        r26.mkdir()
+        big26 = r26 / "big_mig.patch"
+        big26.write_text(
+            "\n".join(f"+added_symbol_{i} = {100 + i}  # padding text to push patch >45 KB safely" for i in range(720)) + "\n",
+            encoding="utf-8",
+        )
+        assert big26.stat().st_size > 44000
+        sl26 = r26 / "helper.py"
+        sl26.write_text(
+            "OUTSIDE_BEFORE = 111\n"
+            + "\n".join(f"LINE_{k} = {k}" for k in range(2, 120))
+            + "\nOUTSIDE_AFTER = 999\n",
+            encoding="utf-8",
+        )
+        assert _is_heavy_chunked_sync_candidate(
+            "digest",
+            {"context_files": [str(big26), f"{sl26}#L3-L5"], "repo": str(r26)},
+        ) is True
+
+        # Compact manifest must preserve all 12 claim anchors even when line_text is huge
+        bulky_claims = [
+            {
+                "line": (i // 3) + 1,
+                "type": "UNBACKED_PROVENANCE_REF",
+                "claim": f"`claim_target_{i}.md#L{10 + i}`",
+                "line_text": f"Verbose line {i} " + ("x" * 600),
+            }
+            for i in range(12)
+        ]
+        compact_msg = _format_compact_verify_failures({"unbacked_claims": bulky_claims}, max_chars=2800)
+        assert len(compact_msg) < 1500 and "`claim_target_11.md#L21`" in compact_msg, f"manifest failed: {compact_msg}"
+
+        seen_prompts_26: list[str] = []
+
+        class _V26Handler(BaseHTTPRequestHandler):
+            def log_message(self, fmt: str, *args: Any) -> None:
+                return
+
+            def do_GET(self) -> None:
+                if self.path == "/api/v0/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}
+                elif self.path == "/v1/models":
+                    payload = {"data": [{"id": local_sidecar.DEFAULT_MODEL_ID}]}
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
+                body = json.dumps(payload).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                length = int(self.headers.get("Content-Length", "0"))
+                req = json.loads(self.rfile.read(length).decode("utf-8"))
+                u_txt = str((req.get("messages") or [{}, {}])[-1].get("content") or "")
+                seen_prompts_26.append(u_txt)
+                if "Below are verbatim per-slice extracts" in u_txt:
+                    ans = "- `LINE_3 = 3` (`helper.py#L3-L3`)\n- `added_symbol_0 = 100` (`big_mig.patch#L1-L1`)"
+                elif "helper.py" in u_txt:
+                    assert "OUTSIDE_AFTER" not in u_txt, "Explicit #L slice must NOT expand full file when sibling patch chunks!"
+                    ans = "- `LINE_3 = 3` (`helper.py#L3-L3`)"
+                elif "big_mig.patch#L1-" in u_txt:
+                    ans = "- `added_symbol_0 = 100` (`big_mig.patch#L1-L1`)"
+                else:
+                    ans = "NONE"
+                body = json.dumps(
+                    {
+                        "choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 180, "completion_tokens": 60},
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        srv26 = ThreadingHTTPServer(("127.0.0.1", 0), _V26Handler)
+        import threading as _th26
+
+        _th26.Thread(target=srv26.serve_forever, daemon=True).start()
+        cache26 = td26_p / "c26"
+        cache26.mkdir()
+        saved26 = {
+            k: os.environ.get(k)
+            for k in (
+                "BIONIC_SIDECAR_API_URL",
+                "BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT",
+                "BIONIC_SIDECAR_TELEMETRY_LOG",
+                "BIONIC_SIDECAR_SCORECARD_PATH",
+                "BIONIC_SIDECAR_KV_STATE_PATH",
+                "BIONIC_SIDECAR_JOBS_DIR",
+            )
+        }
+        try:
+            os.environ["BIONIC_SIDECAR_API_URL"] = f"http://127.0.0.1:{srv26.server_port}/v1"
+            os.environ["BIONIC_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+            os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(cache26 / "tel.jsonl")
+            os.environ["BIONIC_SIDECAR_SCORECARD_PATH"] = str(cache26 / "sc.json")
+            os.environ["BIONIC_SIDECAR_KV_STATE_PATH"] = str(cache26 / "kv.json")
+            os.environ["BIONIC_SIDECAR_JOBS_DIR"] = str(cache26 / "jobs")
+            res26 = _bionic_digest_sync(
+                prompt="Audit big_mig.patch and helper.py#L3-L5",
+                context_files=[str(big26), f"{sl26}#L3-L5"],
+                repo=str(r26),
+                effort="high",
+                invocation_tier="explicit",
+                verify_claims=True,
+            )
+            assert res26["ok"] is True, f"res26 failed: {res26}"
+            cmr26 = res26.get("chunked_map_reduce") or {}
+            assert cmr26.get("enabled") is True and cmr26.get("reduced") is True, f"mixed chunking inactive: {cmr26}"
+            assert res26.get("claims_verified") is True and res26.get("verdict") == "clean", f"res26 unverified: {res26}"
+            assert any(m.get("label") == "helper.py#L3-L5" for m in res26.get("context_files") or []), f"slice meta lost: {res26.get('context_files')}"
+        finally:
+            for k, v in saved26.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv26.shutdown()
+            srv26.server_close()
+    checks.append("v244_mixed_chunking_compact_manifest_and_guard_parity")
+
     return {
         "schema_version": "BIONIC_MCP_V1",
         "status": "PASS",
@@ -4143,7 +4362,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.self_test:
-        res = run_self_tests()
+        try:
+            res = run_self_tests()
+        except Exception as exc:
+            err_payload = {"schema_version": "BIONIC_MCP_V1", "status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+            print(json.dumps(err_payload, indent=2) if args.json else f"[MCP_SELF_TEST_FAIL] {err_payload['error']}", file=sys.stderr)
+            return 3
         print(json.dumps(res, indent=2) if args.json else f"[PASS] {res['tests_run']} MCP server tests passed")
         return 0
     if args.status:

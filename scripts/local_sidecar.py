@@ -22,48 +22,49 @@ Pure Python 3.10+ standard library (zero third-party packages).
   CLI Flags     : --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
                   status, check-eta, query, audit-to-quarantine, stage-code, control, self-test
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_effort_and_mode (#L258-L270)       | def parse_context_spec (#L273-L283)
-    - class SidecarFirewallError (#L286-L287)        | class SidecarEtaTrippedError (#L290-L295)
-    - def load_system_prompt (#L298-L309)            | def validate_loopback_url (#L312-L340)
-    - def _safe_subprocess_cwd (#L343-L366)          | def _safe_abspath (#L369-L375)
-    - def _is_path_within (#L378-L383)               | def _inspect_path_security (#L386-L416)
-    - def _find_git_toplevel (#L419-L425)            | def is_code_heavy_payload (#L428-L432)
-    - def parse_and_validate_context_items (#L435-L462) | def parse_and_validate_context_specs (#L465-L477)
-    - def validate_input_paths (#L480-L529)          | def validate_staging_dir (#L532-L595)
-    - def resolve_effective_max_tokens (#L598-L608)  | def estimate_eta (#L611-L749)
-    - def _http_json_request (#L752-L772)            | def _deduplicate_full_context_diff (#L775-L852)
-    - def plan_line_preserving_chunks (#L855-L916)   | def pack_chunk_batches (#L919-L971)
-    - def assemble_prompt_payload (#L974-L1125)      | def resolve_default_api_url (#L1128-L1130)
-    - def _resolve_kv_state_path (#L1133-L1142)      | def _pid_alive (#L1145-L1154)
-    - def acquire_kv_budget (#L1158-L1266)           | def has_active_exclusive_kv_slot (#L1269-L1287)
-    - def invoke_chat_completion (#L1290-L1455)      | def extract_staged_code (#L1458-L1468)
-    - def _read_prompt_arg (#L1471-L1478)            | def resolve_max_eta_seconds (#L1481-L1487)
-    - def _resolve_telemetry_log (#L1490-L1496)      | def _resolve_scorecard_path (#L1499-L1508)
-    - def _resolve_jobs_dir (#L1511-L1520)           | def _write_private_json_atomic (#L1523-L1541)
-    - def _resolve_scorecard_archive_path (#L1544-L1550) | def _seed_counts_from_telemetry (#L1553-L1585)
-    - def compute_scorecard_metrics (#L1588-L1621)   | def load_or_init_scorecard (#L1624-L1661)
-    - def record_call_outcome (#L1664-L1730)         | def apply_call_verdict (#L1733-L1782)
-    - def format_lifetime_scorecard (#L1785-L1803)   | def reset_scorecard (#L1806-L1905)
-    - def estimate_quota_savings (#L1908-L1968)      | def record_usage_telemetry (#L1971-L1997)
-    - def summarize_usage_telemetry (#L2000-L2044)   | def probe_server_models (#L2047-L2113)
-    - def preflight_live_inference (#L2116-L2130)    | def _enforce_eta_or_raise (#L2133-L2218)
-    - def cmd_status (#L2221-L2257)                  | def cmd_check_eta (#L2260-L2314)
-    - def cmd_query (#L2317-L2459)                   | def cmd_audit_to_quarantine (#L2462-L2658)
-    - def _write_private_staging_file (#L2661-L2670) | def stage_code_artifact (#L2673-L2752)
-    - def cmd_stage_code (#L2755-L2898)              | def build_concrete_model_config (#L2908-L2997)
-    - def _read_hw_counters (#L3000-L3039)           | def _probe_lms_daemon (#L3042-L3059)
-    - def _run_lms_cmd (#L3062-L3075)                | def _has_gui_display_socket (#L3078-L3088)
-    - def _control_plan (#L3091-L3123)               | def _control_status (#L3126-L3142)
-    - def _control_load (#L3145-L3209)               | def _control_start_headless (#L3212-L3268)
-    - def _control_unload (#L3271-L3293)             | def _control_stop_server (#L3296-L3310)
-    - def _safe_job_file (#L3313-L3323)              | def submit_async_job (#L3326-L3364)
-    - def _execute_job_worker (#L3367-L3403)         | def get_job_status (#L3406-L3445)
-    - def list_jobs (#L3448-L3466)                   | def _normalize_control_cli_action (#L3469-L3472)
-    - def cmd_control (#L3475-L3525)                 | def cmd_job_worker (#L3528-L3529)
-    - def cmd_job_status (#L3532-L3535)              | def cmd_job_collect (#L3538-L3541)
-    - def cmd_job_wait (#L3544-L3547)                | def cmd_job_list (#L3550-L3553)
-    - def cmd_verdict (#L3556-L3559)                 | def run_self_tests (#L3562-L4364)
-    - def build_parser (#L4367-L4470)                | def main (#L4473-L4511)
+    - def resolve_effort_and_mode (#L259-L271)       | def parse_context_spec (#L274-L284)
+    - class SidecarFirewallError (#L287-L288)        | class SidecarEtaTrippedError (#L291-L296)
+    - def load_system_prompt (#L299-L310)            | def validate_loopback_url (#L313-L341)
+    - def _safe_subprocess_cwd (#L344-L367)          | def _safe_abspath (#L370-L376)
+    - def _is_path_within (#L379-L384)               | def _inspect_path_security (#L387-L417)
+    - def _find_git_toplevel (#L420-L426)            | def is_code_heavy_payload (#L429-L433)
+    - def parse_and_validate_context_items (#L436-L463) | def parse_and_validate_context_specs (#L466-L478)
+    - def validate_input_paths (#L481-L530)          | def validate_staging_dir (#L533-L596)
+    - def resolve_effective_max_tokens (#L599-L609)  | def estimate_eta (#L612-L750)
+    - def _http_json_request (#L753-L773)            | def _deduplicate_full_context_diff (#L776-L853)
+    - def plan_line_preserving_chunks (#L856-L917)   | def pack_chunk_batches (#L920-L972)
+    - def estimate_chunked_eta (#L975-L1022)         | def assemble_prompt_payload (#L1025-L1176)
+    - def resolve_default_api_url (#L1179-L1181)     | def _resolve_kv_state_path (#L1184-L1193)
+    - def _pid_alive (#L1196-L1205)                  | def acquire_kv_budget (#L1209-L1320)
+    - def has_active_exclusive_kv_slot (#L1323-L1341) | def invoke_chat_completion (#L1344-L1513)
+    - def extract_staged_code (#L1516-L1526)         | def _read_prompt_arg (#L1529-L1536)
+    - def resolve_max_eta_seconds (#L1539-L1545)     | def _resolve_telemetry_log (#L1548-L1554)
+    - def _resolve_scorecard_path (#L1557-L1566)     | def _resolve_jobs_dir (#L1569-L1578)
+    - def _write_private_json_atomic (#L1581-L1599)  | def _resolve_scorecard_archive_path (#L1602-L1608)
+    - def _seed_counts_from_telemetry (#L1611-L1643) | def compute_scorecard_metrics (#L1646-L1679)
+    - def load_or_init_scorecard (#L1682-L1719)      | def record_call_outcome (#L1722-L1788)
+    - def apply_call_verdict (#L1791-L1840)          | def format_lifetime_scorecard (#L1843-L1861)
+    - def reset_scorecard (#L1864-L1963)             | def estimate_quota_savings (#L1966-L2026)
+    - def record_usage_telemetry (#L2029-L2055)      | def summarize_usage_telemetry (#L2058-L2102)
+    - def probe_server_models (#L2105-L2171)         | def preflight_live_inference (#L2174-L2188)
+    - def _enforce_eta_or_raise (#L2191-L2276)       | def cmd_status (#L2279-L2315)
+    - def cmd_check_eta (#L2318-L2372)               | def cmd_query (#L2375-L2517)
+    - def cmd_audit_to_quarantine (#L2520-L2716)     | def _write_private_staging_file (#L2719-L2728)
+    - def stage_code_artifact (#L2731-L2810)         | def cmd_stage_code (#L2813-L2956)
+    - def build_concrete_model_config (#L2966-L3055) | def _read_hw_counters (#L3058-L3097)
+    - def _probe_lms_daemon (#L3100-L3117)           | def _run_lms_cmd (#L3120-L3133)
+    - def _has_gui_display_socket (#L3136-L3146)     | def _control_plan (#L3149-L3181)
+    - def _control_status (#L3184-L3200)             | def _control_load (#L3203-L3267)
+    - def _control_start_headless (#L3270-L3326)     | def _control_unload (#L3329-L3351)
+    - def _control_stop_server (#L3354-L3368)        | def _safe_job_file (#L3371-L3381)
+    - def submit_async_job (#L3384-L3422)            | def _execute_job_worker (#L3425-L3461)
+    - def get_job_status (#L3464-L3503)              | def list_jobs (#L3506-L3524)
+    - def _normalize_control_cli_action (#L3527-L3530) | def cmd_control (#L3533-L3583)
+    - def cmd_job_worker (#L3586-L3587)              | def cmd_job_status (#L3590-L3593)
+    - def cmd_job_collect (#L3596-L3599)             | def cmd_job_wait (#L3602-L3605)
+    - def cmd_job_list (#L3608-L3611)                | def cmd_verdict (#L3614-L3617)
+    - def run_self_tests (#L3620-L4448)              | def build_parser (#L4451-L4554)
+    - def main (#L4557-L4595)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -93,7 +94,7 @@ from typing import Any
 
 SCHEMA_VERSION = "LOCAL_SIDECAR_V1"
 TELEMETRY_SCHEMA = "SIDECAR_TELEMETRY_V2"
-ETA_CALIBRATION_VERSION = "ETA_CAL_V2_4_1"
+ETA_CALIBRATION_VERSION = "ETA_CAL_V2_4_4"
 SCORECARD_SCHEMA = "BIONIC_SCORECARD_V1"
 DEFAULT_API_URL = "http://127.0.0.1:1234/v1"
 DEFAULT_MODEL_ID = "qwen3.6-35b-a3b"
@@ -971,6 +972,56 @@ def pack_chunk_batches(
     return batches
 
 
+def estimate_chunked_eta(
+    *,
+    effective_mode: str,
+    prompt_bytes: int,
+    sys_prompt_bytes: int,
+    total_payload_bytes: int,
+    batch_count: int,
+    max_eta_seconds: float,
+    has_code_context: bool = False,
+    loaded_ctx_override: int | None = None,
+    needs_cross_slice_reasoning: bool = False,
+) -> dict[str, Any]:
+    """Estimate multi-wave mapper + scaled reduce ETA for chunked digests against empirical latency."""
+    waves = max(1, math.ceil(max(1, batch_count) / 2))
+    avg_batch_bytes = sys_prompt_bytes + int(total_payload_bytes / max(1, batch_count)) + prompt_bytes + 350
+    wave_eta = estimate_eta(
+        mode="fast",
+        prompt_bytes=avg_batch_bytes,
+        max_tokens=420 if effective_mode == "deep" else 340,
+        max_eta_seconds=max_eta_seconds,
+        expected_turns=1,
+        has_code_context=has_code_context,
+        loaded_ctx_override=loaded_ctx_override,
+        calibrated_output=False,
+        cmd_name="bionic_digest",
+        sys_prompt_bytes=sys_prompt_bytes,
+    )
+    if batch_count <= 1:
+        total_pred = round(float(wave_eta["predicted_eta_s"]), 2)
+    else:
+        prof = PROFILES[effective_mode if effective_mode in PROFILES else "fast"]
+        est_reduce_in_tok = 900 * batch_count + 500
+        if needs_cross_slice_reasoning:
+            est_reduce_out_tok = min(3200, 1400 + 380 * batch_count)
+        elif effective_mode == "deep":
+            est_reduce_out_tok = min(2200, 650 + 320 * batch_count)
+        else:
+            est_reduce_out_tok = min(1950, 420 + 280 * batch_count)
+        reduce_s = (est_reduce_in_tok / float(prof["pp_tok_s"])) + (est_reduce_out_tok / float(prof["tg_tok_s"])) + 1.0
+        total_pred = round(waves * float(wave_eta["predicted_eta_s"]) + reduce_s, 2)
+    return {
+        **wave_eta,
+        "effort": PROFILES.get(effective_mode, {}).get("effort", wave_eta["effort"]),
+        "waves": waves,
+        "batches": batch_count,
+        "predicted_eta_s": total_pred,
+        "soft_eta_exceeded": total_pred > float(max_eta_seconds),
+    }
+
+
 def assemble_prompt_payload(
     *,
     user_prompt: str,
@@ -1169,7 +1220,9 @@ def acquire_kv_budget(
     slot_id = f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
     lock_path = path.with_suffix(".lock")
     registered = False
-    deadline = time.monotonic() + max(0.05, float(timeout_s))
+    t_wait_start = time.monotonic()
+    deadline = t_wait_start + max(0.05, float(timeout_s))
+    kv_wait_s = 0.0
 
     slot_ttl = max(660.0, float(timeout_s) + 120.0)
 
@@ -1227,6 +1280,7 @@ def acquire_kv_budget(
                             with os.fdopen(fd, "w", encoding="utf-8") as sfh:
                                 json.dump({"slots": slots}, sfh)
                             registered = True
+                            kv_wait_s = round(max(0.0, time.monotonic() - t_wait_start), 3)
                             break
                         if time.monotonic() >= deadline:
                             raise RuntimeError(
@@ -1240,7 +1294,7 @@ def acquire_kv_budget(
         registered = False
 
     try:
-        yield {"slot_id": slot_id, "pool_cap": pool_cap, "registered": registered}
+        yield {"slot_id": slot_id, "pool_cap": pool_cap, "registered": registered, "kv_wait_s": kv_wait_s}
     finally:
         if registered:
             try:
@@ -1322,7 +1376,7 @@ def invoke_chat_completion(
         req_reasoning: str | None = None,
         req_est_p: int = est_p,
         req_timeout_s: float | None = None,
-    ) -> tuple[dict[str, Any], float]:
+    ) -> tuple[dict[str, Any], float, float]:
         eff_req_timeout = float(req_timeout_s if req_timeout_s is not None else timeout_s)
         eff_reasoning = (
             req_reasoning
@@ -1356,13 +1410,14 @@ def invoke_chat_completion(
             loaded_ctx,
             timeout_s=kv_wait_s,
             exclusive=use_exclusive_slot,
-        ):
+        ) as kv_slot:
+            slot_wait_s = float(kv_slot.get("kv_wait_s") or 0.0)
             t0 = time.perf_counter()
             raw_resp = _http_json_request(f"{api_url}/chat/completions", payload=payload, timeout_s=eff_req_timeout)
             dt_s = round(max(0.001, time.perf_counter() - t0), 3)
-        return raw_resp, dt_s
+        return raw_resp, dt_s, slot_wait_s
 
-    resp, elapsed_s = _once(eff_max_tokens)
+    resp, elapsed_s, total_kv_wait_s = _once(eff_max_tokens)
     choice = (resp.get("choices") or [{}])[0]
     msg = choice.get("message") or {}
     content = (msg.get("content") or "").strip()
@@ -1384,7 +1439,7 @@ def invoke_chat_completion(
                 f"{rc_tail[-12000:]}\n"
             )
             synth_est_p = max(1, math.ceil((len(system_prompt.encode("utf-8")) + len(synth_prompt.encode("utf-8"))) / 3.0))
-            resp2, dt2 = _once(
+            resp2, dt2, wait2 = _once(
                 synth_limit,
                 req_content=synth_prompt,
                 req_reasoning="none",
@@ -1392,6 +1447,7 @@ def invoke_chat_completion(
                 req_timeout_s=max(float(timeout_s), 120.0),
             )
             elapsed_s = round(elapsed_s + dt2, 3)
+            total_kv_wait_s = round(total_kv_wait_s + wait2, 3)
             token_bump_retried = True
             usage2 = resp2.get("usage") or {}
             total_prompt_tokens += int(usage2.get("prompt_tokens") or 0)
@@ -1405,8 +1461,9 @@ def invoke_chat_completion(
         max_cap = int(prof.get("max_tokens_cap") or 10240)
         if not content and eff_max_tokens < max_cap:
             bump_limit = min(max_cap, max(6144, eff_max_tokens + 2048))
-            resp2, dt2 = _once(bump_limit)
+            resp2, dt2, wait2 = _once(bump_limit)
             elapsed_s = round(elapsed_s + dt2, 3)
+            total_kv_wait_s = round(total_kv_wait_s + wait2, 3)
             token_bump_retried = True
             eff_max_tokens = bump_limit
             usage2 = resp2.get("usage") or {}
@@ -1444,6 +1501,7 @@ def invoke_chat_completion(
         "token_bump_retried": token_bump_retried,
         "reasoning_recovered": reasoning_recovered,
         "elapsed_s": elapsed_s,
+        "kv_wait_s": total_kv_wait_s,
         "prompt_tokens": prompt_tokens,
         "completion_tokens": completion_tokens,
         "decode_tok_s": decode_tok_s,
@@ -4285,7 +4343,7 @@ def run_self_tests() -> dict[str, Any]:
     checks.append("v2_3_headless_prompt_scorecard_reset_and_chunk_planner")
 
     # 17. V2.4 packed multi-file chunk batches, ETA_CAL_V2_4_1 deep scaling, and decode/wall tok/s separation
-    assert ETA_CALIBRATION_VERSION == "ETA_CAL_V2_4_1"
+    assert ETA_CALIBRATION_VERSION == "ETA_CAL_V2_4_4"
     with tempfile.TemporaryDirectory() as td_v24:
         td_p24 = Path(td_v24)
         f_a = td_p24 / "a.md"
@@ -4355,6 +4413,32 @@ def run_self_tests() -> dict[str, Any]:
         assert [m["label"] for m in ms_meta] == ["multi.py#L2-L5", "multi.py#L18-L21"], f"unexpected meta: {ms_meta}"
         assert "val_3 = 3" in ms_asm and "val_19 = 19" in ms_asm, "Both non-overlapping same-file slices must appear"
     checks.append("v243_multi_slice_same_file_preservation")
+
+    # 22. V2.4.4 kv_wait_s telemetry and calibrated chunked ETA predictor
+    with tempfile.TemporaryDirectory() as td_w244:
+        kv_w = Path(td_w244) / "kv_w.json"
+        with acquire_kv_budget(4000, loaded_ctx=49152, timeout_s=1.0, kv_state_path=kv_w) as sl_w:
+            assert float(sl_w.get("kv_wait_s", -1.0)) >= 0.0
+    chk_std = estimate_chunked_eta(
+        effective_mode="fast",
+        prompt_bytes=200,
+        sys_prompt_bytes=900,
+        total_payload_bytes=75000,
+        batch_count=4,
+        max_eta_seconds=90.0,
+    )
+    chk_high = estimate_chunked_eta(
+        effective_mode="deep",
+        prompt_bytes=200,
+        sys_prompt_bytes=900,
+        total_payload_bytes=75000,
+        batch_count=4,
+        max_eta_seconds=180.0,
+        needs_cross_slice_reasoning=True,
+    )
+    assert chk_std["predicted_eta_s"] >= 50.0, f"expected realistic std chunked eta >=50s: {chk_std}"
+    assert chk_high["predicted_eta_s"] > chk_std["predicted_eta_s"], f"expected cross-slice high eta > std: {chk_high}"
+    checks.append("v244_kv_wait_telemetry_and_chunked_eta_calibration")
 
     return {
         "schema_version": SCHEMA_VERSION,

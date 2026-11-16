@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 153.22,
+  "avg_doc_len": 155.84,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -133,13 +133,13 @@
       "lessons": [
         {
           "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc)...",
-          "end_line": 57,
+          "end_line": 58,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-07",
-          "line_range": "#L52-L57",
+          "line_range": "#L53-L58",
           "location": "main",
           "scope": "",
-          "start_line": 52,
+          "start_line": 53,
           "tier": "TIER2",
           "title": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... (`2026-11-10`)",
           "touched_files": [
@@ -148,13 +148,13 @@
         },
         {
           "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
-          "end_line": 64,
+          "end_line": 65,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-08",
-          "line_range": "#L59-L64",
+          "line_range": "#L60-L65",
           "location": "main",
           "scope": "",
-          "start_line": 59,
+          "start_line": 60,
           "tier": "TIER2",
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
           "touched_files": [
@@ -166,13 +166,13 @@
         },
         {
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 71,
+          "end_line": 72,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L66-L71",
+          "line_range": "#L67-L72",
           "location": "main",
           "scope": "",
-          "start_line": 66,
+          "start_line": 67,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -184,13 +184,13 @@
         },
         {
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 78,
+          "end_line": 79,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L73-L78",
+          "line_range": "#L74-L79",
           "location": "main",
           "scope": "",
-          "start_line": 73,
+          "start_line": 74,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -199,13 +199,13 @@
         },
         {
           "capsule_1line": "Serial file-level unittest sharding bottlenecked full-system-suite at 19.82 seconds, Stage-X memory audits... -> Use execution-order-safe LPT unittest method sharding in benchmark_homunculus.py, deduplicate only Stage-X sync_memory --audit via verified_fastpath.py while keeping audit_data_boundary --staged live, and symlink Alchemical3D git hooks. (`benchmark_homunculus.py` (`Workstation_Operations_Software.md`), `verified_fastpath.py`...",
-          "end_line": 85,
+          "end_line": 86,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-11",
-          "line_range": "#L80-L85",
+          "line_range": "#L81-L86",
           "location": "main",
           "scope": "",
-          "start_line": 80,
+          "start_line": 81,
           "tier": "TIER2",
           "title": "Serial file-level unittest sharding bottlenecked full-system-suite at 19.82 seconds, Stage-X memory audits... (`2026-11-14`)",
           "touched_files": [
@@ -217,13 +217,13 @@
         },
         {
           "capsule_1line": "Stage 5.1/5.2 local sidecar pilots (Pestle_Rotational_Bowden & Alembic_Toolhead) hit wrapper CLI flag... -> Embed author in HTML provenance comment & pre-check destination overwrite inside `local_sidecar.py`; set `max_tokens >= 2200` with prompt bans on unbacked acronym expansions/affiliate query params/deleted-diff `#L` anchors; pair sidecar outputs with `audit_repo_docs.py` + `verify_claims.py` avoiding duplicate basenames or foreign...",
-          "end_line": 93,
+          "end_line": 94,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-12",
-          "line_range": "#L87-L93",
+          "line_range": "#L88-L94",
           "location": "main",
           "scope": "script:local_sidecar",
-          "start_line": 87,
+          "start_line": 88,
           "tier": "TIER2",
           "title": "Stage 5.1/5.2 local sidecar pilots (Pestle_Rotational_Bowden & Alembic_Toolhead) hit wrapper CLI flag... (`2026-11-14`)",
           "touched_files": [
@@ -236,13 +236,13 @@
         },
         {
           "capsule_1line": "Turn-1 Bionic UNLOADED banner vanished on remote session start due to agy 1.5.9 panic in... -> Defer Turn-1 state notice from SessionStart to PreInvocation using pure systemMessage strings (zero metadata/terminationBehavior), check diff -rq before agy plugin install in bootstrap_workstation.sh, and enforce _safe_subprocess_cwd across local_sidecar.py and bionic_mcp_server.py. (`local_sidecar.py`...",
-          "end_line": 101,
+          "end_line": 102,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-13",
-          "line_range": "#L95-L101",
+          "line_range": "#L96-L102",
           "location": "main",
           "scope": "script:bionic_sidecar",
-          "start_line": 95,
+          "start_line": 96,
           "tier": "TIER2",
           "title": "Turn-1 Bionic UNLOADED banner vanished on remote session start due to agy 1.5.9 panic in... (`2026-11-14`)",
           "touched_files": [
@@ -254,13 +254,13 @@
         },
         {
           "capsule_1line": "V2.3.1 HIGH offloads burned 66-89% tokens in <think> blocks (164-279s), truncated lines >320 chars, lost... -> Retain V2.4.1 CONCISE_HIGH_THINKING_HINT, pack_chunk_batches, and effort-preserving BOM-cross-sliced surgical repair; pass async_job=True on parallel or multi-file HIGH MCP digests so runs never collide with the 180s synchronous MCP transport timeout; invoke governed scripts via canonical /home/orin/Projects/Alchemical3D/Homunculus...",
-          "end_line": 109,
+          "end_line": 110,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-14",
-          "line_range": "#L103-L109",
+          "line_range": "#L104-L110",
           "location": "main",
           "scope": "script:bionic_sidecar",
-          "start_line": 103,
+          "start_line": 104,
           "tier": "TIER2",
           "title": "V2.3.1 HIGH offloads burned 66-89% tokens in <think> blocks (164-279s), truncated lines >320 chars, lost... (`2026-11-15`)",
           "touched_files": [
@@ -272,13 +272,13 @@
         },
         {
           "capsule_1line": "Concurrent full deep HIGH streams in --parallel 2 thrashed CPU MoE threads (<20-28 tok/s, 270s socket... -> Keep V2.4.2 exclusive=True single-slot serialization for full deep calls (>=3072 tok, reasoning!=none) while preserving max_slots=2 for mapper batches/fast calls; keep 135s MCP_SYNC_WAIT_CAP_SECONDS auto-promotion + job-collect clamp; keep TRUSTED_INVOCATION_ROOTS symlink check; maintain uniform...",
-          "end_line": 117,
+          "end_line": 118,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-15",
-          "line_range": "#L111-L117",
+          "line_range": "#L112-L118",
           "location": "main",
           "scope": "script:bionic_sidecar",
-          "start_line": 111,
+          "start_line": 112,
           "tier": "TIER2",
           "title": "Concurrent full deep HIGH streams in --parallel 2 thrashed CPU MoE threads (<20-28 tok/s, 270s socket... (`2026-11-15`)",
           "touched_files": [
@@ -289,13 +289,13 @@
         },
         {
           "capsule_1line": "gpu-daily --parallel 4 kept idle batch slots vs max_slots<=2, and STANDARD chunked map-reduce reduce... -> Keep gpu-daily tightened to --parallel 2, run length continuation outside if use_auto_chunk: using reduce_prompt, grant up to 3072 STANDARD reduce tokens, and enable 135s auto-async guard for >36KB digests. (`local_sidecar.py` (`Workstation_Operations_Software.md`), `bionic_sidecar/bionic_mcp_server.py`...",
-          "end_line": 125,
+          "end_line": 126,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-16",
-          "line_range": "#L119-L125",
+          "line_range": "#L120-L126",
           "location": "main",
           "scope": "script:bionic_sidecar",
-          "start_line": 119,
+          "start_line": 120,
           "tier": "TIER2",
           "title": "gpu-daily --parallel 4 kept idle batch slots vs max_slots<=2, and STANDARD chunked map-reduce reduce... (`2026-11-15`)",
           "touched_files": [
@@ -306,15 +306,31 @@
         },
         {
           "capsule_1line": "Multiple #Lstart-Lend slices of the same file passed to Bionic overwrote earlier slices in a Path-keyed... -> Preserve per-slice context via parse_and_validate_context_items() across local_sidecar.py and bionic_mcp_server.py; route repair passes through shared _run_full_repair_with_guard() (4096-6144 deep tok cap, 1x2048 continuation hop, reject clipped/regressed/vacuous-zero repairs) (`local_sidecar.py` (`Workstation_Operations_Software.md`)...",
-          "end_line": 131,
+          "end_line": 134,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-17",
-          "line_range": "#L127-L131",
+          "line_range": "#L128-L134",
           "location": "main",
           "scope": "script:bionic_sidecar",
-          "start_line": 127,
+          "start_line": 128,
           "tier": "TIER2",
           "title": "Multiple #Lstart-Lend slices of the same file passed to Bionic overwrote earlier slices in a Path-keyed... (`2026-11-16`)",
+          "touched_files": [
+            "bionic_mcp_server.py",
+            "local_sidecar.py"
+          ]
+        },
+        {
+          "capsule_1line": "V2.4.4 audit (BC-0225/BC-0228) uncovered .patch files omitted from verify_claims --sources, mixed... -> Lock 49152 gpu-daily as fixed baseline (retain gpu-max optional); add .patch/.diff + [:20] unbacked slice; split unsliced vs #L slices in chunker and _is_heavy_chunked_sync_candidate; use _format_compact_verify_failures() and LL_WS_12_GUARD frontmatter/patch rules; widen async sub-timeouts (120-180s), cont_max_toks (2560/3072), and...",
+          "end_line": 140,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-18",
+          "line_range": "#L136-L140",
+          "location": "main",
+          "scope": "script:bionic_sidecar",
+          "start_line": 136,
+          "tier": "TIER2",
+          "title": "V2.4.4 audit (BC-0225/BC-0228) uncovered .patch files omitted from verify_claims --sources, mixed... (`2026-11-16`)",
           "touched_files": [
             "bionic_mcp_server.py",
             "local_sidecar.py"
@@ -438,8 +454,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 153.22,
-      "proj_total_docs": 18,
+      "proj_avg_doc_len": 155.84,
+      "proj_total_docs": 19,
       "project": "Workstation_Operations"
     }
   },
@@ -458,12 +474,12 @@
     "Projects/Workstation_Operations/Workstation_Operations.md": {
       "lines": 247,
       "sections": 0,
-      "sha256": "4d0cab1269f40ef5"
+      "sha256": "69be10f513e858f1"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 145,
-      "sections": 11,
-      "sha256": "a73eba434b9c9aca"
+      "lines": 154,
+      "sections": 12,
+      "sha256": "35916f83c9a775b0"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -473,10 +489,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 62,
       "sections": 0,
-      "sha256": "9dc35543c803eb16"
+      "sha256": "8773f1601af46eed"
     }
   },
-  "total_docs": 18,
+  "total_docs": 19,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "3266903f105d9b70"
+  "vectors_digest": "5b48d9131150620b"
 }

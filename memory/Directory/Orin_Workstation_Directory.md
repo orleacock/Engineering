@@ -73,7 +73,7 @@ last_synced: "2026-11-16"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: cc16e1b7f336` | `Tree: bb470dc7e4ac`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: 595049972ad7` | `Tree: bb470dc7e4ac`)
 - **Repository Location**: `../scripts`
 
 ```text
