@@ -56,12 +56,12 @@ checkpoint_lessons_digest: "c26e8dad12e6ed84"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 69c006bb976d` | `Worktree: untracked` | `Last Verification: SBX-20261116_201657-a1c0f4f0`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 69c006bb976d` | `Worktree: untracked` | `Last Verification: apprentice_status:v2.5.0-ONLINE_READY,BOUNDARY_CLEAN`
 - **Where We Stopped (Verified State & Context)**:
-  Completed Apprentice Phase 1-4 optimizations, job-collect job_ids batch routing, OS Dry-Run SBX-20261116_201657-a1c0f4f0, and realistic 4-stage sprint re-benchmark
+  Verified live apprentice_sidecar MCP v2.5.0 session parity (server_stale_restart_recommended=false) and clean Engineering repository boundaries
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Start fresh MCP session so live conversation picks up updated apprentice_mcp_server.py; review before any git push
+  1. Workstation operational scripts and apprentice_sidecar v2.5.0 active; monitor remaining deferred tasks
 <!-- SESSION-HANDOFF:END -->
 
 ---

@@ -235,7 +235,7 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 ```
 
-### [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`hardware` | `HEAD: 43ead679c0b0` | `Tree: 13b0feafb257`)
+### [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`hardware` | `HEAD: c7eaca69624a` | `Tree: 78ce7aae3619`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Alembic_Toolhead`
 
 ```text
@@ -295,6 +295,7 @@ last_synced: "2026-11-16"
 │   ├── Chainflex_Clamp_Main.stl
 │   ├── Fan_Baffle_Dragon.stl
 │   ├── Fan_Baffle_Takoto.stl
+│   ├── Intake_6mmOD.stl
 │   ├── Lower_Body.stl
 │   ├── Manifold_Frame.stl
 │   ├── Pnuematic_Strain_Relief.stl
@@ -365,7 +366,7 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 ```
 
-### [`Extras`](../Projects/Extras/Extras.md) (`hardware` | `HEAD: 7c8db38eca18` | `Tree: c5c41f218eb3`)
+### [`Extras`](../Projects/Extras/Extras.md) (`hardware` | `HEAD: cfef0fdbfcc8` | `Tree: 40edca68895b`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Extras`
 
 ```text
@@ -376,7 +377,8 @@ last_synced: "2026-11-16"
 ./
 ├── .git/ (excluded)
 ├── Alch_Cube_20mm_V4.stl
-└── Alchemical_20mm_Cube.stl
+├── Alchemical_20mm_Cube.stl
+└── README.md
 +------------------------------------------------------------+
 ```
 
@@ -575,7 +577,7 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 ```
 
-### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: d94ad4c83c71` | `Tree: ac67baacbab6`)
+### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: bac7c2d35798` | `Tree: ac67baacbab6`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden`
 
 ```text

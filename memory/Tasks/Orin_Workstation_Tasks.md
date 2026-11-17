@@ -19,7 +19,7 @@ last_synced: "2026-11-16"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-16`) | `2` | `0` | Next: Start fresh MCP session so live conversation picks up updated apprentice_mcp_server.py; review before any git push |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-16`) | `2` | `0` | Next: Workstation operational scripts and apprentice_sidecar v2.5.0 active; monitor remaining deferred tasks |
 <!-- AUTO-ROLLUP:END -->
 
 ---

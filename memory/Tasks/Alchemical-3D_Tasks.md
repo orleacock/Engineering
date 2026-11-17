@@ -15,19 +15,19 @@ last_synced: "2026-11-16"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `31 / 39` Tasks Complete (`79.5%`) | Open Tasks: `8` | Open `[TBD]`s: `10`
+**Progress Summary**: `34 / 39` Tasks Complete (`87.2%`) | Open Tasks: `5` | Open `[TBD]`s: `10`
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
 | [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`#L83`) | `2f33452` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Alchemical_Web_Docs`](../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) (`#L91`) | `55b4795` (`clean`, `2026-11-10`) | `0` | `1` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L73`) | `43ead67` (`clean`, `2026-11-16`) | `1` | `0` | Next: Review deployed GitHub formatting; optional home check on standalone Intake STL vs Pnuematic_Strain_Relief.stl |
+| [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L73`) | `c7eaca6` (`clean`, `2026-11-16`) | `0` | `0` | Next: Alembic_Toolhead clean and synced on origin/main; no open tasks |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L100`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Extras`](../Projects/Extras/Extras.md) (`#L103`) | `7c8db38` (`clean`, `2026-11-06`) | `1` | `1` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `b2946a6` (`clean`, `2026-11-16`) | `2` | `0` | Next: Review commits before pushing to origin |
+| [`Extras`](../Projects/Extras/Extras.md) (`#L103`) | `cfef0fd` (`clean`, `2026-11-16`) | `0` | `1` | Next: Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired |
+| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `b2946a6` (`clean`, `2026-11-16`) | `2` | `0` | Next: Optional Phase 5 MS365/Copilot assessment and Phase 6 Visual Studio advancements when needed |
 | [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`#L97`) | `29641c5` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`#L94`) | `b74920e` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L86`) | `d94ad4c` (`clean`, `2026-11-10`) | `3` | `4` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
+| [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L86`) | `bac7c2d` (`clean`, `2026-11-16`) | `2` | `4` | Blocker: 4 unresolved BOM vs Assembly fastener/bearing/STL conflicts blocking modular split · Next: Resolve Pestle_Rotational_Bowden... |
 | [`Pneuma_Remote_Air`](../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) (`#L78`) | `0702c9c` (`clean`, `2026-11-10`) | `1` | `4` | Blocker: Open [TBD] physical fastener counts and TPU slicer parameters awaiting bench measurement. · Next: Physically count Rear_Cover... |
 <!-- AUTO-ROLLUP:END -->
 
@@ -73,7 +73,7 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 ### Alembic_Toolhead
 - [x] **[COMPLETED 2026-11-16] `[LOAD-BEARING]` Provenance Diff & BOM Reconciliation (`8` Dirty Working-Tree Files, `VRF-8febb5171548`, `VRF-f03ddd62239a`):** Verified disk working-tree `BOM.md` retained all `HEAD` (`3ff29ce`) fasteners (stale `LL-ALM-01` divergence note reconciled in [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md)); fixed `Assembly_Guide.md` `2` O-ring routing (`PC4-M10` + `Intake ↔ Manifold_Frame`), `(2) M3x65mm SHCS`, `(4) M3x8mm SHCS` carriage mount + `(2) M3x8mm SHCS` Chainflex clamp, `(2) M3x5x4mm`×2 (`4` total) + `(2) M2x3.5x3mm` insert specs, retained `2.85mm` mandrel, removed `Tg` literals in `Print_Settings.md`, switched BDsensor shim phrasing in `BOM.md` to generic height selection, added `Alembic_Toolhead_V201 - Intake_6mmOD.step` (`[TBD: intake_stl_upload]`), passed `audit_repo_docs.py` (`0` issues), `format_image.py --inspect` (`3/3`), and `verify_claims.py` (`0` unbacked claims).
 - [x] **[COMPLETED 2026-11-16] `[ISOLATED]` CAD-to-BOM Coverage, AI Transparency Footers & Release Push (`3ff29ce..43ead67`, `VRF-d59804719911`, `VRF-cba1b9f1bbcb`):** Documented `Alembic_Toolhead_V201 - Intake_6mmOD.step` (covered via STEP) and COTS reference models (`Alembic_Toolhead_V201 - PC4-M10 Bowden Pass-Through.step`, `Alembic_Toolhead_V201 - Pnuematic_Fitting_6mmOD.step`) in `BOM.md`, kept `Belt_Clamp_9mm.step` silently optional, retained `Dragon-MZE` STLs, appended standard AI transparency footers to all `5` docs, verified `0` `audit_repo_docs.py` issues / `0` unbacked claims / `0` `[TBD]` offenders (`--fail-on-tbd`) / `BOUNDARY_CLEAN`, committed clean working tree + `3` formatted hero PNGs, and pushed `main -> main` (`3ff29ce..43ead67`).
-- [ ] **`[ISOLATED]` Upload Standalone `Intake` STL (`Optional`):** Check home workstation CAD files for whether `Alembic_Toolhead_V201 - Intake_6mmOD.step` is merged inside `Pnuematic_Strain_Relief.stl` or export/upload standalone Intake STL to `STL_Files/` when convenient.
+- [x] **[COMPLETED 2026-11-16] `[ISOLATED]` Upload Standalone `Intake_6mmOD.stl` & Sync `BOM.md`:** Uploaded standalone `STL_Files/Intake_6mmOD.stl` (`17.00 × 20.00 × 57.20 mm`, `11.15 cm³`, `MATCH (<=0.2mm)` vs `Alembic_Toolhead_V201 - Intake_6mmOD.step`) and updated `BOM.md` to reference `Intake_6mmOD.stl` directly (`15` STLs total, `116.89 cm³`).
 
 ### Pneuma_Remote_Air
 - [x] **[COMPLETED 2026-11-10] `[LOAD-BEARING]` Fix 14 Image & Inline-CSS Audit Issues (`0702c9c`):** Stripped all inline HTML `style="border-radius..."` attributes in `Assembly_Guide.md` and formatted all `6` assembly showcase PNGs (`Heatset_Body.png`, `Heatset_Back.png`, `Pump_Mount.png`, `Pneuma_Explode.png`, `Pneuma_Complete_Ext.png`, `Pneuma_Complete_Table.png`) via `format_image.py` (`20px` shadow margin, `#FFFFFF` interior; `audit_repo_docs.py`: `0` load-bearing, `0` isolated).
@@ -84,7 +84,7 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 - [x] **[COMPLETED 2026-11-02] Repository Unification, 20 GitHub-Native Alert Conversions & Claim Verification (`VRF-6cd82426be23`):** Converted all `20` legacy blockquotes in `Assembly_Guide.md` to `> [!NOTE]`/`> [!WARNING]` alerts, fixed `README.md:52` typo, appended AI transparency footers across all `5` docs, and verified `145/145` claims (`0` issues).
 
 ### Pestle_Rotational_Bowden
-- [ ] **`[LOAD-BEARING]` Fix 2 Studio-Grey Card Interior PNGs:** Re-run `format_image.py --force` on `images/Pestle_Title_Formatted.png` and `images/PestleExploded3_Formatted.png` to convert studio-grey card interiors to `#FFFFFF`.
+- [x] **[COMPLETED 2026-11-16] `[LOAD-BEARING]` Fix 2 Studio-Grey Card Interior PNGs:** Re-ran `format_image.py --force` on `images/Pestle_Title_Formatted.png` (`1576x462`) and `images/PestleExploded3_Formatted.png` (`1794x1005`) to convert studio-grey card interiors to `#FFFFFF` (`format_image.py --inspect`: `2/2 [PASS]`; `audit_repo_docs.py`: `0` load-bearing issues, `3` isolated monolithic-doc warnings; `BOUNDARY_CLEAN`; uncommitted locally pending next `Pestle_Rotational_Bowden` tasks).
 - [ ] **`[LOAD-BEARING]` Resolve Internal Fastener & Heat-Set Conflicts Before Modular Split:** Reconcile `README.md` BOM vs. Assembly discrepancies (`7` vs. `6` `M3x5x4` heatsets; `SHCS` vs. `BHCS` on `M3x30`, `M3x35`, `M5x16`; `1` thrust bearing vs. Steps `10 & 12`; unreferenced `M3x16` and `M3x20` screws; 4 unlisted STL mounts/plates in `Releases/1.2/`).
 - [ ] **`[ISOLATED]` Modular Documentation Split & Footers:** Split monolithic `README.md` into `README.md`, `BOM.md`, `Print_Settings.md`, and `Assembly_Guide.md` (`Mode B1`), append AI transparency footers, and validate with `verify_claims.py`.
 
@@ -101,5 +101,5 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 - [x] **[COMPLETED 2026-11-02] Typo Fix, `mailto:` Link & Claim Verification (`VRF-6a3a65d81b80`):** Fixed `README.md:3` `guideline` typo, wrapped `we@alchemical3d.net` in `mailto:`, appended the AI transparency footer, and verified `0` issues.
 
 ### Extras
-- [ ] **`[ISOLATED]` Author Calibration Cube `README.md` (`Optional`):** Create `README.md` documenting XY/Z shrinkage measurement and compensation math for `Alch_Cube_20mm_V4.stl` and `Alchemical_20mm_Cube.stl` ([`Extras_Hardware`](../Projects/Extras/Extras_Hardware.md)).
+- [x] **[COMPLETED 2026-11-16] `[ISOLATED]` Author Calibration Cube `README.md` (`Optional`, `7c8db38..cfef0fd`, `VRF-f451a8fad091`):** Created `README.md` from Printables model `#318865` (`Alchemical_20mm_Cube`, `CC BY-NC 4.0`, Voron-inspired multi-test cube covering dimensional accuracy, overhangs, bridging, pressure advance, and circular accuracy), XY/Z shrinkage compensation (`scale_factor = 20.00 / measured_mm`), and verified `Alch_Cube_20mm_V4.stl` (`4.40 cm³`) + `Alchemical_20mm_Cube.stl` (`4.35 cm³`) telemetry; passed `audit_repo_docs.py` (`0` issues), `verify_claims.py --fail-on-tbd` (`14/14`, `0` unbacked, `0` `[TBD]`), and `BOUNDARY_CLEAN`, committed and pushed `main -> main` (`7c8db38..cfef0fd`).
 <!-- AUTO-PROJECT-TASKS:END -->

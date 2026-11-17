@@ -5,13 +5,14 @@ compartment: "public"
 project_type: "hardware"
 status: "Active"
 local_path: "/home/orin/Projects/Alchemical3D/Extras"
-repo_head_sha: "7c8db38eca18"
-tree_hash: "c5c41f218eb3"
-checkpoint_head_sha: "7c8db38eca18"
-checkpoint_tree_hash: "c5c41f218eb3"
+repo_head_sha: "cfef0fdbfcc8"
+tree_hash: "40edca68895b"
+checkpoint_head_sha: "cfef0fdbfcc8"
+checkpoint_tree_hash: "40edca68895b"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-06"
+last_synced: "2026-11-16"
+checkpoint_lessons_digest: "0fc39ba437d3d1c0"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -36,15 +37,16 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Extras_Hardware`
 ## 📍 Repository & File Inventory
 - **Local Path:** `/home/orin/Projects/Alchemical3D/Extras`
 - **GitHub Remote:** `https://github.com/Alchemical-3D/Extras`
-- **Living Documentation:** *None yet* (`README.md` not yet created)
+- **Living Documentation:** `README.md` (`cfef0fd`, `VRF-f451a8fad091`)
 - **CAD Files:** `Alch_Cube_20mm_V4.stl`, `Alchemical_20mm_Cube.stl` — Full mesh telemetry in [`Extras_Hardware`](Extras_Hardware.md)
 - **Standards Applied:** [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `Author_Voice_and_Cadence`, `Image_and_Style_Rules`, `Subagent_and_Memory_Architecture`
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Extras | HEAD SHA: 7c8db38eca18 | Tree Hash: c5c41f218eb3
+Repository: Extras | HEAD SHA: cfef0fdbfcc8 | Tree Hash: 40edca68895b
   Alch_Cube_20mm_V4.stl
   Alchemical_20mm_Cube.stl
+  README.md
 ```
 <!-- AUTO-TREE:END -->
 
@@ -61,7 +63,7 @@ Repository: Extras | HEAD SHA: 7c8db38eca18 | Tree Hash: c5c41f218eb3
 > [!NOTE]
 > Figures inside this ledger are quarantined by `verify_claims.py` and are **not** treated as authorized source truth until resolved.
 
-- **Git & Provenance Baseline:** `main:clean` (`Extras_Hardware.md` `SYNCED`; both STLs flagged `Doc Ref: Unlisted` because repository root currently has no `README.md`).
+- **Git & Provenance Baseline (`2026-11-16`):** `main:clean` at commit `cfef0fd` (`7c8db38..cfef0fd` pushed to `origin/main`; `audit_repo_docs.py`: `0` issues; `verify_claims.py --fail-on-tbd`: `14/14` supported, `0` unbacked, `VRF-f451a8fad091`; `audit_data_boundary.py`: `BOUNDARY_CLEAN`).
 - **`[TBD: calibration_cube_v4_vs_legacy_distinction]`:** Confirm functional/visual difference between `Alch_Cube_20mm_V4.stl` (`4.40 cm³`) and `Alchemical_20mm_Cube.stl` (`4.35 cm³`) when authoring `README.md`.
 
 ## 🎯 Active Tasks
@@ -71,13 +73,11 @@ Repository: Extras | HEAD SHA: 7c8db38eca18 | Tree Hash: c5c41f218eb3
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-05`
-- **Checkpoint Provenance**: `HEAD SHA: 7c8db38eca18` | `Tree Hash: c5c41f218eb3` | `Worktree: ('clean', [])` | `Last Verification: Transplanted from verified Memory v2 baseline`
+- **Last Session Timestamp**: `2026-11-16`
+- **Checkpoint Provenance**: `HEAD SHA: cfef0fdbfcc8` | `Tree Hash: 40edca68895b` | `Worktree: clean` | `Last Verification: VRF-f451a8fad091,audit_repo_docs:0-issues,BOUNDARY_CLEAN`
 - **Where We Stopped (Verified State & Context)**:
-  - Transplanted `Extras` dossier into native Homunculus Dual-Mode Memory (`entity: Alchemical-3D`, `compartment: public`, `project_type: hardware`). All verified specifications, hazards, and open `[TBD]` ledgers preserved verbatim.
-- **Active Project State Ledger & Blockers**:
-  - See `## 🔍 Provenance Status & Open [TBD] / [CONFLICT] Ledger` above and active tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md).
+  Committed and pushed Extras README.md (7c8db38..cfef0fd) to origin/main with VRF-f451a8fad091, 0 audit_repo_docs issues, and BOUNDARY_CLEAN
+- **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Run `python3 skills/project-memory/scripts/sync_memory.py --project Extras --kickstart` to verify repository provenance.
-  2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Extras).
+  1. Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired
 <!-- SESSION-HANDOFF:END -->

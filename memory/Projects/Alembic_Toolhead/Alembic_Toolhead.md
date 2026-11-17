@@ -5,10 +5,10 @@ compartment: "public"
 project_type: "hardware"
 status: "Alpha"
 local_path: "/home/orin/Projects/Alchemical3D/Alembic_Toolhead"
-repo_head_sha: "43ead679c0b0"
-tree_hash: "13b0feafb257"
-checkpoint_head_sha: "43ead679c0b0"
-checkpoint_tree_hash: "13b0feafb257"
+repo_head_sha: "c7eaca69624a"
+tree_hash: "78ce7aae3619"
+checkpoint_head_sha: "c7eaca69624a"
+checkpoint_tree_hash: "78ce7aae3619"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-16"
@@ -39,13 +39,13 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Alembic_Toolhead
 ## 📍 Repository & File Inventory
 - **Local Path:** `/home/orin/Projects/Alchemical3D/Alembic_Toolhead`
 - **GitHub Remote:** `https://github.com/Alchemical-3D/Alembic_Toolhead`
-- **Living Documentation:** `README.md`, `BOM.md`, `Print_Settings.md`, `Assembly_Guide.md`, `ALPHA_&_DIRECTION.md`, `LICENSE.md` *(Note: working tree currently has `8` uncommitted modified files vs. clean `HEAD` `3ff29ce`)*
-- **CAD & Image Directories:** `STL_Files/` (`14` STLs), `STEP_Files/` (`20` `Alembic_Toolhead_V201` STEPs), `Images/full_images/`, `Images/formatted_assembly_images/` — Full geometry & bore telemetry in [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) *(No local `Firmware/` folder; cooling macros live in [`Pneuma_Remote_Air`](../../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) `Firmware/Pneuma_Control.cfg`)*
+- **Living Documentation:** `README.md`, `BOM.md`, `Print_Settings.md`, `Assembly_Guide.md`, `ALPHA_&_DIRECTION.md`, `LICENSE.md`
+- **CAD & Image Directories:** `STL_Files/` (`15` STLs), `STEP_Files/` (`20` `Alembic_Toolhead_V201` STEPs), `Images/full_images/`, `Images/formatted_assembly_images/` — Full geometry & bore telemetry in [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) *(No local `Firmware/` folder; cooling macros live in [`Pneuma_Remote_Air`](../../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) `Firmware/Pneuma_Control.cfg`)*
 - **Standards Applied:** [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `Author_Voice_and_Cadence`, [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md), `Image_and_Style_Rules`, `Subagent_and_Memory_Architecture`
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
+Repository: Alembic_Toolhead | HEAD SHA: c7eaca69624a | Tree Hash: 78ce7aae3619
   Images/
   Images/formatted_assembly_images/
   Images/formatted_assembly_images/bend_tool_combined.png
@@ -97,6 +97,7 @@ Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
   STL_Files/Chainflex_Clamp_Main.stl
   STL_Files/Fan_Baffle_Dragon.stl
   STL_Files/Fan_Baffle_Takoto.stl
+  STL_Files/Intake_6mmOD.stl
   STL_Files/Lower_Body.stl
   STL_Files/Manifold_Frame.stl
   STL_Files/Pnuematic_Strain_Relief.stl
@@ -122,7 +123,7 @@ Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
 - **Grub-Screw Tube Clamping (`HEAD:Assembly_Guide.md`):** Snug `M3` grub screws in `Lower_Body` just enough to lock tube rotation without crushing the `3mm ID` aluminum bore.
 
 ## 📐 Verified Specs, COTS Hardware & Print Matrix
-- **CAD Telemetry ([`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md)):** `20` STEP files | `14` STL meshes (all `14` STLs `MATCH (<=0.2mm)` STEP↔STL parity) | Total closed-mesh geometric volume `105.74 cm³`. Dedicated hotend fan baffles for `Takoto` (`Fan_Baffle_Takoto.stl`) and `Dragon` (`Fan_Baffle_Dragon.stl`), plus `Dragon-MZE` BDsensor retainer/shim (`Sensor_Retainer_Dragon-MZE.stl`, `Shim_56_BDsensor_Dragon-MZE.stl`, `3.60mm` thick vs. `Shim_06mm_BDsensor.stl` `0.60mm`).
+- **CAD Telemetry ([`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md)):** `20` STEP files | `15` STL meshes (all `15` STLs `MATCH (<=0.2mm)` STEP↔STL parity) | Total closed-mesh geometric volume `116.89 cm³`. Dedicated hotend fan baffles for `Takoto` (`Fan_Baffle_Takoto.stl`) and `Dragon` (`Fan_Baffle_Dragon.stl`), plus `Dragon-MZE` BDsensor retainer/shim (`Sensor_Retainer_Dragon-MZE.stl`, `Shim_56_BDsensor_Dragon-MZE.stl`, `3.60mm` thick vs. `Shim_06mm_BDsensor.stl` `0.60mm`) and standalone `Intake_6mmOD.stl` (`17.00 × 20.00 × 57.20 mm`, `11.15 cm³`).
 - **Reconciled Fasteners & Seals (`BOM.md` & `Assembly_Guide.md`, `2026-11-16`):**
   - `~4` `M3x5x4mm` brass heat-set inserts (`2` in `Intake` + `2` in `Pnuematic_Strain_Relief.stl`, `4` total; `Lower_Body` `Ø5.00mm`×4 and `Pnuematic_Strain_Relief` `Ø4.70mm`×4 bores in CAD)
   - `~2` `M3 x 65mm SHCS` vertical tie-bolts through `Lower_Body` → `Manifold_Frame` → `Intake` (`Fig. 8`)
@@ -145,7 +146,7 @@ Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
 
 - **Git & Provenance Baseline (`2026-11-16`):** `main:clean` at commit `43ead67` (`audit_repo_docs.py`: `0` load-bearing issues, `0` isolated warnings; `format_image.py --inspect`: `3/3` hero PNGs `[PASS]`; `verify_claims.py --fail-on-tbd`: `0` unbacked claims / `0` open `[TBD]` offenders across all `5` docs (`VRF-d59804719911`, `VRF-cba1b9f1bbcb`); `audit_data_boundary.py`: `BOUNDARY_CLEAN`; `0` open blocking `[TBD]`s).
 - **Resolved `BOM.md` / `Assembly_Guide.md` Reconciliation (`43ead67`, `2026-11-16`):** Reconciled and committed all `8` files (`BOM.md` fasteners matched `HEAD`; verified `2` O-rings total, `4` `M3x5x4mm` inserts, `(2) M3x65mm SHCS`, `(4) M3x8mm SHCS` carriage mount + `(2) M3x8mm SHCS` Chainflex clamp, `(2) M3x24mm BHCS`, generic BDsensor shim height wording, `2.85mm` filament mandrel retained, `Tg` numbers removed, `Belt_Clamp_9mm.step` silently optional, `Alembic_Toolhead_V201 - PC4-M10 Bowden Pass-Through.step` & `Alembic_Toolhead_V201 - Pnuematic_Fitting_6mmOD.step` COTS references documented in `BOM.md`, `Dragon-MZE` STLs present, and standard AI transparency footers appended to all `5` docs).
-- **Optional Home Follow-Up (`Intake_6mmOD` STL):** `Alembic_Toolhead_V201 - Intake_6mmOD.step` (`17.00 × 20.00 × 57.20 mm`) is listed in `BOM.md` (`Qty 1`, covered by STEP); verify from home workstation whether the standalone Intake STL is merged inside `Pnuematic_Strain_Relief.stl` or upload standalone STL to `STL_Files/` when convenient.
+- **Resolved `Intake_6mmOD.stl` Upload (`2026-11-16`):** Standalone `STL_Files/Intake_6mmOD.stl` (`17.00 × 20.00 × 57.20 mm`, `11.15 cm³`, `MATCH (<=0.2mm)` vs `Alembic_Toolhead_V201 - Intake_6mmOD.step`) uploaded and wired into `BOM.md` (`15` STLs, `116.89 cm³`).
 
 ## 🎯 Active Tasks
 *(Transcluded live from `### Alembic_Toolhead` in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md))*
@@ -155,10 +156,10 @@ Repository: Alembic_Toolhead | HEAD SHA: 43ead679c0b0 | Tree Hash: 13b0feafb257
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: 43ead679c0b0` | `Tree Hash: 13b0feafb257` | `Worktree: clean` | `Last Verification: VRF-d59804719911,VRF-cba1b9f1bbcb`
+- **Checkpoint Provenance**: `HEAD SHA: c7eaca69624a` | `Tree Hash: 78ce7aae3619` | `Worktree: clean` | `Last Verification: VRF-7a149a2503d5,audit_repo_docs:0-issues,BOUNDARY_CLEAN`
 - **Where We Stopped (Verified State & Context)**:
-  Pushed Alembic_Toolhead reconciliation and formatted hero cards (3ff29ce..43ead67) to origin/main
+  Committed and pushed BOM.md update onto uploaded STL_Files/Intake_6mmOD.stl (a88e0eb..c7eaca6) to origin/main
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Review deployed GitHub formatting; optional home check on standalone Intake STL vs Pnuematic_Strain_Relief.stl
+  1. Alembic_Toolhead clean and synced on origin/main; no open tasks
 <!-- SESSION-HANDOFF:END -->
