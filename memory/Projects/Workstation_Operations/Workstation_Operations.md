@@ -12,7 +12,7 @@ checkpoint_tree_hash: "69c006bb976d"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-16"
-checkpoint_lessons_digest: "f26c825b217e2c32"
+checkpoint_lessons_digest: "c26e8dad12e6ed84"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -56,12 +56,12 @@ checkpoint_lessons_digest: "f26c825b217e2c32"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 69c006bb976d` | `Worktree: untracked` | `Last Verification: SBX-20261116_153626-c42fc7fa`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 69c006bb976d` | `Worktree: untracked` | `Last Verification: SBX-20261116_201657-a1c0f4f0`
 - **Where We Stopped (Verified State & Context)**:
-  Memory consolidated (0 audit violations), Apprentice v2.5.0 live, and Homunculus v0.3.6 (77d39ad4) benchmark pinned (BMK-20261116_162239-819753e1)
+  Completed Apprentice Phase 1-4 optimizations, job-collect job_ids batch routing, OS Dry-Run SBX-20261116_201657-a1c0f4f0, and realistic 4-stage sprint re-benchmark
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Ready for next Engineering/Homunculus feature or hardware-cad-inspector maturation.
+  1. Start fresh MCP session so live conversation picks up updated apprentice_mcp_server.py; review before any git push
 <!-- SESSION-HANDOFF:END -->
 
 ---

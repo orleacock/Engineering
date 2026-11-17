@@ -5,10 +5,10 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.3.6 Released (Stage-2 Gemini 4 Hydrogen/Carbon + Task #69, BMK-20261116_162239-819753e1)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "77d39ad4890f"
-tree_hash: "3ecc837acc9b"
-checkpoint_head_sha: "77d39ad4890f"
-checkpoint_tree_hash: "3ecc837acc9b"
+repo_head_sha: "b2946a631482"
+tree_hash: "687d25be9af7"
+checkpoint_head_sha: "b2946a631482"
+checkpoint_tree_hash: "687d25be9af7"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-16"
@@ -69,7 +69,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 77d39ad4890f | Tree Hash: 3ecc837acc9b
+Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -178,6 +178,7 @@ Repository: Homunculus | HEAD SHA: 77d39ad4890f | Tree Hash: 3ecc837acc9b
   templates/community_sdk/README.md
   templates/diagrams/
   templates/diagrams/Diagram_Blueprints/
+  templates/diagrams/Diagram_Blueprints/Benchmark_Progression_Dashboard_Blueprint.md
   templates/diagrams/Diagram_Blueprints/Column_DataFlow_Blueprint.md
   templates/diagrams/Diagram_Blueprints/Engineering_Comparison_Card_Blueprint.md
   templates/diagrams/Diagram_Blueprints/Hardware_Pinout_and_Pneumatic_Blueprint.md
@@ -270,12 +271,12 @@ Repository: Homunculus | HEAD SHA: 77d39ad4890f | Tree Hash: 3ecc837acc9b
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: 77d39ad4890f` | `Tree Hash: 3ecc837acc9b` | `Worktree: clean` | `Last Verification: BMK-20261116_162239-819753e1`
+- **Checkpoint Provenance**: `HEAD SHA: b2946a631482` | `Tree Hash: 687d25be9af7` | `Worktree: clean` | `Last Verification: PASS_CORE_SKILLS_AND_AUDIT`
 - **Where We Stopped (Verified State & Context)**:
-  Committed & tagged Homunculus v0.3.6 (77d39ad4 / b380a119) with Course D baseline BMK-20261116_162239-819753e1 pinned
+  Committed Benchmark_Progression_Dashboard_Blueprint.md (b2946a6) with all Stage Y/Z checks passing
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Ready for next sprint or MS365 Copilot / Visual Studio Phase 5/6 when needed.
+  1. Review commits before pushing to origin
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

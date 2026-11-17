@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 181.41,
+  "avg_doc_len": 181.65,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -134,13 +134,13 @@
       "lessons": [
         {
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 53,
+          "end_line": 54,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L48-L53",
+          "line_range": "#L49-L54",
           "location": "main",
           "scope": "",
-          "start_line": 48,
+          "start_line": 49,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -152,13 +152,13 @@
         },
         {
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 60,
+          "end_line": 61,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L55-L60",
+          "line_range": "#L56-L61",
           "location": "main",
           "scope": "",
-          "start_line": 55,
+          "start_line": 56,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -167,13 +167,13 @@
         },
         {
           "capsule_1line": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... -> Defer Turn-1 notices to PreInvocation pure systemMessage strings because metadata maps and premature SessionStart hooks collided with agy parsing; compare plugin trees (diff -rq) before reinstalling in bootstrap_workstation.sh and guard child spawns via _safe_subprocess_cwd() because inode swaps broke live cwd subprocesses; match...",
-          "end_line": 68,
+          "end_line": 69,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-20",
-          "line_range": "#L62-L68",
+          "line_range": "#L63-L69",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 62,
+          "start_line": 63,
           "tier": "TIER2",
           "title": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... (`2026-11-16`)",
           "touched_files": [
@@ -185,13 +185,13 @@
         },
         {
           "capsule_1line": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... -> Preserve duplicate per-file hunks via parse_and_validate_context_items() in apprentice_engine.py because path-keyed dicts collapsed multi-slice inputs; split unsliced vs sliced items, cap dense batches at max_slices_per_batch=4, and trigger Slice-Count Map-Reduce for dense multi-file slices (>=5 slices across >=3 files) in...",
-          "end_line": 74,
+          "end_line": 77,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-21",
-          "line_range": "#L70-L74",
+          "line_range": "#L71-L77",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 70,
+          "start_line": 71,
           "tier": "TIER2",
           "title": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... (`2026-11-16`)",
           "touched_files": [
@@ -200,6 +200,22 @@
             "audit_repo_docs.py",
             "memory_gateway.py",
             "verify_claims.py"
+          ]
+        },
+        {
+          "capsule_1line": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... -> Enforce acquire_bjob_worker_slot FIFO locking with explicit except TimeoutError before except OSError, support repo-relative containment in validate_input_paths, lower chunk targets (22000B/450L) with >=768 STANDARD token floor and <=300s reduce budget, and support job_ids batch collection on job-collect/job-collect-any because...",
+          "end_line": 83,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-22",
+          "line_range": "#L79-L83",
+          "location": "main",
+          "scope": "script:apprentice",
+          "start_line": 79,
+          "tier": "TIER2",
+          "title": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... (`2026-11-16`)",
+          "touched_files": [
+            "apprentice_engine.py",
+            "apprentice_mcp_server.py"
           ]
         },
         {
@@ -490,8 +506,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 181.41,
-      "proj_total_docs": 22,
+      "proj_avg_doc_len": 181.65,
+      "proj_total_docs": 23,
       "project": "Workstation_Operations"
     }
   },
@@ -510,12 +526,12 @@
     "Projects/Workstation_Operations/Workstation_Operations.md": {
       "lines": 121,
       "sections": 0,
-      "sha256": "28f571ee77931c40"
+      "sha256": "9199121cf740bf38"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 88,
-      "sections": 4,
-      "sha256": "e0ede1b6aff3d952"
+      "lines": 97,
+      "sections": 5,
+      "sha256": "a533d7da9eaa97e1"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -525,10 +541,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 62,
       "sections": 0,
-      "sha256": "1dc732ff9d948830"
+      "sha256": "6505080e64b66525"
     }
   },
-  "total_docs": 22,
+  "total_docs": 23,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "885863c1eff1f38b"
+  "vectors_digest": "8f5b61c8e3e7df94"
 }

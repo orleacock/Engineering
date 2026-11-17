@@ -22,50 +22,51 @@ Pure Python 3.10+ standard library (zero third-party packages).
   CLI Flags     : --backend, --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
                   status, check-eta, query, audit-to-quarantine, stage-code, control, self-test
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_backend_adapter (#L159-L183)       | def migrate_legacy_bionic_cache (#L186-L248)
-    - def resolve_effort_and_mode (#L386-L398)       | def parse_context_spec (#L401-L411)
-    - class SidecarFirewallError (#L414-L415)        | class SidecarEtaTrippedError (#L418-L423)
-    - def load_system_prompt (#L426-L437)            | def validate_loopback_url (#L440-L471)
-    - def _safe_subprocess_cwd (#L474-L497)          | def _safe_abspath (#L500-L506)
-    - def _is_path_within (#L509-L514)               | def _inspect_path_security (#L517-L547)
-    - def _find_git_toplevel (#L550-L556)            | def is_code_heavy_payload (#L559-L563)
-    - def parse_and_validate_context_items (#L566-L593) | def parse_and_validate_context_specs (#L596-L608)
-    - def validate_input_paths (#L611-L660)          | def validate_staging_dir (#L663-L726)
-    - def resolve_effective_max_tokens (#L729-L739)  | def estimate_eta (#L742-L880)
-    - def _http_json_request (#L883-L903)            | def _deduplicate_full_context_diff (#L906-L983)
-    - def plan_line_preserving_chunks (#L986-L1047)  | def pack_chunk_batches (#L1050-L1102)
-    - def estimate_chunked_eta (#L1105-L1152)        | def assemble_prompt_payload (#L1155-L1306)
-    - def resolve_default_api_url (#L1309-L1320)     | def _resolve_kv_state_path (#L1323-L1332)
-    - def _pid_alive (#L1335-L1344)                  | def acquire_kv_budget (#L1348-L1459)
-    - def has_active_exclusive_kv_slot (#L1462-L1480) | def invoke_chat_completion (#L1483-L1652)
-    - def extract_staged_code (#L1655-L1665)         | def _read_prompt_arg (#L1668-L1675)
-    - def resolve_max_eta_seconds (#L1678-L1684)     | def _resolve_telemetry_log (#L1687-L1697)
-    - def _resolve_scorecard_path (#L1700-L1716)     | def _resolve_jobs_dir (#L1719-L1735)
-    - def _write_private_json_atomic (#L1738-L1756)  | def _resolve_scorecard_archive_path (#L1759-L1765)
-    - def _seed_counts_from_telemetry (#L1768-L1800) | def compute_scorecard_metrics (#L1803-L1836)
-    - def load_or_init_scorecard (#L1839-L1876)      | def record_call_outcome (#L1879-L1945)
-    - def apply_call_verdict (#L1948-L1997)          | def format_lifetime_scorecard (#L2000-L2018)
-    - def reset_scorecard (#L2021-L2120)             | def estimate_quota_savings (#L2123-L2183)
-    - def record_usage_telemetry (#L2186-L2212)      | def summarize_usage_telemetry (#L2215-L2259)
-    - def probe_server_models (#L2262-L2365)         | def preflight_live_inference (#L2368-L2382)
-    - def _enforce_eta_or_raise (#L2385-L2470)       | def cmd_status (#L2473-L2509)
-    - def cmd_check_eta (#L2512-L2566)               | def cmd_query (#L2569-L2711)
-    - def cmd_audit_to_quarantine (#L2714-L2910)     | def _write_private_staging_file (#L2913-L2922)
-    - def stage_code_artifact (#L2925-L3004)         | def cmd_stage_code (#L3007-L3150)
-    - def build_concrete_model_config (#L3160-L3249) | def _read_hw_counters (#L3252-L3291)
-    - def _probe_lms_daemon (#L3294-L3311)           | def _run_lms_cmd (#L3314-L3327)
-    - def _has_gui_display_socket (#L3330-L3340)     | def _control_plan (#L3343-L3375)
-    - def _control_status (#L3378-L3394)             | def _control_load (#L3397-L3461)
-    - def _control_start_headless (#L3464-L3520)     | def _control_unload (#L3523-L3545)
-    - def _control_stop_server (#L3548-L3562)        | def _safe_job_file (#L3565-L3575)
-    - def submit_async_job (#L3578-L3616)            | def _execute_job_worker (#L3619-L3655)
-    - def get_job_status (#L3658-L3697)              | def list_jobs (#L3700-L3718)
-    - def _normalize_control_cli_action (#L3721-L3724) | def cmd_control (#L3727-L3777)
-    - def cmd_job_worker (#L3780-L3781)              | def cmd_job_status (#L3784-L3787)
-    - def cmd_job_collect (#L3790-L3793)             | def cmd_job_wait (#L3796-L3799)
-    - def cmd_job_list (#L3802-L3805)                | def cmd_verdict (#L3808-L3811)
-    - def run_self_tests (#L3814-L4711)              | def build_parser (#L4714-L4819)
-    - def main (#L4822-L4860)
+    - def resolve_backend_adapter (#L160-L184)       | def migrate_legacy_bionic_cache (#L187-L249)
+    - def resolve_effort_and_mode (#L387-L399)       | def parse_context_spec (#L402-L412)
+    - class SidecarFirewallError (#L415-L416)        | class SidecarEtaTrippedError (#L419-L424)
+    - def load_system_prompt (#L427-L438)            | def validate_loopback_url (#L441-L472)
+    - def _safe_subprocess_cwd (#L475-L498)          | def _safe_abspath (#L501-L507)
+    - def _is_path_within (#L510-L515)               | def _inspect_path_security (#L518-L548)
+    - def _find_git_toplevel (#L551-L557)            | def is_code_heavy_payload (#L560-L564)
+    - def parse_and_validate_context_items (#L567-L594) | def parse_and_validate_context_specs (#L597-L609)
+    - def validate_input_paths (#L612-L671)          | def validate_staging_dir (#L674-L737)
+    - def resolve_effective_max_tokens (#L740-L750)  | def estimate_eta (#L753-L891)
+    - def _http_json_request (#L894-L914)            | def _deduplicate_full_context_diff (#L917-L994)
+    - def plan_line_preserving_chunks (#L997-L1058)  | def pack_chunk_batches (#L1061-L1113)
+    - def estimate_chunked_eta (#L1116-L1163)        | def assemble_prompt_payload (#L1166-L1317)
+    - def resolve_default_api_url (#L1320-L1331)     | def _resolve_kv_state_path (#L1334-L1343)
+    - def _pid_alive (#L1346-L1355)                  | def acquire_kv_budget (#L1359-L1470)
+    - def has_active_exclusive_kv_slot (#L1473-L1491) | def invoke_chat_completion (#L1494-L1663)
+    - def extract_staged_code (#L1666-L1676)         | def _read_prompt_arg (#L1679-L1686)
+    - def resolve_max_eta_seconds (#L1689-L1695)     | def _resolve_telemetry_log (#L1698-L1708)
+    - def _resolve_scorecard_path (#L1711-L1727)     | def _resolve_jobs_dir (#L1730-L1746)
+    - def _write_private_json_atomic (#L1749-L1767)  | def _resolve_scorecard_archive_path (#L1770-L1776)
+    - def _seed_counts_from_telemetry (#L1779-L1811) | def compute_scorecard_metrics (#L1814-L1847)
+    - def load_or_init_scorecard (#L1850-L1887)      | def record_call_outcome (#L1890-L1956)
+    - def apply_call_verdict (#L1959-L2008)          | def format_lifetime_scorecard (#L2011-L2029)
+    - def reset_scorecard (#L2032-L2131)             | def estimate_quota_savings (#L2134-L2194)
+    - def record_usage_telemetry (#L2197-L2223)      | def summarize_usage_telemetry (#L2226-L2270)
+    - def probe_server_models (#L2273-L2376)         | def preflight_live_inference (#L2379-L2393)
+    - def _enforce_eta_or_raise (#L2396-L2481)       | def cmd_status (#L2484-L2520)
+    - def cmd_check_eta (#L2523-L2577)               | def cmd_query (#L2580-L2722)
+    - def cmd_audit_to_quarantine (#L2725-L2921)     | def _write_private_staging_file (#L2924-L2933)
+    - def stage_code_artifact (#L2936-L3015)         | def cmd_stage_code (#L3018-L3161)
+    - def build_concrete_model_config (#L3171-L3260) | def _read_hw_counters (#L3263-L3302)
+    - def _probe_lms_daemon (#L3305-L3322)           | def _run_lms_cmd (#L3325-L3338)
+    - def _has_gui_display_socket (#L3341-L3351)     | def _control_plan (#L3354-L3386)
+    - def _control_status (#L3389-L3405)             | def _control_load (#L3408-L3472)
+    - def _control_start_headless (#L3475-L3531)     | def _control_unload (#L3534-L3556)
+    - def _control_stop_server (#L3559-L3573)        | def _safe_job_file (#L3576-L3586)
+    - def submit_async_job (#L3589-L3627)            | def acquire_bjob_worker_slot (#L3631-L3734)
+    - def _execute_job_worker (#L3737-L3777)         | def get_job_status (#L3780-L3819)
+    - def collect_any_jobs (#L3822-L3859)            | def list_jobs (#L3862-L3880)
+    - def _normalize_control_cli_action (#L3883-L3886) | def cmd_control (#L3889-L3939)
+    - def cmd_job_worker (#L3942-L3943)              | def cmd_job_status (#L3946-L3949)
+    - def cmd_job_collect (#L3952-L3955)             | def cmd_job_wait (#L3958-L3961)
+    - def cmd_job_list (#L3964-L3967)                | def cmd_verdict (#L3970-L3973)
+    - def run_self_tests (#L3976-L4908)              | def build_parser (#L4911-L5016)
+    - def main (#L5019-L5057)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -624,20 +625,30 @@ def validate_input_paths(
 
     validated: list[Path] = []
     git_roots: set[Path] = set()
+    repo_abs = _safe_abspath(Path(os.path.expanduser(str(repo_root)))) if repo_root is not None else None
     for raw_spec in paths:
         raw_path, _ = parse_context_spec(raw_spec)
         reason = _inspect_path_security(raw_path)
         if reason:
             raise SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {reason}")
-        resolved = _safe_abspath(raw_path).resolve(strict=False)
+        expanded_raw = Path(os.path.expanduser(str(raw_path)))
+        if repo_abs is not None and not expanded_raw.is_absolute():
+            joined = repo_abs / expanded_raw
+            j_reason = _inspect_path_security(joined)
+            if j_reason:
+                raise SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {j_reason}")
+            resolved = _safe_abspath(joined).resolve(strict=False)
+        else:
+            resolved = _safe_abspath(raw_path).resolve(strict=False)
         if resolved_repo is not None and not _is_path_within(resolved, resolved_repo):
             raise SidecarFirewallError(
                 f"[SECURITY_FIREWALL_BLOCKED] Single-repo containment (4C): "
                 f"{resolved} escapes --repo boundary {resolved_repo}"
             )
         if require_exists and not resolved.is_file():
+            hint = " Pass repo='<repo_root>' or an absolute path." if (not expanded_raw.is_absolute() and repo_root is None) else ""
             raise SidecarFirewallError(
-                f"[SECURITY_FIREWALL_BLOCKED] Context file missing or unreadable: {raw_path}"
+                f"[SECURITY_FIREWALL_BLOCKED] Context file missing or unreadable: {raw_path}.{hint}"
             )
         if resolved_repo is None:
             raw_abs = _safe_abspath(raw_path)
@@ -3616,6 +3627,113 @@ def submit_async_job(job_spec: dict[str, Any], *, jobs_dir: Path | None = None) 
     }
 
 
+@contextlib.contextmanager
+def acquire_bjob_worker_slot(
+    effort: str = "standard",
+    *,
+    jobs_dir: Path | None = None,
+    poll_interval_s: float = 0.2,
+    max_wait_s: float = 1800.0,
+):
+    """Queue background BJOB workers cleanly outside KV/HTTP timeouts (1 active HIGH, <=2 STANDARD)."""
+    jdir = _resolve_jobs_dir(jobs_dir)
+    effort_norm = str(effort or "standard").strip().lower()
+    is_high = effort_norm == "high"
+    slots_path = jdir / "bjob_active_slots.json"
+    lock_path = jdir / "bjob_active_slots.lock"
+    slot_id = f"W-{os.getpid()}-{uuid.uuid4().hex[:8]}"
+    registered = False
+    t0 = time.monotonic()
+    deadline = t0 + max(0.5, float(max_wait_s))
+    slot_ttl_s = 2400.0
+
+    def _prune(rows: list[Any], now_ts: float) -> list[dict[str, Any]]:
+        kept: list[dict[str, Any]] = []
+        for r in rows:
+            if not isinstance(r, dict):
+                continue
+            pid_v = int(r.get("pid") or 0)
+            ts_v = float(r.get("ts") or 0.0)
+            if (now_ts - ts_v) <= slot_ttl_s and _pid_alive(pid_v):
+                kept.append(r)
+        return kept
+
+    try:
+        jdir.mkdir(parents=True, exist_ok=True)
+        try:
+            os.chmod(jdir, 0o700)
+        except OSError:
+            pass
+        if not (jdir.is_symlink() or slots_path.is_symlink() or lock_path.is_symlink()):
+            while True:
+                now_ts = time.time()
+                with open(lock_path, "a+", encoding="utf-8") as lfh:
+                    fcntl.flock(lfh.fileno(), fcntl.LOCK_EX)
+                    try:
+                        try:
+                            raw_obj = json.loads(slots_path.read_text(encoding="utf-8")) if slots_path.is_file() else {}
+                        except (OSError, json.JSONDecodeError):
+                            raw_obj = {}
+                        active = _prune(list(raw_obj.get("slots") or []), now_ts)
+                        has_high = any(str(s.get("effort") or "").lower() == "high" for s in active)
+                        can_enter = (
+                            (len(active) == 0)
+                            if is_high
+                            else (not has_high and len(active) < 2)
+                        )
+                        if can_enter:
+                            active.append(
+                                {
+                                    "slot_id": slot_id,
+                                    "pid": os.getpid(),
+                                    "effort": "high" if is_high else "standard",
+                                    "ts": now_ts,
+                                }
+                            )
+                            flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)
+                            fd = os.open(slots_path, flags, 0o600)
+                            with os.fdopen(fd, "w", encoding="utf-8") as sfh:
+                                json.dump({"slots": active}, sfh)
+                            registered = True
+                            break
+                        if time.monotonic() >= deadline:
+                            raise TimeoutError(
+                                f"[BJOB_QUEUE_TIMEOUT] Timed out after {max_wait_s:.1f}s waiting for BJOB GPU slot."
+                            )
+                    finally:
+                        fcntl.flock(lfh.fileno(), fcntl.LOCK_UN)
+                time.sleep(max(0.02, float(poll_interval_s)))
+    except TimeoutError:
+        raise
+    except OSError:
+        registered = False
+
+    try:
+        yield {"slot_id": slot_id, "queue_wait_s": round(max(0.0, time.monotonic() - t0), 3), "registered": registered}
+    finally:
+        if registered:
+            try:
+                with open(lock_path, "a+", encoding="utf-8") as lfh:
+                    fcntl.flock(lfh.fileno(), fcntl.LOCK_EX)
+                    try:
+                        try:
+                            raw_obj = json.loads(slots_path.read_text(encoding="utf-8")) if slots_path.is_file() else {}
+                        except (OSError, json.JSONDecodeError):
+                            raw_obj = {}
+                        active = [
+                            s for s in _prune(list(raw_obj.get("slots") or []), time.time())
+                            if s.get("slot_id") != slot_id
+                        ]
+                        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)
+                        fd = os.open(slots_path, flags, 0o600)
+                        with os.fdopen(fd, "w", encoding="utf-8") as sfh:
+                            json.dump({"slots": active}, sfh)
+                    finally:
+                        fcntl.flock(lfh.fileno(), fcntl.LOCK_UN)
+            except OSError:
+                pass
+
+
 def _execute_job_worker(job_file: Path) -> int:
     """Run an async sprint job spec and atomically persist the result."""
     import importlib.util
@@ -3625,6 +3743,7 @@ def _execute_job_worker(job_file: Path) -> int:
     kind = str(spec.get("kind") or "digest")
     kwargs = dict(spec.get("kwargs") or {})
     kwargs["async_job"] = False
+    effort_norm, _ = resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
 
     mcp_path = Path(__file__).resolve().parent / "apprentice" / "apprentice_mcp_server.py"
     try:
@@ -3640,7 +3759,10 @@ def _execute_job_worker(job_file: Path) -> int:
         }
         if kind not in fn_map:
             raise ValueError(f"Unsupported async job kind: {kind}")
-        result = fn_map[kind](**kwargs)
+        with acquire_bjob_worker_slot(effort=effort_norm, jobs_dir=job_file.parent) as qslot:
+            result = fn_map[kind](**kwargs)
+            if isinstance(result, dict):
+                result["bjob_queue_wait_s"] = qslot.get("queue_wait_s", 0.0)
         raw_rec["status"] = "completed" if result.get("ok") else "failed"
         raw_rec["result"] = result
         raw_rec["error"] = result.get("error") if not result.get("ok") else None
@@ -3695,6 +3817,46 @@ def get_job_status(
     if include_result:
         out["result"] = rec.get("result")
     return out
+
+
+def collect_any_jobs(
+    job_ids: list[str],
+    *,
+    wait_seconds: float = 120.0,
+    include_result: bool = True,
+    jobs_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Wait once until >=1 running job transitions out of 'running' (or all finish), returning batch results."""
+    unique_ids = list(dict.fromkeys(str(j).strip() for j in job_ids if str(j).strip()))
+    if not unique_ids:
+        raise ValueError("job_ids must contain at least one BJOB-* identifier")
+    for jid in unique_ids:
+        _safe_job_file(jid, jobs_dir)
+
+    deadline = time.monotonic() + max(0.0, float(wait_seconds))
+    latest: dict[str, dict[str, Any]] = {}
+    while True:
+        latest = {
+            jid: get_job_status(jid, wait_seconds=0.0, include_result=include_result, jobs_dir=jobs_dir)
+            for jid in unique_ids
+        }
+        finished = [jid for jid, st in latest.items() if st.get("status") != "running"]
+        if finished or time.monotonic() >= deadline:
+            break
+        time.sleep(0.25)
+
+    completed_ids = [jid for jid, st in latest.items() if st.get("status") == "completed"]
+    failed_ids = [jid for jid, st in latest.items() if st.get("status") == "failed"]
+    running_ids = [jid for jid, st in latest.items() if st.get("status") == "running"]
+    return {
+        "ok": True,
+        "requested_job_ids": unique_ids,
+        "completed_job_ids": completed_ids,
+        "failed_job_ids": failed_ids,
+        "running_job_ids": running_ids,
+        "all_done": len(running_ids) == 0,
+        "results_by_id": latest,
+    }
 
 
 def list_jobs(limit: int = 20, *, jobs_dir: Path | None = None) -> dict[str, Any]:
@@ -4702,6 +4864,41 @@ def run_self_tests() -> dict[str, Any]:
         _sc_mig = json.loads((_app_dir / "apprentice_scorecard.json").read_text(encoding="utf-8"))
         assert _sc_mig["clean"] == 26 and _sc_mig["healed"] == 8 and _sc_mig["schema_version"] == SCORECARD_SCHEMA
     checks.append("apprentice_legacy_bionic_cache_migration")
+
+    # 24. Repo-relative path resolution & traversal block in validate_input_paths
+    with tempfile.TemporaryDirectory() as _rel_tmp:
+        _rel_repo = Path(_rel_tmp) / "demo_repo"
+        (_rel_repo / "sub").mkdir(parents=True)
+        _sub_f = _rel_repo / "sub" / "mod.py"
+        _sub_f.write_text("X = 1\n", encoding="utf-8")
+        _outside = Path(_rel_tmp) / "outside.py"
+        _outside.write_text("SECRET = 1\n", encoding="utf-8")
+        _resolved_rel = validate_input_paths([Path("sub/mod.py")], repo_root=_rel_repo, require_exists=True)
+        assert _resolved_rel == [_sub_f.resolve()], f"relative repo resolution failed: {_resolved_rel}"
+        try:
+            validate_input_paths([Path("../outside.py")], repo_root=_rel_repo, require_exists=True)
+            raise AssertionError("Expected 4C block on ../outside.py")
+        except SidecarFirewallError:
+            pass
+    checks.append("repo_relative_path_resolution_and_4c_guard")
+
+    # 25. BJOB FIFO worker admission slot & collect_any_jobs
+    with tempfile.TemporaryDirectory() as _q_tmp:
+        _qdir = Path(_q_tmp) / "jobs"
+        with acquire_bjob_worker_slot("high", jobs_dir=_qdir, poll_interval_s=0.02, max_wait_s=2.0):
+            try:
+                with acquire_bjob_worker_slot("standard", jobs_dir=_qdir, poll_interval_s=0.02, max_wait_s=0.5):
+                    raise AssertionError("Expected HIGH slot to serialize concurrent STANDARD worker")
+            except TimeoutError:
+                pass
+        _qdir.mkdir(parents=True, exist_ok=True)
+        _j1 = "BJOB-20261116_000001-aa1111"
+        _j2 = "BJOB-20261116_000002-bb2222"
+        _write_private_json_atomic(_qdir / f"{_j1}.json", {"job_id": _j1, "status": "completed", "result": {"ok": True, "val": 1}})
+        _write_private_json_atomic(_qdir / f"{_j2}.json", {"job_id": _j2, "status": "running", "worker_pid": os.getpid()})
+        _batch = collect_any_jobs([_j1, _j2], wait_seconds=2.0, jobs_dir=_qdir)
+        assert _batch["completed_job_ids"] == [_j1] and _batch["running_job_ids"] == [_j2] and not _batch["all_done"]
+    checks.append("bjob_worker_fifo_slot_and_collect_any_jobs")
 
     return {
         "schema_version": SCHEMA_VERSION,

@@ -24,7 +24,7 @@ last_synced: "2026-11-16"
 | [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L73`) | `43ead67` (`clean`, `2026-11-16`) | `1` | `0` | Next: Review deployed GitHub formatting; optional home check on standalone Intake STL vs Pnuematic_Strain_Relief.stl |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L100`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Extras`](../Projects/Extras/Extras.md) (`#L103`) | `7c8db38` (`clean`, `2026-11-06`) | `1` | `1` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `77d39ad` (`clean`, `2026-11-16`) | `2` | `0` | Next: Ready for next sprint or MS365 Copilot / Visual Studio Phase 5/6 when needed. |
+| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `b2946a6` (`clean`, `2026-11-16`) | `2` | `0` | Next: Review commits before pushing to origin |
 | [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`#L97`) | `29641c5` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`#L94`) | `b74920e` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L86`) | `d94ad4c` (`clean`, `2026-11-10`) | `3` | `4` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |

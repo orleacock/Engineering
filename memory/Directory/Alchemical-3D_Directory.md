@@ -380,7 +380,7 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 77d39ad4890f` | `Tree: 3ecc837acc9b`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: b2946a631482` | `Tree: 687d25be9af7`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -497,6 +497,7 @@ last_synced: "2026-11-16"
 │   │   └── README.md
 │   ├── diagrams/
 │   │   ├── Diagram_Blueprints/
+│   │   │   ├── Benchmark_Progression_Dashboard_Blueprint.md
 │   │   │   ├── Column_DataFlow_Blueprint.md
 │   │   │   ├── Engineering_Comparison_Card_Blueprint.md
 │   │   │   ├── Hardware_Pinout_and_Pneumatic_Blueprint.md

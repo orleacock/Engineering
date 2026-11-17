@@ -25,6 +25,6 @@ Operates strictly under Homunculus Priority (`1. Accuracy & Truth > 2. Efficienc
 
 ## 2. Effort Tiers, Self-Heal & Relative Scorecard
 
-1. **`effort="standard"`** (`2048` default output tokens, `<=60s` auto / `<=90s` explicit) vs. **`effort="high"`** (`4096` floor / `8192` default / `10240` cap, `180s` soft target, `<think>` recovery, auto map-reduce).
-2. Pass `async_job=True` for long `HIGH` runs and collect via `apprentice_control(action="job-collect", job_id=..., wait_seconds=120)`.
+1. **`effort="standard"` (default)** (`2048` default output tokens, `<=60s` auto / `<=90s` explicit, `<=2` concurrent async jobs queued safely) vs. **`effort="high"`** (`4096` floor / `8192` default / `10240` cap, `180s` soft target, `<think>` recovery, serialized `1`-at-a-time FIFO queue).
+2. For `async_job=True` sprints, pass `job_ids=[...]` to `apprentice_control(action="job-collect-any", wait_seconds=120)` (or `action="job-collect"`) instead of polling `job-status`.
 3. Telemetry & scorecards persist under `~/.cache/apprentice_plugin/` (preserving migrated historical `homunculus_bionic_plugin/` metrics).

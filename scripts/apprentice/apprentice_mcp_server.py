@@ -317,7 +317,7 @@ def _run_verify_claims_check(
 
 def _normalize_control_action(action: str) -> str:
     norm = (action or "status").strip().lower().replace("_", "-")
-    aliases = {"load-profile": "load"}
+    aliases = {"load-profile": "load", "job-collect-batch": "job-collect-any"}
     norm = aliases.get(norm, norm)
     if norm not in {
         "status",
@@ -327,6 +327,7 @@ def _normalize_control_action(action: str) -> str:
         "stop-server",
         "job-status",
         "job-collect",
+        "job-collect-any",
         "job-list",
         "verdict",
         "scorecard-reset",
@@ -365,6 +366,7 @@ def _control_action_impl(
     *,
     epoch_label: str = "v2.3",
     job_id: str | None = None,
+    job_ids: list[str] | None = None,
     wait_seconds: float = 0.0,
     call_id: str | None = None,
     verdict: str | None = None,
@@ -377,11 +379,18 @@ def _control_action_impl(
         clamped_wait = min(max(0.0, float(wait_seconds)), 60.0)
         jres = apprentice_engine.get_job_status(job_id, wait_seconds=clamped_wait, include_result=False)
         sc_str = _scorecard_suffix()
+        poll_tip = (
+            " (avoid polling; call job-collect or job-collect-any with wait_seconds=120)"
+            if jres.get("status") == "running" and clamped_wait < 1.0
+            else ""
+        )
         return {
             **jres,
             "scorecard": sc_str,
-            "user_notice": f"[APPRENTICE NOTICE] Job {job_id} status={jres['status']} | {sc_str}",
+            "user_notice": f"[APPRENTICE NOTICE] Job {job_id} status={jres['status']}{poll_tip} | {sc_str}",
         }
+    if norm_action == "job-collect" and job_ids:
+        norm_action = "job-collect-any"
     if norm_action == "job-collect":
         if not job_id:
             raise ValueError("job_id is required for action='job-collect'")
@@ -394,6 +403,26 @@ def _control_action_impl(
             "waited_seconds": clamped_collect_wait,
             "scorecard": sc_str,
             "user_notice": f"[APPRENTICE NOTICE] Job {job_id} status={jres['status']}{still_msg} | {sc_str}",
+        }
+    if norm_action == "job-collect-any":
+        ids_list = list(dict.fromkeys(([job_id] if job_id else []) + list(job_ids or [])))
+        if not ids_list:
+            raise ValueError("job_ids (or job_id) is required for action='job-collect-any'")
+        eff_wait = float(wait_seconds) if float(wait_seconds) > 0.0 else 120.0
+        clamped_collect_wait = min(max(0.0, eff_wait), float(MCP_SYNC_WAIT_CAP_SECONDS))
+        bres = apprentice_engine.collect_any_jobs(ids_list, wait_seconds=clamped_collect_wait, include_result=True)
+        sc_str = _scorecard_suffix()
+        done_n = len(bres["completed_job_ids"]) + len(bres["failed_job_ids"])
+        rem_n = len(bres["running_job_ids"])
+        return {
+            **bres,
+            "waited_seconds": clamped_collect_wait,
+            "scorecard": sc_str,
+            "user_notice": (
+                f"[APPRENTICE NOTICE] Batch job-collect-any: {done_n} finished "
+                f"({len(bres['completed_job_ids'])} completed, {len(bres['failed_job_ids'])} failed), "
+                f"{rem_n} running. | {sc_str}"
+            ),
         }
     if norm_action == "job-list":
         lres = apprentice_engine.list_jobs(limit=20)
@@ -490,6 +519,7 @@ def _apprentice_control_sync(
     user_confirmed: bool = False,
     epoch_label: str = "v2.3",
     job_id: str | None = None,
+    job_ids: list[str] | None = None,
     wait_seconds: float = 0.0,
     call_id: str | None = None,
     verdict: str | None = None,
@@ -504,6 +534,7 @@ def _apprentice_control_sync(
             user_confirmed=bool(user_confirmed),
             epoch_label=epoch_label,
             job_id=job_id,
+            job_ids=job_ids,
             wait_seconds=float(wait_seconds),
             call_id=call_id,
             verdict=verdict,
@@ -538,6 +569,7 @@ async def apprentice_control(
     user_confirmed: bool = False,
     epoch_label: str = "v2.3",
     job_id: str | None = None,
+    job_ids: list[str] | None = None,
     wait_seconds: float = 0.0,
     call_id: str | None = None,
     verdict: str | None = None,
@@ -551,6 +583,7 @@ async def apprentice_control(
         user_confirmed=user_confirmed,
         epoch_label=epoch_label,
         job_id=job_id,
+        job_ids=job_ids,
         wait_seconds=wait_seconds,
         call_id=call_id,
         verdict=verdict,
@@ -1277,7 +1310,11 @@ def _apprentice_digest_sync(
         kept_labeled_blocks: list[str] = []
 
         if use_auto_chunk:
-            unsliced_chunks = apprentice_engine.plan_line_preserving_chunks(unsliced_unique, target_chunk_bytes=20000)
+            unsliced_chunks = apprentice_engine.plan_line_preserving_chunks(
+                unsliced_unique,
+                target_chunk_bytes=22000,
+                max_lines_per_chunk=450,
+            )
             raw_chunks = unsliced_chunks + explicit_slices
             batches = apprentice_engine.pack_chunk_batches(
                 raw_chunks,
@@ -1286,7 +1323,7 @@ def _apprentice_digest_sync(
                 max_slices_per_batch=4,
             )
             prompt_low = prompt.lower()
-            needs_cross_slice_reasoning = effective_mode == "deep" and any(
+            is_cross_slice_audit = any(
                 kw in prompt_low
                 for kw in (
                     "compare",
@@ -1301,6 +1338,7 @@ def _apprentice_digest_sync(
                     "cross-slice",
                 )
             )
+            needs_cross_slice_reasoning = effective_mode == "deep" and is_cross_slice_audit
             wave_eta = apprentice_engine.estimate_chunked_eta(
                 effective_mode=effective_mode,
                 prompt_bytes=len(prompt.encode("utf-8")),
@@ -1370,7 +1408,7 @@ def _apprentice_digest_sync(
             base_chunk_max_toks = (
                 min(1800, max(600, max_toks // 3))
                 if effective_mode == "deep"
-                else min(1200, max(450, max_toks // 3))
+                else min(1400, max(768, max_toks // 2))
             )
 
             def _run_batch(task_item: tuple[int, list[tuple[Path, int, int]]]) -> tuple[int, str, dict[str, Any], str]:
@@ -1536,6 +1574,11 @@ def _apprentice_digest_sync(
                     )
                     red_allow_high_floor = False
                 try:
+                    reduce_timeout_s = (
+                        min(300.0, max(200.0, 130.0 + 18.0 * len(kept_labeled_blocks)))
+                        if (needs_cross_slice_reasoning or is_cross_slice_audit or len(kept_labeled_blocks) >= 5)
+                        else 150.0
+                    )
                     red_res = apprentice_engine.invoke_chat_completion(
                         api_url=api_url,
                         model_id=apprentice_engine.DEFAULT_MODEL_ID,
@@ -1543,7 +1586,7 @@ def _apprentice_digest_sync(
                         system_prompt=sys_prompt,
                         user_content=reduce_prompt,
                         max_tokens=red_max_toks,
-                        timeout_s=240.0 if needs_cross_slice_reasoning else 150.0,
+                        timeout_s=reduce_timeout_s,
                         preflight_checked=True,
                         loaded_ctx=loaded_ctx,
                         allow_high_floor=red_allow_high_floor,
@@ -4708,6 +4751,108 @@ def run_self_tests() -> dict[str, Any]:
             srv27.shutdown()
             srv27.server_close()
     checks.append("v245_slice_count_mapreduce_and_fast_ctx_stage_repair")
+
+    # 29. V2.5.1 Optimization Suite: repo-relative context_files, job-collect-any batching & STANDARD reduce budget scaling
+    with tempfile.TemporaryDirectory() as tmp29:
+        r29 = Path(tmp29) / "repo29"
+        (r29 / "pkg").mkdir(parents=True)
+        rel_target = r29 / "pkg" / "mod29.py"
+        # Build ~132 KB module (~7 chunks at 22 KB) to force STANDARD multi-chunk reduce + verify repo-relative path
+        rel_target.write_text("\n".join(f"CONST_{i} = {i}" for i in range(1, 5201)) + "\n", encoding="utf-8")
+        jdir29 = Path(tmp29) / "jobs29"
+        jdir29.mkdir()
+        apprentice_engine._write_private_json_atomic(
+            jdir29 / "BJOB-20261116_120001-aa0001.json",
+            {"job_id": "BJOB-20261116_120001-aa0001", "status": "completed", "result": {"ok": True, "digest": "done1"}},
+        )
+        apprentice_engine._write_private_json_atomic(
+            jdir29 / "BJOB-20261116_120002-bb0002.json",
+            {"job_id": "BJOB-20261116_120002-bb0002", "status": "running", "worker_pid": os.getpid()},
+        )
+        seen_29: list[dict[str, Any]] = []
+
+        class _V29Handler(http.server.BaseHTTPRequestHandler):
+            def log_message(self, format: str, *args: object) -> None:
+                return
+
+            def do_GET(self) -> None:
+                if self.path == "/api/v0/models":
+                    body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}).encode("utf-8")
+                elif self.path == "/v1/models":
+                    body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID}]}).encode("utf-8")
+                else:
+                    body = b"{}"
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                ln = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(ln).decode("utf-8"))
+                u_txt = str((req.get("messages") or [{}, {}])[-1].get("content") or "")
+                seen_29.append({"req": req, "is_reduce": "Merge, deduplicate, and filter" in u_txt})
+                ans = "- `CONST_1 = 1` (`pkg/mod29.py#L1-L1`)"
+                body = json.dumps(
+                    {
+                        "choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 180, "completion_tokens": 25},
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        srv29 = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _V29Handler)
+        thr29 = threading.Thread(target=srv29.serve_forever, daemon=True)
+        thr29.start()
+        saved29 = {k: os.environ.get(k) for k in ("APPRENTICE_API_URL", "BIONIC_SIDECAR_API_URL", "APPRENTICE_TELEMETRY_LOG", "APPRENTICE_SCORECARD_PATH", "APPRENTICE_JOBS_DIR", "APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT")}
+        try:
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv29.server_address[1]}/v1"
+            os.environ["BIONIC_SIDECAR_API_URL"] = os.environ["APPRENTICE_API_URL"]
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(Path(tmp29) / "tel29.jsonl")
+            os.environ["APPRENTICE_SCORECARD_PATH"] = str(Path(tmp29) / "sc29.json")
+            os.environ["APPRENTICE_JOBS_DIR"] = str(jdir29)
+            os.environ["APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+
+            # A. Batch job-collect-any and batch job-collect(job_ids=...)
+            c_any = _apprentice_control_sync(
+                action="job-collect-any",
+                job_ids=["BJOB-20261116_120001-aa0001", "BJOB-20261116_120002-bb0002"],
+                wait_seconds=2.0,
+            )
+            assert c_any["ok"] is True and c_any["completed_job_ids"] == ["BJOB-20261116_120001-aa0001"]
+            assert c_any["running_job_ids"] == ["BJOB-20261116_120002-bb0002"] and c_any["all_done"] is False
+            c_col_batch = _apprentice_control_sync(
+                action="job-collect",
+                job_ids=["BJOB-20261116_120001-aa0001", "BJOB-20261116_120002-bb0002"],
+                wait_seconds=1.0,
+            )
+            assert c_col_batch["ok"] is True and c_col_batch["completed_job_ids"] == ["BJOB-20261116_120001-aa0001"]
+
+            # B. Repo-relative context_files + STANDARD chunk token headroom >= 768
+            d29 = _apprentice_digest_sync(
+                prompt="Audit pkg/mod29.py constants",
+                context_files=["pkg/mod29.py"],
+                repo=str(r29),
+                effort="standard",
+                verify_claims=False,
+            )
+            assert d29["ok"] is True and d29.get("chunked_map_reduce", {}).get("reduced") is True, f"d29 unexpected: {d29}"
+            mappers29 = [s for s in seen_29 if not s["is_reduce"]]
+            assert mappers29 and all(int(s["req"].get("max_tokens") or 0) >= 768 for s in mappers29), f"expected >=768 chunk budget: {mappers29}"
+        finally:
+            for k, v in saved29.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv29.shutdown()
+            srv29.server_close()
+    checks.append("v251_relpath_collect_any_and_std_chunk_budget")
 
     return {
         "schema_version": "APPRENTICE_MCP_V1",
