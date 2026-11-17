@@ -133,16 +133,16 @@ When generating a Project Review or Multi-Workbook Validation Report, NEA shall 
 | Metadata Field | BOM `Cover Sheet` | CRL `Cover Sheet` | Standalone `Cover Sheet` | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Project Name** | `[Value]` (`D10`) | `[Value]` (`D10`) | `[Value]` (`D10`) | `[Aligned | Mismatch -> AR/RR-##]` |
-| **Project Number** | `[Value]` (`D12`) | `[Value / *Absent*]` | `[Value / *Absent*]` | `[Aligned | Template Gap -> TPL-##]` |
-| **Customer** | `[Value]` (`D14`) | `[Value]` (`D12`) | `[Value]` (`D12`) | `[Aligned | Mismatch]` |
-| **Customer Contact** | `[Value]` (`D16`) | `[Value]` (`D14`) | `[Value]` (`D14`) | `[Aligned | Mismatch]` |
-| **Site / Building** | `[Value]` (`D18`) | `[Value]` (`D16`) | `[Value]` (`D16`) | `[Aligned | Mismatch]` |
-| **Project Manager** | `[Value]` (`D20`) | `[Value]` (`D18`) | `[Value]` (`D18`) | `[Aligned | Mismatch]` |
-| **Designer / Engineer** | `[Value]` (`D22`) | `[Value]` (`D20`) | `[Value]` (`D20`) | `[Aligned | Mismatch]` |
-| **Installation Contractor** | `[*Absent* / N/A]` | `[Value]` (`D22`) | `[Value]` (`D22`) | `[Intentional Scope Diff | Mismatch]` |
-| **Issue Date** | `[YYYY-MM-DD]` (`D24`) | `[YYYY-MM-DD]` (`D24`) | `[YYYY-MM-DD]` (`D24`) | `[Aligned | Independent Date -> INF-##]` |
-| **Revision & History Link** | `[Rev]` (`H24`/`B30`) | `[Rev]` (`H24`/`B30`) | `[Rev]` (`H24`/`B30`) | `[Aligned | Static Override -> RR-##]` |
-| **Document Lifecycle State** | `[State / *Absent*]` | `[State / *Absent*]` | `[State / *Absent*]` | `[Aligned | Template Gap -> TPL-##]` |
+| **Project Number** | `[Value]` (`D12`) | `[Value]` (`D12`) | `[Value]` (`D12`) | `[Aligned | Mismatch -> AR/RR-##]` |
+| **Customer** | `[Value]` (`D14`) | `[Value]` (`D14`) | `[Value]` (`D14`) | `[Aligned | Mismatch]` |
+| **Customer Contact** | `[Value]` (`D16`) | `[Value]` (`D16`) | `[Value]` (`D16`) | `[Aligned | Mismatch]` |
+| **Site / Building** | `[Value]` (`D18`) | `[Value]` (`D18`) | `[Value]` (`D18`) | `[Aligned | Mismatch]` |
+| **Project Manager** | `[Value]` (`D20`) | `[Value]` (`D20`) | `[Value]` (`D20`) | `[Aligned | Mismatch]` |
+| **Designer / Engineer** | `[Value]` (`D22`) | `[Value]` (`D22`) | `[Value]` (`D22`) | `[Aligned | Mismatch]` |
+| **Installation Contractor** | `[*Absent* / N/A]` | `[Value]` (`D24`) | `[Value]` (`D24`) | `[Intentional Scope Diff | Mismatch]` |
+| **Issue Date** | `[YYYY-MM-DD]` (`D24`) | `[YYYY-MM-DD]` (`D26`) | `[YYYY-MM-DD]` (`D26`) | `[Aligned | Independent Date -> INF-##]` |
+| **Revision & History Link** | `[Rev]` (`H24`/`B32`) | `[Rev]` (`H26`/`B34`) | `[Rev]` (`H26`/`B34`) | `[Aligned | Static Override -> RR-##]` |
+| **Document Status** | `[State]` (`D26`) | `[State]` (`D28`) | `[State]` (`D28`) | `[Aligned | Missing]` |
 
 ### Cover Sheet Alignment Notes
 - **`[Field / Topic]`**: `[1-sentence note explaining any mismatch, independent issue date, or GOV-006 template gap without cluttering the table cells.]`
@@ -216,7 +216,7 @@ To advance this deliverable package from **`[Current Outcome]`** to **`Approved`
 
 > [!TIP]
 > **Cross-Duty Agent Advisories (`NEA-SCR-001`)**
-> - **$\rightarrow$ `NEA Repair Tool` (`NEA-AGT-005`)**: `[Summary of overwritten formulas, Cover Sheet!B30:C30 static overrides, OpenXML [4E] validation/filter anomalies, or GOV-002/GOV-006 template items — recommend running NEA Repair Tool for automated non-destructive repair.]`
+> - **$\rightarrow$ `NEA Repair Tool` (`NEA-AGT-005`)**: `[Summary of overwritten formulas, Cover Sheet Revision History static overrides, OpenXML [4E] validation/filter anomalies, or legacy GOV-002/GOV-006 template items — recommend running NEA Repair Tool for automated non-destructive repair.]`
 > - **$\rightarrow$ `NEA Catalog Manager` (`NEA-AGT-004`)**: `[Summary of duplicate MB P/Ns, duplicate (Manufacturer, MFG P/N) pairs, or unreferenced CAT-## catalog hygiene anomalies — recommend running NEA Catalog Manager.]`
 > - **$\rightarrow$ `NEA BOM Builder` / `NEA CRL Builder`**: `[Optional handoff if guided Mode 2 takeoff rollup or bulk CRL normalization is needed.]`
 ```

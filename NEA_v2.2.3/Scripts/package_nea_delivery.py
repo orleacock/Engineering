@@ -15,7 +15,7 @@ ARCHIVE_PREFIX = "NEA_v2.2.3"
 DOWNLOADS_DIR = "/home/orin/Downloads"
 OUT_ZIP = os.path.join(DOWNLOADS_DIR, "NEA_v2.2.3_Delivery.zip")
 
-EXCLUDE_DIRS = {"Historical", "__pycache__", ".git", ".agents"}
+EXCLUDE_DIRS = {"Historical", "Testbeds", "__pycache__", ".git", ".agents"}
 EXCLUDE_FILES = {".nea_inspect_cache.json", ".DS_Store"}
 
 

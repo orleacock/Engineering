@@ -3,8 +3,8 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "24b801bf1e57"
-last_synced: "2026-11-11"
+tree_hash: "a22f7f2f2de5"
+last_synced: "2026-11-17"
 ---
 
 # 🗂️ `NetCom` — Directory Lookup Map (`entity: NetCom`)
@@ -36,6 +36,8 @@ last_synced: "2026-11-11"
 │   └── Decision_Profile.md
 ├── Projects/
 │   └── NetCom_Engineering_Assistant/
+│       ├── Archive/
+│       │   └── NetCom_Engineering_Assistant_Lessons_Archive.md
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
 │       ├── NetCom_Engineering_Assistant.md
@@ -71,7 +73,7 @@ last_synced: "2026-11-11"
 
 ## 2. `NetCom` Repository Directory Trees (`1` Indexed)
 
-### [`NetCom_Engineering_Assistant`](../Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) (`software` | `HEAD: UNTRACKED` | `Tree: 9e7492e491a3`)
+### [`NetCom_Engineering_Assistant`](../Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) (`software` | `HEAD: UNTRACKED` | `Tree: 8744fdc518bf`)
 - **Repository Location**: `/home/orin/Projects/Engineering/NEA_v2.2.3`
 
 ```text
@@ -143,6 +145,7 @@ last_synced: "2026-11-11"
 │   └── Agent_Builder_Guide.md
 ├── Scripts/
 │   ├── build_copilot_agents.py
+│   ├── edit_nea_workbooks.py
 │   ├── inspect_nea_workbooks.py
 │   └── package_nea_delivery.py
 ├── Skills/
@@ -158,6 +161,7 @@ last_synced: "2026-11-11"
 │   │   └── SKILL.md
 │   ├── nea-workbook-entry-guard/
 │   │   ├── scripts/
+│   │   │   ├── edit_nea_workbooks.py
 │   │   │   └── inspect_nea_workbooks.py
 │   │   ├── nea-workbook-entry-guard.zip
 │   │   └── SKILL.md
@@ -167,6 +171,11 @@ last_synced: "2026-11-11"
 │   ├── Cable_Running_List_Template.xlsx
 │   ├── Project_Cover_Sheet_Template.xlsx
 │   └── Timesheet_Template.xlsx
+├── Testbeds/
+│   └── 307-2/
+│       ├── BOM_Materials_Master_Template.xlsx
+│       ├── Cable_Running_List_Template.xlsx
+│       └── Project_Cover_Sheet_Template.xlsx
 ├── CHANGELOG.md
 ├── NEA_Governance_Register_v2.2.3.md
 ├── NEA_User_and_DevOps_Manual.md

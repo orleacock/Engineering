@@ -5,11 +5,11 @@ description: "Project-scoped development, packaging, and validation runbook for 
 
 # NEA M365 Copilot Agent Builder Development & Packaging Skill (`nea-copilot-builder`)
 
-This project-scoped skill governs all architecture, instruction authoring, Knowledge `.txt` synchronization, Skill `.zip` packaging, OpenXML script maintenance, and deployment gating for the **NetCom Engineering Assistant (`NEA v2.2.3`)** inside `/home/orin/Projects/Engineering/NEA_v2.2.3`. When onboarding a brand-new module (`NEA-AGT-007+`), pair this skill with `/home/orin/Projects/Engineering/Obsidian_Notes/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Module_Launchpad.md`.
+This project-scoped skill governs all architecture, instruction authoring, Knowledge `.txt` synchronization, Skill `.zip` packaging, OpenXML script maintenance, and deployment gating for the **NetCom Engineering Assistant (`NEA v2.2.3`)** inside `/home/orin/Projects/Engineering/NEA_v2.2.3`. When onboarding a brand-new module (`NEA-AGT-007+`), pair this skill with `/home/orin/Projects/Engineering/memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Module_Launchpad.md`.
 
 > [!IMPORTANT]
 > **Compartment C Containment (Zero Leakage into `Homunculus` / `Alchemical-3D`)**:
-> This skill lives exclusively inside `/home/orin/Projects/Engineering/NEA_v2.2.3/.agents/skills/nea-copilot-builder/SKILL.md` and is activated via Turn-1 dossier routing from `Obsidian_Notes/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md`. It is **never** registered in global `~/.gemini/config/skills/` or `~/.gemini/config/rules/`, consuming `0` tokens outside `NEA` tasks, and `.agents/` is excluded from `NEA_v2.2.3_Delivery.zip`.
+> This skill lives exclusively inside `/home/orin/Projects/Engineering/NEA_v2.2.3/.agents/skills/nea-copilot-builder/SKILL.md` and is activated via Turn-1 dossier routing from `memory/Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md`. It is **never** registered in global `~/.gemini/config/skills/` or `~/.gemini/config/rules/`, consuming `0` tokens outside `NEA` tasks, and `.agents/` is excluded from `NEA_v2.2.3_Delivery.zip`.
 
 ---
 
@@ -22,7 +22,7 @@ Before modifying any file in `/home/orin/Projects/Engineering/NEA_v2.2.3`:
    - **Never** read from, edit, or regenerate `/home/orin/Downloads/NEA_*` archives during development turns, and **never** stage or update Gmail drafts until the user explicitly declares a **deployment state** (e.g., *"prepare an email"* or *"package for testing"*).
    - During development iterations, run **only** `python3 Scripts/build_copilot_agents.py` (never `Scripts/package_nea_delivery.py`).
 2. **Closed-World Source Authority (`Historical/` Quarantine)**:
-   - Never read or copy requirements from `Historical/` (`External_Review_v1..v2`, `Internal_Review_v3`). Only the active `v2.2.3` files and `NEA_Governance_Register_v2.2.3.md` (`GOV-001`..`GOV-017`) govern the system.
+   - Never read or copy requirements from `Historical/` (`External_Review_v1..v2`, `Internal_Review_v3`). Only the active `v2.2.3` files and `NEA_Governance_Register_v2.2.3.md` (`GOV-001`..`GOV-018`) govern the system.
 3. **Direct `.txt` Knowledge Authoring (`GOV-017`)**:
    - The authoritative Standards, Workflows, and Behavior documents live directly inside `Copilot_Agents/<Agent_Slug>/Knowledge/*.txt` (with zero duplicate Skill or Python `.txt` files inside `Knowledge/`).
    - `Scripts/build_copilot_agents.py` (`sync_shared_knowledge_files()`) automatically propagates edits from the newest `.txt` file across all agents that share that file, mirrors `NEA_Governance_Register_v2.2.3.md` $\rightarrow$ `Knowledge/NEA_Governance_Register_v2.2.3.txt`, and bundles `Scripts/inspect_nea_workbooks.py` directly inside each `Skills/<skill-name>/<skill-name>.zip` at `scripts/inspect_nea_workbooks.py`.
@@ -65,9 +65,9 @@ In M365 Copilot Agent Builder, `Skills -> Add skill -> Upload skill` **is** the 
    - *(Strictly banned: `01_`..`09_` folder prefixes, duplicate role-specific skill folders duplicating `Instructions.txt`, loose duplicate `.txt` files in `Skills/`, or duplicate `inspect_nea_workbooks.txt` / `NEA_*_Skill.txt` files inside `Copilot_Agents/*/Knowledge/`.)*
 2. **Allowed Contents Inside Each `Skills/<skill-name>/` Folder**:
    - `SKILL.md`
-   - `scripts/inspect_nea_workbooks.py`
+   - `scripts/inspect_nea_workbooks.py` (plus `scripts/edit_nea_workbooks.py` inside `nea-workbook-entry-guard/`)
    - `<skill-name>.zip`
-   - **Bundled Zip Archive Rule**: `<skill-name>.zip` must contain **`SKILL.md` at the root of the `.zip` archive plus `scripts/inspect_nea_workbooks.py`** (`zf.namelist() == ["SKILL.md", "scripts/inspect_nea_workbooks.py"]`). Never nest `<skill-name>/SKILL.md` inside a wrapper directory, and ensure `SKILL.md` explicitly identifies `scripts/inspect_nea_workbooks.py`, when to run it, expected inputs, and expected outputs.
+   - **Bundled Zip Archive Rule**: `<skill-name>.zip` must contain **`SKILL.md` at the root of the `.zip` archive plus its bundled `scripts/*.py` files** (`["SKILL.md", "scripts/inspect_nea_workbooks.py"]` for `nea-anti-hallucination` and `nea-verification-and-receipt`; `["SKILL.md", "scripts/edit_nea_workbooks.py", "scripts/inspect_nea_workbooks.py"]` for `nea-workbook-entry-guard`). Never nest `<skill-name>/SKILL.md` inside a wrapper directory, and ensure `SKILL.md` explicitly identifies its bundled scripts, when to run them, expected inputs, and expected outputs.
 3. **Hardened `SKILL.md` YAML Frontmatter Rules**:
    - **Byte-0 Start**: Must start at byte `0` with `---\nname: "<skill-name>"\ndescription: "<clean_desc>"\n---\n\n` (`LF` `\n` line endings, UTF-8 with no BOM).
    - **`name` Field**: Lowercase letters, digits, and hyphens only (`<= 64` chars), wrapped in double quotes.
@@ -79,10 +79,10 @@ In M365 Copilot Agent Builder, `Skills -> Add skill -> Upload skill` **is** the 
 
 ### Pillar C — 6-Agent Separation of Duties & OpenXML Integrity (`Scripts/inspect_nea_workbooks.py`)
 1. **Role-Scoped Telemetry (`--scope {review,bom,crl,catalog,repair,timesheet}`)**:
-   - `NEA Package Reviewer` (`--scope review`, Mode 1 Read-Only): Audits active project deliverables (`Cover Sheet`, `Project BOM` active rows + `[3B]` `UOM=BX` bulk-box multiplier anomalies, `Cable Running List`, and CRL-to-BOM takeoffs). Never dumps raw Excel formula syntax into Sections 4/5; routes workbook formula/OpenXML plumbing (`Cover Sheet!B30:C30`, `Project BOM!G4`, `Lists!H1` zero-spill, `CRL` DataValidations) strictly to **`NEA Repair Tool`** and unreferenced catalog hygiene (`CAT-##`) strictly to **`NEA Catalog Manager`** in **Section 6 (`Cross-Duty Agent Advisories`)**.
+   - `NEA Package Reviewer` (`--scope review`, Mode 1 Read-Only): Audits active project deliverables (`Cover Sheet`, `Project BOM` active rows + `[3B]` `UOM=BX` bulk-box multiplier anomalies, `Cable Running List`, and CRL-to-BOM takeoffs). Never dumps raw Excel formula syntax into Sections 4/5; routes workbook formula/OpenXML plumbing (static overrides on `Cover Sheet` Revision History `B32:C32`/`B34:C34`/legacy `B30:C30`, legacy mixed-UOM `Project BOM!G4`, `Lists!H1` zero-spill, `CRL` DataValidations) strictly to **`NEA Repair Tool`** and unreferenced catalog hygiene (`CAT-##`) strictly to **`NEA Catalog Manager`** in **Section 6 (`Cross-Duty Agent Advisories`)**.
    - `NEA BOM Builder` (`--scope bom`), `NEA CRL Builder` (`--scope crl`), `NEA Catalog Manager` (`--scope catalog`), `NEA Repair Tool` (`--scope repair` / `--repair`), and `NEA Timesheet Consolidator` (`--scope timesheet` / `--consolidate`).
 2. **Non-Destructive OpenXML Repair, Desktop Excel ECMA-376 Integrity & Write Verification**:
-   - `--repair` restores `Cover Sheet!B30:C30`, `Project BOM` `A8:I155` 3-tier `XLOOKUP` formulas, rescales `tblMaterials` `ref="A3:G<last_row>"` (`A3:G508`) and adds `<>0` to `Lists!H1` (`GOV-007`), expands `Fiber Assemblies!H` DataValidation (`H4:H1258`), normalizes `CRL` AutoFilter (`A2:P1087`), and calls `preserve_openxml_extensions()` without altering any user-entered project data (`Editable Cells Modified: 0`).
+   - `--repair` uses label-driven `find_cover_sheet_coords()` to restore `Cover Sheet` Revision History (`B32:C32` BOM, `B34:C34` CRL/Standalone, legacy `B30:C30`), restores `Project BOM` `A8:I155` 3-tier `XLOOKUP` formulas (`G4:G5` unit-segregated totals untouched), rescales `tblMaterials` `ref="A3:G<last_row>"` (`A3:G508`) and adds `<>0` to `Lists!H1` (`GOV-007`), expands `Fiber Assemblies!H` DataValidation (`H4:H1258`), normalizes `CRL` AutoFilter (`A2:P1087`), and calls `preserve_openxml_extensions()` without altering any user-entered project data (`Editable Cells Modified: 0`).
    - Mode 1 reviews require live `NEA-VRF-<12hex>` (`0 bytes modified`); Mode 2 writes/repairs/consolidations require `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>` + `validate_openxml_package_integrity()` confirming `0` Desktop Excel ECMA-376 OpenXML issues).
 
 ### Pillar D — Human Reference Manual (`NEA_User_and_DevOps_Manual.md`) & Delivery Archive Gate (`Scripts/package_nea_delivery.py`)

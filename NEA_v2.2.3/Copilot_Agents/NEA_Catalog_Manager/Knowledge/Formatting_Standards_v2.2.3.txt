@@ -37,7 +37,7 @@ NEA workbooks contain functional structures whose exact names and coordinates ar
    - In Excel `.xlsx` XML (`xl/worksheets/sheet*.xml`), formula ranges such as `Project BOM` Column `A` (`A11:A167`) use OpenXML shared formulas where the master cell contains `<f t="shared" ref="A11:A167" si="1">IF(B11="","",ROW()-7)</f>` and follower cells contain `<f t="shared" si="1"/>` (with `f.text == None`).
    - Any XML inspection script checking for overwritten formulas must verify `cell.find('main:f') is not None` rather than `bool(f.text)`.
 3. **Cover Sheet Formula Links**:
-   - Preserve dynamic header-link formulas in `Project BOM!B2, E2, H2` and Revision History cells `Cover Sheet!B30:C30`.
+   - Preserve dynamic header-link formulas in `Project BOM!B2, E2, H2` and Revision History cells (`Cover Sheet` `B32:C32` on BOM, `B34:C34` on CRL/Standalone, or `B30:C30` on legacy sheets).
 
 ---
 
@@ -56,12 +56,12 @@ Engineers routinely leave blank rows between material categories on `Project BOM
 
 1. **Prohibition of Undifferentiated Mixed-UOM Sums**:
    - Quantities with incompatible Units of Measure (`FT`, `EA`, `KT`, `BX`, `M`, `RL`, `PK`) shall never be added together and presented as a meaningful engineering or procurement quantity.
-   - The legacy template formula in `Project BOM!G4` (`=SUM(C8:C167)`) sums mixed UOMs and shall be flagged as a non-blocking **`Advisory` (`ADV-##`)** item (tracked for template redesign under `GOV-002`).
+   - `BOM_Materials_Master_Template.xlsx` implements unit-segregated summary cells in `F4:G4` (`Total FT` `=SUMIF(G8:G155,"FT",C8:C155)`) and `F5:G5` (`Total EA/KT/BX` `=SUMIF(G8:G155,"EA",C8:C155)+SUMIF(G8:G155,"KT",C8:C155)+SUMIF(G8:G155,"BX",C8:C155)`); any legacy workbook still containing `=SUM(C8:C155)` in `G4` shall be flagged as **`Advisory` (`ADV-##` / `-> NEA Repair Tool`)**.
 2. **Required Unit-Aware Takeoff Metrics**:
    - Engineering reviews and BOM summaries shall present quantities separated by unit and functional category:
-     - **Total Line Items** (`=COUNTIF(B8:B167,"<>")`)
-     - **Bulk Copper & Fiber Cable Footage (`FT`)**
-     - **Discrete Connectivity, Hardware & Assemblies (`EA`, `KT`, `BX`)**
+     - **Total Line Items** (`=COUNTIF(B8:B155,"<>")`)
+     - **Bulk Copper & Fiber Cable Footage (`FT`)** (`G4`)
+     - **Discrete Connectivity, Hardware & Assemblies (`EA`, `KT`, `BX`)** (`G5`)
 
 ---
 

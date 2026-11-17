@@ -68,7 +68,7 @@ To ensure fast, deterministic classification and exact section citations without
 | **Catalog (`Materials Master`)** | Duplicate `MB P/N` or `TPN##` with **conflicting attributes** (`UOM`, `Category`, `Status`, `Description`), or jacks classified as `Cable`/`FT` | **`Action Required`** (`AR-##` if BOM-active; **Route to `NEA Catalog Manager`** if unreferenced) | `Material_Master_Standards` Sec 2 & `BOM_Standards` Sec 3.4 |
 | **Catalog (`Materials Master`)** | Exact duplicate `MB P/N` rows (identical attributes), blank `Manufacturer`/`Description`/`UOM` on unreferenced row, or legacy `Category = Equipment` | **Route to `NEA Catalog Manager` (Section 6)** | `Material_Master_Standards` Sec 2–4 & `GOV-002` |
 | **Cover Sheet & Templates** | Conflicting `Project Name`, `Customer`, or `Building` across package Cover Sheets | **`Action Required` (`AR-##`)** | `Project_Metadata_Standard` Sec 1 |
-| **Cover Sheet & Templates** | Static override in Revision History (`B30:C30`) decoupling from `H24`/`D24` (`'1'` vs `'001'`), or template parity gaps (`GOV-006`) | **Route to `NEA Repair Tool` (Section 6)** | `Project_Metadata_Standard` Sec 1–3 & `GOV-006` |
+| **Cover Sheet & Templates** | Static override in Revision History (`B32:C32`, `B34:C34`, or legacy `B30:C30`) decoupling from `Issue Date`/`Revision`, or legacy template parity gaps (`GOV-006`) | **Route to `NEA Repair Tool` (Section 6)** | `Project_Metadata_Standard` Sec 1–3 & `GOV-006` |
 | **Cover Sheet & Templates** | Independent `Issue Date` across package Cover Sheets (`YYYY-MM-DD` BOM vs `YYYY-MM-DD` CRL) | **`Informational` (`INF-##`)** | `Project_Metadata_Standard` Sec 1 |
 
 ---

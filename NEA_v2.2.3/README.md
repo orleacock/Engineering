@@ -32,6 +32,7 @@ NEA_v2.2.3/
 │   └── NEA_Timesheet_Consolidator/                  # Mode 2: Multi-Media Missouri Timesheet Consolidation (5 Knowledge .txt files)
 ├── Scripts/
 │   ├── inspect_nea_workbooks.py                     # Master OpenXML Inspector, Write Verifier, Repair & Timesheet Engine (NEA-SCR-001)
+│   ├── edit_nea_workbooks.py                        # Controlled OpenXML Safe-Write JSON Manifest Editor (NEA-SKL-002)
 │   ├── build_copilot_agents.py                      # Compiles Copilot_Agents/<Agent>/ & Skills/<skill-name>/<skill-name>.zip
 │   └── package_nea_delivery.py                      # Packages clean NEA_v2.2.3_Delivery.zip
 ├── Skills/
@@ -61,6 +62,7 @@ python3 Scripts/inspect_nea_workbooks.py Templates --scope timesheet
 python3 Scripts/inspect_nea_workbooks.py Templates --lookup "Cat6A"
 python3 Scripts/inspect_nea_workbooks.py Templates --repair --out-dir /tmp/Repaired_Workbooks
 python3 Scripts/inspect_nea_workbooks.py --consolidate manifest.json --template Templates/Timesheet_Template.xlsx --out Week_of_10-25_to_10-31.xlsx
+python3 Scripts/edit_nea_workbooks.py orig.xlsx --manifest edit_manifest.json --out edited.xlsx
 python3 Scripts/inspect_nea_workbooks.py --verify-write orig.xlsx edited.xlsx
 
 # 2. Rebuild Copilot_Agents/ & Skills/<skill-name>/<skill-name>.zip:

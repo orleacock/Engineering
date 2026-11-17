@@ -28,15 +28,17 @@ Current approved artifact versions are governed by `Repository_Index.md`. Govern
 
 1. Populate `Cover Sheet` cells in `Cable_Running_List_Template.xlsx` per `Project_Metadata_Standard`, ensuring project identity matches the `Project BOM` workbook:
    - `D10`: `Project Name`
-   - `D12`: `Customer`
-   - `D14`: `Customer Contact`
-   - `D16`: `Site Address` / `Building`
-   - `D18`: `Project Manager`
-   - `D20`: `Designer / Engineer`
-   - `D22`: `Installation Contractor`
-   - `D24`: `Issue Date`
-   - `H24`: `Revision`
-2. Verify that Revision History row 1 (`B30:C30`) uses dynamic formulas (`=IF($H$24="","",$H$24)` and `=IF($D$24="","",$D$24)`) rather than static text overrides.
+   - `D12`: `Project Number`
+   - `D14`: `Customer`
+   - `D16`: `Customer Contact`
+   - `D18`: `Site Address` / `Building`
+   - `D20`: `Project Manager`
+   - `D22`: `Designer / Engineer`
+   - `D24`: `Installation Contractor`
+   - `D26`: `Issue Date`
+   - `H26`: `Revision`
+   - `D28`: `Document Status` (`Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived`)
+2. Verify that Revision History row 1 (`B34:C34`, or `B30:C30` on legacy sheets) uses dynamic formulas (`=IF($H$26="","",$H$26)` and `=IF($D$26="","",$D$26)`) rather than static text overrides.
 
 ---
 

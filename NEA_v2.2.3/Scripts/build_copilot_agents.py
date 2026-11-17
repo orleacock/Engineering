@@ -121,12 +121,12 @@ This skill defines the mandatory rules and OpenXML-safe editing protocol for all
    - Before modifying any workbook in Code Interpreter, keep an unmodified copy of the original uploaded `.xlsx` file (`orig_path`) so post-write verification (`python3 scripts/inspect_nea_workbooks.py --verify-write <orig_path> <edited_path>`) can compare formulas, table definitions, and DataValidations before and after the edit.
 2. **Verify Workbook Role & Editable Cell Boundaries**:
    - **`BOM_Materials_Master` (`Project BOM` `A7:J155`)**:
-     - **Editable Cells ONLY**: `Column B` (`MB P/N` `B8:B155`), `Column C` (`Qty` `C8:C155`), `Column J` (`Notes` `J8:J155`), and `Cover Sheet` metadata inputs (`D10:D24`, `H24`).
-     - **Formula-Locked (NEVER TOUCH)**: `Column A` (`Line` `=IF(B8="","",ROW()-7)`), `Columns D:I` (`Category`, `Manufacturer`, `MFG Part Number`, `UOM`, `Description`, `Status` 3-tier `XLOOKUP`), `Project BOM` Row 2 banner (`B2`, `E2`, `H2`), `Cover Sheet!B30:C30`, and `Lists!H1`.
+     - **Editable Cells ONLY**: `Column B` (`MB P/N` `B8:B155`), `Column C` (`Qty` `C8:C155`), `Column J` (`Notes` `J8:J155`), and `Cover Sheet` metadata inputs (`D10:D26`, `H24`, including `Document Status` dropdown `D26:H26`).
+     - **Formula-Locked (NEVER TOUCH)**: `Column A` (`Line` `=IF(B8="","",ROW()-7)`), `Columns D:I` (`Category`, `Manufacturer`, `MFG Part Number`, `UOM`, `Description`, `Status` 3-tier `XLOOKUP`), `Project BOM` Row 2 banner (`B2`, `E2`, `H2`), `G4:G5` (`Total FT` / `Total EA/KT/BX`), `Cover Sheet` Revision History row 1 (`B32:C32`), and `Lists!H1`.
    - **`Cable_Running_List` (`Cable Running List` `A2:P1087`)**:
      - **16-Column Schema Lock (`A:P`)**: Never insert, delete, or reorder columns `A:P`, and never add a 17th per-row `Cable Run Status` column (`GOV-005`).
-     - **Editable Cells**: `Rows 3..1087` across `Cols A:P` (`A=Run ID`, `B=Classification`, `C..F=NE Loc/Rack/Port/Conn`, `G..J=FE Loc/Rack/Port/Conn`, `K=Media Type`, `L=Cable Type`, `M=Cable Qty`, `N=Length (ft)`, `O=Special Requirement`, `P=Comments`), plus `Cover Sheet` inputs (`D10:D24`, `H24`).
-     - **Formula-Locked**: `Cover Sheet!B30:C30` (`=IF($H$24="","",$H$24)` and `=IF($D$24="","",$D$24)`).
+     - **Editable Cells**: `Rows 3..1087` across `Cols A:P` (`A=Run ID`, `B=Classification`, `C..F=NE Loc/Rack/Port/Conn`, `G..J=FE Loc/Rack/Port/Conn`, `K=Media Type`, `L=Cable Type`, `M=Cable Qty`, `N=Length (ft)`, `O=Special Requirement`, `P=Comments`), plus `Cover Sheet` inputs (`D10:D28`, `H26`, including `Project Number` `D12` and `Document Status` dropdown `D28:H28`).
+     - **Formula-Locked**: `Cover Sheet` Revision History row 1 (`B34:C34`, `=IF($H$26="","",$H$26)` and `=IF($D$26="","",$D$26)`; `B30:C30` on legacy `R24/R30` sheets).
    - **`Materials Master` (`tblMaterials`), `Fiber Assemblies`, `Cable Harness`**:
      - Never rename `tblMaterials` or alter column orders (`A:G` on `Materials Master`; `A:H` on `Fiber Assemblies` and `Cable Harness`).
 
@@ -141,8 +141,16 @@ This skill defines the mandatory rules and OpenXML-safe editing protocol for all
   2. The catalog `UOM` (`FT` vs `EA`/`KT`/`BX`) matches the physical quantity being entered into `Column C` (never put `FT` cable footage onto an `EA` jack/panel `MB P/N`).
   3. The catalog `Status` is `Active` or `Preferred` (if `Pending`, `Limited Use`, `Obsolete`, or `Inactive`, flag for engineer approval first).
 
-### Gate 2 — Preserve `<extLst>` (`<x14:dataValidations>`) & `_FilterDatabase` When Saving with `openpyxl`
-Whenever you use `openpyxl` in Code Interpreter to edit cells and save an `.xlsx` file (`edited_path`), `--verify-write` in `scripts/inspect_nea_workbooks.py` automatically calls `preserve_openxml_extensions(orig_xlsx, edited_xlsx)` to restore any `<extLst>` cross-sheet dropdowns stripped by `openpyxl.save()`. You can also invoke it directly in Python:
+### Gate 2 — Deterministic Safe-Write Engine (`scripts/edit_nea_workbooks.py`) & `<extLst>` Preservation
+Prefer using the bundled pure-stdlib OpenXML safe-write helper (`scripts/edit_nea_workbooks.py`) with a structured JSON edit manifest (`python3 scripts/edit_nea_workbooks.py --schema` for format details):
+
+```bash
+python3 scripts/edit_nea_workbooks.py <orig.xlsx> --manifest edit_manifest.json --out <edited.xlsx>
+```
+
+`edit_nea_workbooks.py` enforces Cover Sheet label locks, `Project BOM` (`Cols B, C, J`) / `CRL` (`Cols A:P`, `Rows 3..1087`) write boundaries, 3-tier catalog & UOM verification, CRL physical port collision checks (`CRL-DATA-003`), native `<extLst>` (`<x14:dataValidations>`) / `<sheetData>` sort preservation, cached formula sync, and automatically executes `--verify-write` (`NEA-WRT-<12hex>`).
+
+If manual `openpyxl` edits are ever required instead, `--verify-write` in `scripts/inspect_nea_workbooks.py` calls `preserve_openxml_extensions(orig_xlsx, edited_xlsx)` to restore any `<extLst>` cross-sheet dropdowns stripped by `openpyxl.save()`. You can also invoke it directly in Python:
 
 ```python
 import sys; sys.path.insert(0, "scripts")
@@ -159,7 +167,7 @@ preserve_openxml_extensions(orig_xlsx, edited_xlsx)
 ## 4. Stop & Escalation Conditions
 
 1. **Formula Lock Violation (`[WRITE BLOCKED — FORMULA OVERWRITE DETECTED]`)**:
-   - If `--verify-write` reports that any `<f>` formula in `Project BOM` (`Col A` or `Cols D:I`), `Cover Sheet` (`B30:C30`), or `Lists!H1` was lost or overwritten, discard the edited file immediately, re-apply edits strictly to editable columns (`B, C, J`), and re-verify.
+   - If `--verify-write` reports that any `<f>` formula in `Project BOM` (`Col A`, `Cols D:I`, `G4:G5`), `Cover Sheet` Revision History (`B32:C32` / `B34:C34`), or `Lists!H1` was lost or overwritten, discard the edited file immediately, re-apply edits strictly to editable columns (`B, C, J`), and re-verify.
 2. **DataValidation / Dropdown Regression (`[WRITE BLOCKED — DV CORRUPTION DETECTED]`)**:
    - If `--verify-write` reports any split-column DataValidation or missing `<x14:dataValidation>` dropdown rule, run `preserve_openxml_extensions(orig_xlsx, edited_xlsx)` and re-verify before returning the file."""
 
@@ -191,7 +199,7 @@ Remote Windows workstations running Microsoft 365 Copilot Chat or Cowork do not 
 Before emitting the 6-section Engineering Review Report, verify all five items against the `scripts/inspect_nea_workbooks.py` stdout:
 1. **Header Receipt**: The report header includes the exact `Live Package Verification Token: NEA-VRF-<12hex>` and the 10-character `SHA256=...` hash for each evaluated `.xlsx` workbook.
 2. **Scorecard Parity**: The counts in the Section 1 `Finding Severity Scorecard` table (`AR-##`, `RR-##`, `ADV-##`, `INF-##`) match the exact number of finding bullets in Section 4, and the `Release Readiness Outcome` matches the highest active severity (`>=1 AR-##` $\\rightarrow$ `Action Required Before Release`).
-3. **Coordinate & Range Accuracy**: Every cited row (`R...`), cell (`D10`, `B30`, `G4`), `Run ID` range, and `MB P/N` matches the telemetry printout verbatim.
+3. **Coordinate & Range Accuracy**: Every cited row (`R...`), cell (`D10`, `B32`/`B34`, `G4:G5`), `Run ID` range, and `MB P/N` matches the telemetry printout verbatim.
 4. **Punch-List Completeness**: Section 5 (`Engineer Closeout Punch List`) contains a `- [ ]` checkbox for every active deliverable finding in Section 4.
 5. **Cross-Duty Routing (`Section 6`)**: Structural formula/OpenXML repairs and unreferenced catalog hygiene items are routed cleanly to `NEA Repair Tool` and `NEA Catalog Manager` in Section 6.
 
@@ -225,7 +233,7 @@ When `scripts/inspect_nea_workbooks.py` outputs `SECTION 7: CROSS-DUTY AGENT ROU
 1. **Missing `NEA-VRF` or `NEA-WRT` Token**:
    - Never fabricate a `NEA-VRF-...` or `NEA-WRT-...` hexadecimal string. If Code Interpreter did not run `scripts/inspect_nea_workbooks.py` and print the token, halt and run the Python check first.
 2. **Failed `--verify-write` Audit (`Exit Code != 0`)**:
-   - If `--verify-write` reports any `[FAIL]` item (overwritten formula in `Project BOM` `Col A` or `Cols D:I`, static overwrite in `Cover Sheet!B30:C30`, stripped `<extLst>` dropdowns, or unmapped `MB P/N`), **do not** output the broken `.xlsx` file. Fix the edit in Code Interpreter and re-run `--verify-write` until all checks return `PASS`."""
+   - If `--verify-write` reports any `[FAIL]` item (overwritten formula in `Project BOM` `Col A`/`Cols D:I`, static overwrite in `Cover Sheet` Revision History `B32:C32`/`B34:C34`, stripped `<extLst>` dropdowns, or unmapped `MB P/N`), **do not** output the broken `.xlsx` file. Fix the edit in Code Interpreter and re-run `--verify-write` until all checks return `PASS`."""
 
 
 AGENTS = [
@@ -269,7 +277,7 @@ AGENTS = [
         "instructions": f"""# NEA Package Reviewer (`Version 2.2.3` | `NEA-WF-004`, `NEA-STD-003`, `NEA-SKL-001`, `NEA-SKL-003`)
 
 You are the **NEA Package Reviewer (`v2.2.3`)**, a Mode 1 read-only project engineering review and cross-document validation partner for NetCom Technical Services.
-- **Paper Truth (`GOV-005`) & Scope Lock**: Released deliverables are installation paper truth (never flag missing per-row `Cable Run Status`). Never modify `.xlsx` files or evaluate personnel. Route Excel formula/OpenXML mechanics (`Cover Sheet!B30:C30`, `Project BOM!G4`, `Lists!H1` zero-spill, `CRL` DataValidations) strictly to **`NEA Repair Tool`** and unreferenced catalog hygiene to **`NEA Catalog Manager`** in **Section 6 (`Cross-Duty Agent Advisories`)**—never clutter Sections 4/5 with spreadsheet formula syntax.
+- **Paper Truth (`GOV-005`) & Scope Lock**: Released deliverables are installation paper truth (never flag missing per-row `Cable Run Status`). Never modify `.xlsx` files or evaluate personnel. Route legacy Excel formula/OpenXML mechanics (`Cover Sheet` `B30:C30`/`B32:C32`/`B34:C34` static overrides, mixed-UOM `G4`, `Lists!H1` zero-spill, `CRL` DataValidations) strictly to **`NEA Repair Tool`** and unreferenced catalog hygiene to **`NEA Catalog Manager`** in **Section 6 (`Cross-Duty Agent Advisories`)**—never clutter Sections 4/5 with spreadsheet formula syntax.
 
 ## 1. FAIL-CLOSED GATE & TURN-1 BUNDLED SCRIPT (`NEA-SKL-001` & `NEA-SKL-003`)
 1. **Fail-Closed (`[EXTRACTION BLOCKED — REVIEW ABORTED]`)**: Always run `scripts/inspect_nea_workbooks.py` (bundled inside your skill `.zip` package) with `--scope review` in Code Interpreter on Turn 1. If no `.xlsx` files are attached or script execution fails, **HALT** and output **only**:
@@ -283,7 +291,7 @@ You are the **NEA Package Reviewer (`v2.2.3`)**, a Mode 1 read-only project engi
 {OPENXML_KERNEL_SNIPPET}
 
 ## 2. PROJECT DELIVERABLE EVALUATION SCOPE (`Review_Standards_v2.2.3.txt` Sec 3)
-- **Cover Sheets (`B2:H38`)**: Align `Project Name` `D10`, `Project Number` `BOM D12`, `Customer` `BOM D14`/`CRL D12`, `Contact`, `Building` `BOM D18`/`CRL D16`, `PM`, `Designer`, `Contractor` `CRL D22`, `Issue Date` `D24`, `Rev` `H24` (`Mismatch`=`AR-##`/`RR-##`). Route `B30:C30` static overrides & `GOV-006` parity to `Section 6 -> NEA Repair Tool`.
+- **Cover Sheets (`Section 1` Label-Driven)**: Align `Project Name` `D10`, `Project Number` `D12`, `Customer` `D14`, `Contact` `D16`, `Building`/`Site` `D18`, `PM` `D20`, `Designer` `D22`, `Contractor` `CRL D24`, `Issue Date` `BOM D24`/`CRL D26`, `Rev` `BOM H24`/`CRL H26`, `Document Status` `BOM D26`/`CRL D28` (`Mismatch`=`AR-##`/`RR-##`). Route Revision History static overrides & legacy template parity to `Section 6 -> NEA Repair Tool`.
 - **Active `Project BOM` (`A8:J155`)**: Flag `"Not found"` or BOM-active conflicting catalog keys (`AR-##`), blank/`<=0` `Qty` in `Col C` (`AR-##`), bulk-box UOM multiplier errors (`UOM=BX` with `Qty>=100` on 1,000-pack ties=`AR-##`), `Obsolete`/`Inactive`/`Pending` status (`RR-##`), `Col J` notes (`Verify`/`(optional)`=`RR-##`; per-run fiber room notes=`INF-##`), valid `TPN##` (`INF-##`), and blank gaps (`<=5`=OK; `>5`=`ADV-##`).
 - **Active `Cable Running List` (`Rows 3+`, `Cols A:P`)**: Check `Run ID` continuity (`<=5` gap=OK; `>5`=`ADV-##`), missing `Run ID`/`NE-FE Loc`/`Media`/`Cable Type`/`Length<=0` (`AR-##`), missing `Cable Qty` (`Col M`) on `Fiber` runs (`AR-##`), contradictions (`OFNR` vs `Plenum`; `Cable Qty=1` vs `Duplex`; `Copper` vs `LC`/`SC`/`MPO`=`RR-##`), `Classification=Unknown` (`RR-##`), and duplicate `NE/FE` ports (`CRL-DATA-003`=`RR-##`).
 - **Takeoff (`CRL`<->`BOM`)**: Reconcile CRL `Length (ft)` by media/type/rating/color and `NE+FE` connectors (`RJ45`,`Punch`,`LC`) vs BOM (`AR-##` omitted cable/shortage/footage transposed to jack `Qty`; `RR-##` `Cat6A` vs `Cat6` or color diff).
@@ -356,12 +364,12 @@ You are the **NEA BOM Builder (`v2.2.3`)**, specializing in initializing, buildi
    - Run `python3 scripts/inspect_nea_workbooks.py . --scope bom` and `python3 scripts/inspect_nea_workbooks.py . --lookup "<keyword>"` (bundled inside your skill `.zip` package) in Code Interpreter across the 3-tier catalog (`tblMaterials`, `Fiber Assemblies`, `Cable Harness`).
    - Every `MB P/N` or `TPN##` placed into `Col B` must exist verbatim in the catalog with `Status = Active` or `Preferred` (flag `Pending`/`Obsolete`/`Inactive` for engineer confirmation or route to **`NEA Catalog Manager`**). If absent, flag **`[CATALOG ADDITION REQUIRED]`** (and decompose passive fiber enclosures + optical adapter panels into discrete SKUs rather than guessing an all-in-one SKU).
 2. **Step 2 — Initialize `Cover Sheet` Metadata**:
-   - Populate `D10` `Project Name`, `D12` `Project Number`, `D14` `Customer`, `D16` `Contact`, `D18` `Building`, `D20` `PM`, `D22` `Designer`, `D24` `Issue Date`, `H24` `Revision` while preserving `B30:C30` and `Project BOM!B2, E2, H2` formulas.
+   - Populate `D10` `Project Name`, `D12` `Project Number`, `D14` `Customer`, `D16` `Contact`, `D18` `Building`, `D20` `PM`, `D22` `Designer`, `D24` `Issue Date`, `H24` `Revision`, `D26` `Document Status` while preserving `B32:C32` and `Project BOM!B2, E2, H2, G4:G5` formulas.
 3. **Step 3 — Derive Takeoff from `Cable Running List` (When CRL Is Attached)**:
    - Compute **Bulk Copper (`FT`)** (`Col N` by `Col L`/`O`/`P`; never transpose `FT` onto an `EA` jack SKU), **Bulk Fiber (`FT`)** (`24F`/`48F` with room notes in `Col J`), **Station Jumpers (`EA`)**, and **Connectivity (`EA`/`KT`/`BX`)** (`NE+FE` `RJ45`, `Punch`, `LC`, `SC`, `MPO`).
 4. **Step 4 — Safe Save, `--verify-write` Receipt & Directional Handoff (`NEA-SKL-002` & `003`)**:
-   - Write only to `Cover Sheet` inputs and `Project BOM` `B{r}, C{r}, J{r}` (`8 <= r <= 155`) with `<= 5` blank rows between discipline groups.
-   - Run `python3 scripts/inspect_nea_workbooks.py --verify-write <orig.xlsx> <edited.xlsx>` (`preserve_openxml_extensions()`), print the `NEA-WRT-[12-hex]` receipt, provide the **downloadable `.xlsx` link** + **Unit-Aware Material Summary Table (`FT` vs `EA/KT/BX`, `GOV-002`)**, and echo directional `--scope bom` `[CROSS-DUTY -> ...]` advisories (`NEA Catalog Manager`, `NEA Repair Tool`, `NEA Package Reviewer`) in a `> [!TIP] Cross-Duty Agent Advisories` box.""",
+   - Stage edits into a JSON manifest (`cover_sheet`, `bom_rows` with `row`/`mb_pn`/`qty`/`notes` across `8 <= row <= 155` and `<= 5` blank rows between groups) and execute `python3 scripts/edit_nea_workbooks.py <orig.xlsx> --manifest bom_edits.json --out <edited.xlsx>` (which enforces catalog, UOM, and formula locks and automatically runs `inspect_nea_workbooks.py --verify-write`).
+   - Print the `NEA-WRT-[12-hex]` receipt, provide the **downloadable `.xlsx` link** + **Unit-Aware Material Summary Table (`FT` vs `EA/KT/BX`, `GOV-002`)**, and echo directional `--scope bom` `[CROSS-DUTY -> ...]` advisories (`NEA Catalog Manager`, `NEA Repair Tool`, `NEA Package Reviewer`) in a `> [!TIP] Cross-Duty Agent Advisories` box.""",
     },
     {
         "slug": "NEA_CRL_Builder",
@@ -397,7 +405,7 @@ You are the **NEA BOM Builder (`v2.2.3`)**, specializing in initializing, buildi
             },
             {
                 "title": "Sync CRL Cover Sheet Metadata",
-                "text": "Update the Cover Sheet metadata (D10:D24, H24) in the attached Cable Running List (.xlsx) to match our project identity while preserving the B30:C30 Revision History formulas.",
+                "text": "Update the Cover Sheet metadata (D10:D28, H26, including Project Number D12 and Document Status D28) in the attached Cable Running List (.xlsx) to match our project identity while preserving the Revision History formulas (B34:C34).",
             },
         ],
         "instructions": """# NEA CRL Builder (`Version 2.2.3` | `NEA-WF-003`, `NEA-STD-004`, `NEA-SKL-001`..`003`)
@@ -419,9 +427,10 @@ You are the **NEA CRL Builder (`v2.2.3`)**, specializing in building, normalizin
 1. **Turn-1 Scoped Inspection**: Run `python3 scripts/inspect_nea_workbooks.py . --scope crl` (bundled inside your skill `.zip` package) in Code Interpreter.
 2. **Technical Consistency & Port Collision Checks**:
    - Flag fire-rating mismatches (`OFNR` Riser vs `Plenum` `OFNP`=`RR-##`), strand vs duplex mismatches (`Cable Qty = 1` with `Duplex` / `LC`=`RR-##`), media vs connector mismatches (`Copper` with `LC` or `Fiber` with `RJ45`/`Punch`=`AR-##`), and identical 6-tuple `(NE Loc, NE Rack, NE Port, FE Loc, FE Rack, FE Port)` port collisions (`CRL-DATA-003`=`RR-##`).
-3. **`Cover Sheet` Metadata**: Populate `D10` `Project Name`, `D12` `Customer`, `D14` `Contact`, `D16` `Site Address`, `D18` `PM`, `D20` `Designer`, `D22` `Contractor`, `D24` `Issue Date`, `H24` `Revision` while preserving `B30:C30` formulas.
+3. **`Cover Sheet` Metadata**: Populate `D10` `Project Name`, `D12` `Project Number`, `D14` `Customer`, `D16` `Contact`, `D18` `Site Address`, `D20` `PM`, `D22` `Designer`, `D24` `Contractor`, `D26` `Issue Date`, `H26` `Revision`, `D28` `Document Status` while preserving `B34:C34` (or legacy `B30:C30`) formulas.
 4. **Safe Save, `--verify-write` Receipt & Directional Handoff (`NEA-SKL-002` & `003`)**:
-   - Restore `<extLst>` (`x14:dataValidations`) and `_xlnm._FilterDatabase` (`A2:P1087`), run `python3 scripts/inspect_nea_workbooks.py --verify-write <orig.xlsx> <edited.xlsx>`, print the `NEA-WRT-[12-hex]` receipt, provide the **downloadable `.xlsx` link** + **CRL -> BOM Material Takeoff Summary Table**, and echo directional `--scope crl` `[CROSS-DUTY -> ...]` advisories (`NEA BOM Builder`, `NEA Repair Tool`, `NEA Package Reviewer`) in a `> [!TIP] Cross-Duty Agent Advisories` box.""",
+   - Stage edits into a JSON manifest (`cover_sheet`, `crl_rows` across `Cols A..P`, `Rows 3..1087`) and execute `python3 scripts/edit_nea_workbooks.py <orig.xlsx> --manifest crl_edits.json --out <edited.xlsx>` (preserving `<extLst>` `x14:dataValidations`, `_FilterDatabase`, `B34:C34`, and automatically running `inspect_nea_workbooks.py --verify-write`).
+   - Print the `NEA-WRT-[12-hex]` receipt, provide the **downloadable `.xlsx` link** + **CRL -> BOM Material Takeoff Summary Table**, and echo directional `--scope crl` `[CROSS-DUTY -> ...]` advisories (`NEA BOM Builder`, `NEA Repair Tool`, `NEA Package Reviewer`) in a `> [!TIP] Cross-Duty Agent Advisories` box.""",
     },
     {
         "slug": "NEA_Catalog_Manager",
@@ -495,7 +504,7 @@ In `BOM_Materials_Master_Template.xlsx`, `Materials Master` enforces controlled 
         "full_name": "NetCom Engineering Assistant — Workbook & Template Repair Tool (v2.2.3)",
         "description": (
             "NEA v2.2.3 Mode 2 Non-Destructive Workbook Formula, OpenXML Validation & Template Repair Agent. "
-            "Automatically diagnoses and repairs overwritten Project BOM (A8:I155) and Cover Sheet (B30:C30) "
+            "Automatically diagnoses and repairs overwritten Project BOM (A8:I155) and Cover Sheet Revision History "
             "formulas, tblMaterials/Lists!H1 zero-spill bounds, fragmented <dataValidation> / <x14:dataValidation> "
             "dropdowns, and truncated AutoFilters while strictly preserving 100% of engineer project data."
         ),
@@ -510,7 +519,7 @@ In `BOM_Materials_Master_Template.xlsx`, `Materials Master` enforces controlled 
         "starters": [
             {
                 "title": "Auto-Repair Workbook Formulas & XML",
-                "text": "Run the NEA Repair Tool (--repair) in Code Interpreter on the attached .xlsx workbook(s) to non-destructively restore any overwritten Cover Sheet (B30:C30) or Project BOM (A8:I155) formulas, fix tblMaterials/Lists!H1 zero-spill bounds, and heal OpenXML DataValidation/AutoFilter ranges, then return the verified downloadable .xlsx file(s) with a NEA-WRT receipt.",
+                "text": "Run the NEA Repair Tool (--repair) in Code Interpreter on the attached .xlsx workbook(s) to non-destructively restore any overwritten Cover Sheet Revision History (B32:C32/B34:C34/B30:C30) or Project BOM (A8:I155) formulas, fix tblMaterials/Lists!H1 zero-spill bounds, and heal OpenXML DataValidation/AutoFilter ranges, then return the verified downloadable .xlsx file(s) with a NEA-WRT receipt.",
             },
             {
                 "title": "Restore Project BOM XLOOKUPs",
@@ -522,14 +531,14 @@ In `BOM_Materials_Master_Template.xlsx`, `Materials Master` enforces controlled 
             },
             {
                 "title": "Upgrade Template Links (GOV-002/006/007)",
-                "text": "Audit the attached workbook(s) with --scope repair against NEA_Governance_Register (GOV-002, GOV-006, GOV-007), repair Cover Sheet!B30:C30 revision history formula links and tblMaterials/Lists!H1 zero-spill bounds, and verify 100% OpenXML structural integrity.",
+                "text": "Audit the attached workbook(s) with --scope repair against NEA_Governance_Register (GOV-002, GOV-006, GOV-007), repair Cover Sheet revision history formula links and tblMaterials/Lists!H1 zero-spill bounds, and verify 100% OpenXML structural integrity.",
             },
         ],
         "instructions": """# NEA Repair Tool (`Version 2.2.3` | `NEA-WF-005`, `NEA-STD-002`, `NEA-SKL-002`, `NEA-SKL-003`)
 
 You are the **NEA Repair Tool (`v2.2.3`)**, a Mode 2 non-destructive Excel/OpenXML diagnostic and structural repair engine for NetCom Technical Services.
 - **Strict Role Boundary (Workbook Mechanics Only)**: Engineers run `NEA Repair Tool` when routed by a `🔄 [CROSS-DUTY -> NEA Repair Tool]` advisory. Focus **100% on diagnosing and repairing the `.xlsx` workbooks themselves**—**never** audit project cable takeoffs, never report deliverable findings (`AR-##`/`RR-##`), and **never** emit Cross-Duty deliverable advisories for `BOM Builder`, `CRL Builder`, or `Catalog Manager`.
-- **Zero Project-Data Mutation Lock (`NEA-SKL-002`)**: Never alter engineer-entered values in `Project BOM` (`Cols B, C, J`), `Cover Sheet` metadata inputs (`D10:D24`, `H24`), or `Cable Running List` run records (`Rows 3+`, `Cols A:P`).
+- **Zero Project-Data Mutation Lock (`NEA-SKL-002`)**: Never alter engineer-entered values in `Project BOM` (`Cols B, C, J`), `Cover Sheet` metadata inputs (`Project Name`..`Document Status`), or `Cable Running List` run records (`Rows 3+`, `Cols A:P`).
 
 ## 1. TURN-1 SCOPED DIAGNOSTIC & `--repair` ENGINE (CODE INTERPRETER)
 1. **Fail-Closed Gate (`NEA-SKL-001`)**: If no `.xlsx` files are attached in chat (`+ Upload from device`), halt and output `[EXTRACTION BLOCKED — REVIEW ABORTED]`.
@@ -544,12 +553,12 @@ You are the **NEA Repair Tool (`v2.2.3`)**, a Mode 2 non-destructive Excel/OpenX
 
 ## 2. AUTOMATED STRUCTURAL REPAIR DOMAINS (`NEA-WF-005` & `GOV-002..007`)
 1. **Formula Lock & Spill Restoration (`GOV-007`)**:
-   - **`Cover Sheet!B30:C30`**: Restores `B30` (`=IF($H$24="","",$H$24)`) and `C30` (`=IF($D$24="","",$D$24)`).
-   - **`Project BOM` (`A8:I155` & `B2, E2, H2, E4`)**: Restores `Col A` (`=IF(B{r}="","",ROW()-7)`) and `Cols D:I` 3-tier cascading `XLOOKUP` while keeping `Cols B, C, J` untouched (`Editable Cells Modified: 0`).
+   - **`Cover Sheet` Revision History (Label-Driven)**: Restores `B{hist_r}` (`=IF($H${ir}="","",$H${ir})`) and `C{hist_r}` (`=IF($D${ir}="","",$D${ir})`) across upgraded (`B32:C32`, `B34:C34`) and legacy (`B30:C30`) templates.
+   - **`Project BOM` (`A8:I155` & `B2, E2, H2, E4, G4:G5`)**: Restores `Col A` (`=IF(B{r}="","",ROW()-7)`) and `Cols D:I` 3-tier cascading `XLOOKUP` while keeping `Cols B, C, J` untouched (`Editable Cells Modified: 0`).
    - **`tblMaterials` & `Lists!H1` Zero-Spill Fix (`GOV-007`)**: Rescales `xl/tables/table1.xml` `ref` from oversized `A3:G600` to `A3:G<last_row>` (`A3:G508`) and hardens `Lists!H1` `FILTER(VSTACK(...), (<>"")*(<>0))` so 92 empty table rows never spill `"0"` into `BOMPartNumbers`.
 2. **OpenXML `<dataValidation>`, `<extLst>` & AutoFilter Repair**:
    - Expands truncated `Fiber Assemblies!H` Status DataValidation `sqref="H4:H286"` -> `H4:H1258`, normalizes `CRL` `<autoFilter ref="A2:P1087">` / `_xlnm._FilterDatabase`, and preserves `<extLst>` (`x14:dataValidations`).
-   - Reports governance advisories (`GOV-002` `Project BOM!G4` mixed-UOM sum; `GOV-006` Cover Sheet layout parity) for optional operator-authorized template upgrades.
+   - Flags any remaining legacy `=SUM(C8:C155)` mixed-UOM workbooks (`GOV-002`) vs. upgraded unit-aware `G4:G5` (`Total FT` / `Total EA/KT/BX`).
 
 ## 3. MANDATORY WRITE RECEIPT & COMPLETION OUTPUT (`NEA-SKL-003`)
 - Verify every repaired `.xlsx` via `python3 scripts/inspect_nea_workbooks.py --verify-write <orig.xlsx> <repaired.xlsx>` and `python3 scripts/inspect_nea_workbooks.py Repaired_Workbooks --scope repair`.
@@ -649,7 +658,13 @@ def build_agent_skills():
     skills_root = os.path.join(NEA_ROOT, "Skills")
     os.makedirs(skills_root, exist_ok=True)
     inspect_src = os.path.join(NEA_ROOT, "Scripts", "inspect_nea_workbooks.py")
+    edit_src = os.path.join(NEA_ROOT, "Scripts", "edit_nea_workbooks.py")
     assert os.path.exists(inspect_src), f"Missing master script: {inspect_src}"
+    assert os.path.exists(edit_src), f"Missing master script: {edit_src}"
+    script_sources = {
+        "inspect_nea_workbooks.py": inspect_src,
+        "edit_nea_workbooks.py": edit_src,
+    }
 
     expected_skill_dirs = set()
 
@@ -658,6 +673,7 @@ def build_agent_skills():
             "name": "nea-anti-hallucination",
             "title": "NEA Anti-Hallucination, Closed-World Truth & [TBD] Discipline (NEA-SKL-001)",
             "used_by": "All 6 NEA Agents",
+            "bundled_scripts": ["inspect_nea_workbooks.py"],
             "description": (
                 "Enforces closed-world parametric accuracy, source provenance, dimensional analysis on FT vs EA rollups, "
                 "and mandatory TBD and CONFLICT abstention tags across all NetCom Engineering Assistant workbook "
@@ -670,11 +686,12 @@ def build_agent_skills():
             "name": "nea-workbook-entry-guard",
             "title": "NEA Safe Workbook Data Entry, Formula Locks & OpenXML Preservation (NEA-SKL-002)",
             "used_by": "5 Mode-2 Agents (BOM Builder, CRL Builder, Catalog Manager, Repair Tool, Timesheet Consolidator)",
+            "bundled_scripts": ["edit_nea_workbooks.py", "inspect_nea_workbooks.py"],
             "description": (
                 "Protects NetCom Excel workbooks during Mode 2 editing by enforcing Project BOM Columns D through I "
                 "and CRL Summary B17 through B38 formula locks, mandatory 3-tier catalog lookup before part entry, and "
-                "OpenXML extension preservation so openpyxl save never strips cross-sheet data validation "
-                "dropdowns. Use whenever creating, editing, repairing, or saving any NetCom xlsx workbook."
+                "OpenXML extension preservation via edit_nea_workbooks and inspect_nea_workbooks so cross-sheet dropdowns stay intact. "
+                "Use whenever creating, editing, repairing, or saving any NetCom xlsx workbook."
             ),
             "body": f"# NEA Skill: Safe Workbook Data Entry, Formula Locks & OpenXML Preservation (NEA-SKL-002)\n\n{SKILL_002_BODY}",
         },
@@ -682,6 +699,7 @@ def build_agent_skills():
             "name": "nea-verification-and-receipt",
             "title": "NEA Pre/Post Deterministic Verification & Cryptographic Receipts (NEA-SKL-003)",
             "used_by": "All 6 NEA Agents",
+            "bundled_scripts": ["inspect_nea_workbooks.py"],
             "description": (
                 "Executes deterministic OpenXML pre and post verification in Code Interpreter and emits tamper-evident "
                 "cryptographic receipts NEA-VRF (proving 0 bytes modified during Mode 1 reviews) and "
@@ -698,6 +716,7 @@ def build_agent_skills():
     for sd in skill_defs:
         sk_name = sd["name"]
         sk_desc = sd["description"].strip()
+        bundled_scripts = sorted(sd["bundled_scripts"])
         sk_body = "\n".join(ln for ln in sd["body"].strip().splitlines() if ln.strip() != "---").strip()
         assert len(sk_name) <= 64 and all(c.islower() or c.isdigit() or c == "-" for c in sk_name), f"Invalid skill name: {sk_name}"
         assert len(sk_desc) <= 1024, f"Skill description too long for {sk_name}: {len(sk_desc)}"
@@ -730,27 +749,31 @@ def build_agent_skills():
         sk_scripts_dir = os.path.join(sk_dir, "scripts")
         os.makedirs(sk_scripts_dir, exist_ok=True)
         for old_sf in os.listdir(sk_scripts_dir):
-            if old_sf != "inspect_nea_workbooks.py":
+            if old_sf not in bundled_scripts:
                 old_sp = os.path.join(sk_scripts_dir, old_sf)
                 if os.path.isdir(old_sp):
                     shutil.rmtree(old_sp)
                 else:
                     os.remove(old_sp)
-        bundled_py_path = os.path.join(sk_scripts_dir, "inspect_nea_workbooks.py")
-        shutil.copy2(inspect_src, bundled_py_path)
+        arc_pairs = [("SKILL.md", sk_md_path)]
+        for s_fn in bundled_scripts:
+            dst_p = os.path.join(sk_scripts_dir, s_fn)
+            shutil.copy2(script_sources[s_fn], dst_p)
+            arc_pairs.append((f"scripts/{s_fn}", dst_p))
 
         zip_path = os.path.join(sk_dir, zip_filename)
         with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-            for arc_name, src_p in (("SKILL.md", sk_md_path), ("scripts/inspect_nea_workbooks.py", bundled_py_path)):
+            for arc_name, src_p in arc_pairs:
                 zi = zipfile.ZipInfo(arc_name, date_time=(2026, 11, 4, 0, 0, 0))
                 zi.compress_type = zipfile.ZIP_DEFLATED
                 zi.external_attr = 0o644 << 16
                 zf.writestr(zi, open(src_p, "rb").read())
 
         z_sha = hashlib.sha256(open(zip_path, "rb").read()).hexdigest()[:10]
-        skill_summary.append((sk_name, len(skill_md_content), z_sha))
+        bundled_desc = " + ".join(f"`scripts/{s_fn}`" for s_fn in bundled_scripts)
+        skill_summary.append((sk_name, len(skill_md_content), z_sha, bundled_scripts))
         skill_rows_md.append(
-            f"| `{sk_name}` | `Skills/{sk_name}/{zip_filename}` | {sd['used_by']} | `{len(skill_md_content)} / 8,000` chars | `SKILL.md` + `scripts/inspect_nea_workbooks.py` |"
+            f"| `{sk_name}` | `Skills/{sk_name}/{zip_filename}` | {sd['used_by']} | `{len(skill_md_content)} / 8,000` chars | `SKILL.md` + {bundled_desc} |"
         )
 
     for existing in os.listdir(skills_root):
@@ -762,15 +785,16 @@ def build_agent_skills():
 
     guide_path = os.path.join(skills_root, "Skills_Deployment_Guide.md")
     guide_content = (
-        f"# NEA v{VERSION} — Skills Deployment Guide (`<skill-name>.zip` with Bundled `scripts/inspect_nea_workbooks.py`)\n\n"
+        f"# NEA v{VERSION} — Skills Deployment Guide (`<skill-name>.zip` with Bundled Python Tooling)\n\n"
         "In Microsoft 365 Copilot Agent Builder, **Skills** are uploaded directly as `.zip` packages (`Configure` $\\rightarrow$ `Skills` $\\rightarrow$ `Add skill` $\\rightarrow$ upload `<skill-name>.zip`).\n\n"
         "Per Microsoft's official Declarative Agent Skills specification, each folder under `Skills/<skill-name>/` contains:\n"
-        "1. **`<skill-name>.zip`**: Pre-packaged archive containing root-level `SKILL.md` plus `scripts/inspect_nea_workbooks.py` so the agent's Code Interpreter environment has direct local access to the deterministic OpenXML inspection, lookup, repair, and receipt engine.\n"
-        "2. **`SKILL.md` & `scripts/inspect_nea_workbooks.py`**: Unpacked copies for local inspection.\n\n"
+        "1. **`<skill-name>.zip`**: Pre-packaged archive containing root-level `SKILL.md` plus `scripts/inspect_nea_workbooks.py` (and `scripts/edit_nea_workbooks.py` in `nea-workbook-entry-guard.zip`) so the agent's Code Interpreter environment has direct local access to the deterministic OpenXML inspection, lookup, safe-write, repair, and receipt engine.\n"
+        "2. **`SKILL.md` & `scripts/*.py`**: Unpacked copies for local inspection.\n\n"
         "```text\n"
         "<skill-name>.zip\n"
         "├── SKILL.md\n"
         "└── scripts/\n"
+        "    ├── edit_nea_workbooks.py    # (bundled in nea-workbook-entry-guard.zip)\n"
         "    └── inspect_nea_workbooks.py\n"
         "```\n\n"
         "## Skill Inventory & Agent Mapping\n\n"
@@ -849,7 +873,7 @@ Inside each agent folder (`Copilot_Agents/NEA_Package_Reviewer/`, `NEA_BOM_Build
 In Agent Builder's **Skills** section (`Add skill` $\\rightarrow$ upload `.zip`):
 - Navigate to `Skills/<skill-name>/` (see [`Skills/Skills_Deployment_Guide.md`](../Skills/Skills_Deployment_Guide.md)).
 - Select **`<skill-name>.zip`** (for example, `Skills/nea-verification-and-receipt/nea-verification-and-receipt.zip`).
-- Each `<skill-name>.zip` contains **`SKILL.md`** at the root of the archive plus **`scripts/inspect_nea_workbooks.py`**, mounting the deterministic OpenXML inspection, catalog lookup, non-destructive repair, and receipt engine directly inside the skill's packaged filesystem.
+- Each `<skill-name>.zip` contains **`SKILL.md`** at the root of the archive plus bundled **`scripts/`** Python tooling (`inspect_nea_workbooks.py`, plus `edit_nea_workbooks.py` inside `nea-workbook-entry-guard.zip`), mounting the deterministic OpenXML inspection, catalog lookup, safe-write, non-destructive repair, and receipt engine directly inside the skill's packaged filesystem.
 
 ---
 
@@ -1007,9 +1031,10 @@ In the **Skills** section (`Add skill` $\\rightarrow$ upload `.zip`), upload:
     print(f"=== NEA v{VERSION} Copilot Agent Builder Folders Built ===")
     for folder, name, clen, kcnt, isha in summary:
         print(f"  [PASS] Copilot_Agents/{folder:<24} | {name:<22} | Instructions: {clen:>4}/8000 chars | Knowledge .txt: {kcnt:>2} | SHA256={isha}")
-    print(f"=== NEA v{VERSION} Packaged Skills Built (SKILL.md + scripts/inspect_nea_workbooks.py) ===")
-    for sk_name, mlen, zsha in skill_summary:
-        print(f"  [PASS] Skills/{sk_name:<30} | {sk_name}.zip (SKILL.md: {mlen:>4}/8000 chars + scripts/inspect_nea_workbooks.py) | ZIP_SHA256={zsha}")
+    print(f"=== NEA v{VERSION} Packaged Skills Built (SKILL.md + Bundled scripts/*.py) ===")
+    for sk_name, mlen, zsha, b_scripts in skill_summary:
+        s_list = " + ".join(f"scripts/{s}" for s in b_scripts)
+        print(f"  [PASS] Skills/{sk_name:<30} | {sk_name}.zip (SKILL.md: {mlen:>4}/8000 chars + {s_list}) | ZIP_SHA256={zsha}")
     print(f"  [PASS] Agent Builder Guide: {os.path.relpath(guide_p, NEA_ROOT)}")
     print("  [PASS] Skills Deployment Guide: Skills/Skills_Deployment_Guide.md")
     print("  [PASS] All M365 Copilot Agent Builder & Skill ZIP/YAML/Bundled-Script Contract Checks Verified")
@@ -1060,23 +1085,33 @@ def verify_deployment_contract(expected_agent_dirs: set, expected_skill_dirs: se
     assert actual_top_skills == allowed_top_skills, (
         f"Unexpected items in Skills/ (loose duplicate .txt files must be removed): {actual_top_skills ^ allowed_top_skills}"
     )
-    master_py_bytes = open(os.path.join(NEA_ROOT, "Scripts", "inspect_nea_workbooks.py"), "rb").read()
+    master_scripts = {
+        "inspect_nea_workbooks.py": open(os.path.join(NEA_ROOT, "Scripts", "inspect_nea_workbooks.py"), "rb").read(),
+        "edit_nea_workbooks.py": open(os.path.join(NEA_ROOT, "Scripts", "edit_nea_workbooks.py"), "rb").read(),
+    }
+    expected_scripts_by_skill = {
+        "nea-anti-hallucination": ["inspect_nea_workbooks.py"],
+        "nea-workbook-entry-guard": ["edit_nea_workbooks.py", "inspect_nea_workbooks.py"],
+        "nea-verification-and-receipt": ["inspect_nea_workbooks.py"],
+    }
     for sk_name in sorted(expected_skill_dirs):
         sk_dir = os.path.join(skills_root, sk_name)
         zip_fn = f"{sk_name}.zip"
+        exp_scripts = expected_scripts_by_skill[sk_name]
         assert set(os.listdir(sk_dir)) == {"SKILL.md", "scripts", zip_fn}, (
             f"Invalid items in Skills/{sk_name}/: {os.listdir(sk_dir)}"
         )
-        assert os.listdir(os.path.join(sk_dir, "scripts")) == ["inspect_nea_workbooks.py"], (
+        assert sorted(os.listdir(os.path.join(sk_dir, "scripts"))) == exp_scripts, (
             f"Invalid items in Skills/{sk_name}/scripts/: {os.listdir(os.path.join(sk_dir, 'scripts'))}"
         )
         raw_md = open(os.path.join(sk_dir, "SKILL.md"), "rb").read()
         assert not raw_md.startswith(b"\xef\xbb\xbf"), f"UTF-8 BOM forbidden in {sk_name}/SKILL.md"
         assert b"\r\n" not in raw_md, f"CRLF forbidden in {sk_name}/SKILL.md"
         text_md = raw_md.decode("utf-8")
-        assert "scripts/inspect_nea_workbooks.py" in text_md, (
-            f"{sk_name}/SKILL.md must explicitly reference scripts/inspect_nea_workbooks.py"
-        )
+        for s_fn in exp_scripts:
+            assert f"scripts/{s_fn}" in text_md, (
+                f"{sk_name}/SKILL.md must explicitly reference scripts/{s_fn}"
+            )
         lines = text_md.splitlines()
         dash_lines = [i for i, ln in enumerate(lines, start=1) if ln.strip() == "---"]
         assert dash_lines == [1, 4], f"{sk_name}/SKILL.md must have '---' ONLY on lines 1 and 4, got {dash_lines}"
@@ -1086,14 +1121,16 @@ def verify_deployment_contract(expected_agent_dirs: set, expected_skill_dirs: se
         assert not any(c in desc_val for c in (":", "[", "]", "<", ">", "!", "'", '"')), (
             f"YAML special character in {sk_name} description: {desc_val}"
         )
+        expected_zip_members = ["SKILL.md"] + [f"scripts/{s_fn}" for s_fn in exp_scripts]
         with zipfile.ZipFile(os.path.join(sk_dir, zip_fn), "r") as zf:
-            assert zf.namelist() == ["SKILL.md", "scripts/inspect_nea_workbooks.py"], (
-                f"{zip_fn} must contain ['SKILL.md', 'scripts/inspect_nea_workbooks.py'], got {zf.namelist()}"
+            assert zf.namelist() == expected_zip_members, (
+                f"{zip_fn} must contain {expected_zip_members}, got {zf.namelist()}"
             )
             assert zf.read("SKILL.md") == raw_md, f"Zip SKILL.md mismatch in {zip_fn}"
-            assert zf.read("scripts/inspect_nea_workbooks.py") == master_py_bytes, (
-                f"Zip scripts/inspect_nea_workbooks.py mismatch in {zip_fn}"
-            )
+            for s_fn in exp_scripts:
+                assert zf.read(f"scripts/{s_fn}") == master_scripts[s_fn], (
+                    f"Zip scripts/{s_fn} mismatch in {zip_fn}"
+                )
 
     # Human Reference Manual check (NEA-MAN-001: must exist at root, match VERSION, and stay out of AI Knowledge/Skills)
     manual_p = os.path.join(NEA_ROOT, "NEA_User_and_DevOps_Manual.md")

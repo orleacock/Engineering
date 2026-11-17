@@ -291,17 +291,23 @@ def classify_workbook_role(wb):
 
 
 def discover_xlsx_files(target_dir):
-    """Discovers .xlsx workbooks across target_dir or fallback relative folders."""
+    """Discovers .xlsx workbooks strictly inside target_dir (falls back to repo Templates/ only when omitted)."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    if target_dir != "Templates" and not os.path.exists(target_dir):
-        return os.path.abspath(target_dir), []
-    candidates = [
-        os.path.abspath(target_dir),
-        os.path.join(os.path.abspath(target_dir), "Templates"),
-        os.path.abspath(os.path.join(script_dir, "..", "Templates")),
-        script_dir,
-        os.path.abspath(os.path.join(script_dir, "..")),
-    ]
+    if target_dir != "Templates":
+        if not os.path.exists(target_dir):
+            return os.path.abspath(target_dir), []
+        candidates = [
+            os.path.abspath(target_dir),
+            os.path.join(os.path.abspath(target_dir), "Templates"),
+        ]
+    else:
+        candidates = [
+            os.path.abspath(target_dir),
+            os.path.join(os.path.abspath(target_dir), "Templates"),
+            os.path.abspath(os.path.join(script_dir, "..", "Templates")),
+            script_dir,
+            os.path.abspath(os.path.join(script_dir, "..")),
+        ]
     for cand in candidates:
         if os.path.isfile(cand) and cand.endswith(".xlsx"):
             parent = os.path.dirname(cand)
@@ -647,8 +653,34 @@ def run_verify_write(orig_path, edited_path):
     )
 
 
+def find_cover_sheet_coords(cov_rows):
+    """Locates Project Number, Document Status, Issue Date/Revision, and Revision History Row 1 by Cover Sheet labels."""
+    issue_r = None
+    hist_r = None
+    doc_status_r = None
+    proj_num_r = None
+    for r in sorted(cov_rows.keys()):
+        b_txt = cell_val(cov_rows, r, "B").strip()
+        c_txt = cell_val(cov_rows, r, "C").strip()
+        f_txt = cell_val(cov_rows, r, "F").strip()
+        if b_txt == "Project Number":
+            proj_num_r = r
+        elif b_txt == "Document Status":
+            doc_status_r = r
+        elif b_txt == "Issue Date" or f_txt == "Revision":
+            issue_r = r
+        elif b_txt == "Rev" and c_txt == "Date":
+            hist_r = r + 1
+    return {
+        "issue_r": issue_r or 24,
+        "hist_r": hist_r or 30,
+        "doc_status_r": doc_status_r,
+        "proj_num_r": proj_num_r,
+    }
+
+
 def repair_single_xlsx(orig_path, out_path):
-    """Non-destructively repairs overwritten Cover Sheet!B30:C30 formulas, Project BOM A8:I155 formulas,
+    """Non-destructively repairs overwritten Cover Sheet Revision History formulas, Project BOM A8:I155 formulas,
     tblMaterials / Lists!H1 zero-spill bounds, Fiber Assemblies DV sqref, and CRL DataValidation / AutoFilter
     ranges while preserving 100% of engineer data inputs."""
     import shutil
@@ -672,28 +704,37 @@ def repair_single_xlsx(orig_path, out_path):
         }
 
         modified_entries = {}
-        # 1. Check Cover Sheet B30:C30 formula link restoration
+        # 1. Check Cover Sheet Revision History B{hist_r}:C{hist_r} formula link restoration (label-driven)
         cov_target = sheet_target_by_name.get("Cover Sheet")
         if cov_target and cov_target in z_in.namelist():
             cov_rows = wb_info["sheets"].get("Cover Sheet", {})
-            h24_val = cell_val(cov_rows, 24, "H")
-            d24_val = cell_val(cov_rows, 24, "D")
-            b30_ci = cell_info(cov_rows, 30, "B")
-            c30_ci = cell_info(cov_rows, 30, "C")
-            if (not b30_ci["has_formula"] and (b30_ci["val"] or h24_val)) or (not c30_ci["has_formula"] and (c30_ci["val"] or d24_val)):
+            coords = find_cover_sheet_coords(cov_rows)
+            ir = coords["issue_r"]
+            hr = coords["hist_r"]
+            h_val = cell_val(cov_rows, ir, "H")
+            d_val = cell_val(cov_rows, ir, "D")
+            b_hr_ci = cell_info(cov_rows, hr, "B")
+            c_hr_ci = cell_info(cov_rows, hr, "C")
+            if (not b_hr_ci["has_formula"] and (b_hr_ci["val"] or h_val)) or (not c_hr_ci["has_formula"] and (c_hr_ci["val"] or d_val)):
                 xml_txt = z_in.read(cov_target).decode("utf-8")
-                if not b30_ci["has_formula"] and (b30_ci["val"] or h24_val):
-                    new_b30 = f'<c r="B30" s="25" t="str"><f>IF($H$24="","",$H$24)</f><v>{h24_val}</v></c>'
-                    xml_txt_new = re.sub(r'<c r="B30"[^>]*>.*?</c>', new_b30, xml_txt, count=1, flags=re.DOTALL)
+                if not b_hr_ci["has_formula"] and (b_hr_ci["val"] or h_val):
+                    m_sb = re.search(rf'<c r="B{hr}"([^>]*)>', xml_txt)
+                    m_style_b = re.search(r'\bs="(\d+)"', m_sb.group(1)) if m_sb else None
+                    sb_attr = f' s="{m_style_b.group(1)}"' if m_style_b else ' s="25"'
+                    new_b_hr = f'<c r="B{hr}"{sb_attr} t="str"><f>IF($H${ir}="","",$H${ir})</f><v>{h_val}</v></c>'
+                    xml_txt_new = re.sub(rf'<c r="B{hr}"[^>]*>.*?</c>|<c r="B{hr}"[^>]*/>', new_b_hr, xml_txt, count=1, flags=re.DOTALL)
                     if xml_txt_new != xml_txt:
                         xml_txt = xml_txt_new
-                        repaired_items.append(f"Cover Sheet!B30: Restored formula IF($H$24=\"\",\"\",$H$24) (val='{h24_val}')")
-                if not c30_ci["has_formula"] and (c30_ci["val"] or d24_val):
-                    new_c30 = f'<c r="C30" s="26"><f>IF($D$24="","",$D$24)</f><v>{d24_val}</v></c>'
-                    xml_txt_new = re.sub(r'<c r="C30"[^>]*>.*?</c>', new_c30, xml_txt, count=1, flags=re.DOTALL)
+                        repaired_items.append(f'Cover Sheet!B{hr}: Restored formula IF($H${ir}="","",$H${ir}) (val=\'{h_val}\')')
+                if not c_hr_ci["has_formula"] and (c_hr_ci["val"] or d_val):
+                    m_sc = re.search(rf'<c r="C{hr}"([^>]*)>', xml_txt)
+                    m_style_c = re.search(r'\bs="(\d+)"', m_sc.group(1)) if m_sc else None
+                    sc_attr = f' s="{m_style_c.group(1)}"' if m_style_c else ' s="26"'
+                    new_c_hr = f'<c r="C{hr}"{sc_attr}><f>IF($D${ir}="","",$D${ir})</f><v>{d_val}</v></c>'
+                    xml_txt_new = re.sub(rf'<c r="C{hr}"[^>]*>.*?</c>|<c r="C{hr}"[^>]*/>', new_c_hr, xml_txt, count=1, flags=re.DOTALL)
                     if xml_txt_new != xml_txt:
                         xml_txt = xml_txt_new
-                        repaired_items.append(f"Cover Sheet!C30: Restored formula IF($D$24=\"\",\"\",$D$24) (val='{d24_val}')")
+                        repaired_items.append(f'Cover Sheet!C{hr}: Restored formula IF($D${ir}="","",$D${ir}) (val=\'{d_val}\')')
                 modified_entries[cov_target] = xml_txt.encode("utf-8")
 
         # 2. Check BOM tblMaterials table boundary (GOV-007 92-zero spill fix), Lists!H1, & Fiber Assemblies DV sqref
@@ -2787,7 +2828,7 @@ def main():
     parser.add_argument(
         "--repair",
         action="store_true",
-        help="Non-destructively repair overwritten formulas (Cover Sheet!B30:C30, Project BOM) and OpenXML validations",
+        help="Non-destructively repair overwritten formulas (Cover Sheet Revision History, Project BOM) and OpenXML validations",
     )
     parser.add_argument(
         "--out-dir",
@@ -2823,13 +2864,17 @@ def main():
 
     resolved_dir, xlsx_files = discover_xlsx_files(args.target_dir)
     if not xlsx_files:
-        print(f"ERROR: No .xlsx files found in '{args.target_dir}' (resolved: '{resolved_dir}').")
+        print(f"[EXTRACTION BLOCKED — REVIEW ABORTED] No .xlsx files found in '{args.target_dir}' (resolved: '{resolved_dir}').")
         sys.exit(2)
 
     workbooks = {}
     workbooks_by_role = {}
     for p in xlsx_files:
-        wb = parse_xlsx(p)
+        try:
+            wb = parse_xlsx(p)
+        except Exception as exc:
+            print(f"[EXTRACTION BLOCKED — REVIEW ABORTED] Unable to read '{os.path.basename(p)}' ({type(exc).__name__}: {exc}).")
+            sys.exit(2)
         workbooks[wb["filename"]] = wb
         role = classify_workbook_role(wb)
         wb["role"] = role
@@ -2863,6 +2908,35 @@ def main():
                 escalation_triggers.append(
                     f"Worksheet tab drift in '{fname}' ({role}): found {list(wb['sheets'].keys())} -> Read Formatting_Standards_v2.2.3.md"
                 )
+        if role == "CRL" and "Cable Running List" in wb["sheets"]:
+            known_crl_cols = set("ABCDEFGHIJKLMNOP")
+            known_crl_headers = {
+                "run id", "classification",
+                "ne location", "ne rack", "ne port", "ne connector", "ne conn.", "ne conn",
+                "fe location", "fe rack", "fe port", "fe connector", "fe conn.", "fe conn",
+                "media type", "cable type", "cable qty", "fiber count", "length (ft)", "length",
+                "special requirement", "comments",
+            }
+            crl_r2 = wb["sheets"]["Cable Running List"].get(2, {})
+            for col_let, ci in sorted(crl_r2.items(), key=lambda kv: _col_to_idx(kv[0])):
+                hdr_txt = (ci.get("val") or "").strip()
+                if hdr_txt and (col_let not in known_crl_cols or hdr_txt.lower() not in known_crl_headers):
+                    escalation_triggers.append(
+                        f"Unmapped CRL column {col_let}='{hdr_txt}' in '{fname}' (Row 2) -> Read CRL_Standards_v2.2.3.md & Workbook_Types_v2.2.3.md"
+                    )
+        if role == "BOM" and "Project BOM" in wb["sheets"]:
+            known_bom_cols = set("ABCDEFGHIJ")
+            known_bom_headers = {
+                "line", "mb p/n", "qty", "category", "manufacturer", "mfg part number",
+                "uom", "description", "status", "notes",
+            }
+            pb_r7 = wb["sheets"]["Project BOM"].get(7, {})
+            for col_let, ci in sorted(pb_r7.items(), key=lambda kv: _col_to_idx(kv[0])):
+                hdr_txt = (ci.get("val") or "").strip()
+                if hdr_txt and (col_let not in known_bom_cols or hdr_txt.lower() not in known_bom_headers):
+                    escalation_triggers.append(
+                        f"Unmapped Project BOM column {col_let}='{hdr_txt}' in '{fname}' (Row 7) -> Read Formatting_Standards_v2.2.3.md & Workbook_Types_v2.2.3.md"
+                    )
 
     core_hash_wbs = {
         fn: wb for fn, wb in workbooks.items()
@@ -2924,27 +2998,34 @@ def main():
         if not wb or "Cover Sheet" not in wb["sheets"]:
             continue
         cs = wb["sheets"]["Cover Sheet"]
+        coords = find_cover_sheet_coords(cs)
+        hr = coords["hist_r"]
         pairs = []
         for r in sorted(cs.keys()):
             b = cell_val(cs, r, "B")
-            c = cell_val(cs, r, "C")
+            c_info = cell_info(cs, r, "C")
+            c = c_info["val"]
             d_info = cell_info(cs, r, "D")
+            f_val = cell_val(cs, r, "F")
             g = cell_val(cs, r, "G")
             h_info = cell_info(cs, r, "H")
-            if b or d_info["val"] or g or h_info["val"] or c:
+            b_info = cell_info(cs, r, "B")
+            if b or c or d_info["val"] or f_val or g or h_info["val"] or b_info["has_formula"] or c_info["has_formula"]:
                 d_val = excel_serial_to_iso(d_info["val"]) if "Date" in b else d_info["val"]
-                c_val = excel_serial_to_iso(c) if r == 30 else c
+                c_val = excel_serial_to_iso(c) if r == hr else c
+                c_str = f"{c_val} [F:{c_info['f_text']}]" if c_info["has_formula"] else c_val
                 d_str = f"{d_val} [F:{d_info['f_text']}]" if d_info["has_formula"] else d_val
                 h_str = f"{h_info['val']} [F:{h_info['f_text']}]" if h_info["has_formula"] else h_info["val"]
-                b_info = cell_info(cs, r, "B")
                 b_str = f"{b} [F:{b_info['f_text']}]" if b_info["has_formula"] else b
                 row_summary = f"R{r}: B='{b_str}'"
-                if c_val:
-                    row_summary += f" | C='{c_val}'"
+                if c_str:
+                    row_summary += f" | C='{c_str}'"
                 if d_str or b.endswith(":"):
                     row_summary += f" | D='{d_str}'"
+                if f_val and not d_info["val"] and r == coords["issue_r"]:
+                    row_summary += f" | F='{f_val}'"
                 if g or h_str:
-                    row_summary += f" | G='{g}' | H='{h_str}'"
+                    row_summary += (f" | F='{f_val}'" if f_val else "") + f" | G='{g}' | H='{h_str}'"
                 pairs.append(row_summary)
         print(f"[{label} Cover Sheet]:")
         for p in pairs:
@@ -3003,9 +3084,14 @@ def main():
                     if not ci["has_formula"]:
                         formula_overwrites.append(f"{col_let}{r} (val='{ci['val']}')")
             g4_ci = cell_info(pb, 4, "G")
+            g5_ci = cell_info(pb, 5, "G")
+            f4_lbl = cell_val(pb, 4, "F")
+            f5_lbl = cell_val(pb, 5, "F")
             print(f"[BOM Mechanics ({bom_wb['filename']})]:")
             print(f"  - Project BOM A8:I{max_bom_r} Formula Overwrites: {len(formula_overwrites)}")
-            print(f"  - Project BOM!G4 Formula: '{g4_ci['f_text']}' (val='{g4_ci['val']}')")
+            print(f"  - Project BOM!G4 ({f4_lbl}) Formula: '{g4_ci['f_text']}' (val='{g4_ci['val']}')")
+            if g5_ci["has_formula"] or g5_ci["val"] or f5_lbl:
+                print(f"  - Project BOM!G5 ({f5_lbl}) Formula: '{g5_ci['f_text']}' (val='{g5_ci['val']}')")
             print(f"  - tblMaterials Boundary: {tbl_ref_drift or 'ALIGNED'} | Lists!H1 Zero-Spill Count: {tbl_zero_spill_count}")
             print(f"  - Fiber Assemblies DV Range: {fa_dv_drift or 'ALIGNED (H4:H1258)'}")
         if crl_wb and "Cable Running List" in crl_wb["sheets"]:
@@ -3222,9 +3308,11 @@ def main():
             print("\n" + "-" * 92)
             print(f"SECTION 3: PROJECT BOM TELEMETRY ({bom_wb['filename']} -> Project BOM)")
             print("-" * 92)
-            for coord in ("B2", "E2", "H2", "E4", "G4"):
+            for coord in ("B2", "E2", "H2", "E4", "G4", "G5"):
                 m = COL_RE.match(coord)
                 ci = cell_info(pb, int(m.group(2)), m.group(1))
+                if coord == "G5" and not (ci["has_formula"] or ci["val"]):
+                    continue
                 print(f"Header/Summary Cell {coord}: val='{ci['val']}' | has_formula={ci['has_formula']} | f='{ci['f_text']}'")
 
             print(f"\nPopulated Project BOM Rows ({len(bom_lines)} rows across R8..R{max_bom_formula_row}):")
@@ -3400,10 +3488,13 @@ def main():
         max_run = max(run_id_ints) if run_id_ints else 0
         missing_seq_ids = sorted(set(range(min_run, max_run + 1)) - set(run_id_ints)) if run_id_ints else []
 
-        print(
-            f"Total Active CRL Runs: {len(crl_runs)} (Rows {crl_runs[0]['row']}..{crl_runs[-1]['row']} | "
-            f"Run IDs {crl_runs[0]['run']}..{crl_runs[-1]['run']})"
-        )
+        if crl_runs:
+            print(
+                f"Total Active CRL Runs: {len(crl_runs)} (Rows {crl_runs[0]['row']}..{crl_runs[-1]['row']} | "
+                f"Run IDs {crl_runs[0]['run']}..{crl_runs[-1]['run']})"
+            )
+        else:
+            print("Total Active CRL Runs: 0 (Blank template)")
         print(
             f"Run ID Sequence Continuity: {'Continuous ' + str(min_run) + '..' + str(max_run) + ' (0 missing, 0 duplicate Run IDs)' if not missing_seq_ids and not dup_run_ids else f'Missing={missing_seq_ids}, Duplicates={dup_run_ids}'}"
         )
@@ -3882,9 +3973,10 @@ def main():
         for w_label, wb in [("BOM", bom_wb), ("CRL", crl_wb), ("Standalone", cov_wb)]:
             if wb and "Cover Sheet" in wb["sheets"]:
                 cs = wb["sheets"]["Cover Sheet"]
-                b30_ci, c30_ci = cell_info(cs, 30, "B"), cell_info(cs, 30, "C")
-                if (b30_ci["val"] and not b30_ci["has_formula"]) or (c30_ci["val"] and not c30_ci["has_formula"]):
-                    repair_pending.append(f"{w_label} Cover Sheet!B30:C30 static override")
+                hr = find_cover_sheet_coords(cs)["hist_r"]
+                b_hr_ci, c_hr_ci = cell_info(cs, hr, "B"), cell_info(cs, hr, "C")
+                if (b_hr_ci["val"] and not b_hr_ci["has_formula"]) or (c_hr_ci["val"] and not c_hr_ci["has_formula"]):
+                    repair_pending.append(f"{w_label} Cover Sheet!B{hr}:C{hr} static override")
         if tbl_ref_drift or tbl_zero_spill_count:
             repair_pending.append(f"tblMaterials / Lists!H1 zero-spill ({tbl_zero_spill_count} zeros)")
         if fa_dv_drift:
@@ -3906,10 +3998,11 @@ def main():
         for w_label, wb in cov_targets:
             if wb and "Cover Sheet" in wb["sheets"]:
                 cs = wb["sheets"]["Cover Sheet"]
-                b30_ci = cell_info(cs, 30, "B")
-                c30_ci = cell_info(cs, 30, "C")
-                if (b30_ci["val"] and not b30_ci["has_formula"]) or (c30_ci["val"] and not c30_ci["has_formula"]):
-                    repair_reasons.append(f"{w_label} Cover Sheet!B30:C30 static revision override")
+                hr = find_cover_sheet_coords(cs)["hist_r"]
+                b_hr_ci = cell_info(cs, hr, "B")
+                c_hr_ci = cell_info(cs, hr, "C")
+                if (b_hr_ci["val"] and not b_hr_ci["has_formula"]) or (c_hr_ci["val"] and not c_hr_ci["has_formula"]):
+                    repair_reasons.append(f"{w_label} Cover Sheet!B{hr}:C{hr} static revision override")
     if args.scope in ("full", "review", "delta", "bom", "catalog") and (tbl_ref_drift or tbl_zero_spill_count):
         repair_reasons.append(f"tblMaterials boundary / Lists!H1 zero-spill ({tbl_zero_spill_count} '0' dropdown entries, GOV-007)")
     if args.scope in ("full", "review", "delta", "catalog") and fa_dv_drift:

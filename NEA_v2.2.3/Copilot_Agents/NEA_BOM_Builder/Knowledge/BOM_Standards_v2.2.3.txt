@@ -49,7 +49,7 @@ The `Project BOM` worksheet in `BOM_Materials_Master_Template.xlsx` enforces a s
    - Discrete hardware (jacks, patch panels, faceplates, plugs, jumpers) must be quantified in discrete units (`EA`, `KT`, `BX`, `PK`), whereas bulk cable and bulk fiber must be quantified in linear units (`FT`, `M`, `RL`).
    - Verify that `Column C` (`Qty`) matches the catalog `UOM`—neither entering linear cable footage `FT` onto a jack `MB P/N` with `UOM = EA`, nor entering piece counts (`1000`) into a bulk-pack `UOM = BX` item (such as `PLT2S-M` 1,000-pack cable ties where `Qty = 1000 BX` orders `1,000,000` ties -> **`Action Required` (`AR-##`)**).
 3. **Unit-Aware Summary Requirement (`GOV-002`)**:
-   - Undifferentiated mixed-UOM sums (such as `Project BOM!G4` `=SUM(C8:C155)` combining `FT + EA + KT + BX`) shall not be presented as a meaningful engineering total (routed to **`NEA Repair Tool`** under `GOV-002`). Always report unit-separated totals (`Total FT` vs. `Total EA/KT/BX`).
+   - `Project BOM!F4:G4` (`Total FT` `=SUMIF(G8:G155,"FT",C8:C155)`) and `F5:G5` (`Total EA/KT/BX` `=SUMIF(G8:G155,"EA",C8:C155)+SUMIF(G8:G155,"KT",C8:C155)+SUMIF(G8:G155,"BX",C8:C155)`) report unit-separated totals; legacy workbooks containing `=SUM(C8:C155)` in `G4` are routed to **`NEA Repair Tool`** under `GOV-002`. Always report unit-separated totals (`Total FT` vs. `Total EA/KT/BX`).
 
 ---
 

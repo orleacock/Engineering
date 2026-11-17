@@ -17,10 +17,10 @@ Engineers are routed to `NEA Repair Tool` whenever `NEA Package Reviewer` (or an
 ## 1. Non-Destructive Repair Boundary (Project Data Lock)
 
 1. **Zero Alteration of Engineer Project Data**:
-   - **On `BOM_Materials_Master`**: Never alter user-entered values in `Project BOM` **Column `B` (`MB P/N`)**, **Column `C` (`Qty`)**, or **Column `J` (`Notes`)**, and never alter `Cover Sheet` metadata inputs (`D10:D24`, `H24`).
+   - **On `BOM_Materials_Master`**: Never alter user-entered values in `Project BOM` **Column `B` (`MB P/N`)**, **Column `C` (`Qty`)**, or **Column `J` (`Notes`)**, and never alter `Cover Sheet` metadata inputs (`Project Name` through `Document Status`).
    - **On `Cable_Running_List`**: Never alter, delete, or reorder active cable run records across `Rows 3+` (`Columns A:P`), and never add a 17th per-row `Cable Run Status` column (`GOV-005`).
 2. **Repair Scope (Plumbing, Formulas & OpenXML Extensions Only)**:
-   - Restore overwritten or missing `<f>` formulas in formula-locked cells (`Project BOM` `Column A`, `Columns D:I`, `B2, E2, H2, E4`; `Cover Sheet!B30:C30`; `Lists!H1`; `CRL Summary!B17:B38`).
+   - Restore overwritten or missing `<f>` formulas in formula-locked cells (`Project BOM` `Column A`, `Columns D:I`, `B2, E2, H2, E4, G4:G5`; label-driven `Cover Sheet` Revision History row 1 `B32:C32`/`B34:C34`/legacy `B30:C30`; `Lists!H1`; `CRL Summary!B17:B38`).
    - Heal fragmented or split-column `<dataValidation>` and `<extLst>` (`<x14:dataValidation>`) dropdown rules across `Rows 3..1087`.
    - Normalize truncated `_xlnm._FilterDatabase` AutoFilter ranges (`$A$2:$P$1087`).
    - Apply authorized `TPL-##` template upgrades (`GOV-002` unit-segregated summary metrics; `GOV-006` Cover Sheet parity links).
@@ -35,9 +35,9 @@ Engineers are routed to `NEA Repair Tool` whenever `NEA Package Reviewer` (or an
    python3 scripts/inspect_nea_workbooks.py . --scope repair
    ```
 2. Inspect ONLY the structural workbook mechanics output (`NEA Repair Tool` never audits project engineering deliverables or emits sister-agent deliverable advisories):
-   - **Section 1**: `Cover Sheet!B30:C30` static overrides (`Rev` / `Date` decoupled from `H24` / `D24`) and `GOV-006` parity gaps.
+   - **Section 1**: Label-driven `Cover Sheet` Revision History static overrides (`B32:C32`, `B34:C34`, or legacy `B30:C30` decoupled from `Issue Date` / `Revision`) and legacy `GOV-006` parity gaps.
    - **Section 2 (`--scope repair`)**:
-     - `Project BOM` `Formula Overwrites in A8:I155`, Header Banner (`B2, E2, H2, E4`), and `G4` mixed-UOM sum (`GOV-002`).
+     - `Project BOM` `Formula Overwrites in A8:I155`, Header Banner (`B2, E2, H2, E4`), and `G4:G5` unit-aware vs legacy `G4` mixed-UOM sum (`GOV-002`).
      - `tblMaterials` table boundary (`$A$3:$G$508` vs oversized `$A$3:$G$600` causing 92 zero-spill entries in `Lists!H1#` under `GOV-007`) and `Fiber Assemblies!H` Status DataValidation `sqref` (`H4:H1258`).
      - `Cable Running List` `Data Validation, Dropdown & AutoFilter Integrity` (`[FRAGMENTED_DV_SQREF]`, `[SPLIT_COLUMN_DV_MISMATCH]`, `[TRUNCATED_AUTOFILTER]`).
 
@@ -47,7 +47,7 @@ Engineers are routed to `NEA Repair Tool` whenever `NEA Package Reviewer` (or an
    python3 scripts/inspect_nea_workbooks.py . --repair --out-dir Repaired_Workbooks
    ```
 2. Automated `--repair` actions performed without touching any engineer data cells:
-   - **Restores `Cover Sheet!B30:C30`**: `B30` = `=IF($H$24="","",$H$24)`, `C30` = `=IF($D$24="","",$D$24)`.
+   - **Restores `Cover Sheet` Revision History Links (Label-Driven)**: `B{hist_r}` = `=IF($H${ir}="","",$H${ir})`, `C{hist_r}` = `=IF($D${ir}="","",$D${ir})` (`B32:C32` BOM, `B34:C34` CRL/Standalone, `B30:C30` legacy).
    - **Rescales `tblMaterials` & Hardens `Lists!H1` (`GOV-007`)**: Trims `xl/tables/table1.xml` `ref` to `A3:G<last_row>` (`A3:G508`) and adds `<>0` filter to `Lists!H1` so empty table rows never spill `"0"` into `BOMPartNumbers`.
    - **Expands `Fiber Assemblies!H` DataValidation**: Expands `sqref="H4:H286"` to `sqref="H4:H1258"`.
    - **Normalizes `CRL` AutoFilter & Preserves `<extLst>`**: Ensures `<autoFilter ref="A2:P1087">` / `_xlnm._FilterDatabase` and `<x14:dataValidations>` remain intact.

@@ -21,16 +21,16 @@ Every project managed by NEA shall maintain a single, consistent project identit
 | Metadata Field | Authority Level | BOM `Cover Sheet` Cell | CRL & Standalone `Cover Sheet` Cell | Synchronization & Validation Requirement (`Review_Standards`) |
 | :--- | :---: | :---: | :---: | :--- |
 | **Project Name** | **Required** | `D10` | `D10` | Must match across all workbooks in the deliverable package (`Mismatch = Action Required` or `Review Recommended`). |
-| **Project Number** | **Required** | `D12` *(Linked to `Project BOM!B2`)* | *Row Absent (`GOV-006`)* | Authoritative in `BOM Cover Sheet!D12`. Missing row on CRL/Standalone Cover Sheets is a known template item (`GOV-006` / `TPL-##`), not a project data error. |
-| **Customer** | **Required** | `D14` | `D12` | Must match across all workbooks in the deliverable package. |
-| **Customer Contact** | **Recommended** | `D16` | `D14` | Should remain consistent when populated across package Cover Sheets. |
-| **Building / Site Address** | **Required** | `D18` *(Linked to `Project BOM!E2`)* | `D16` | Must identify the same physical site/building across package workbooks. |
-| **Project Manager** | **Recommended** | `D20` | `D18` | Should match across package workbooks. |
-| **Designer / Engineer** | **Required** | `D22` | `D20` | Identifies the responsible engineer; should match across package workbooks. |
-| **Installation Contractor** | **Conditional** | *Row Absent (`GOV-006`)* | `D22` | Required on installation-facing Cover Sheets (`CRL` and `Standalone`); intentional omission on `BOM Cover Sheet` is not a finding. |
-| **Issue Date** | **Required** | `D24` *(Linked to `C30`)* | `D24` *(Linked to `C30`)* | Valid date required. Independent Issue Dates between BOM and CRL workbooks are permitted when issued on separate cycles (`Informational` / `Advisory`). |
-| **Revision & History Link** | **Required** | `H24` *(Linked to `B30` & `BOM!H2`)* | `H24` *(Linked to `B30`)* | `B30` (`Rev`) and `C30` (`Date`) in Revision History should dynamically reference `H24` (`=IF($H$24="","",$H$24)`) and `D24` (`=IF($D$24="","",$D$24)`). Static overrides decoupling `H24` from `B30` require review (`RR-##` / `ADV-##`). |
-| **Document Status** | **Required** *(Document Level)* | *Template Gap (`GOV-006`)* | *Template Gap (`GOV-006`)* | Governs document lifecycle at the workbook level (`Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived`). |
+| **Project Number** | **Required** | `D12` *(Linked to `Project BOM!B2`)* | `D12` | Authoritative across package Cover Sheets (`GOV-006`). Missing `Project Number` on legacy pre-upgrade sheets is handled via label-driven telemetry (`TPL-##`). |
+| **Customer** | **Required** | `D14` | `D14` | Must match across all workbooks in the deliverable package. |
+| **Customer Contact** | **Recommended** | `D16` | `D16` | Should remain consistent when populated across package Cover Sheets. |
+| **Building / Site Address** | **Required** | `D18` *(Linked to `Project BOM!E2`)* | `D18` | Must identify the same physical site/building across package workbooks. |
+| **Project Manager** | **Recommended** | `D20` | `D20` | Should match across package workbooks. |
+| **Designer / Engineer** | **Required** | `D22` | `D22` | Identifies the responsible engineer; should match across package workbooks. |
+| **Installation Contractor** | **Conditional** | *Row Absent (`GOV-006`)* | `D24` | Required on installation-facing Cover Sheets (`CRL` and `Standalone`); intentional omission on `BOM Cover Sheet` is not a finding. |
+| **Issue Date** | **Required** | `D24` *(Linked to `C32`)* | `D26` *(Linked to `C34`)* | Valid date required. Independent Issue Dates between BOM and CRL workbooks are permitted when issued on separate cycles (`Informational` / `Advisory`). |
+| **Revision & History Link** | **Required** | `H24` *(Linked to `B32` & `BOM!H2`)* | `H26` *(Linked to `B34`)* | Revision History Row 1 (`B32:C32` BOM / `B34:C34` CRL, or `B30:C30` on legacy sheets) should dynamically reference `H{ir}` (`=IF($H${ir}="","",$H${ir})`) and `D{ir}` (`=IF($D${ir}="","",$D${ir})`). Static overrides require review (`RR-##` / `ADV-##`). |
+| **Document Status** | **Required** *(Document Level)* | `D26:H26` *(Dropdown)* | `D28:H28` *(Dropdown)* | Governs document lifecycle at the workbook level (`Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived`). |
 
 ---
 
@@ -39,10 +39,10 @@ Every project managed by NEA shall maintain a single, consistent project identit
 Before populating `Project BOM` or `Cable Running List` rows for a new project, project initialization shall:
 
 1. **Select Approved Controlled Templates**: Start from the current templates in `Templates/` governed by `Repository_Index.md`.
-2. **Populate Authoritative Cover Sheet Metadata**: Enter `Project Name`, `Project Number`, `Customer`, `Customer Contact`, `Building / Site Address`, `Project Manager`, `Designer / Engineer`, `Issue Date`, and initial `Revision` on the workbook `Cover Sheet` tabs.
+2. **Populate Authoritative Cover Sheet Metadata**: Enter `Project Name`, `Project Number`, `Customer`, `Customer Contact`, `Building / Site Address`, `Project Manager`, `Designer / Engineer`, `Issue Date`, initial `Revision`, and `Document Status` on the workbook `Cover Sheet` tabs.
 3. **Verify Internal Formula Propagation**:
    - Confirm `Project BOM!B2` (`Project #`), `E2` (`Building`), and `H2` (`Revision`) dynamically pull from `Cover Sheet!D12`, `D18`, and `H24`.
-   - Confirm Revision History row 1 (`B30:C30`) preserves its dynamic link formulas to `H24` and `D24`.
+   - Confirm Revision History row 1 (`B32:C32` on BOM; `B34:C34` on CRL/Standalone) preserves its dynamic link formulas to `Issue Date` and `Revision`.
 4. **Never Invent Missing Metadata**: Leave unknown required metadata identifiable for engineering review rather than inserting fabricated placeholders.
 
 ---

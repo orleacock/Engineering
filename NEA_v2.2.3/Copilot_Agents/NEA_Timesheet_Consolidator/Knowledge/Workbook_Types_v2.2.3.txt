@@ -29,21 +29,22 @@ NEA manages an extensible deliverable package of spreadsheets. Once completed by
 
 ## 2. Cover Sheet Coordinate & Formula Map (All 3 Workbooks)
 
-Because the BOM `Cover Sheet` includes a `Project Number` row (`Row 12`) and omits `Installation Contractor`, row coordinates below `Row 10` shift by 2 rows between the BOM workbook and the CRL/Standalone workbooks (`GOV-006`):
+All three templates include `Project Number` (`D12`) and a `Document Status` dropdown (`BOM D26:H26`, `CRL/Standalone D28:H28`); CRL/Standalone shift rows `14..26` by 2 rows below `BOM` (`Installation Contractor` at `D24`) and shift Revision History by 2 rows (`GOV-006`):
 
 | Metadata Field | `BOM_Materials_Master_Template.xlsx` (`Cover Sheet`) | `Cable_Running_List_Template.xlsx` & `Project_Cover_Sheet_Template.xlsx` (`Cover Sheet`) | Formula / Linking Behavior |
 | :--- | :---: | :---: | :--- |
 | **Project Name** | `D10` (Label `B10`) | `D10` (Label `B10`) | User input text |
-| **Project Number** | `D12` (Label `B12`) | *Row Absent (`GOV-006`)* | Linked to `Project BOM!B2`: `=IF('Cover Sheet'!D12="","",'Cover Sheet'!D12)` |
-| **Customer** | `D14` (Label `B14`) | `D12` (Label `B12`) | User input text |
-| **Customer Contact** | `D16` (Label `B16`) | `D14` (Label `B14`) | User input text |
-| **Building / Site Address** | `D18` (Label `B18`) | `D16` (Label `B16`) | Linked to `Project BOM!E2`: `=IF('Cover Sheet'!D18="","",'Cover Sheet'!D18)` |
-| **Project Manager** | `D20` (Label `B20`) | `D18` (Label `B18`) | User input text |
-| **Designer / Engineer** | `D22` (Label `B22`) | `D20` (Label `B20`) | User input text |
-| **Installation Contractor** | *Row Absent (`GOV-006`)* | `D22` (Label `B22`) | User input text (CRL & Standalone only) |
-| **Issue Date** | `D24` (Label `B24`) | `D24` (Label `B24`) | Excel date serial; linked to Revision History `C30`: `=IF($D$24="","",$D$24)` |
-| **Revision** | `H24` (Label `F24`) | `H24` (Label `F24`) | Linked to `Project BOM!H2` and Revision History `B30`: `=IF($H$24="","",$H$24)` |
-| **Revision History Row 1** | `B30` (Rev), `C30` (Date), `E30` (Desc), `H30` (Author) | `B30` (Rev), `C30` (Date), `E30` (Desc), `H30` (Author) | `B30` and `C30` should contain dynamic `=IF(...)` formulas pointing to `H24` and `D24` |
+| **Project Number** | `D12` (Label `B12`) | `D12` (Label `B12`) | Linked to `Project BOM!B2`: `=IF('Cover Sheet'!D12="","",'Cover Sheet'!D12)` |
+| **Customer** | `D14` (Label `B14`) | `D14` (Label `B14`) | User input text |
+| **Customer Contact** | `D16` (Label `B16`) | `D16` (Label `B16`) | User input text |
+| **Building / Site Address** | `D18` (Label `B18`) | `D18` (Label `B18`) | Linked to `Project BOM!E2`: `=IF('Cover Sheet'!D18="","",'Cover Sheet'!D18)` |
+| **Project Manager** | `D20` (Label `B20`) | `D20` (Label `B20`) | User input text |
+| **Designer / Engineer** | `D22` (Label `B22`) | `D22` (Label `B22`) | User input text |
+| **Installation Contractor** | *Row Absent (`GOV-006`)* | `D24` (Label `B24`) | User input text (CRL & Standalone only) |
+| **Issue Date** | `D24` (Label `B24`) | `D26` (Label `B26`) | Excel date serial; linked to Revision History (`C32` BOM / `C34` CRL): `=IF($D$<ir>="","",$D$<ir>)` |
+| **Revision** | `H24` (Label `F24`) | `H26` (Label `F26`) | Linked to `Project BOM!H2` and Revision History (`B32` BOM / `B34` CRL): `=IF($H$<ir>="","",$H$<ir>)` |
+| **Document Status** | `D26:H26` (Label `B26`) | `D28:H28` (Label `B28`) | DataValidation list: `Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived` |
+| **Revision History Row 1** | `B32` (Rev), `C32` (Date), `E32` (Desc), `H32` (Author) | `B34` (Rev), `C34` (Date), `E34` (Desc), `H34` (Author) | `B{hist_r}` & `C{hist_r}` contain dynamic `=IF(...)` formulas pointing to `H{ir}` and `D{ir}` *(legacy sheets may use `B30:C30`)* |
 
 ---
 
@@ -53,19 +54,20 @@ Because the BOM `Cover Sheet` includes a `Project Number` row (`Row 12`) and omi
 
 | Worksheet | Structure Type | Range & Columns | Key Technical Notes & Governance (`GOV-###`) |
 | :--- | :--- | :--- | :--- |
-| **`Materials Master`** | Official Excel Table **`tblMaterials`** | `$A$3:$G$600` (`Row 3` Headers):<br>`A`: `Category`<br>`B`: `MB P/N` *(Primary Key)*<br>`C`: `Manufacturer`<br>`D`: `MFG Part Number`<br>`E`: `UOM`<br>`F`: `Description`<br>`G`: `Status` | • **Priority 1 Lookup Source** for `Project BOM`.<br>• **Never rename `tblMaterials`** (`GOV-007`); `Lists!H1` and all `Project BOM` `XLOOKUP` formulas depend on this exact table name.<br>• Displays reference keys in `Columns I:J` (`Row 3–9`: Material Status Key; `Row 12–19`: UOM Key; `Row 22–38`: Category Key). |
-| **`Fiber Assemblies`** | Standard Worksheet Range | `$A$3:$H$1258` (`Row 3` Headers):<br>`A`: `Category` (`Bulk Fiber` / `Term Fiber`)<br>`B`: `Fiber Type`<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | • **Priority 2 Lookup Source** when an `MB P/N` is not found in `tblMaterials`.<br>• Includes `Column H` (`Status`, `H4:H286` validated against the 6 governed Material Statuses). |
+| **`Materials Master`** | Official Excel Table **`tblMaterials`** | `$A$3:$G$508` (`Row 3` Headers):<br>`A`: `Category`<br>`B`: `MB P/N` *(Primary Key)*<br>`C`: `Manufacturer`<br>`D`: `MFG Part Number`<br>`E`: `UOM`<br>`F`: `Description`<br>`G`: `Status` | • **Priority 1 Lookup Source** for `Project BOM`.<br>• **Never rename `tblMaterials`** (`GOV-007`); `Lists!H1` and all `Project BOM` `XLOOKUP` formulas depend on this exact table name.<br>• Displays reference keys in `Columns I:J` (`Row 3–9`: Material Status Key; `Row 12–19`: UOM Key; `Row 22–38`: Category Key). |
+| **`Fiber Assemblies`** | Standard Worksheet Range | `$A$3:$H$1258` (`Row 3` Headers):<br>`A`: `Category` (`Bulk Fiber` / `Term Fiber`)<br>`B`: `Fiber Type`<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | • **Priority 2 Lookup Source** when an `MB P/N` is not found in `tblMaterials`.<br>• Includes `Column H` (`Status`, `H4:H1258` validated against the 6 governed Material Statuses). |
 | **`Cable Harness`** | Standard Worksheet Range | `$A$3:$H$1258` (`Row 3` Headers):<br>`A`: `Category` (`Cable Harness`)<br>`B`: `Cable Type` (`C6A U/UTP`, `C6A U/FTP`)<br>`C`: `MB P/N` *(Primary Key)*<br>`D`: `Manufacturer`<br>`E`: `MFG Part Number`<br>`F`: `UOM`<br>`G`: `Description`<br>`H`: `Status` | • **Priority 3 Lookup Source** when an `MB P/N` is not found in `tblMaterials` or `Fiber Assemblies`.<br>• Tracks changing cable harness variants (`202` variants across `11` section headers + Suffix Key in `M5:P12`). Unassigned variants leave `Col C` (`MB P/N`) blank and `Col H` (`Status = Pending`) until assigned. |
-| **`Lists`** | Validation & Spill Engine | • `H1`: Dynamic 3-tier `FILTER(VSTACK(...))` spill formula (`BOMPartNumbers` = `Lists!$H$1#`)<br>• Helper validation lists in `Columns A:F` | • **Defined Name `BOMPartNumbers`** (`Lists!$H$1#`) combines `tblMaterials[MB P/N]`, `'Fiber Assemblies'!$C$4:$C$1258`, and `'Cable Harness'!$C$4:$C$1258` while filtering out blank unassigned harness rows so `#CALC!` never occurs:<br>`=_xlfn._xlws.FILTER(_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258),_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258)<>"")` |
+| **`Lists`** | Validation & Spill Engine | • `H1`: Dynamic 3-tier `FILTER(VSTACK(...))` spill formula (`BOMPartNumbers` = `Lists!$H$1#`)<br>• Helper validation lists in `Columns A:F` | • **Defined Name `BOMPartNumbers`** (`Lists!$H$1#`) combines `tblMaterials[MB P/N]`, `'Fiber Assemblies'!$C$4:$C$1258`, and `'Cable Harness'!$C$4:$C$1258` while filtering out blank and `0`-coerced rows so `#CALC!` / zero-spill never occurs:<br>`=_xlfn._xlws.FILTER(_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258),(_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258)<>"")*(_xlfn.VSTACK(tblMaterials[MB P/N],'Fiber Assemblies'!$C$4:$C$1258,'Cable Harness'!$C$4:$C$1258)<>0))` |
 
 ### 3.2 `Project BOM` Sheet (`A7:J155` — Formula-Protected Range)
 
-- **Header Summary Banner (`Rows 2 & 4`)**:
+- **Header Summary Banner (`Rows 2, 4 & 5`)**:
   - `B2`: Project Number (`=IF('Cover Sheet'!D12="","",'Cover Sheet'!D12)`)
   - `E2`: Building (`=IF('Cover Sheet'!D18="","",'Cover Sheet'!D18)`)
   - `H2`: Revision (`=IF('Cover Sheet'!H24="","",'Cover Sheet'!H24)`)
   - `E4`: Line Items (`=COUNTIF(B8:B155,"<>")`)
-  - `G4`: Total Quantity (`=SUM(C8:C155)` — *Note: sums mixed UOMs; flagged under `GOV-002` / `ADV-##`*).
+  - `G4` (`F4='Total FT'`): Bulk Cable/Fiber Footage (`=SUMIF(G8:G155,"FT",C8:C155)` — `GOV-002` unit-aware formula; legacy workbooks using `=SUM(C8:C155)` are flagged for upgrade).
+  - `G5` (`F5='Total EA/KT/BX'`): Discrete Hardware/Kit/Box Count (`=SUMIF(G8:G155,"EA",C8:C155)+SUMIF(G8:G155,"KT",C8:C155)+SUMIF(G8:G155,"BX",C8:C155)`).
 - **10-Column Schema (`Row 7` Headers, `Rows 8–155` Data Rows)**:
 
 | Col | Header | Control Type | Formula / Validation Rule (`Row 8` Archetype) |

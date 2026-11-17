@@ -2,7 +2,7 @@
 title: "NetCom Engineering Assistant — M365 Copilot Execution Flowchart"
 entity: "NetCom"
 compartment: "private"
-last_synced: "2026-11-05"
+last_synced: "2026-11-17"
 ---
 
 # 🏢 NetCom Engineering Assistant (`NEA v2.2.3`) — M365 Copilot & Guardrail Execution Flowchart
@@ -58,10 +58,10 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "style": "primary",
           "weight": 1.05,
           "lines": [
-            "• **BOM_Materials_Master_Template.xlsx**: SHA256=f47a9f3ad7 (6 sheets)",
-            "• **Cable_Running_List_Template.xlsx**: SHA256=e6b4614fa2 (3 sheets + hidden)",
-            "• **Project_Cover_Sheet_Template.xlsx**: SHA256=82caf65dc0 (1 sheet)",
-            "• **Timesheet_Template.xlsx**: SHA256=1e61da1be0 (2 sheets + multi-media inputs)"
+            "• **BOM_Materials_Master_Template.xlsx**: SHA256=2fcafd1bd9 (6 sheets)",
+            "• **Cable_Running_List_Template.xlsx**: SHA256=f4571cdaa8 (3 sheets)",
+            "• **Project_Cover_Sheet_Template.xlsx**: SHA256=dcd6b46ef5 (2 sheets)",
+            "• **Timesheet_Template.xlsx**: SHA256=5bf4f136c8 (1 sheet + Testbeds/307-2/ archived)"
           ]
         },
         {
@@ -81,15 +81,15 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
         {
           "id": "c_skills",
           "title": "3 Packaged Core Guardrail <skill-name>.zip Archives",
-          "subtitle": "Skills/<skill-name>/<skill-name>.zip (SKILL.md + scripts/inspect_nea_workbooks.py)",
+          "subtitle": "Skills/<skill-name>/<skill-name>.zip (SKILL.md + scripts/*.py)",
           "badge": "NEA-SKL-001..003 CORE",
           "style": "secondary",
           "weight": 1.05,
           "lines": [
             "• **NEA-SKL-001 (All 6 Agents)**: Closed-World Lock & [TBD] / [CONFLICT] tags",
-            "• **NEA-SKL-002 (5 Mode-2 Agents)**: preserve_openxml_extensions() & formula locks",
+            "• **NEA-SKL-002 (5 Mode-2 Agents)**: preserve_openxml_extensions() & edit_nea_workbooks.py",
             "• **NEA-SKL-003 (All 6 Agents)**: Pre/Post SHA-256, NEA-VRF/WRT & Gate C Advisories",
-            "• **Bundled Oracle**: Each .zip ships root SKILL.md + scripts/inspect_nea_workbooks.py"
+            "• **Bundled Oracles**: Root SKILL.md + scripts/inspect_nea_workbooks.py (+ edit_nea_workbooks.py)"
           ]
         }
       ]
@@ -106,7 +106,7 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "id": "c_agt_rev",
           "title": "Package Reviewer",
           "subtitle": "AGT-001 • Mode 1 Read-Only Review",
-          "badge": "5,330 / 8,000c",
+          "badge": "5,463 / 8,000c",
           "style": "primary",
           "weight": 1.0,
           "lines": [
@@ -120,12 +120,12 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "id": "c_agt_bom",
           "title": "BOM Builder",
           "subtitle": "AGT-002 • Mode 2 Project BOM Build",
-          "badge": "3,820 / 8,000c",
+          "badge": "3,970 / 8,000c",
           "style": "secondary",
           "weight": 1.0,
           "lines": [
             "• **Scope**: --scope bom (6 .txt files)",
-            "• **Editable**: Project BOM Cols B, C, J",
+            "• **Editable**: BOM Cols B, C, J (edit_nea_workbooks)",
             "• **Locks**: Col A & Cols D..I (3-tier XLOOKUP)",
             "• **Gate**: Mandatory --lookup before entry"
           ]
@@ -134,14 +134,14 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "id": "c_agt_crl",
           "title": "CRL Builder",
           "subtitle": "AGT-003 • Mode 2 16-Col CRL Build",
-          "badge": "3,342 / 8,000c",
+          "badge": "3,596 / 8,000c",
           "style": "tertiary",
           "weight": 1.0,
           "lines": [
             "• **Scope**: --scope crl (6 .txt files)",
             "• **Layout**: Row 1 banner, Row 2 headers, Row 3+",
             "• **Summary Lock**: Protects B17:B38 formulas",
-            "• **Audit**: Run ID 1..279 & duplicate NE/FE ports"
+            "• **Audit**: Run ID continuity & duplicate NE/FE ports"
           ]
         },
         {
@@ -162,12 +162,12 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "id": "c_agt_rep",
           "title": "Repair Tool",
           "subtitle": "AGT-005 • Mode 2 OpenXML Repair",
-          "badge": "3,607 / 8,000c",
+          "badge": "3,725 / 8,000c",
           "style": "warn",
           "weight": 1.0,
           "lines": [
             "• **Scope**: --scope repair & --repair (6 .txt)",
-            "• **Formulas**: Restores BOM A8:I155 & B30:C30",
+            "• **Formulas**: Restores BOM A8:I155 & Rev B32:C32/B34:C34",
             "• **OpenXML**: Fixes tblMaterials & [4E] DVs",
             "• **Focus**: Mechanics only (0 project review)"
           ]
@@ -220,7 +220,7 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "lines": [
             "• **Cascading Lookup**: Searches tblMaterials -> Fiber Assemblies -> Cable Harness",
             "• **Duplicate Mfg Check**: Flags duplicate (Manufacturer, MFG P/N) pairs",
-            "• **Run Continuity**: Verifies CRL Run IDs 1..279 & duplicate NE/FE endpoints",
+            "• **Run Continuity**: Verifies Run ID continuity & duplicate NE/FE endpoints",
             "• **Zero Guessing**: Emits [CATALOG ADDITION REQUIRED] when part is absent"
           ]
         },
@@ -271,7 +271,7 @@ python3 /home/orin/.gemini/config/skills/visual-studio/scripts/render_diagram.py
           "weight": 1.02,
           "lines": [
             "• **Immutability**: Verifies Pre-SHA256 == Post-SHA256 (0 bytes modified)",
-            "• **Live Token**: Emits NEA-VRF-31A37EEFB1DF over sorted workbook hashes",
+            "• **Live Token**: Emits NEA-VRF-B8758592E52D over sorted workbook hashes",
             "• **Header Lock**: Every Review Report must display live NEA-VRF + 10-char SHA256",
             "• **Anti-Spoiler**: 0 hardcoded testbed part numbers or quantities in Knowledge/"
           ]

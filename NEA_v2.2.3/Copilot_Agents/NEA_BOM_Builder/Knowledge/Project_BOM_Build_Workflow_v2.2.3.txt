@@ -43,7 +43,8 @@ Before editing any cell in `BOM_Materials_Master_Template.xlsx`, enforce these n
    - `D22`: `Designer / Engineer`
    - `D24`: `Issue Date`
    - `H24`: `Revision`
-2. Verify that `Cover Sheet!B30:C30` (`Revision History`) and `Project BOM!B2, E2, H2` dynamically display the entered `Project Number`, `Building`, `Revision`, and `Issue Date`.
+   - `D26`: `Document Status` (`Draft`, `Internal Review`, `Issued`, `Issued For Construction`, `Archived`)
+2. Verify that `Cover Sheet!B32:C32` (`Revision History`, or `B30:C30` on legacy sheets) and `Project BOM!B2, E2, H2, G4:G5` dynamically display the entered `Project Number`, `Building`, `Revision`, `Issue Date`, and unit-segregated totals.
 
 ---
 

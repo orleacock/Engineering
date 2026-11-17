@@ -13,11 +13,11 @@ Open Microsoft 365 Copilot **Agent Builder** and create each of the 6 NEA agents
 
 | Agent Name (`<= 30` chars) | Folder in `Copilot_Agents/` | Config & Starters File | Instructions File | Knowledge Folder (`Ctrl+A` Upload) | Skills to Upload (`.zip` in `Skills/<skill-name>/`) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`NEA Package Reviewer`** | `NEA_Package_Reviewer/` | `Agent_Config.md` | `Instructions.txt` (`5,330 / 8,000`) | `Knowledge/` (`5` `.txt` files) | `nea-anti-hallucination.zip`, `nea-verification-and-receipt.zip` |
-| **`NEA BOM Builder`** | `NEA_BOM_Builder/` | `Agent_Config.md` | `Instructions.txt` (`3,820 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
-| **`NEA CRL Builder`** | `NEA_CRL_Builder/` | `Agent_Config.md` | `Instructions.txt` (`3,342 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
+| **`NEA Package Reviewer`** | `NEA_Package_Reviewer/` | `Agent_Config.md` | `Instructions.txt` (`5,463 / 8,000`) | `Knowledge/` (`5` `.txt` files) | `nea-anti-hallucination.zip`, `nea-verification-and-receipt.zip` |
+| **`NEA BOM Builder`** | `NEA_BOM_Builder/` | `Agent_Config.md` | `Instructions.txt` (`3,970 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
+| **`NEA CRL Builder`** | `NEA_CRL_Builder/` | `Agent_Config.md` | `Instructions.txt` (`3,596 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
 | **`NEA Catalog Manager`** | `NEA_Catalog_Manager/` | `Agent_Config.md` | `Instructions.txt` (`3,794 / 8,000`) | `Knowledge/` (`7` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
-| **`NEA Repair Tool`** | `NEA_Repair_Tool/` | `Agent_Config.md` | `Instructions.txt` (`3,607 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
+| **`NEA Repair Tool`** | `NEA_Repair_Tool/` | `Agent_Config.md` | `Instructions.txt` (`3,725 / 8,000`) | `Knowledge/` (`6` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
 | **`NEA Timesheet Consolidator`** | `NEA_Timesheet_Consolidator/` | `Agent_Config.md` | `Instructions.txt` (`6,206 / 8,000`) | `Knowledge/` (`5` `.txt` files) | `nea-anti-hallucination.zip`, `nea-workbook-entry-guard.zip`, `nea-verification-and-receipt.zip` |
 
 ---
@@ -40,7 +40,7 @@ Inside each agent folder (`Copilot_Agents/NEA_Package_Reviewer/`, `NEA_BOM_Build
 In Agent Builder's **Skills** section (`Add skill` $\rightarrow$ upload `.zip`):
 - Navigate to `Skills/<skill-name>/` (see [`Skills/Skills_Deployment_Guide.md`](../Skills/Skills_Deployment_Guide.md)).
 - Select **`<skill-name>.zip`** (for example, `Skills/nea-verification-and-receipt/nea-verification-and-receipt.zip`).
-- Each `<skill-name>.zip` contains **`SKILL.md`** at the root of the archive plus **`scripts/inspect_nea_workbooks.py`**, mounting the deterministic OpenXML inspection, catalog lookup, non-destructive repair, and receipt engine directly inside the skill's packaged filesystem.
+- Each `<skill-name>.zip` contains **`SKILL.md`** at the root of the archive plus bundled **`scripts/`** Python tooling (`inspect_nea_workbooks.py`, plus `edit_nea_workbooks.py` inside `nea-workbook-entry-guard.zip`), mounting the deterministic OpenXML inspection, catalog lookup, safe-write, non-destructive repair, and receipt engine directly inside the skill's packaged filesystem.
 
 ---
 

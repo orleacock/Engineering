@@ -32,7 +32,7 @@ Remote Windows workstations running Microsoft 365 Copilot Chat or Cowork do not 
 Before emitting the 6-section Engineering Review Report, verify all five items against the `scripts/inspect_nea_workbooks.py` stdout:
 1. **Header Receipt**: The report header includes the exact `Live Package Verification Token: NEA-VRF-<12hex>` and the 10-character `SHA256=...` hash for each evaluated `.xlsx` workbook.
 2. **Scorecard Parity**: The counts in the Section 1 `Finding Severity Scorecard` table (`AR-##`, `RR-##`, `ADV-##`, `INF-##`) match the exact number of finding bullets in Section 4, and the `Release Readiness Outcome` matches the highest active severity (`>=1 AR-##` $\rightarrow$ `Action Required Before Release`).
-3. **Coordinate & Range Accuracy**: Every cited row (`R...`), cell (`D10`, `B30`, `G4`), `Run ID` range, and `MB P/N` matches the telemetry printout verbatim.
+3. **Coordinate & Range Accuracy**: Every cited row (`R...`), cell (`D10`, `B32`/`B34`, `G4:G5`), `Run ID` range, and `MB P/N` matches the telemetry printout verbatim.
 4. **Punch-List Completeness**: Section 5 (`Engineer Closeout Punch List`) contains a `- [ ]` checkbox for every active deliverable finding in Section 4.
 5. **Cross-Duty Routing (`Section 6`)**: Structural formula/OpenXML repairs and unreferenced catalog hygiene items are routed cleanly to `NEA Repair Tool` and `NEA Catalog Manager` in Section 6.
 
@@ -66,4 +66,4 @@ When `scripts/inspect_nea_workbooks.py` outputs `SECTION 7: CROSS-DUTY AGENT ROU
 1. **Missing `NEA-VRF` or `NEA-WRT` Token**:
    - Never fabricate a `NEA-VRF-...` or `NEA-WRT-...` hexadecimal string. If Code Interpreter did not run `scripts/inspect_nea_workbooks.py` and print the token, halt and run the Python check first.
 2. **Failed `--verify-write` Audit (`Exit Code != 0`)**:
-   - If `--verify-write` reports any `[FAIL]` item (overwritten formula in `Project BOM` `Col A` or `Cols D:I`, static overwrite in `Cover Sheet!B30:C30`, stripped `<extLst>` dropdowns, or unmapped `MB P/N`), **do not** output the broken `.xlsx` file. Fix the edit in Code Interpreter and re-run `--verify-write` until all checks return `PASS`.
+   - If `--verify-write` reports any `[FAIL]` item (overwritten formula in `Project BOM` `Col A`/`Cols D:I`, static overwrite in `Cover Sheet` Revision History `B32:C32`/`B34:C34`, stripped `<extLst>` dropdowns, or unmapped `MB P/N`), **do not** output the broken `.xlsx` file. Fix the edit in Code Interpreter and re-run `--verify-write` until all checks return `PASS`.

@@ -24,7 +24,7 @@
 
 ## 1. System Overview & Core Philosophy ("Paper Truth")
 
-The **NetCom Engineering Assistant (`NEA v2.2.3`)** is a 6-Agent Microsoft 365 Copilot suite backed by a deterministic Python OpenXML inspection, repair, and consolidation engine (`inspect_nea_workbooks.py`). It is designed to help NetCom engineers and operations staff build, cross-check, repair, and release structured-cabling project spreadsheet packages and consolidate weekly multi-media Missouri Timesheets without formula corruption or part-number guesswork.
+The **NetCom Engineering Assistant (`NEA v2.2.3`)** is a 6-Agent Microsoft 365 Copilot suite backed by deterministic Python OpenXML inspection, safe-write, repair, and consolidation tooling (`inspect_nea_workbooks.py` + `edit_nea_workbooks.py`). It is designed to help NetCom engineers and operations staff build, cross-check, repair, and release structured-cabling project spreadsheet packages and consolidate weekly multi-media Missouri Timesheets without formula corruption or part-number guesswork.
 
 ### Why NEA Uses 6 Specialist Agents
 Rather than cramming every rule into a single overloaded chatbot, NEA divides engineering and operations work into **6 specialized agents**:
@@ -35,7 +35,7 @@ Rather than cramming every rule into a single overloaded chatbot, NEA divides en
 | **`NEA BOM Builder`** | **Mode 2** *(Builder)* | Searches the 3-tier material catalog (`tblMaterials`, `Fiber Assemblies`, `Cable Harness`), rolls up `CRL` quantities, and populates `Project BOM` (`Cols B, C, J`) without overwriting `XLOOKUP` formulas (`Cols A, D:I`). | When starting a new Project BOM, converting a CRL into a material list, or adding/updating BOM line items. |
 | **`NEA CRL Builder`** | **Mode 2** *(Builder)* | Builds, normalizes, and validates the 16-column `Cable Running List` (`Cols A:P`), checks `Run ID` sequence continuity, flags duplicate `NE/FE` ports, and generates takeoff summaries. | When building a cable schedule from floorplans/field notes or cleaning up an existing CRL. |
 | **`NEA Catalog Manager`** | **Mode 2** *(Catalog)* | Audits and maintains the 3-tier catalog in `BOM_Materials_Master_Template.xlsx`, onboards new vendor parts, promotes `TPN##` keys, and protects the `Lists!H1` dynamic `VSTACK` dropdown spill. | When a project requires a part number not yet in `Materials Master`, or when deduplicating/updating catalog records. |
-| **`NEA Repair Tool`** | **Mode 2** *(Repair)* | Non-destructively restores overwritten `Project BOM` (`A8:I155`), `Cover Sheet` (`B30:C30`), and `Timesheet` (`AG17:AK38`) formulas, fixes `tblMaterials`/`Lists!H1` zero-spill ranges, and heals broken Excel dropdowns/AutoFilters while keeping `100%` of your project data intact. | Whenever `NEA Package Reviewer` or a Builder displays a `🔄 [CROSS-DUTY -> NEA Repair Tool]` alert, or when a spreadsheet's dropdowns/formulas break. |
+| **`NEA Repair Tool`** | **Mode 2** *(Repair)* | Non-destructively restores overwritten `Project BOM` (`A8:I155`), `Cover Sheet` Revision History (`B32:C32` / `B34:C34`, legacy `B30:C30`), and `Timesheet` (`AG17:AK38`) formulas, fixes `tblMaterials`/`Lists!H1` zero-spill ranges, and heals broken Excel dropdowns/AutoFilters while keeping `100%` of your project data intact. | Whenever `NEA Package Reviewer` or a Builder displays a `🔄 [CROSS-DUTY -> NEA Repair Tool]` alert, or when a spreadsheet's dropdowns/formulas break. |
 | **`NEA Timesheet Consolidator`** | **Mode 2** *(Timesheet)* | Consolidates digital `.xlsx`, scanned multi-page `.pdf` packets, and `.png`/`.jpg` photos of NetCom Missouri Timesheets into `Week_of_MM-DD_to_MM-DD.xlsx` (`Weekly Summary` Tab 1 + alphabetical `Last, First` employee tabs) while ignoring `Expense Report` tabs, store receipts, and vendor invoices. | Every week when consolidating office and field employee timesheets into a single payroll/operations workbook. |
 
 ---
@@ -48,11 +48,11 @@ NetCom's Microsoft 365 Copilot environment uses the integrated **Agent Builder**
 
 | Agent Name (`<= 30` chars) | Folder inside `Copilot_Agents/` | Instructions File (`Ctrl+A` Copy) | Knowledge Files (`Ctrl+A` Batch Upload) | Skill `.zip` Packages to Upload (`Skills/<skill-name>/`) |
 | :--- | :--- | :--- | :--- | :--- |
-| **`NEA Package Reviewer`** | `NEA_Package_Reviewer/` | `Instructions.txt` (`5,330 / 8,000` chars) | `Knowledge/*.txt` (`5` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-verification-and-receipt.zip` |
-| **`NEA BOM Builder`** | `NEA_BOM_Builder/` | `Instructions.txt` (`3,820 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
-| **`NEA CRL Builder`** | `NEA_CRL_Builder/` | `Instructions.txt` (`3,342 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
+| **`NEA Package Reviewer`** | `NEA_Package_Reviewer/` | `Instructions.txt` (`5,463 / 8,000` chars) | `Knowledge/*.txt` (`5` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-verification-and-receipt.zip` |
+| **`NEA BOM Builder`** | `NEA_BOM_Builder/` | `Instructions.txt` (`3,970 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
+| **`NEA CRL Builder`** | `NEA_CRL_Builder/` | `Instructions.txt` (`3,596 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
 | **`NEA Catalog Manager`** | `NEA_Catalog_Manager/` | `Instructions.txt` (`3,794 / 8,000` chars) | `Knowledge/*.txt` (`7` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
-| **`NEA Repair Tool`** | `NEA_Repair_Tool/` | `Instructions.txt` (`3,607 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
+| **`NEA Repair Tool`** | `NEA_Repair_Tool/` | `Instructions.txt` (`3,725 / 8,000` chars) | `Knowledge/*.txt` (`6` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
 | **`NEA Timesheet Consolidator`** | `NEA_Timesheet_Consolidator/` | `Instructions.txt` (`6,206 / 8,000` chars) | `Knowledge/*.txt` (`5` files) | 1. `nea-anti-hallucination.zip`<br>2. `nea-workbook-entry-guard.zip`<br>3. `nea-verification-and-receipt.zip` |
 
 ---
@@ -96,7 +96,7 @@ Follow these **7 steps** for each agent you want to deploy:
      - `Skills/nea-anti-hallucination/nea-anti-hallucination.zip`
      - `Skills/nea-workbook-entry-guard/nea-workbook-entry-guard.zip`
      - `Skills/nea-verification-and-receipt/nea-verification-and-receipt.zip`
-3. **Why You Upload the `.zip` File Here**: Each `<skill-name>.zip` contains both `SKILL.md` at the root of the archive and `scripts/inspect_nea_workbooks.py` in `scripts/`. Uploading the `.zip` mounts the deterministic Python inspection and repair script directly inside the skill's packaged filesystem so the agent never has to write ad-hoc Python from scratch.
+3. **Why You Upload the `.zip` File Here**: Each `<skill-name>.zip` contains `SKILL.md` at the root of the archive plus bundled `scripts/inspect_nea_workbooks.py` (and `scripts/edit_nea_workbooks.py` inside `nea-workbook-entry-guard.zip`). Uploading the `.zip` mounts the deterministic Python inspection, safe-write, and repair scripts directly inside the skill's packaged filesystem so the agent never has to write ad-hoc Python from scratch.
 
 #### Step 7 — Add Starter Prompts & Publish
 1. Scroll to **Starter prompts** at the bottom of `Agent_Config.md`.
@@ -189,7 +189,7 @@ You can click any agent's built-in **Starter Prompts** or copy-paste the special
 | **Roll Up Attached CRL into Project BOM** | `Using Code Interpreter, calculate the required copper cable footage, fiber runs, and termination hardware from the attached Cable Running List (.xlsx), match each item to verified MB P/Ns in the attached BOM workbook, and populate Project BOM Columns B, C, and J.` |
 | **Search the 3-Tier Catalog for Part Numbers** | `Search the attached BOM workbook's 3-tier catalog (tblMaterials, Fiber Assemblies, and Cable Harness) in Code Interpreter to find matching active MB P/Ns, UOMs, and descriptions for: [list your items or keywords here, e.g., Cat6A Plenum Blue, 24-strand OS2, 48-port patch panel].` |
 | **Add or Update Specific BOM Rows Safely** | `Update the attached BOM workbook (.xlsx) in Code Interpreter by adding the following items to Project BOM (Columns B, C, and J only) while preserving all Column A and Columns D:I XLOOKUP formulas and cross-sheet dropdowns: [paste your MB P/Ns, Quantities, and Notes].` |
-| **Update BOM Cover Sheet Metadata** | `Update the Cover Sheet metadata cells (D10 Project Name, D12 Project Number, D14 Customer, D16 Contact, D18 Building, D20 PM, D22 Designer, D24 Issue Date, H24 Revision) in the attached BOM workbook (.xlsx) with the following project details while keeping B30:C30 formulas intact: [paste details].` |
+| **Update BOM Cover Sheet Metadata** | `Update the Cover Sheet metadata cells (D10 Project Name, D12 Project Number, D14 Customer, D16 Contact, D18 Building, D20 PM, D22 Designer, D24 Issue Date, H24 Revision, D26 Document Status) in the attached BOM workbook (.xlsx) with the following project details while keeping B32:C32 Revision History formulas intact: [paste details].` |
 | **Verify BOM Formula Locks & Unit Summary** | `Inspect the attached BOM workbook (.xlsx) in Code Interpreter to confirm 100% of Project BOM Rows 8-155 preserve their Column A and Columns D:I XLOOKUP formulas, zero 'Not found' errors exist, and generate a unit-segregated summary (FT vs EA/KT/BX).` |
 
 ---
@@ -220,7 +220,7 @@ You can click any agent's built-in **Starter Prompts** or copy-paste the special
 
 | Goal | Copy-Paste Prompt |
 | :--- | :--- |
-| **One-Click Full Workbook Auto-Repair (`--repair`)** | `Run the NEA Repair Tool (--repair) in Code Interpreter on the attached .xlsx workbook(s) to non-destructively restore any overwritten Cover Sheet (B30:C30) or Project BOM (A8:I155) formulas, fix tblMaterials/Lists!H1 zero-spill bounds, and heal OpenXML DataValidation/AutoFilter ranges, then return the verified downloadable .xlsx file(s) with a NEA-WRT receipt.` |
+| **One-Click Full Workbook Auto-Repair (`--repair`)** | `Run the NEA Repair Tool (--repair) in Code Interpreter on the attached .xlsx workbook(s) to non-destructively restore any overwritten Cover Sheet Revision History (B32:C32 / B34:C34 / legacy B30:C30) or Project BOM (A8:I155) formulas, fix tblMaterials/Lists!H1 zero-spill bounds, and heal OpenXML DataValidation/AutoFilter ranges, then return the verified downloadable .xlsx file(s) with a NEA-WRT receipt.` |
 | **Restore Overwritten `Project BOM` `XLOOKUP` Formulas** | `Inspect the attached BOM_Materials_Master (.xlsx) workbook in Code Interpreter and restore any missing or overwritten Column A (Line) and Columns D:I 3-tier XLOOKUP formulas across Rows 8-155 while keeping my Columns B, C, and J inputs 100% untouched.` |
 | **Heal Broken `CRL` Dropdowns & AutoFilter** | `Repair any fragmented or split-column DataValidation rules (<dataValidation> and <x14:dataValidation>) and normalize the _FilterDatabase AutoFilter across Rows 3..1087 in the attached Cable Running List (.xlsx) without altering any cable run data.` |
 
@@ -258,10 +258,13 @@ python3 Scripts/inspect_nea_workbooks.py Templates --lookup "OS2"
 # 5. Non-destructive automated workbook repair (writes repaired copies to out_dir):
 python3 Scripts/inspect_nea_workbooks.py Templates --repair --out-dir ./Repaired_Workbooks
 
-# 6. Verify an edited workbook against its original baseline (generates NEA-WRT receipt):
+# 6. Controlled safe-write edit from JSON manifest (enforces formula/catalog/CRL locks & auto-runs --verify-write):
+python3 Scripts/edit_nea_workbooks.py Templates/BOM_Materials_Master_Template.xlsx --manifest edit_manifest.json --out ./Edited_BOM.xlsx
+
+# 7. Verify an edited workbook against its original baseline (generates NEA-WRT receipt):
 python3 Scripts/inspect_nea_workbooks.py --verify-write Templates/BOM_Materials_Master_Template.xlsx ./Repaired_Workbooks/BOM_Materials_Master_Template.xlsx
 
-# 7. Recompile all 6 Copilot Agent folders and all 3 core guardrail <skill-name>.zip packages after a rule/script update:
+# 8. Recompile all 6 Copilot Agent folders and all 3 core guardrail <skill-name>.zip packages after a rule/script update:
 python3 Scripts/build_copilot_agents.py
 ```
 
@@ -272,7 +275,7 @@ python3 Scripts/build_copilot_agents.py
 ### 5.1 How NEA Is Designed to Grow
 The NEA architecture is modular by design:
 - **Role-Based Workbook Discovery**: `scripts/inspect_nea_workbooks.py` identifies spreadsheets by their internal worksheet tab structure rather than hardcoded filenames.
-- **Ample Instruction Headroom**: All 5 agents sit well below Microsoft's `8,000`-character instruction limit (`41%–66%` utilization), leaving room for additional spreadsheet types and validation rules.
+- **Ample Instruction Headroom**: All 6 agents sit below Microsoft's `8,000`-character instruction limit (`3,596–6,206 / 8,000` characters across `Instructions.txt`), leaving room for additional spreadsheet types and validation rules.
 - **Independent Module Updates**: New workbook types—such as **Equipment Schedules**, **Rack Elevation Schedules**, **Fiber Assignment / Splice Schedules**, **Patch Panel Port Maps**, or **Field Test Logs**—can be added to `NEA Package Reviewer` first to test cross-document comparisons (`New Schedule <-> Project BOM <-> CRL`) before rolling builder or repair capabilities out to the rest of the suite.
 
 ### 5.2 What to Prepare When Requesting a New Feature or Spreadsheet Type
