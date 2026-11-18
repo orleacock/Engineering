@@ -37,9 +37,9 @@ Responsibilities:
     - def _parse_jsonl_trajectory (#L1752-L1868)     | def bench_profile_subagent_ab (#L1871-L2016)
     - def bench_profile_full_suite (#L2019-L2126)    | def build_universal_spine (#L2129-L2175)
     - def apply_synthetic_regression (#L2178-L2215)  | def evaluate_comparisons (#L2218-L2315)
-    - def render_regression_autopsy_md (#L2318-L2406) | def _render_table_md (#L2409-L2427)
-    - def render_markdown_report (#L2430-L2465)      | def load_history_maps (#L2468-L2511)
-    - def update_ledger_and_history (#L2514-L2564)   | def main (#L2567-L2833)
+    - def render_regression_autopsy_md (#L2318-L2406) | def _render_table_md (#L2409-L2448)
+    - def render_markdown_report (#L2451-L2486)      | def load_history_maps (#L2489-L2532)
+    - def update_ledger_and_history (#L2535-L2585)   | def main (#L2588-L2854)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -2407,23 +2407,44 @@ def render_regression_autopsy_md(
 
 
 def _render_table_md(rows: list[dict[str, Any]], baseline_tag: str, cand_ver: str) -> list[str]:
-    out = [
-        f"| # | Pillar | Standardized Metric | Baseline (`{baseline_tag}`) | Previous Run | Candidate (`{cand_ver}`) | Delta (vs. Baseline) | Ceiling / Target | Status |",
-        "| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |",
-    ]
+    """Render compact 5-column pillar-grouped comparison tables legible in Obsidian & MarkText."""
+    pillar_order: list[str] = []
+    grouped: dict[str, list[dict[str, Any]]] = {}
     for r in rows:
-        st = r["status"]
-        badge = {
-            "PASS": "`PASS`",
-            "IMPROVED": "**`IMPROVED`**",
-            "BASELINE_PINNED": "**`PINNED`**",
-            "ADVISORY": "**`ADVISORY`**",
-            "HARD_BLOCK": "**`HARD_BLOCK`**",
-        }.get(st, f"`{st}`")
-        out.append(
-            f"| `{r['row_num']}` | `{r['pillar']}` | **{r['name']}** | `{r['baseline_display']}` | "
-            f"`{r['previous_display']}` | `{r['display_value']}` | `{r['delta_display']}` | `{r['ceiling_display']}` | {badge} |"
+        p = str(r.get("pillar") or "Other")
+        if p not in grouped:
+            pillar_order.append(p)
+            grouped[p] = []
+        grouped[p].append(r)
+
+    out: list[str] = []
+    for idx, pillar in enumerate(pillar_order):
+        if idx > 0:
+            out.append("")
+        out.extend(
+            [
+                f"##### {pillar}",
+                "",
+                f"| # | Metric | Candidate (`{cand_ver}`) vs Base (`{baseline_tag}`) / Prev | Ceiling / Target | Status |",
+                "| :---: | :--- | :--- | :--- | :---: |",
+            ]
         )
+        for r in grouped[pillar]:
+            st = r["status"]
+            badge = {
+                "PASS": "**PASS**",
+                "IMPROVED": "**IMPROVED**",
+                "BASELINE_PINNED": "**PINNED**",
+                "ADVISORY": "**ADVISORY**",
+                "HARD_BLOCK": "**HARD BLOCK**",
+            }.get(st, f"`{st}`")
+            val_cell = (
+                f"**`{r['display_value']}`** ({r['delta_display']})"
+                f"<br>Base: `{r['baseline_display']}` · Prev: `{r['previous_display']}`"
+            )
+            out.append(
+                f"| `{r['row_num']}` | **{r['name']}** | {val_cell} | `{r['ceiling_display']}` | {badge} |"
+            )
     return out
 
 

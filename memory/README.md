@@ -3,7 +3,7 @@ title: "Engineering Memory"
 memory_mode: "obsidian"
 default_entity: "Alchemical-3D"
 schema_version: "2.0.0"
-last_synced: "2026-11-16"
+last_synced: "2026-11-17"
 ---
 
 # Engineering Memory — Dual-Mode Engineering Memory Hub
@@ -49,7 +49,7 @@ last_synced: "2026-11-16"
 | **Maker-Tools** | `Alchemical-3D` | `public` | `software` | `29641c5` (`clean`) | [`Maker-Tools.md`](Projects/Maker-Tools/Maker-Tools.md) | [`_Software.md`](Projects/Maker-Tools/Maker-Tools_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **NetCom_Engineering_Assistant** | `NetCom` | `private` | `software` | `UNTRACKED` (`untracked`) | [`NetCom_Engineering_Assistant.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) | [`_Software.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md) | [`NetCom_Tasks.md`](Tasks/NetCom_Tasks.md) |
 | **Organization_Profile** | `Alchemical-3D` | `public` | `software` | `b74920e` (`clean`) | [`Organization_Profile.md`](Projects/Organization_Profile/Organization_Profile.md) | [`_Software.md`](Projects/Organization_Profile/Organization_Profile_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
-| **Pestle_Rotational_Bowden** | `Alchemical-3D` | `public` | `hardware` | `bac7c2d` (`clean`) | [`Pestle_Rotational_Bowden.md`](Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) | [`_Hardware.md`](Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
+| **Pestle_Rotational_Bowden** | `Alchemical-3D` | `public` | `hardware` | `7197d2b` (`clean`) | [`Pestle_Rotational_Bowden.md`](Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) | [`_Hardware.md`](Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Pneuma_Remote_Air** | `Alchemical-3D` | `public` | `hardware` | `0702c9c` (`clean`) | [`Pneuma_Remote_Air.md`](Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) | [`_Hardware.md`](Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Workstation_Operations** | `Orin_Workstation` | `private` | `software` | `UNTRACKED` (`untracked`) | [`Workstation_Operations.md`](Projects/Workstation_Operations/Workstation_Operations.md) | [`_Software.md`](Projects/Workstation_Operations/Workstation_Operations_Software.md) | [`Orin_Workstation_Tasks.md`](Tasks/Orin_Workstation_Tasks.md) |
 <!-- AUTO-PROJECT-INDEX:END -->

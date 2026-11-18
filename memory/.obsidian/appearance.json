@@ -1,6 +1,7 @@
 {
   "enabledCssSnippets": [
-    "mermaid-responsive"
+    "mermaid-responsive",
+    "readable-tables"
   ],
   "showRibbon": true
 }

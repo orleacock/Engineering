@@ -13,6 +13,7 @@ import argparse
 import ast
 import asyncio
 import concurrent.futures
+import contextlib
 import importlib.util
 import json
 import math
@@ -59,7 +60,7 @@ else:  # pragma: no cover - stdlib fallback for offline self-tests
             )
 
 
-SERVER_VERSION = "2.5.0"
+SERVER_VERSION = "2.6.0"
 MCP_SYNC_WAIT_CAP_SECONDS = 135.0
 _TRACKED_SERVER_FILES = (Path(__file__).resolve(), Path(apprentice_engine.__file__).resolve())
 _BOOT_MTIMES = {p: p.stat().st_mtime for p in _TRACKED_SERVER_FILES if p.is_file()}
@@ -313,6 +314,174 @@ def _run_verify_claims_check(
         return res
     finally:
         tmp_md.unlink(missing_ok=True)
+
+
+def _compute_raw_payload_metrics(
+    validated_files: list[Path],
+    slice_items: list[tuple[int, int] | None],
+) -> tuple[list[Path], set[Path], list[tuple[Path, int, int]], int, int]:
+    """Compute unique unsliced files, explicit slices, distinct file count, and total raw payload bytes."""
+    unsliced_unique = list(dict.fromkeys(fp for fp, sl in zip(validated_files, slice_items) if sl is None))
+    unsliced_set = set(unsliced_unique)
+    explicit_slices = [
+        (fp, sl[0], sl[1])
+        for fp, sl in zip(validated_files, slice_items)
+        if sl is not None and fp not in unsliced_set
+    ]
+    unsliced_raw_bytes = sum(vf.stat().st_size for vf in unsliced_unique if vf.is_file()) if unsliced_unique else 0
+    slice_raw_bytes = 0
+    if explicit_slices:
+        lines_cache: dict[Path, list[str]] = {}
+        for fp_s, s_l, e_l in explicit_slices:
+            if fp_s not in lines_cache:
+                lines_cache[fp_s] = fp_s.read_text(encoding="utf-8", errors="replace").splitlines()
+            all_l = lines_cache[fp_s]
+            slice_raw_bytes += len("\n".join(all_l[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8"))
+    distinct_files = len({fp for fp in validated_files})
+    return unsliced_unique, unsliced_set, explicit_slices, distinct_files, unsliced_raw_bytes + slice_raw_bytes
+
+
+@contextlib.contextmanager
+def _mount_optional_patch_sources(
+    base_sources: list[Path],
+    assembled_text: str,
+    *,
+    include_git_diff: bool,
+    extra_text_sources: dict[str, str] | None = None,
+):
+    """Mount extracted git diff (.patch) and optional oracle text snapshots as transient verification sources."""
+    diff_txt = apprentice_engine.extract_diff_patch_text(assembled_text) if include_git_diff else ""
+    mount_diff = bool(diff_txt) and not any(p.suffix.lower() in {".patch", ".diff"} for p in base_sources)
+    clean_extras = {
+        str(name).strip(): str(txt).strip()
+        for name, txt in (extra_text_sources or {}).items()
+        if str(name).strip() and str(txt).strip()
+    }
+    if not mount_diff and not clean_extras:
+        yield list(base_sources), None
+        return
+    with tempfile.TemporaryDirectory(prefix="apprentice_diff_vrf_") as td_p:
+        mounted: list[Path] = list(base_sources)
+        patch_p: Path | None = None
+        if mount_diff:
+            patch_p = Path(td_p) / "working_tree_delta.patch"
+            patch_p.write_text(diff_txt + "\n", encoding="utf-8")
+            os.chmod(patch_p, 0o600)
+            mounted.append(patch_p)
+        for ename, etxt in clean_extras.items():
+            safe_name = Path(ename).name
+            ep = Path(td_p) / safe_name
+            ep.write_text(etxt + "\n", encoding="utf-8")
+            os.chmod(ep, 0o600)
+            mounted.append(ep)
+        yield mounted, patch_p
+
+
+def _run_cpu_truth_oracles(
+    *,
+    repo_resolved: Path,
+    draft_files: list[Path],
+    verify_sources: list[Path],
+    hom_root: Path,
+    mem_root: Path,
+    py_targets: list[Path] | None = None,
+) -> dict[str, Any]:
+    """Run deterministic sub-second CPU truth oracles (verify_claims, audit_repo_docs, data_boundary, py_compile)."""
+    t0 = time.perf_counter()
+    verify_claims_path = hom_root / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
+    audit_docs_path = hom_root / "skills" / "doc-and-card-studio" / "scripts" / "audit_repo_docs.py"
+    audit_boundary_path = hom_root / "scripts" / "audit_data_boundary.py"
+
+    draft_vrf: dict[str, Any] = {"ran": False}
+    clean_drafts = [p for p in draft_files if p.is_file() and p.suffix.lower() == ".md"]
+    clean_srcs, src_warns = select_collision_free_sources(repo_resolved, verify_sources) if verify_sources else ([], [])
+    if clean_drafts and clean_srcs and verify_claims_path.is_file():
+        cmd_v = [
+            sys.executable,
+            "-B",
+            str(verify_claims_path),
+            "--sources",
+            *[str(s) for s in clean_srcs],
+            "--memory-root",
+            str(mem_root),
+            "--json",
+        ]
+        for df in clean_drafts:
+            cmd_v.extend(["--target", str(df)])
+        vp = subprocess.run(
+            cmd_v,
+            cwd=apprentice_engine._safe_subprocess_cwd(repo_resolved),
+            capture_output=True,
+            text=True,
+            timeout=45,
+            check=False,
+        )
+        rep_v: dict[str, Any] = {}
+        try:
+            rep_v = json.loads(vp.stdout) if vp.stdout.strip() else {}
+        except json.JSONDecodeError:
+            rep_v = {}
+        draft_vrf = {
+            "ran": True,
+            "returncode": vp.returncode,
+            "supported": int(rep_v.get("supported_count", 0)),
+            "unbacked": int(rep_v.get("unbacked_count", 0)),
+            "tbd_count": int(rep_v.get("tbd_count", 0)),
+            "vrf_token": rep_v.get("vrf_token"),
+            "targets": [d.name for d in clean_drafts],
+            "source_warnings": src_warns,
+        }
+
+    audit_docs_res: dict[str, Any] = {"ran": False}
+    if audit_docs_path.is_file():
+        adp = subprocess.run(
+            [sys.executable, "-B", str(audit_docs_path), str(repo_resolved), "--skip-image-check"],
+            cwd=apprentice_engine._safe_subprocess_cwd(repo_resolved),
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        audit_docs_res = {
+            "ran": True,
+            "returncode": adp.returncode,
+            "output_tail": (adp.stdout + "\n" + adp.stderr).strip()[-1800:],
+        }
+
+    boundary_res: dict[str, Any] = {"ran": False}
+    if audit_boundary_path.is_file():
+        bp = subprocess.run(
+            [sys.executable, "-B", str(audit_boundary_path), "--repo", str(repo_resolved), "--worktree"],
+            cwd=apprentice_engine._safe_subprocess_cwd(repo_resolved),
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        boundary_res = {
+            "ran": True,
+            "returncode": bp.returncode,
+            "summary": (bp.stdout + "\n" + bp.stderr).strip()[-600:],
+        }
+
+    py_syntax_res: dict[str, Any] = {"ran": False, "checked": 0, "errors": []}
+    py_list = [p for p in (py_targets or []) if p.is_file() and p.suffix.lower() == ".py"]
+    if py_list:
+        errs: list[str] = []
+        for pp in py_list:
+            try:
+                ast.parse(pp.read_text(encoding="utf-8", errors="replace"), filename=str(pp))
+            except SyntaxError as exc:
+                errs.append(f"{pp.name}:{exc.lineno}: {exc.msg}")
+        py_syntax_res = {"ran": True, "checked": len(py_list), "errors": errs}
+
+    return {
+        "elapsed_ms": round((time.perf_counter() - t0) * 1000.0, 1),
+        "verify_claims_drafts": draft_vrf,
+        "audit_repo_docs": audit_docs_res,
+        "audit_data_boundary": boundary_res,
+        "python_ast": py_syntax_res,
+    }
 
 
 def _normalize_control_action(action: str) -> str:
@@ -1208,7 +1377,7 @@ def _apprentice_digest_sync(
     context_files: list[str] | None = None,
     repo: str = "",
     include_git_diff: bool = False,
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "auto",
     max_tokens: int | None = None,
@@ -1218,12 +1387,10 @@ def _apprentice_digest_sync(
     prev_verdict: str | None = None,
     prev_verdict_note: str = "",
 ) -> dict[str, Any]:
-    """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (async_job & verify_claims enabled by default)."""
+    """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (auto/standard/high, async_job & verify_claims)."""
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
-        tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
         sys_prompt, sys_src = apprentice_engine.load_system_prompt()
         repo_root = Path(repo) if repo.strip() else None
@@ -1235,6 +1402,23 @@ def _apprentice_digest_sync(
         )
         if not prompt.strip():
             raise ValueError("Prompt must be non-empty.")
+
+        unsliced_unique, unsliced_set, explicit_slices, distinct_files_cnt, total_raw_file_bytes = _compute_raw_payload_metrics(
+            validated_files,
+            slice_items,
+        )
+        route_plan = apprentice_engine.classify_hybrid_effort(
+            tool_kind="digest",
+            prompt=prompt,
+            distinct_files=distinct_files_cnt,
+            include_git_diff=bool(include_git_diff),
+            requested_effort=effort,
+            requested_mode=mode,
+            total_raw_bytes=total_raw_file_bytes,
+        )
+        effort_norm = route_plan["effective_effort"]
+        req_mode = route_plan["effective_mode"]
+        tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
 
         if async_job:
             apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
@@ -1259,11 +1443,12 @@ def _apprentice_digest_sync(
             return {
                 **job_info,
                 "effort": effort_norm,
+                "route_id": route_plan["route_id"],
                 "prev_verdict_update": prev_res,
                 "scorecard": sc_str,
                 "user_notice": (
                     f"[APPRENTICE NOTICE] Launched async digest sprint {job_info['job_id']} "
-                    f"(effort={effort_norm}, mode={req_mode}). Collect with apprentice_control(action='job-collect', job_id='{job_info['job_id']}'). | {sc_str}"
+                    f"(effort={effort_norm}, mode={req_mode}, route={route_plan['route_id']}). Collect with apprentice_control(action='job-collect', job_id='{job_info['job_id']}'). | {sc_str}"
                 ),
             }
 
@@ -1273,27 +1458,11 @@ def _apprentice_digest_sync(
         sys_bytes = len(sys_prompt.encode("utf-8"))
         has_code = apprentice_engine.is_code_heavy_payload(validated_files, bool(include_git_diff))
 
-        unsliced_unique = list(dict.fromkeys(fp for fp, sl in zip(validated_files, slice_items) if sl is None))
-        unsliced_set = set(unsliced_unique)
-        explicit_slices = [
-            (fp, sl[0], sl[1])
-            for fp, sl in zip(validated_files, slice_items)
-            if sl is not None and fp not in unsliced_set
-        ]
-        unsliced_raw_bytes = sum(vf.stat().st_size for vf in unsliced_unique) if unsliced_unique else 0
-        slice_raw_bytes = 0
-        if explicit_slices:
-            _lines_cache: dict[Path, list[str]] = {}
-            for fp_s, s_l, e_l in explicit_slices:
-                if fp_s not in _lines_cache:
-                    _lines_cache[fp_s] = fp_s.read_text(encoding="utf-8", errors="replace").splitlines()
-                all_l = _lines_cache[fp_s]
-                slice_raw_bytes += len("\n".join(all_l[max(0, s_l - 1) : max(0, e_l)]).encode("utf-8"))
-        total_raw_file_bytes = unsliced_raw_bytes + slice_raw_bytes
-        chunk_threshold = 42000 if effective_mode == "deep" else 36000
+        chunk_threshold = 55296 if effective_mode == "deep" else 40000
         use_auto_chunk = (
             effective_mode in {"fast", "deep"}
             and not include_git_diff
+            and not route_plan["skip_chunking_for_cross_audit"]
             and _should_trigger_chunked_digest(
                 len(unsliced_unique),
                 explicit_slices,
@@ -1422,10 +1591,9 @@ def _apprentice_digest_sync(
                         f"Overall user goal (other parallel slices inspect the remaining files/sections):\n"
                         f"{prompt.strip()}\n\n"
                         f"TASK FOR THIS SLICE ONLY:\n"
-                        f"Extract EVERY matching item, fastener, material/infill setting, quantitative figure, symbol, or fact "
-                        f"ACTUALLY PRESENT in `{rel_label}#L{s_line}-L{e_line}` that contributes to ANY part of the user goal above. "
-                        f"`{rel_label}` IS one of the target files referenced in the user goal—do NOT wait for other files to compare; "
-                        f"report this slice's relevant facts now.\n"
+                        f"Extract ONLY matching items, fasteners (exact size + head style), specs, rules, symbols, or facts DIRECTLY RELEVANT to the user goal "
+                        f"that are ACTUALLY PRESENT in `{rel_label}#L{s_line}-L{e_line}` using terse lossless rows (`Item/Rule | Exact Literal/Qty/Spec | {rel_label}#L<start>-L<end>`, max ~24 rows). "
+                        f"`{rel_label}` IS one of the target files referenced in the user goal—preserve relevant edge specs without skipping, and omit unrelated sections.\n"
                         f"- Cite exact `{rel_label}#L<start>-L<end>` anchors verbatim (`StartLine <= EndLine`).\n"
                         f"- Do NOT emit `[TBD]` or mention items absent from lines L{s_line}-L{e_line} "
                         f"(other chunks cover the rest of `{rel_label}` and other files).\n"
@@ -1445,8 +1613,8 @@ def _apprentice_digest_sync(
                         f"Overall user goal (other parallel batches inspect any remaining files/sections):\n"
                         f"{prompt.strip()}\n\n"
                         f"TASK FOR THIS BATCH:\n"
-                        f"Extract EVERY matching item, fastener, metric, setting, status, or fact ACTUALLY PRESENT in each file in this batch.\n"
-                        f"- Cover EVERY file listed in this batch; prefix or cite exact `<relative_path>#L<start>-L<end>` verbatim (`StartLine <= EndLine`).\n"
+                        f"Extract ONLY matching items, fasteners (exact size + head style), metrics, rules, or facts DIRECTLY RELEVANT to the user goal from each file in this batch using terse lossless rows (`File | Item/Rule | Exact Literal/Qty/Spec | <relative_path>#L<start>-L<end>`, max ~24 rows).\n"
+                        f"- Cover relevant parts of EVERY file listed in this batch; preserve exact counts/specs cleanly and skip unrelated noise; cite exact `<relative_path>#L<start>-L<end>` verbatim (`StartLine <= EndLine`).\n"
                         f"- Do NOT emit `[TBD]` for items absent from these files unless specifically asked.\n"
                         f"- Only reply `NONE` if ALL files in this batch contain ZERO relevant facts. Zero preamble."
                     )
@@ -1554,11 +1722,11 @@ def _apprentice_digest_sync(
                 if needs_cross_slice_reasoning:
                     reduce_prompt += (
                         "\n\n[MERGE-ONLY THINKING LIMIT: Facts are already extracted above; "
-                        "keep <think> under 300 words and emit final verified bullets immediately.]"
+                        "keep <think> concise (<=500 words) and emit final verified bullets with zero preamble.]"
                     )
                     reduce_prompt_used = reduce_prompt
                     red_reasoning_override = None
-                    red_max_toks = min(max_toks, 4608)
+                    red_max_toks = min(max(max_toks, 8192), 10240)
                     red_allow_high_floor = True
                 elif effective_mode == "deep":
                     # Probe proved Bionic treats low/medium == high; pure merge uses 'none' to avoid 200s CoT blowups
@@ -1575,9 +1743,9 @@ def _apprentice_digest_sync(
                     red_allow_high_floor = False
                 try:
                     reduce_timeout_s = (
-                        min(300.0, max(200.0, 130.0 + 18.0 * len(kept_labeled_blocks)))
+                        min(300.0, max(260.0, 180.0 + 15.0 * len(kept_labeled_blocks)))
                         if (needs_cross_slice_reasoning or is_cross_slice_audit or len(kept_labeled_blocks) >= 5)
-                        else 150.0
+                        else 180.0
                     )
                     red_res = apprentice_engine.invoke_chat_completion(
                         api_url=api_url,
@@ -1691,6 +1859,8 @@ def _apprentice_digest_sync(
                 context_slices=slice_items,
             )
             prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
+            eff_diff = apprentice_engine.has_effective_git_diff(assembled, bool(include_git_diff))
+            has_code_eff = apprentice_engine.is_code_heavy_payload(validated_files, eff_diff)
             eta = apprentice_engine._enforce_eta_or_raise(
                 mode=effective_mode,
                 prompt_bytes=prompt_bytes,
@@ -1700,12 +1870,12 @@ def _apprentice_digest_sync(
                 force_slow=False,
                 cmd_name="apprentice_digest",
                 invocation_tier=tier,
-                has_code_context=has_code,
+                has_code_context=has_code_eff,
                 loaded_ctx_override=loaded_ctx,
                 calibrated_output=True,
                 allow_soft_eta_overrun=(effective_mode != "cpu-bg"),
                 sys_prompt_bytes=sys_bytes,
-                include_git_diff=bool(include_git_diff),
+                include_git_diff=eff_diff,
             )
             t_call0 = time.perf_counter()
             try:
@@ -1850,131 +2020,137 @@ def _apprentice_digest_sync(
         claims_verified: bool | None = None
         verify_healed = False
 
-        if verify_claims and validated_files and include_git_diff:
-            vrf_res = {"ran": False, "skipped_reason": "git_diff_head_delta"}
-        elif verify_claims and validated_files:
+        if verify_claims and (validated_files or include_git_diff):
             hom_root, mem_root = _resolve_homunculus_and_memory()
             verify_claims_path = hom_root / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
-            if repo_resolved is not None:
-                clean_sources, _ = select_collision_free_sources(repo_resolved, validated_files)
+            if validated_files and repo_resolved is not None:
+                base_sources, _ = select_collision_free_sources(repo_resolved, validated_files)
             else:
                 seen_bn: set[str] = set()
-                clean_sources = []
+                base_sources = []
                 for vf in validated_files:
                     if vf.name not in seen_bn:
                         seen_bn.add(vf.name)
-                        clean_sources.append(vf)
-            cwd_check = repo_resolved or validated_files[0].parent
-            vrf_res = _run_verify_claims_check(res["content"], clean_sources, verify_claims_path, mem_root, cwd_check)
-            if vrf_res.get("ran"):
-                if vrf_res.get("returncode") == 0:
-                    claims_verified = True
-                else:
-                    t_heal0 = time.perf_counter()
-                    draft_for_heal = res["content"]
-                    vrf_for_heal = vrf_res
-                    try:
-                        surg = _surgical_repair_unbacked_lines(
-                            draft_text=draft_for_heal,
-                            vrf_res=vrf_for_heal,
-                            context_sources=validated_files,
-                            clean_sources=clean_sources,
-                            repo_resolved=repo_resolved,
-                            verify_claims_path=verify_claims_path,
-                            mem_root=mem_root,
-                            cwd_check=cwd_check,
-                            api_url=api_url,
-                            sys_prompt=sys_prompt,
-                            loaded_ctx=loaded_ctx,
-                            tier=tier,
-                            eta=eta,
-                            cmd_name_prefix="apprentice_digest",
-                        )
-                    except Exception:
-                        surg = None
-
-                    if surg is not None:
-                        res = {
-                            **res,
-                            "prompt_tokens": int(res.get("prompt_tokens") or 0) + int(surg["prompt_tokens"]),
-                            "completion_tokens": int(res.get("completion_tokens") or 0) + int(surg["completion_tokens"]),
-                        }
-                        if surg.get("verified"):
-                            heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                            res = {**res, "content": surg["content"]}
-                            vrf_res = {
-                                "ran": True,
-                                "returncode": 0,
-                                "elapsed_ms": surg["vrf_after"].get("elapsed_ms"),
-                                "surgical_repair": True,
-                                "initial": vrf_res,
-                                "after_heal": surg["vrf_after"],
-                            }
-                            verify_healed = True
-                            claims_verified = True
-                        elif int(surg["vrf_after"].get("unbacked", 999)) < int(vrf_for_heal.get("unbacked", 999)):
-                            draft_for_heal = surg["content"]
-                            vrf_for_heal = surg["vrf_after"]
-
-                    if claims_verified is not True:
-                        fail_detail = _format_compact_verify_failures(vrf_for_heal, max_chars=2800)
-                        repair_ctx = (
-                            _build_chunked_repair_context(
-                                prompt,
-                                draft_for_heal,
-                                validated_files,
-                                repo_resolved,
-                                kept_labeled_blocks,
-                                unbacked_claims=vrf_for_heal.get("unbacked_claims"),
-                            )
-                            if use_auto_chunk
-                            else assembled
-                        )
-                        repair_prompt = (
-                            f"{repair_ctx}\n\nYour previous draft failed deterministic claim verification:\n{fail_detail}\n"
-                            "CRITICAL REPAIR RULES:\n"
-                            "1. DELETE any intro or heading sentence so line 1 starts directly with `- `.\n"
-                            "2. DELETE any unbacked summary counts echoed from the prompt, uncalculated group totals, or invalid `[CALC: ...]` labels (if `[CALC: ...]` is used, the left side of `=` MUST contain ONLY source-verbatim integers/operators like `[CALC: 4 + 1 + 1 + 2 = 8]` — NEVER variable words like `Total` AND NEVER derived subtotals not literally printed in source lines; expand sums into literal source numbers or omit `[CALC:]` completely).\n"
-                            "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; if a cited source slice lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier on that bullet; for QUALIFIED_QUANTITY(...) failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or remove redundant duplicates.\n"
-                            "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines) instead of missing external files; insert `[TBD: ...]` for missing values.\n\n"
-                            f"Previous draft:\n{draft_for_heal}\n"
-                        )
+                        base_sources.append(vf)
+            cwd_check = repo_resolved or (validated_files[0].parent if validated_files else Path.home())
+            diff_src_text = "" if use_auto_chunk else assembled
+            with _mount_optional_patch_sources(
+                base_sources,
+                diff_src_text,
+                include_git_diff=bool(include_git_diff),
+            ) as (clean_sources, _mounted_patch):
+                vrf_res = _run_verify_claims_check(res["content"], clean_sources, verify_claims_path, mem_root, cwd_check)
+                if vrf_res.get("ran"):
+                    if vrf_res.get("returncode") == 0:
+                        claims_verified = True
+                    elif heal_error is not None:
+                        claims_verified = False
+                    else:
+                        t_heal0 = time.perf_counter()
+                        draft_for_heal = res["content"]
+                        vrf_for_heal = vrf_res
                         try:
-                            rep_out = _run_full_repair_with_guard(
-                                repair_prompt=repair_prompt,
-                                draft_for_heal=draft_for_heal,
-                                vrf_for_heal=vrf_for_heal,
-                                base_res=res,
-                                effective_mode=effective_mode,
-                                effort_norm=effort_norm,
-                                max_budget=max_toks,
-                                api_url=api_url,
-                                sys_prompt=sys_prompt,
-                                loaded_ctx=loaded_ctx,
+                            surg = _surgical_repair_unbacked_lines(
+                                draft_text=draft_for_heal,
+                                vrf_res=vrf_for_heal,
+                                context_sources=clean_sources,
                                 clean_sources=clean_sources,
+                                repo_resolved=repo_resolved,
                                 verify_claims_path=verify_claims_path,
                                 mem_root=mem_root,
                                 cwd_check=cwd_check,
+                                api_url=api_url,
+                                sys_prompt=sys_prompt,
+                                loaded_ctx=loaded_ctx,
                                 tier=tier,
                                 eta=eta,
-                                telemetry_cmd="apprentice_digest_verify_retry",
+                                cmd_name_prefix="apprentice_digest",
                             )
-                            heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
-                            res = rep_out["res"]
-                            vrf_res = {
-                                "ran": True,
-                                "returncode": rep_out["vrf_after"].get("returncode"),
-                                "elapsed_ms": rep_out["vrf_after"].get("elapsed_ms"),
-                                "initial": vrf_res,
-                                "after_heal": rep_out["vrf_after"],
-                                **({"attempted_heal": rep_out["vrf_attempt"]} if not rep_out["adopted"] else {}),
+                        except Exception:
+                            surg = None
+
+                        if surg is not None:
+                            res = {
+                                **res,
+                                "prompt_tokens": int(res.get("prompt_tokens") or 0) + int(surg["prompt_tokens"]),
+                                "completion_tokens": int(res.get("completion_tokens") or 0) + int(surg["completion_tokens"]),
                             }
-                            verify_healed = bool(rep_out["adopted"])
-                            claims_verified = rep_out["verified"]
-                        except Exception as heal_exc:
-                            heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                            heal_error = f"verify_repair_failed: {heal_exc}"
-                            claims_verified = False
+                            if surg.get("verified"):
+                                heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
+                                res = {**res, "content": surg["content"]}
+                                vrf_res = {
+                                    "ran": True,
+                                    "returncode": 0,
+                                    "elapsed_ms": surg["vrf_after"].get("elapsed_ms"),
+                                    "surgical_repair": True,
+                                    "initial": vrf_res,
+                                    "after_heal": surg["vrf_after"],
+                                }
+                                verify_healed = True
+                                claims_verified = True
+                            elif int(surg["vrf_after"].get("unbacked", 999)) < int(vrf_for_heal.get("unbacked", 999)):
+                                draft_for_heal = surg["content"]
+                                vrf_for_heal = surg["vrf_after"]
+
+                        if claims_verified is not True:
+                            fail_detail = _format_compact_verify_failures(vrf_for_heal, max_chars=2800)
+                            repair_ctx = (
+                                _build_chunked_repair_context(
+                                    prompt,
+                                    draft_for_heal,
+                                    validated_files,
+                                    repo_resolved,
+                                    kept_labeled_blocks,
+                                    unbacked_claims=vrf_for_heal.get("unbacked_claims"),
+                                )
+                                if use_auto_chunk
+                                else assembled
+                            )
+                            repair_prompt = (
+                                f"{repair_ctx}\n\nYour previous draft failed deterministic claim verification:\n{fail_detail}\n"
+                                "CRITICAL REPAIR RULES:\n"
+                                "1. DELETE any intro or heading sentence so line 1 starts directly with `- `.\n"
+                                "2. DELETE any unbacked summary counts echoed from the prompt, uncalculated group totals, or invalid `[CALC: ...]` labels (if `[CALC: ...]` is used, the left side of `=` MUST contain ONLY source-verbatim integers/operators like `[CALC: 4 + 1 + 1 + 2 = 8]` — NEVER variable words like `Total` AND NEVER derived subtotals not literally printed in source lines; expand sums into literal source numbers or omit `[CALC:]` completely).\n"
+                                "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; if a cited source slice lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier on that bullet; for QUALIFIED_QUANTITY(...) failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or remove redundant duplicates.\n"
+                                "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines) instead of missing external files; insert `[TBD: ...]` for missing values.\n\n"
+                                f"Previous draft:\n{draft_for_heal}\n"
+                            )
+                            try:
+                                rep_out = _run_full_repair_with_guard(
+                                    repair_prompt=repair_prompt,
+                                    draft_for_heal=draft_for_heal,
+                                    vrf_for_heal=vrf_for_heal,
+                                    base_res=res,
+                                    effective_mode=effective_mode,
+                                    effort_norm=effort_norm,
+                                    max_budget=max_toks,
+                                    api_url=api_url,
+                                    sys_prompt=sys_prompt,
+                                    loaded_ctx=loaded_ctx,
+                                    clean_sources=clean_sources,
+                                    verify_claims_path=verify_claims_path,
+                                    mem_root=mem_root,
+                                    cwd_check=cwd_check,
+                                    tier=tier,
+                                    eta=eta,
+                                    telemetry_cmd="apprentice_digest_verify_retry",
+                                )
+                                heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
+                                res = rep_out["res"]
+                                vrf_res = {
+                                    "ran": True,
+                                    "returncode": rep_out["vrf_after"].get("returncode"),
+                                    "elapsed_ms": rep_out["vrf_after"].get("elapsed_ms"),
+                                    "initial": vrf_res,
+                                    "after_heal": rep_out["vrf_after"],
+                                    **({"attempted_heal": rep_out["vrf_attempt"]} if not rep_out["adopted"] else {}),
+                                }
+                                verify_healed = bool(rep_out["adopted"])
+                                claims_verified = rep_out["verified"]
+                            except Exception as heal_exc:
+                                heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
+                                heal_error = f"verify_repair_failed: {heal_exc}"
+                                claims_verified = False
 
         if res["finish_reason"] != "stop" or claims_verified is False or heal_error is not None:
             verdict = "corrected"
@@ -2004,6 +2180,7 @@ def _apprentice_digest_sync(
             "call_id": sc_rec.get("call_id"),
             "verdict": verdict,
             "effort": eta["effort"],
+            "route_id": route_plan["route_id"],
             "invocation_tier": tier,
             "system_prompt_source": sys_src,
             "quarantined_draft_warning": "UNVERIFIED LOCAL SIDECAR OUTPUT — verify claims against primary sources before citing.",
@@ -2101,8 +2278,24 @@ async def _run_mcp_with_sync_guard(op_label: str, sync_fn: Any, kwargs: dict[str
         effort_norm, _ = apprentice_engine.resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
     except ValueError:
         return await asyncio.to_thread(sync_fn, **kwargs)
+    if effort_norm == "auto":
+        try:
+            raw_ctx = list(kwargs.get("context_files") or kwargs.get("draft_files") or [])
+            distinct_cnt = len({str(apprentice_engine.parse_context_spec(str(c))[0]) for c in raw_ctx})
+            kind_lbl = op_label.replace("-", "_").replace(" ", "_")
+            auto_route = apprentice_engine.classify_hybrid_effort(
+                tool_kind=kind_lbl,
+                prompt=str(kwargs.get("prompt") or ""),
+                distinct_files=distinct_cnt,
+                include_git_diff=bool(kwargs.get("include_git_diff")),
+                requested_effort="auto",
+                requested_mode=kwargs.get("mode"),
+            )
+            effort_norm = auto_route["effective_effort"]
+        except Exception:
+            effort_norm = "standard"
     tier_norm = str(kwargs.get("invocation_tier") or "auto").strip().lower()
-    explicit_multipass = op_label in ("repo_audit", "stage_patch") and tier_norm == "explicit"
+    explicit_multipass = op_label in ("repo_audit", "repo audit", "stage_patch", "stage-patch", "shadow_review") and tier_norm == "explicit"
     if (
         effort_norm != "high"
         and not explicit_multipass
@@ -2160,7 +2353,7 @@ async def apprentice_digest(
     context_files: list[str] | None = None,
     repo: str = "",
     include_git_diff: bool = False,
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "auto",
     max_tokens: int | None = None,
@@ -2170,7 +2363,7 @@ async def apprentice_digest(
     prev_verdict: str | None = None,
     prev_verdict_note: str = "",
 ) -> dict[str, Any]:
-    """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (STANDARD/HIGH, async_job & verify_claims)."""
+    """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (auto/standard/high, async_job & verify_claims)."""
     return await _run_mcp_with_sync_guard(
         "digest",
         _apprentice_digest_sync,
@@ -2224,7 +2417,7 @@ def _apprentice_repo_audit_sync(
     prompt: str,
     context_files: list[str] | None = None,
     include_git_diff: bool = False,
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "explicit",
     max_tokens: int | None = None,
@@ -2238,8 +2431,6 @@ def _apprentice_repo_audit_sync(
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
-        tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
         sys_prompt, sys_src = apprentice_engine.load_system_prompt()
         repo_root = Path(os.path.expanduser(repo))
@@ -2266,6 +2457,22 @@ def _apprentice_repo_audit_sync(
             repo_root=repo_resolved,
             require_exists=True,
         )
+        _u_cnt, _u_set, _e_sl, distinct_files_cnt, total_raw_file_bytes = _compute_raw_payload_metrics(
+            validated_files,
+            slice_items,
+        )
+        route_plan = apprentice_engine.classify_hybrid_effort(
+            tool_kind="repo_audit",
+            prompt=prompt,
+            distinct_files=distinct_files_cnt,
+            include_git_diff=bool(include_git_diff),
+            requested_effort=effort,
+            requested_mode=mode,
+            total_raw_bytes=total_raw_file_bytes,
+        )
+        effort_norm = route_plan["effective_effort"]
+        req_mode = route_plan["effective_mode"]
+        tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
 
         # Fail fast (<50ms) BEFORE spawning subprocesses when Bionic is offline or unloaded
         srv, effective_mode = apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
@@ -2352,7 +2559,8 @@ def _apprentice_repo_audit_sync(
         sys_bytes = len(sys_prompt.encode("utf-8"))
         prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
         loaded_ctx = srv.get("loaded_context_length")
-        has_code = apprentice_engine.is_code_heavy_payload(validated_files, bool(include_git_diff))
+        eff_diff = apprentice_engine.has_effective_git_diff(assembled, bool(include_git_diff))
+        has_code = apprentice_engine.is_code_heavy_payload(validated_files, eff_diff)
         eta = apprentice_engine._enforce_eta_or_raise(
             mode=effective_mode,
             prompt_bytes=prompt_bytes,
@@ -2367,7 +2575,7 @@ def _apprentice_repo_audit_sync(
             calibrated_output=True,
             allow_soft_eta_overrun=(effective_mode != "cpu-bg"),
             sys_prompt_bytes=sys_bytes,
-            include_git_diff=bool(include_git_diff),
+            include_git_diff=eff_diff,
         )
         t_call0 = time.perf_counter()
         try:
@@ -2499,15 +2707,17 @@ def _apprentice_repo_audit_sync(
                 heal_elapsed_s += round(time.perf_counter() - t_len0, 3)
                 heal_error = f"audit_length_retry_failed: {cont_exc}"
 
-        # 3. Sanitize placeholder links & collision-free verify_claims BEFORE single gateway write
+        # 3. Sanitize placeholder links & collision-free verify_claims (with optional .patch diff grounding) BEFORE gateway write
         sanitized_content, links_fixed = sanitize_quarantine_placeholder_links(res["content"])
         raw_sources = validated_files if validated_files else discovered_repo_sources
-        clean_sources, src_warnings = select_collision_free_sources(repo_resolved, raw_sources)
+        base_clean_sources, src_warnings = select_collision_free_sources(repo_resolved, raw_sources)
         proj_mem_dir = mem_root / "Projects" / project
 
-        if include_git_diff:
-            vrf_pass1: dict[str, Any] = {"ran": False, "skipped_reason": "git_diff_head_delta"}
-        else:
+        with _mount_optional_patch_sources(
+            base_clean_sources,
+            assembled,
+            include_git_diff=bool(include_git_diff),
+        ) as (clean_sources, _mounted_patch):
             vrf_pass1 = _run_verify_claims_check(
                 sanitized_content,
                 clean_sources,
@@ -2517,94 +2727,94 @@ def _apprentice_repo_audit_sync(
                 project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
             )
 
-        vrf_final: dict[str, Any] = vrf_pass1
-        if vrf_pass1.get("ran") and vrf_pass1.get("returncode") != 0:
-            t_heal0 = time.perf_counter()
-            draft_for_scrub = sanitized_content
-            vrf_for_scrub = vrf_pass1
-            scrub_done = False
-            try:
-                surg = _surgical_repair_unbacked_lines(
-                    draft_text=draft_for_scrub,
-                    vrf_res=vrf_for_scrub,
-                    context_sources=raw_sources,
-                    clean_sources=clean_sources,
-                    repo_resolved=repo_resolved,
-                    verify_claims_path=verify_claims_path,
-                    mem_root=mem_root,
-                    cwd_check=repo_resolved,
-                    api_url=api_url,
-                    sys_prompt=sys_prompt,
-                    loaded_ctx=loaded_ctx,
-                    tier=tier,
-                    eta=eta,
-                    cmd_name_prefix="apprentice_repo_audit",
-                    project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
-                    sanitize_links=True,
-                )
-            except Exception:
-                surg = None
-
-            if surg is not None:
-                res = {
-                    **res,
-                    "prompt_tokens": int(res.get("prompt_tokens", 0)) + int(surg["prompt_tokens"]),
-                    "completion_tokens": int(res.get("completion_tokens", 0)) + int(surg["completion_tokens"]),
-                }
-                links_fixed += int(surg.get("links_fixed") or 0)
-                if surg.get("verified"):
-                    heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                    sanitized_content = surg["content"]
-                    res = {**res, "content": sanitized_content}
-                    vrf_final = surg["vrf_after"]
-                    verify_healed = True
-                    scrub_done = True
-                elif int(surg["vrf_after"].get("unbacked", 999)) < int(vrf_for_scrub.get("unbacked", 999)):
-                    draft_for_scrub = surg["content"]
-                    vrf_for_scrub = surg["vrf_after"]
-
-            if not scrub_done:
-                fail_detail = _format_compact_verify_failures(vrf_for_scrub, max_chars=2800)
-                scrub_prompt = (
-                    f"{assembled}\n\n"
-                    f"Your previous audit draft failed deterministic claim verification:\n{fail_detail}\n"
-                    "CRITICAL REPAIR RULES:\n"
-                    "1. DELETE any intro sentence (such as 'Based on ...') and delete any unbacked prompt summary counts or uncalculated group totals.\n"
-                    "2. Rewrite accurately using ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present verbatim in the files above (any `[CALC: ...]` tag MUST have pure numeric arithmetic using literal source numbers on the left of `=`, NEVER words like `Total` or derived subtotals).\n"
-                    "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines); for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
-                    f"Previous draft:\n{draft_for_scrub}\n"
-                )
+            vrf_final: dict[str, Any] = vrf_pass1
+            if vrf_pass1.get("ran") and vrf_pass1.get("returncode") != 0:
+                t_heal0 = time.perf_counter()
+                draft_for_scrub = sanitized_content
+                vrf_for_scrub = vrf_pass1
+                scrub_done = False
                 try:
-                    rep_out = _run_full_repair_with_guard(
-                        repair_prompt=scrub_prompt,
-                        draft_for_heal=draft_for_scrub,
-                        vrf_for_heal=vrf_for_scrub,
-                        base_res=res,
-                        effective_mode=effective_mode,
-                        effort_norm=effort_norm,
-                        max_budget=effective_max_toks,
-                        api_url=api_url,
-                        sys_prompt=sys_prompt,
-                        loaded_ctx=loaded_ctx,
+                    surg = _surgical_repair_unbacked_lines(
+                        draft_text=draft_for_scrub,
+                        vrf_res=vrf_for_scrub,
+                        context_sources=clean_sources if _mounted_patch is not None else raw_sources,
                         clean_sources=clean_sources,
+                        repo_resolved=repo_resolved,
                         verify_claims_path=verify_claims_path,
                         mem_root=mem_root,
                         cwd_check=repo_resolved,
+                        api_url=api_url,
+                        sys_prompt=sys_prompt,
+                        loaded_ctx=loaded_ctx,
                         tier=tier,
                         eta=eta,
-                        telemetry_cmd="apprentice_repo_audit_verify_retry",
+                        cmd_name_prefix="apprentice_repo_audit",
                         project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
                         sanitize_links=True,
                     )
-                    heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
-                    res = rep_out["res"]
-                    sanitized_content = rep_out["content"]
-                    links_fixed += int(rep_out["links_fixed"] or 0)
-                    vrf_final = rep_out["vrf_after"]
-                    verify_healed = bool(rep_out["adopted"])
-                except Exception as scrub_exc:
-                    heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
-                    heal_error = f"audit_verify_scrub_failed: {scrub_exc}"
+                except Exception:
+                    surg = None
+
+                if surg is not None:
+                    res = {
+                        **res,
+                        "prompt_tokens": int(res.get("prompt_tokens", 0)) + int(surg["prompt_tokens"]),
+                        "completion_tokens": int(res.get("completion_tokens", 0)) + int(surg["completion_tokens"]),
+                    }
+                    links_fixed += int(surg.get("links_fixed") or 0)
+                    if surg.get("verified"):
+                        heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
+                        sanitized_content = surg["content"]
+                        res = {**res, "content": sanitized_content}
+                        vrf_final = surg["vrf_after"]
+                        verify_healed = True
+                        scrub_done = True
+                    elif int(surg["vrf_after"].get("unbacked", 999)) < int(vrf_for_scrub.get("unbacked", 999)):
+                        draft_for_scrub = surg["content"]
+                        vrf_for_scrub = surg["vrf_after"]
+
+                if not scrub_done:
+                    fail_detail = _format_compact_verify_failures(vrf_for_scrub, max_chars=2800)
+                    scrub_prompt = (
+                        f"{assembled}\n\n"
+                        f"Your previous audit draft failed deterministic claim verification:\n{fail_detail}\n"
+                        "CRITICAL REPAIR RULES:\n"
+                        "1. DELETE any intro sentence (such as 'Based on ...') and delete any unbacked prompt summary counts or uncalculated group totals.\n"
+                        "2. Rewrite accurately using ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present verbatim in the files above (any `[CALC: ...]` tag MUST have pure numeric arithmetic using literal source numbers on the left of `=`, NEVER words like `Total` or derived subtotals).\n"
+                        "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines); for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
+                        f"Previous draft:\n{draft_for_scrub}\n"
+                    )
+                    try:
+                        rep_out = _run_full_repair_with_guard(
+                            repair_prompt=scrub_prompt,
+                            draft_for_heal=draft_for_scrub,
+                            vrf_for_heal=vrf_for_scrub,
+                            base_res=res,
+                            effective_mode=effective_mode,
+                            effort_norm=effort_norm,
+                            max_budget=effective_max_toks,
+                            api_url=api_url,
+                            sys_prompt=sys_prompt,
+                            loaded_ctx=loaded_ctx,
+                            clean_sources=clean_sources,
+                            verify_claims_path=verify_claims_path,
+                            mem_root=mem_root,
+                            cwd_check=repo_resolved,
+                            tier=tier,
+                            eta=eta,
+                            telemetry_cmd="apprentice_repo_audit_verify_retry",
+                            project_dir=proj_mem_dir if proj_mem_dir.is_dir() else None,
+                            sanitize_links=True,
+                        )
+                        heal_elapsed_s = round(heal_elapsed_s + float(rep_out["elapsed_s"]), 3)
+                        res = rep_out["res"]
+                        sanitized_content = rep_out["content"]
+                        links_fixed += int(rep_out["links_fixed"] or 0)
+                        vrf_final = rep_out["vrf_after"]
+                        verify_healed = bool(rep_out["adopted"])
+                    except Exception as scrub_exc:
+                        heal_elapsed_s = round(heal_elapsed_s + (time.perf_counter() - t_heal0), 3)
+                        heal_error = f"audit_verify_scrub_failed: {scrub_exc}"
 
         audit_total_elapsed_s = round(audit_initial_elapsed_s + heal_elapsed_s, 3)
         if heal_elapsed_s > 0.0:
@@ -2683,6 +2893,7 @@ def _apprentice_repo_audit_sync(
             "call_id": sc_rec.get("call_id"),
             "verdict": verdict,
             "effort": eta["effort"],
+            "route_id": route_plan["route_id"],
             "invocation_tier": tier,
             "system_prompt_source": sys_src,
             "elapsed_s": audit_total_elapsed_s,
@@ -2739,7 +2950,7 @@ async def apprentice_repo_audit(
     prompt: str,
     context_files: list[str] | None = None,
     include_git_diff: bool = False,
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "explicit",
     max_tokens: int | None = None,
@@ -2941,7 +3152,7 @@ def _apprentice_stage_patch_sync(
     repo: str = "",
     compare_against: str = "",
     staging_dir: str = str(apprentice_engine.DEFAULT_STAGING_DIR),
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "auto",
     max_tokens: int | None = None,
@@ -2955,7 +3166,15 @@ def _apprentice_stage_patch_sync(
     _ensure_live_process_cwd()
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
-        effort_norm, req_mode = apprentice_engine.resolve_effort_and_mode(effort, mode)
+        route_stage = apprentice_engine.classify_hybrid_effort(
+            tool_kind="stage_patch",
+            prompt=prompt,
+            distinct_files=len(list(context_files or [])),
+            requested_effort=effort,
+            requested_mode=mode,
+        )
+        effort_norm = route_stage["effective_effort"]
+        req_mode = route_stage["effective_mode"]
         tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
         safe_staging = apprentice_engine.validate_staging_dir(Path(staging_dir))
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
@@ -3335,7 +3554,7 @@ async def apprentice_stage_patch(
     repo: str = "",
     compare_against: str = "",
     staging_dir: str = str(apprentice_engine.DEFAULT_STAGING_DIR),
-    effort: str | None = None,
+    effort: str | None = "auto",
     mode: str | None = None,
     invocation_tier: str = "auto",
     max_tokens: int | None = None,
@@ -3371,6 +3590,308 @@ async def apprentice_stage_patch(
 
 _mcp_apprentice_stage_patch_coro = apprentice_stage_patch
 apprentice_stage_patch = _apprentice_stage_patch_sync  # type: ignore[assignment]
+
+
+def _apprentice_shadow_review_sync(
+    repo: str,
+    draft_files: list[str] | None = None,
+    context_files: list[str] | None = None,
+    include_git_diff: bool = True,
+    prompt: str = "",
+    effort: str | None = "auto",
+    mode: str | None = None,
+    invocation_tier: str = "explicit",
+    max_tokens: int | None = None,
+    async_job: bool = True,
+    prev_call_id: str | None = None,
+    prev_verdict: str | None = None,
+    prev_verdict_note: str = "",
+) -> dict[str, Any]:
+    """Parallel Second-Set-of-Eyes card: CPU truth oracles + compact local semantic contradiction critic."""
+    _ensure_live_process_cwd()
+    try:
+        prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
+        api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
+        sys_prompt, sys_src = apprentice_engine.load_system_prompt()
+        repo_root = Path(os.path.expanduser(repo))
+        repo_sec = apprentice_engine._inspect_path_security(repo_root)
+        if repo_sec:
+            raise apprentice_engine.SidecarFirewallError(f"[SECURITY_FIREWALL_BLOCKED] {repo_sec}")
+        repo_resolved = repo_root.resolve(strict=False)
+        if not repo_resolved.is_dir():
+            raise ValueError(f"Repository directory does not exist: {repo}")
+
+        draft_list = list(draft_files or [])
+        ctx_list = list(context_files or [])
+        combined_specs = [*draft_list, *[c for c in ctx_list if c not in draft_list]]
+        validated_all, slice_items, _ = apprentice_engine.parse_and_validate_context_items(
+            combined_specs,
+            repo_root=repo_resolved,
+            require_exists=True,
+        )
+        draft_paths, _, _ = apprentice_engine.parse_and_validate_context_items(
+            draft_list,
+            repo_root=repo_resolved,
+            require_exists=True,
+        )
+        _u1, _u2, _es, distinct_cnt, raw_bytes = _compute_raw_payload_metrics(validated_all, slice_items)
+
+        review_goal = (
+            prompt.strip()
+            or "Audit draft files and working-tree diff alongside repo specs for cross-file contradictions, "
+            "[!CAUTION]/[!WARNING] violations, hardware/schema mismatches, or missed invariants that hash/regex checks miss."
+        )
+        route_plan = apprentice_engine.classify_hybrid_effort(
+            tool_kind="shadow_review",
+            prompt=review_goal,
+            distinct_files=max(distinct_cnt, 1),
+            include_git_diff=bool(include_git_diff),
+            requested_effort=effort,
+            requested_mode=mode,
+            total_raw_bytes=raw_bytes,
+        )
+        effort_norm = route_plan["effective_effort"]
+        req_mode = route_plan["effective_mode"]
+        tier, max_eta = _resolve_eta_cap(invocation_tier, effort_norm)
+
+        srv, effective_mode = apprentice_engine.preflight_live_inference(api_url, apprentice_engine.DEFAULT_MODEL_ID, req_mode)
+
+        if async_job:
+            job_info = apprentice_engine.submit_async_job(
+                {
+                    "kind": "shadow_review",
+                    "kwargs": {
+                        "repo": repo,
+                        "draft_files": draft_list,
+                        "context_files": ctx_list,
+                        "include_git_diff": bool(include_git_diff),
+                        "prompt": prompt,
+                        "effort": effort_norm,
+                        "mode": req_mode,
+                        "invocation_tier": tier,
+                        "max_tokens": max_tokens,
+                        "async_job": False,
+                    },
+                }
+            )
+            sc_str = _scorecard_suffix()
+            return {
+                **job_info,
+                "schema_version": "SHADOW_SECOND_EYES_V1",
+                "effort": effort_norm,
+                "route_id": route_plan["route_id"],
+                "prev_verdict_update": prev_res,
+                "scorecard": sc_str,
+                "user_notice": (
+                    f"[APPRENTICE NOTICE] Launched async Shadow Second-Eyes sprint {job_info['job_id']} "
+                    f"(effort={effort_norm}, mode={effective_mode}, route={route_plan['route_id']}). | {sc_str}"
+                ),
+            }
+
+        hom_root, mem_root = _resolve_homunculus_and_memory()
+        verify_claims_path = hom_root / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
+        discovered = _discover_repo_sources(repo_resolved)
+        draft_set = set(draft_paths)
+        verify_sources = [p for p in (validated_all or discovered) if p not in draft_set] or discovered
+
+        # Stage 1: Sub-second CPU Truth Oracles
+        py_targets = [p for p in validated_all if p.suffix.lower() == ".py"]
+        cpu_oracles = _run_cpu_truth_oracles(
+            repo_resolved=repo_resolved,
+            draft_files=draft_paths,
+            verify_sources=verify_sources,
+            hom_root=hom_root,
+            mem_root=mem_root,
+            py_targets=py_targets,
+        )
+
+        # Stage 2: Compact Local Semantic Critic (<=450 words)
+        oracle_brief = (
+            f"CPU Oracle Telemetry ({cpu_oracles['elapsed_ms']} ms):\n"
+            f"- verify_claims_drafts: {json.dumps(cpu_oracles['verify_claims_drafts'])}\n"
+            f"- audit_repo_docs rc={cpu_oracles['audit_repo_docs'].get('returncode')} tail={str(cpu_oracles['audit_repo_docs'].get('output_tail') or '')[:600]}\n"
+            f"- audit_data_boundary rc={cpu_oracles['audit_data_boundary'].get('returncode')} {cpu_oracles['audit_data_boundary'].get('summary', '')}\n"
+            f"- python_ast: {json.dumps(cpu_oracles['python_ast'])}\n"
+        )
+        critic_prompt = (
+            "You are an independent parallel Second-Set-of-Eyes Reviewer.\n"
+            f"Task: {review_goal}\n"
+            "Inspect the CPU Oracle findings, context files, and working-tree diff below. Surface ONLY high-signal semantic "
+            "contradictions, safety/caution violations, hardware/API mismatches, or regression risks (<=450 words, terse `- ` bullets "
+            "with exact verbatim `<file>#L<start>-L<end>` anchors). Zero preamble.\n\n"
+            f"{oracle_brief}"
+        )
+        if effort_norm == "high":
+            critic_prompt += apprentice_engine.CONCISE_HIGH_THINKING_HINT
+
+        context_for_llm = validated_all or discovered[:6]
+        slices_for_llm = slice_items if validated_all else [None for _ in context_for_llm]
+        assembled, file_meta = apprentice_engine.assemble_prompt_payload(
+            user_prompt=critic_prompt,
+            context_files=context_for_llm,
+            repo_root=repo_resolved,
+            include_git_diff=bool(include_git_diff),
+            sys_prompt=sys_prompt,
+            context_slices=slices_for_llm,
+            diff_repo_wide=not bool(context_files or draft_files),
+        )
+        loaded_ctx = srv.get("loaded_context_length")
+        eff_max_toks = apprentice_engine.resolve_effective_max_tokens(effective_mode, max_tokens)
+        sys_bytes = len(sys_prompt.encode("utf-8"))
+        prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
+        eff_diff = apprentice_engine.has_effective_git_diff(assembled, bool(include_git_diff))
+        has_code = apprentice_engine.is_code_heavy_payload(context_for_llm, eff_diff)
+        eta = apprentice_engine._enforce_eta_or_raise(
+            mode=effective_mode,
+            prompt_bytes=prompt_bytes,
+            max_tokens=eff_max_toks,
+            max_eta_seconds=max_eta,
+            expected_turns=1,
+            force_slow=False,
+            cmd_name="apprentice_shadow_review",
+            invocation_tier=tier,
+            has_code_context=has_code,
+            loaded_ctx_override=loaded_ctx,
+            calibrated_output=True,
+            allow_soft_eta_overrun=(effective_mode != "cpu-bg"),
+            sys_prompt_bytes=sys_bytes,
+            include_git_diff=eff_diff,
+        )
+        res = apprentice_engine.invoke_chat_completion(
+            api_url=api_url,
+            model_id=apprentice_engine.DEFAULT_MODEL_ID,
+            mode=effective_mode,
+            system_prompt=sys_prompt,
+            user_content=assembled,
+            max_tokens=eff_max_toks,
+            timeout_s=min(max(max_eta + 90.0, 210.0), 300.0) if effective_mode == "deep" else min(max(max_eta + 60.0, 150.0), 300.0),
+            preflight_checked=True,
+            loaded_ctx=loaded_ctx,
+            est_prompt_tokens=eta["est_prompt_tokens"],
+        )
+        apprentice_engine.record_usage_telemetry(
+            {
+                "cmd": "apprentice_shadow_review",
+                "effort": eta["effort"],
+                "invocation_tier": tier,
+                "mode": effective_mode,
+                "est_prompt_tokens": eta["est_prompt_tokens"],
+                "predicted_eta_s": eta["predicted_eta_s"],
+                "max_eta_seconds": max_eta,
+                "tripped": False,
+                "soft_eta_exceeded": eta["soft_eta_exceeded"],
+                "prompt_tokens": res["prompt_tokens"],
+                "completion_tokens": res["completion_tokens"],
+                "elapsed_s": res["elapsed_s"],
+                "kv_wait_s": res.get("kv_wait_s", 0.0),
+                "observed_tg_tok_s": res["observed_tg_tok_s"],
+                "finish_reason": res["finish_reason"],
+            }
+        )
+        clean_base, _ = select_collision_free_sources(repo_resolved, context_for_llm)
+        with _mount_optional_patch_sources(
+            clean_base,
+            assembled,
+            include_git_diff=bool(include_git_diff),
+            extra_text_sources={"shadow_cpu_oracles.txt": oracle_brief},
+        ) as (v_srcs, _mp):
+            vrf_card = _run_verify_claims_check(res["content"], v_srcs, verify_claims_path, mem_root, repo_resolved)
+
+        vrf_ok = (not vrf_card.get("ran")) or (vrf_card.get("returncode") == 0)
+        verdict = "clean" if (res["finish_reason"] == "stop" and vrf_ok) else "corrected"
+        sc_rec = apprentice_engine.record_call_outcome(
+            verdict=verdict,
+            cmd="apprentice_shadow_review",
+            effort=eta["effort"],
+            mode=effective_mode,
+            elapsed_s=float(res["elapsed_s"]),
+            soft_eta_exceeded=eta.get("soft_eta_exceeded", False),
+        )
+        sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
+        return {
+            "ok": True,
+            "schema_version": "SHADOW_SECOND_EYES_V1",
+            "call_id": sc_rec.get("call_id"),
+            "verdict": verdict,
+            "effort": eta["effort"],
+            "route_id": route_plan["route_id"],
+            "cpu_oracles": cpu_oracles,
+            "verify_claims": vrf_card,
+            "claims_verified": vrf_ok if vrf_card.get("ran") else None,
+            "context_files": file_meta,
+            "shadow_card": res["content"],
+            "completion_telemetry": {k: v for k, v in res.items() if k != "content"},
+            "prev_verdict_update": prev_res,
+            "scorecard": sc_fmt,
+            "user_notice": (
+                f"[APPRENTICE NOTICE] Shadow Second-Eyes Card ({eta['effort']}/{effective_mode}, "
+                f"route={route_plan['route_id']}) completed in {res['elapsed_s']}s (cpu_oracles={cpu_oracles['elapsed_ms']}ms, "
+                f"verdict={verdict}). | {sc_fmt}"
+            ),
+        }
+    except apprentice_engine.SidecarFirewallError as exc:
+        return _firewall_error_response(exc, "Shadow review")
+    except apprentice_engine.SidecarEtaTrippedError as exc:
+        sc_str = _scorecard_suffix()
+        return {
+            "ok": False,
+            "error_code": "ETA_CIRCUIT_BREAKER_TRIPPED",
+            "error": str(exc),
+            "eta_estimate": exc.estimate,
+            "scorecard": sc_str,
+            "user_notice": f"[APPRENTICE NOTICE] Shadow review ETA breaker handed back to frontier thread. | {sc_str}",
+        }
+    except Exception as exc:
+        sc_str = _scorecard_suffix()
+        return {
+            "ok": False,
+            "error_code": "SHADOW_REVIEW_ERROR",
+            "error": str(exc),
+            "scorecard": sc_str,
+            "user_notice": f"[APPRENTICE NOTICE] Shadow review error: {exc} | {sc_str}",
+        }
+
+
+@mcp.tool()
+async def apprentice_shadow_review(
+    repo: str,
+    draft_files: list[str] | None = None,
+    context_files: list[str] | None = None,
+    include_git_diff: bool = True,
+    prompt: str = "",
+    effort: str | None = "auto",
+    mode: str | None = None,
+    invocation_tier: str = "explicit",
+    max_tokens: int | None = None,
+    async_job: bool = True,
+    prev_call_id: str | None = None,
+    prev_verdict: str | None = None,
+    prev_verdict_note: str = "",
+) -> dict[str, Any]:
+    """Parallel Second-Set-of-Eyes card: CPU truth oracles + compact local semantic contradiction critic."""
+    return await _run_mcp_with_sync_guard(
+        "shadow_review",
+        _apprentice_shadow_review_sync,
+        {
+            "repo": repo,
+            "draft_files": draft_files,
+            "context_files": context_files,
+            "include_git_diff": include_git_diff,
+            "prompt": prompt,
+            "effort": effort,
+            "mode": mode,
+            "invocation_tier": invocation_tier,
+            "max_tokens": max_tokens,
+            "async_job": async_job,
+            "prev_call_id": prev_call_id,
+            "prev_verdict": prev_verdict,
+            "prev_verdict_note": prev_verdict_note,
+        },
+    )
+
+
+_mcp_apprentice_shadow_review_coro = apprentice_shadow_review
+apprentice_shadow_review = _apprentice_shadow_review_sync  # type: ignore[assignment]
 
 
 def run_self_tests() -> dict[str, Any]:
@@ -3420,7 +3941,13 @@ def run_self_tests() -> dict[str, Any]:
 
     # 5. Tool discovery check (full MCPServer verification when running in venv)
     tools = _registered_tool_names()
-    expected = {"apprentice_control", "apprentice_digest", "apprentice_repo_audit", "apprentice_stage_patch"}
+    expected = {
+        "apprentice_control",
+        "apprentice_digest",
+        "apprentice_repo_audit",
+        "apprentice_stage_patch",
+        "apprentice_shadow_review",
+    }
     assert expected.issubset(set(tools)), f"Missing MCP tools: {expected - set(tools)}"
     checks.append("mcp_tool_registration" if _HAS_MCP else "stdlib_fallback_tool_registration")
 
@@ -4417,10 +4944,10 @@ def run_self_tests() -> dict[str, Any]:
         r26.mkdir()
         big26 = r26 / "big_mig.patch"
         big26.write_text(
-            "\n".join(f"+added_symbol_{i} = {100 + i}  # padding text to push patch >45 KB safely" for i in range(720)) + "\n",
+            "\n".join(f"+added_symbol_{i} = {100 + i}  # padding text to push patch >56 KB safely" for i in range(920)) + "\n",
             encoding="utf-8",
         )
-        assert big26.stat().st_size > 44000
+        assert big26.stat().st_size > 56000
         sl26 = r26 / "helper.py"
         sl26.write_text(
             "OUTSIDE_BEFORE = 111\n"
@@ -4853,6 +5380,141 @@ def run_self_tests() -> dict[str, Any]:
             srv29.shutdown()
             srv29.server_close()
     checks.append("v251_relpath_collect_any_and_std_chunk_budget")
+
+    # 30. V2.6 size-aware auto cross-audit (<36KB single-shot vs >36KB 8192-cap reduce) + git_diff verify_claims
+    with tempfile.TemporaryDirectory() as tmp30:
+        r30 = Path(tmp30) / "repo30"
+        r30.mkdir(parents=True)
+        subprocess.run(["git", "-C", str(r30), "init"], capture_output=True, check=True)
+        subprocess.run(["git", "-C", str(r30), "config", "user.email", "test@example.com"], capture_output=True, check=True)
+        subprocess.run(["git", "-C", str(r30), "config", "user.name", "Test User"], capture_output=True, check=True)
+        f30a = r30 / "BOM.md"
+        f30b = r30 / "Guide.md"
+        f30a.write_text("# BOM\n- M3x8 qty 4\n", encoding="utf-8")
+        f30b.write_text("# Guide\n- Install 4 M3x8 screws.\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(r30), "add", "BOM.md", "Guide.md"], capture_output=True, check=True)
+        subprocess.run(["git", "-C", str(r30), "commit", "-m", "init"], capture_output=True, check=True)
+        f30a.write_text("# BOM\n- M3x8 qty 2\n", encoding="utf-8")
+
+        big30 = r30 / "BigSpec.md"
+        big30.write_text("".join(f"- SPEC_LINE_{i} = {i} mm\n" for i in range(2500)), encoding="utf-8")
+
+        reqs30: list[dict[str, Any]] = []
+
+        class _V30Handler(http.server.BaseHTTPRequestHandler):
+            def log_message(self, *args: object) -> None:
+                return
+
+            def do_GET(self) -> None:
+                if self.path.startswith("/api/v0/models"):
+                    body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152}]}).encode("utf-8")
+                elif self.path == "/v1/models":
+                    body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID}]}).encode("utf-8")
+                else:
+                    body = b"{}"
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                ln = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(ln).decode("utf-8"))
+                u_txt = str((req.get("messages") or [{}, {}])[-1].get("content") or "")
+                reqs30.append({"req": req, "is_reduce": "Merge, deduplicate, and filter" in u_txt})
+                if "GIT WORKING-TREE DIFF" in u_txt:
+                    ans = "- `- M3x8 qty 2` (`BOM.md#L2-L2`) replaces `- M3x8 qty 4` (`working_tree_delta.patch#L1-L7`)"
+                elif "SPEC_LINE_" in u_txt and "Merge, deduplicate" not in u_txt:
+                    ans = "- `SPEC_LINE_1 = 1 mm` (`BigSpec.md#L2-L2`)"
+                else:
+                    ans = "- `M3x8` (`BOM.md#L2-L2` vs `Guide.md#L2-L2`)"
+                body = json.dumps(
+                    {
+                        "choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 160, "completion_tokens": 30},
+                    }
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        srv30 = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _V30Handler)
+        thr30 = threading.Thread(target=srv30.serve_forever, daemon=True)
+        thr30.start()
+        saved30 = {k: os.environ.get(k) for k in ("APPRENTICE_API_URL", "BIONIC_SIDECAR_API_URL", "APPRENTICE_TELEMETRY_LOG", "APPRENTICE_SCORECARD_PATH", "APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT")}
+        try:
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv30.server_address[1]}/v1"
+            os.environ["BIONIC_SIDECAR_API_URL"] = os.environ["APPRENTICE_API_URL"]
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(Path(tmp30) / "tel30.jsonl")
+            os.environ["APPRENTICE_SCORECARD_PATH"] = str(Path(tmp30) / "sc30.json")
+            os.environ["APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+
+            # A. Small 2-file cross-audit uses Single-Shot HIGH (route HIGH_CROSS_SINGLE_SHOT)
+            reqs30.clear()
+            d30_small = _apprentice_digest_sync(
+                prompt="Compare BOM.md against Guide.md conflicts",
+                context_files=["BOM.md", "Guide.md"],
+                repo=str(r30),
+                effort="auto",
+                verify_claims=False,
+            )
+            assert d30_small["ok"] and d30_small["route_id"] == "HIGH_CROSS_SINGLE_SHOT" and len(reqs30) == 1, d30_small
+
+            # B. Oversized (>42KB) cross-audit chunks Map=STANDARD -> Reduce=HIGH with >=8192 cap
+            reqs30.clear()
+            d30_big = _apprentice_digest_sync(
+                prompt="Compare BOM.md and BigSpec.md conflicts",
+                context_files=["BOM.md", "BigSpec.md"],
+                repo=str(r30),
+                effort="auto",
+                verify_claims=False,
+            )
+            reduces30 = [r for r in reqs30 if r["is_reduce"]]
+            assert d30_big["ok"] and reduces30 and int(reduces30[0]["req"].get("max_tokens") or 0) >= 8192, (d30_big, reduces30)
+
+            # C. include_git_diff=True runs verify_claims against transient .patch (not skipped)
+            d30_diff = _apprentice_digest_sync(
+                prompt="Compare BOM.md diff against Guide.md",
+                context_files=["BOM.md", "Guide.md"],
+                repo=str(r30),
+                include_git_diff=True,
+                effort="standard",
+                verify_claims=True,
+            )
+            assert d30_diff["ok"] and d30_diff["verify_claims"].get("skipped_reason") != "git_diff_head_delta", d30_diff
+            d30_clean_diff = _apprentice_digest_sync(
+                prompt="Extract Guide.md lines",
+                context_files=["Guide.md"],
+                repo=str(r30),
+                include_git_diff=True,
+                effort="standard",
+                verify_claims=False,
+            )
+            assert d30_clean_diff["ok"] and int(d30_clean_diff["eta_estimate"]["est_output_tokens"]) < 960, d30_clean_diff
+
+            # D. Shadow Second-Eyes review runs CPU oracles + local semantic critique
+            sh30 = _apprentice_shadow_review_sync(
+                repo=str(r30),
+                draft_files=["Guide.md"],
+                context_files=["BOM.md"],
+                include_git_diff=True,
+                effort="auto",
+                async_job=False,
+            )
+            assert sh30["ok"] and sh30["schema_version"] == "SHADOW_SECOND_EYES_V1", sh30
+            assert sh30["cpu_oracles"]["verify_claims_drafts"]["ran"] is True, sh30["cpu_oracles"]
+        finally:
+            for k, v in saved30.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv30.shutdown()
+            srv30.server_close()
+    checks.append("v26_hybrid_auto_routing_8192_reduce_patch_verify_and_shadow_review")
 
     return {
         "schema_version": "APPRENTICE_MCP_V1",

@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 181.65,
+  "avg_doc_len": 183.04,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-16",
+  "last_synced": "2026-11-17",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -129,18 +129,35 @@
             "apprentice_mcp_server.py",
             "bootstrap_workstation.sh"
           ]
+        },
+        {
+          "governing_lls": [
+            "LL-WS-23"
+          ],
+          "must_keep": "classify_hybrid_effort effort=auto <=36KB Single-Shot HIGH & 8192-cap lossless Reduce; fast default_max_tokens=3072; _mount_optional_patch_sources .patch verify; dedicated apprentice_shadow_review SHADOW_SECOND_EYES_V1; PORTABILITY_AND_TUNING_GUIDE.md",
+          "retired_bloat": "effort=high default or lossy summary maps on cross-audits; 4608 reduce cap causing <think> recovery; git_diff_head_delta verify skip; folding shadow review into repo_audit",
+          "scope": "script:apprentice",
+          "subsystem": "Apprentice v2.6.0 (`classify_hybrid_effort`, `_mount_optional_patch_sources`, `apprentice_shadow_review`)",
+          "tier": "TIER1",
+          "touched_files": [
+            "PORTABILITY_AND_TUNING_GUIDE.md",
+            "Workstation_Operations.md",
+            "Workstation_Operations_Software.md",
+            "apprentice_engine.py",
+            "apprentice_mcp_server.py"
+          ]
         }
       ],
       "lessons": [
         {
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 54,
+          "end_line": 56,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L49-L54",
+          "line_range": "#L51-L56",
           "location": "main",
           "scope": "",
-          "start_line": 49,
+          "start_line": 51,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -152,13 +169,13 @@
         },
         {
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 61,
+          "end_line": 63,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L56-L61",
+          "line_range": "#L58-L63",
           "location": "main",
           "scope": "",
-          "start_line": 56,
+          "start_line": 58,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -167,13 +184,13 @@
         },
         {
           "capsule_1line": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... -> Defer Turn-1 notices to PreInvocation pure systemMessage strings because metadata maps and premature SessionStart hooks collided with agy parsing; compare plugin trees (diff -rq) before reinstalling in bootstrap_workstation.sh and guard child spawns via _safe_subprocess_cwd() because inode swaps broke live cwd subprocesses; match...",
-          "end_line": 69,
+          "end_line": 71,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-20",
-          "line_range": "#L63-L69",
+          "line_range": "#L65-L71",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 63,
+          "start_line": 65,
           "tier": "TIER2",
           "title": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... (`2026-11-16`)",
           "touched_files": [
@@ -185,13 +202,13 @@
         },
         {
           "capsule_1line": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... -> Preserve duplicate per-file hunks via parse_and_validate_context_items() in apprentice_engine.py because path-keyed dicts collapsed multi-slice inputs; split unsliced vs sliced items, cap dense batches at max_slices_per_batch=4, and trigger Slice-Count Map-Reduce for dense multi-file slices (>=5 slices across >=3 files) in...",
-          "end_line": 77,
+          "end_line": 79,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-21",
-          "line_range": "#L71-L77",
+          "line_range": "#L73-L79",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 71,
+          "start_line": 73,
           "tier": "TIER2",
           "title": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... (`2026-11-16`)",
           "touched_files": [
@@ -204,16 +221,33 @@
         },
         {
           "capsule_1line": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... -> Enforce acquire_bjob_worker_slot FIFO locking with explicit except TimeoutError before except OSError, support repo-relative containment in validate_input_paths, lower chunk targets (22000B/450L) with >=768 STANDARD token floor and <=300s reduce budget, and support job_ids batch collection on job-collect/job-collect-any because...",
-          "end_line": 83,
+          "end_line": 87,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-22",
-          "line_range": "#L79-L83",
+          "line_range": "#L81-L87",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 79,
+          "start_line": 81,
           "tier": "TIER2",
           "title": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... (`2026-11-16`)",
           "touched_files": [
+            "apprentice_engine.py",
+            "apprentice_mcp_server.py"
+          ]
+        },
+        {
+          "capsule_1line": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... -> Default to effort=auto via classify_hybrid_effort (STANDARD default + stage_patch lock, HIGH_CROSS_SINGLE_SHOT <=36KB, lossless Map -> 8192-cap HIGH Reduce >36KB), raise PROFILES fast cap to 3072, mount .patch sources via _mount_optional_patch_sources() on include_git_diff=True, isolate second-eyes CPU+semantic critique in...",
+          "end_line": 93,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-23",
+          "line_range": "#L89-L93",
+          "location": "main",
+          "scope": "script:apprentice",
+          "start_line": 89,
+          "tier": "TIER2",
+          "title": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... (`2026-11-17`)",
+          "touched_files": [
+            "PORTABILITY_AND_TUNING_GUIDE.md",
             "apprentice_engine.py",
             "apprentice_mcp_server.py"
           ]
@@ -506,8 +540,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 181.65,
-      "proj_total_docs": 23,
+      "proj_avg_doc_len": 183.04,
+      "proj_total_docs": 24,
       "project": "Workstation_Operations"
     }
   },
@@ -524,14 +558,14 @@
       "sha256": "ed8662be4e8a4afa"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 121,
+      "lines": 123,
       "sections": 0,
-      "sha256": "338f8ae7d32f5508"
+      "sha256": "ec05234ff8b59482"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 97,
-      "sections": 5,
-      "sha256": "a533d7da9eaa97e1"
+      "lines": 107,
+      "sections": 6,
+      "sha256": "f885c810baedaf15"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -541,10 +575,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 62,
       "sections": 0,
-      "sha256": "6505080e64b66525"
+      "sha256": "bbe5f3d40723ae49"
     }
   },
-  "total_docs": 23,
+  "total_docs": 24,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "8da07590fc84933a"
+  "vectors_digest": "cf2c33a6b0440f40"
 }

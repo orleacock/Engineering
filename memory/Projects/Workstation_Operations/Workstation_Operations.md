@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "69c006bb976d"
+tree_hash: "868c6ff4621c"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "69c006bb976d"
+checkpoint_tree_hash: "868c6ff4621c"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-16"
-checkpoint_lessons_digest: "c26e8dad12e6ed84"
+last_synced: "2026-11-17"
+checkpoint_lessons_digest: "7e0f9311a59062a5"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -55,13 +55,14 @@ checkpoint_lessons_digest: "c26e8dad12e6ed84"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 69c006bb976d` | `Worktree: untracked` | `Last Verification: apprentice_status:v2.5.0-ONLINE_READY,BOUNDARY_CLEAN`
+- **Last Session Timestamp**: `2026-11-17`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 868c6ff4621c` | `Worktree: untracked` | `Last Verification: SBX-20261117_180207-4f24ed08 | BMK-APPRENTICE-20261118_004217 | VRF-d499b5951b89 | VRF-07891504f765`
 - **Where We Stopped (Verified State & Context)**:
-  Verified live apprentice_sidecar MCP v2.5.0 session parity (server_stale_restart_recommended=false) and clean Engineering repository boundaries
+  Shipped Apprentice v2.6.0 (54KB Single-Shot HIGH, effort=auto router, .patch + shadow_cpu_oracles verify, 5-column MarkText/Obsidian reports, PORTABILITY_AND_TUNING_GUIDE.md) and verified BMK-APPRENTICE-20261118_004217 (24 PASS / 0 FAIL / 1 ADVISORY) + day-to-day replay (-92.8% context bytes, -97.7% eq-tok, 90.7% faster STD).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Workstation operational scripts and apprentice_sidecar v2.5.0 active; monitor remaining deferred tasks
+  1. Start a fresh Antigravity CLI session so the in-memory apprentice_sidecar MCP process reloads disk updates. 2. Address tonight's [MEMORY HYGIENE] task in Alchemical-3D_Tasks.md.
+- **Open Discussion / Alignment Questions**: Apprentice v2.6.0 committed & pushed cleanly; ready for [MEMORY HYGIENE].
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -70,7 +71,7 @@ checkpoint_lessons_digest: "c26e8dad12e6ed84"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 69c006bb976d
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 868c6ff4621c
   apprentice/
   apprentice/apprentice_lifecycle_hook.py
   apprentice/apprentice_mcp_server.py
@@ -79,6 +80,7 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 69c006bb976d
   apprentice_plugin/rules/AGENTS.md
   apprentice_plugin/skills/
   apprentice_plugin/skills/apprentice/
+  apprentice_plugin/skills/apprentice/references/
   apprentice_plugin/skills/apprentice/SKILL.md
   apprentice_plugin/hooks.json
   apprentice_plugin/mcp_config.json

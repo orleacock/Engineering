@@ -22,51 +22,53 @@ Pure Python 3.10+ standard library (zero third-party packages).
   CLI Flags     : --backend, --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
                   status, check-eta, query, audit-to-quarantine, stage-code, control, self-test
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_backend_adapter (#L160-L184)       | def migrate_legacy_bionic_cache (#L187-L249)
-    - def resolve_effort_and_mode (#L387-L399)       | def parse_context_spec (#L402-L412)
-    - class SidecarFirewallError (#L415-L416)        | class SidecarEtaTrippedError (#L419-L424)
-    - def load_system_prompt (#L427-L438)            | def validate_loopback_url (#L441-L472)
-    - def _safe_subprocess_cwd (#L475-L498)          | def _safe_abspath (#L501-L507)
-    - def _is_path_within (#L510-L515)               | def _inspect_path_security (#L518-L548)
-    - def _find_git_toplevel (#L551-L557)            | def is_code_heavy_payload (#L560-L564)
-    - def parse_and_validate_context_items (#L567-L594) | def parse_and_validate_context_specs (#L597-L609)
-    - def validate_input_paths (#L612-L671)          | def validate_staging_dir (#L674-L737)
-    - def resolve_effective_max_tokens (#L740-L750)  | def estimate_eta (#L753-L891)
-    - def _http_json_request (#L894-L914)            | def _deduplicate_full_context_diff (#L917-L994)
-    - def plan_line_preserving_chunks (#L997-L1058)  | def pack_chunk_batches (#L1061-L1113)
-    - def estimate_chunked_eta (#L1116-L1163)        | def assemble_prompt_payload (#L1166-L1317)
-    - def resolve_default_api_url (#L1320-L1331)     | def _resolve_kv_state_path (#L1334-L1343)
-    - def _pid_alive (#L1346-L1355)                  | def acquire_kv_budget (#L1359-L1470)
-    - def has_active_exclusive_kv_slot (#L1473-L1491) | def invoke_chat_completion (#L1494-L1663)
-    - def extract_staged_code (#L1666-L1676)         | def _read_prompt_arg (#L1679-L1686)
-    - def resolve_max_eta_seconds (#L1689-L1695)     | def _resolve_telemetry_log (#L1698-L1708)
-    - def _resolve_scorecard_path (#L1711-L1727)     | def _resolve_jobs_dir (#L1730-L1746)
-    - def _write_private_json_atomic (#L1749-L1767)  | def _resolve_scorecard_archive_path (#L1770-L1776)
-    - def _seed_counts_from_telemetry (#L1779-L1811) | def compute_scorecard_metrics (#L1814-L1847)
-    - def load_or_init_scorecard (#L1850-L1887)      | def record_call_outcome (#L1890-L1956)
-    - def apply_call_verdict (#L1959-L2008)          | def format_lifetime_scorecard (#L2011-L2029)
-    - def reset_scorecard (#L2032-L2131)             | def estimate_quota_savings (#L2134-L2194)
-    - def record_usage_telemetry (#L2197-L2223)      | def summarize_usage_telemetry (#L2226-L2270)
-    - def probe_server_models (#L2273-L2376)         | def preflight_live_inference (#L2379-L2393)
-    - def _enforce_eta_or_raise (#L2396-L2481)       | def cmd_status (#L2484-L2520)
-    - def cmd_check_eta (#L2523-L2577)               | def cmd_query (#L2580-L2722)
-    - def cmd_audit_to_quarantine (#L2725-L2921)     | def _write_private_staging_file (#L2924-L2933)
-    - def stage_code_artifact (#L2936-L3015)         | def cmd_stage_code (#L3018-L3161)
-    - def build_concrete_model_config (#L3171-L3260) | def _read_hw_counters (#L3263-L3302)
-    - def _probe_lms_daemon (#L3305-L3322)           | def _run_lms_cmd (#L3325-L3338)
-    - def _has_gui_display_socket (#L3341-L3351)     | def _control_plan (#L3354-L3386)
-    - def _control_status (#L3389-L3405)             | def _control_load (#L3408-L3472)
-    - def _control_start_headless (#L3475-L3531)     | def _control_unload (#L3534-L3556)
-    - def _control_stop_server (#L3559-L3573)        | def _safe_job_file (#L3576-L3586)
-    - def submit_async_job (#L3589-L3627)            | def acquire_bjob_worker_slot (#L3631-L3734)
-    - def _execute_job_worker (#L3737-L3777)         | def get_job_status (#L3780-L3819)
-    - def collect_any_jobs (#L3822-L3859)            | def list_jobs (#L3862-L3880)
-    - def _normalize_control_cli_action (#L3883-L3886) | def cmd_control (#L3889-L3939)
-    - def cmd_job_worker (#L3942-L3943)              | def cmd_job_status (#L3946-L3949)
-    - def cmd_job_collect (#L3952-L3955)             | def cmd_job_wait (#L3958-L3961)
-    - def cmd_job_list (#L3964-L3967)                | def cmd_verdict (#L3970-L3973)
-    - def run_self_tests (#L3976-L4908)              | def build_parser (#L4911-L5016)
-    - def main (#L5019-L5057)
+    - def resolve_backend_adapter (#L162-L186)       | def migrate_legacy_bionic_cache (#L189-L251)
+    - def resolve_effort_and_mode (#L403-L417)       | def has_cross_audit_intent (#L420-L423)
+    - def classify_hybrid_effort (#L426-L513)        | def extract_diff_patch_text (#L516-L523)
+    - def has_effective_git_diff (#L526-L528)        | def parse_context_spec (#L531-L541)
+    - class SidecarFirewallError (#L544-L545)        | class SidecarEtaTrippedError (#L548-L553)
+    - def load_system_prompt (#L556-L567)            | def validate_loopback_url (#L570-L601)
+    - def _safe_subprocess_cwd (#L604-L627)          | def _safe_abspath (#L630-L636)
+    - def _is_path_within (#L639-L644)               | def _inspect_path_security (#L647-L677)
+    - def _find_git_toplevel (#L680-L686)            | def is_code_heavy_payload (#L689-L693)
+    - def parse_and_validate_context_items (#L696-L723) | def parse_and_validate_context_specs (#L726-L738)
+    - def validate_input_paths (#L741-L800)          | def validate_staging_dir (#L803-L866)
+    - def resolve_effective_max_tokens (#L869-L879)  | def estimate_eta (#L882-L1020)
+    - def _http_json_request (#L1023-L1043)          | def _deduplicate_full_context_diff (#L1046-L1123)
+    - def plan_line_preserving_chunks (#L1126-L1187) | def pack_chunk_batches (#L1190-L1242)
+    - def estimate_chunked_eta (#L1245-L1292)        | def assemble_prompt_payload (#L1295-L1446)
+    - def resolve_default_api_url (#L1449-L1460)     | def _resolve_kv_state_path (#L1463-L1472)
+    - def _pid_alive (#L1475-L1484)                  | def acquire_kv_budget (#L1488-L1599)
+    - def has_active_exclusive_kv_slot (#L1602-L1620) | def invoke_chat_completion (#L1623-L1792)
+    - def extract_staged_code (#L1795-L1805)         | def _read_prompt_arg (#L1808-L1815)
+    - def resolve_max_eta_seconds (#L1818-L1824)     | def _resolve_telemetry_log (#L1827-L1837)
+    - def _resolve_scorecard_path (#L1840-L1856)     | def _resolve_jobs_dir (#L1859-L1875)
+    - def _write_private_json_atomic (#L1878-L1896)  | def _resolve_scorecard_archive_path (#L1899-L1905)
+    - def _seed_counts_from_telemetry (#L1908-L1940) | def compute_scorecard_metrics (#L1943-L1976)
+    - def load_or_init_scorecard (#L1979-L2016)      | def record_call_outcome (#L2019-L2085)
+    - def apply_call_verdict (#L2088-L2137)          | def format_lifetime_scorecard (#L2140-L2158)
+    - def reset_scorecard (#L2161-L2260)             | def estimate_quota_savings (#L2263-L2323)
+    - def record_usage_telemetry (#L2326-L2352)      | def summarize_usage_telemetry (#L2355-L2399)
+    - def probe_server_models (#L2402-L2505)         | def preflight_live_inference (#L2508-L2522)
+    - def _enforce_eta_or_raise (#L2525-L2610)       | def cmd_status (#L2613-L2649)
+    - def cmd_check_eta (#L2652-L2708)               | def cmd_query (#L2711-L2854)
+    - def cmd_audit_to_quarantine (#L2857-L3054)     | def _write_private_staging_file (#L3057-L3066)
+    - def stage_code_artifact (#L3069-L3148)         | def cmd_stage_code (#L3151-L3294)
+    - def build_concrete_model_config (#L3304-L3393) | def _read_hw_counters (#L3396-L3435)
+    - def _probe_lms_daemon (#L3438-L3455)           | def _run_lms_cmd (#L3458-L3471)
+    - def _has_gui_display_socket (#L3474-L3484)     | def _control_plan (#L3487-L3519)
+    - def _control_status (#L3522-L3538)             | def _control_load (#L3541-L3605)
+    - def _control_start_headless (#L3608-L3664)     | def _control_unload (#L3667-L3689)
+    - def _control_stop_server (#L3692-L3706)        | def _safe_job_file (#L3709-L3719)
+    - def submit_async_job (#L3722-L3760)            | def acquire_bjob_worker_slot (#L3764-L3867)
+    - def _execute_job_worker (#L3870-L3912)         | def get_job_status (#L3915-L3954)
+    - def collect_any_jobs (#L3957-L3994)            | def list_jobs (#L3997-L4015)
+    - def _normalize_control_cli_action (#L4018-L4021) | def cmd_control (#L4024-L4074)
+    - def cmd_job_worker (#L4077-L4078)              | def cmd_job_status (#L4081-L4084)
+    - def cmd_job_collect (#L4087-L4090)             | def cmd_job_wait (#L4093-L4096)
+    - def cmd_job_list (#L4099-L4102)                | def cmd_verdict (#L4105-L4108)
+    - def run_self_tests (#L4111-L5060)              | def build_parser (#L5063-L5168)
+    - def main (#L5171-L5209)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -271,7 +273,7 @@ HEADLESS_API_SYSTEM_PROMPT = (
     "never emit ?affp=/dt_id=/aff_id= or placeholder [label](...) links, "
     "never read/parse .step/.stp/.stl/.3mf/.iges/.fcstd (ZERO_ADHOC_CAD_PARSING), "
     "enforce single-repo 4C scope, never touch secrets/.env*/keys/gmail_mcp/NetCom/NEA_v2/corpus_inbox, "
-    "output terse `- ` technical bullets with zero preamble unless prose/code is requested, "
+    "output terse `- ` technical bullets with zero preamble/self-correction chatter unless prose/code is requested, "
     "and treat outputs as quarantined drafts."
 )
 FALLBACK_SYSTEM_PROMPT = HEADLESS_API_SYSTEM_PROMPT
@@ -282,12 +284,26 @@ CONCISE_HIGH_THINKING_HINT = (
     "and leave >=45% of max_tokens for final verified output).]"
 )
 
-EFFORT_TIERS = ("standard", "high")
+EFFORT_TIERS = ("auto", "standard", "high")
 EFFORT_TO_MODE = {"standard": "fast", "high": "deep"}
+CROSS_AUDIT_KEYWORDS = (
+    "compare",
+    "discrepanc",
+    "conflict",
+    "audit",
+    "mismatch",
+    "cross-reference",
+    "cross-check",
+    "reconcil",
+    "diff",
+    "contradict",
+    "inconsisten",
+    "cross-slice",
+)
 
-# Calibrated from V1 baseline + V2.3/V2.4 dogfood telemetry (bionic_benchmark_history.jsonl / sidecar_usage_telemetry.jsonl)
+# Calibrated from V1 baseline + V2.3/V2.4/V2.6 sandbox telemetry (apprentice_benchmark_history.jsonl / apprentice_usage_telemetry.jsonl)
 # Deliverable & buffer sizing rationale:
-#   - fast (STANDARD): default_max_tokens=2048 eliminates mid-sentence audit clipping at 0 cost when stopped early;
+#   - fast (STANDARD): default_max_tokens=3072 eliminates dense multi-file audit clipping at 0 cost when stopped early;
 #     empirical decode ~40.5 tok/s, soft prompt warn at 12,000 tok.
 #   - deep (HIGH): default_max_tokens=8192 (min floor 4096, cap 10240) prevents <think> empty-completion exhaustion,
 #     while prompt-scaled output estimates & concise thinking hints eliminate short-prompt over-prediction;
@@ -302,7 +318,7 @@ PROFILES: dict[str, dict[str, Any]] = {
         "prompt_cap": 32768,
         "prompt_warn_tokens": 12000,
         "reasoning_effort": "none",
-        "default_max_tokens": 2048,
+        "default_max_tokens": 3072,
         "typical_output_tokens": 480,
         "thinking_overhead_tokens": 0,
     },
@@ -385,10 +401,10 @@ CODE_CONTEXT_EXTENSIONS = frozenset(
 
 
 def resolve_effort_and_mode(effort: str | None = None, mode: str | None = None) -> tuple[str, str]:
-    """Map effort ('standard'|'high') and legacy mode ('fast'|'deep'|'cpu-bg') cleanly."""
+    """Map effort ('auto'|'standard'|'high') and legacy mode ('fast'|'deep'|'cpu-bg') cleanly."""
     eff_norm = (effort or "").strip().lower()
     if eff_norm and eff_norm not in EFFORT_TIERS:
-        raise ValueError(f"Unsupported effort '{effort}'; expected 'standard' or 'high'.")
+        raise ValueError(f"Unsupported effort '{effort}'; expected one of {EFFORT_TIERS}.")
     mode_norm = (mode or "").strip().lower()
     if mode_norm and mode_norm not in PROFILES:
         raise ValueError(f"Unsupported mode '{mode}'; expected one of {tuple(PROFILES.keys())}.")
@@ -396,7 +412,120 @@ def resolve_effort_and_mode(effort: str | None = None, mode: str | None = None) 
         return "standard", "cpu-bg"
     if eff_norm == "high" or mode_norm == "deep":
         return "high", "deep"
-    return "standard", "fast"
+    if eff_norm == "standard" or mode_norm == "fast":
+        return "standard", "fast"
+    return "auto", "fast"
+
+
+def has_cross_audit_intent(prompt: str) -> bool:
+    """Return True when prompt requests cross-document comparison or contradiction detection."""
+    low = (prompt or "").lower()
+    return any(kw in low for kw in CROSS_AUDIT_KEYWORDS)
+
+
+def classify_hybrid_effort(
+    *,
+    tool_kind: str,
+    prompt: str,
+    distinct_files: int,
+    include_git_diff: bool = False,
+    requested_effort: str | None = "auto",
+    requested_mode: str | None = None,
+    total_raw_bytes: int = 0,
+    single_shot_cross_ceiling_bytes: int = 55296,
+) -> dict[str, Any]:
+    """Size-aware effort router: STANDARD default, Single-Shot HIGH (<=54KB cross-audit), Lossless Hybrid (>54KB)."""
+    kind = (tool_kind or "digest").strip().lower()
+    eff_in, mode_in = resolve_effort_and_mode(requested_effort, requested_mode)
+
+    if mode_in == "cpu-bg":
+        return {
+            "route_id": "CPU_BG",
+            "effective_effort": "standard",
+            "effective_mode": "cpu-bg",
+            "map_mode": "cpu-bg",
+            "reduce_reasoning_effort": "none",
+            "reduce_max_tokens_cap": 800,
+            "skip_chunking_for_cross_audit": False,
+            "trigger_reason": "CPU background profile enforced.",
+        }
+
+    if kind == "stage_patch" and eff_in != "high":
+        return {
+            "route_id": "STAGE_PATCH_STANDARD",
+            "effective_effort": "standard",
+            "effective_mode": "fast",
+            "map_mode": "fast",
+            "reduce_reasoning_effort": "none",
+            "reduce_max_tokens_cap": 3072,
+            "skip_chunking_for_cross_audit": False,
+            "trigger_reason": "Scratch staging and Pass-2 py_compile retries stay on STANDARD (LL-WS-21).",
+        }
+
+    multi_target = (int(distinct_files) >= 2) or (bool(include_git_diff) and int(distinct_files) >= 1)
+    cross_intent = has_cross_audit_intent(prompt)
+    needs_cross_audit = (multi_target and cross_intent) or (kind == "repo_audit" and int(distinct_files) >= 2)
+    fits_single_shot = int(total_raw_bytes) <= int(single_shot_cross_ceiling_bytes) and (
+        int(total_raw_bytes) > 0 or bool(include_git_diff)
+    )
+
+    if eff_in == "standard":
+        return {
+            "route_id": "FORCED_STANDARD",
+            "effective_effort": "standard",
+            "effective_mode": "fast",
+            "map_mode": "fast",
+            "reduce_reasoning_effort": "none",
+            "reduce_max_tokens_cap": 3072,
+            "skip_chunking_for_cross_audit": False,
+            "trigger_reason": "Explicit effort='standard' requested.",
+        }
+
+    if eff_in == "high" or (eff_in == "auto" and needs_cross_audit):
+        is_cross = cross_intent or kind in {"repo_audit", "shadow_review"}
+        return {
+            "route_id": (
+                "HIGH_CROSS_SINGLE_SHOT"
+                if (is_cross and fits_single_shot)
+                else ("HYBRID_MAP_STD_REDUCE_HIGH" if is_cross else "HIGH_NON_AUDIT_FAST_MERGE")
+            ),
+            "effective_effort": "high",
+            "effective_mode": "deep",
+            "map_mode": "fast",
+            "reduce_reasoning_effort": "high" if is_cross else "none",
+            "reduce_max_tokens_cap": 8192 if is_cross else 3072,
+            "skip_chunking_for_cross_audit": bool(is_cross and fits_single_shot),
+            "trigger_reason": (
+                f"{'Explicit HIGH' if eff_in == 'high' else 'Auto-promoted cross-audit'} "
+                f"(files={distinct_files}, diff={include_git_diff}, bytes={total_raw_bytes})."
+            ),
+        }
+
+    return {
+        "route_id": "AUTO_STANDARD",
+        "effective_effort": "standard",
+        "effective_mode": "fast",
+        "map_mode": "fast",
+        "reduce_reasoning_effort": "none",
+        "reduce_max_tokens_cap": 3072,
+        "skip_chunking_for_cross_audit": False,
+        "trigger_reason": "Single-file/extract workload stays on fast STANDARD (94.7% baseline usability).",
+    }
+
+
+def extract_diff_patch_text(assembled_text: str) -> str:
+    """Extract fenced git diff body emitted by assemble_prompt_payload for verify_claims .patch grounding."""
+    m = re.search(
+        r"### GIT WORKING-TREE DIFF[^\n]*\n```diff\r?\n(.*?)\r?\n```",
+        assembled_text or "",
+        re.DOTALL,
+    )
+    return m.group(1).strip() if m else ""
+
+
+def has_effective_git_diff(assembled_prompt: str, include_git_diff: bool) -> bool:
+    """Return True only when include_git_diff attached at least one non-empty diff hunk."""
+    return bool(include_git_diff) and bool(extract_diff_patch_text(assembled_prompt))
 
 
 def parse_context_spec(raw: str | Path) -> tuple[Path, tuple[int, int] | None]:
@@ -2533,6 +2662,7 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
         user_prompt = _read_prompt_arg(None, args.prompt_file)
 
     prompt_bytes = len(sys_prompt.encode("utf-8")) + len(user_prompt.encode("utf-8"))
+    eff_diff = bool(args.include_git_diff)
     if validated_files or args.include_git_diff:
         assembled, _ = assemble_prompt_payload(
             user_prompt=user_prompt,
@@ -2543,6 +2673,7 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
             context_slices=slice_items,
         )
         prompt_bytes = len(sys_prompt.encode("utf-8")) + len(assembled.encode("utf-8"))
+        eff_diff = has_effective_git_diff(assembled, bool(args.include_git_diff))
 
     effort_norm, eff_mode = resolve_effort_and_mode(getattr(args, "effort", None), getattr(args, "mode", None))
     max_toks = resolve_effective_max_tokens(eff_mode, args.max_tokens)
@@ -2556,11 +2687,11 @@ def cmd_check_eta(args: argparse.Namespace) -> int:
         prompt_tokens_override=args.prompt_tokens,
         max_eta_seconds=max_eta,
         expected_turns=args.expected_turns,
-        has_code_context=is_code_heavy_payload(validated_files, bool(args.include_git_diff)),
+        has_code_context=is_code_heavy_payload(validated_files, eff_diff),
         calibrated_output=True,
         cmd_name="check-eta",
         sys_prompt_bytes=len(sys_prompt.encode("utf-8")),
-        include_git_diff=bool(args.include_git_diff),
+        include_git_diff=eff_diff,
     )
     eta["invocation_tier"] = getattr(args, "invocation_tier", "explicit")
     if args.json:
@@ -2597,7 +2728,8 @@ def cmd_query(args: argparse.Namespace) -> int:
     )
     sys_bytes = len(sys_prompt.encode("utf-8"))
     prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
-    has_code = is_code_heavy_payload(validated_files, bool(args.include_git_diff))
+    eff_diff = has_effective_git_diff(assembled, bool(args.include_git_diff))
+    has_code = is_code_heavy_payload(validated_files, eff_diff)
     tier = getattr(args, "invocation_tier", "explicit")
     effort_norm, req_mode = resolve_effort_and_mode(getattr(args, "effort", None), getattr(args, "mode", None))
     requested_max_toks = args.max_tokens
@@ -2623,7 +2755,7 @@ def cmd_query(args: argparse.Namespace) -> int:
         calibrated_output=True,
         allow_soft_eta_overrun=(effective_mode != "cpu-bg"),
         sys_prompt_bytes=sys_bytes,
-        include_git_diff=bool(args.include_git_diff),
+        include_git_diff=eff_diff,
     )
     t_err0 = time.perf_counter()
     try:
@@ -2752,7 +2884,8 @@ def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
 
     sys_bytes = len(sys_prompt.encode("utf-8"))
     prompt_bytes = sys_bytes + len(assembled.encode("utf-8"))
-    has_code = is_code_heavy_payload(validated_files, bool(args.include_git_diff))
+    eff_diff = has_effective_git_diff(assembled, bool(args.include_git_diff))
+    has_code = is_code_heavy_payload(validated_files, eff_diff)
     tier = getattr(args, "invocation_tier", "explicit")
     effort_norm, req_mode = resolve_effort_and_mode(getattr(args, "effort", None), getattr(args, "mode", None))
     requested_max_toks = args.max_tokens
@@ -2777,7 +2910,7 @@ def cmd_audit_to_quarantine(args: argparse.Namespace) -> int:
         calibrated_output=True,
         allow_soft_eta_overrun=(effective_mode != "cpu-bg"),
         sys_prompt_bytes=sys_bytes,
-        include_git_diff=bool(args.include_git_diff),
+        include_git_diff=eff_diff,
     )
     t_err0 = time.perf_counter()
     try:
@@ -3744,6 +3877,7 @@ def _execute_job_worker(job_file: Path) -> int:
     kwargs = dict(spec.get("kwargs") or {})
     kwargs["async_job"] = False
     effort_norm, _ = resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
+    slot_effort = "high" if effort_norm == "high" else "standard"
 
     mcp_path = Path(__file__).resolve().parent / "apprentice" / "apprentice_mcp_server.py"
     try:
@@ -3756,10 +3890,11 @@ def _execute_job_worker(job_file: Path) -> int:
             "digest": mcp_mod.apprentice_digest,
             "repo_audit": mcp_mod.apprentice_repo_audit,
             "stage_patch": mcp_mod.apprentice_stage_patch,
+            "shadow_review": mcp_mod.apprentice_shadow_review,
         }
         if kind not in fn_map:
             raise ValueError(f"Unsupported async job kind: {kind}")
-        with acquire_bjob_worker_slot(effort=effort_norm, jobs_dir=job_file.parent) as qslot:
+        with acquire_bjob_worker_slot(effort=slot_effort, jobs_dir=job_file.parent) as qslot:
             result = fn_map[kind](**kwargs)
             if isinstance(result, dict):
                 result["bjob_queue_wait_s"] = qslot.get("queue_wait_s", 0.0)
@@ -4899,6 +5034,23 @@ def run_self_tests() -> dict[str, Any]:
         _batch = collect_any_jobs([_j1, _j2], wait_seconds=2.0, jobs_dir=_qdir)
         assert _batch["completed_job_ids"] == [_j1] and _batch["running_job_ids"] == [_j2] and not _batch["all_done"]
     checks.append("bjob_worker_fifo_slot_and_collect_any_jobs")
+
+    # 26. Hybrid effort router (auto promotion on >=2-file cross-audit vs stage_patch/single-file lock + .patch extract)
+    assert resolve_effort_and_mode("auto", None) == ("auto", "fast"), "effort auto mapping"
+    assert resolve_effective_max_tokens("fast", None) == 3072, "fast default max_tokens"
+    _rt_single = classify_hybrid_effort(tool_kind="digest", prompt="Compare top and bottom of README.md", distinct_files=1, total_raw_bytes=8000)
+    assert _rt_single["effective_effort"] == "standard" and _rt_single["route_id"] == "AUTO_STANDARD", _rt_single
+    _rt_stage = classify_hybrid_effort(tool_kind="stage_patch", prompt="Compare diff audit", distinct_files=3, requested_effort="auto")
+    assert _rt_stage["effective_effort"] == "standard" and _rt_stage["route_id"] == "STAGE_PATCH_STANDARD", _rt_stage
+    _rt_small_cross = classify_hybrid_effort(tool_kind="digest", prompt="Compare BOM.md and Assembly_Guide.md", distinct_files=2, total_raw_bytes=48000, requested_effort="auto")
+    assert _rt_small_cross["effective_effort"] == "high" and _rt_small_cross["skip_chunking_for_cross_audit"] is True and _rt_small_cross["reduce_max_tokens_cap"] == 8192, _rt_small_cross
+    _rt_big_cross = classify_hybrid_effort(tool_kind="digest", prompt="Compare BOM.md and Assembly_Guide.md conflicts", distinct_files=2, total_raw_bytes=64000, requested_effort="auto")
+    assert _rt_big_cross["effective_effort"] == "high" and _rt_big_cross["skip_chunking_for_cross_audit"] is False and _rt_big_cross["reduce_max_tokens_cap"] == 8192, _rt_big_cross
+    _patch_txt = extract_diff_patch_text("Intro\n\n### GIT WORKING-TREE DIFF (Repo)\n```diff\ndiff --git a/a.py b/a.py\n+X = 42\n```\n")
+    assert "diff --git a/a.py b/a.py" in _patch_txt and "+X = 42" in _patch_txt, f"bad patch extract: {_patch_txt}"
+    assert has_effective_git_diff("Intro\n### GIT WORKING-TREE DIFF (Repo)\n(clean/no matching safe unstaged diff)\n", True) is False
+    assert has_effective_git_diff("Intro\n### GIT WORKING-TREE DIFF (Repo)\n```diff\n+X = 42\n```\n", True) is True
+    checks.append("hybrid_effort_classifier_and_diff_patch_extract")
 
     return {
         "schema_version": SCHEMA_VERSION,

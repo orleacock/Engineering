@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-16",
+  "last_synced": "2026-11-17",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -2203,7 +2203,7 @@
     "Projects/Homunculus/Homunculus.md": {
       "lines": 285,
       "sections": 0,
-      "sha256": "6870cf85684f49d0"
+      "sha256": "bb1c7f6271eed4f7"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
       "lines": 224,
@@ -2261,14 +2261,14 @@
       "sha256": "c6e4060bcfeb5ed1"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md": {
-      "lines": 122,
+      "lines": 120,
       "sections": 0,
-      "sha256": "9f27f846b74827cd"
+      "sha256": "8f5c06a4762ca30a"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md": {
-      "lines": 61,
+      "lines": 64,
       "sections": 0,
-      "sha256": "35ce65a8a908fb9f"
+      "sha256": "16892789cca05f57"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md": {
       "lines": 48,
@@ -2303,5 +2303,5 @@
   },
   "total_docs": 84,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "2c8483dc0e74f9b6"
+  "vectors_digest": "4e0ef22e1bc53b5a"
 }

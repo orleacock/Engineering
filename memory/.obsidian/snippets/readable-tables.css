@@ -1,0 +1,34 @@
+/* Prevent awkward mid-word character wrapping inside Obsidian Markdown tables & benchmark charts. */
+
+.markdown-preview-view,
+.markdown-rendered {
+  overflow-x: auto;
+}
+
+.markdown-preview-view table,
+.markdown-rendered table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.markdown-preview-view th,
+.markdown-rendered th {
+  white-space: nowrap;
+  word-break: normal !important;
+}
+
+.markdown-preview-view td,
+.markdown-rendered td {
+  vertical-align: top;
+  word-break: normal !important;
+  overflow-wrap: break-word;
+  padding: 0.45rem 0.65rem;
+}
+
+.markdown-preview-view td code,
+.markdown-rendered td code {
+  white-space: nowrap;
+}

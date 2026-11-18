@@ -4,7 +4,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
 tree_hash: "a168f3d642e0"
-last_synced: "2026-11-16"
+last_synced: "2026-11-17"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -577,7 +577,7 @@ last_synced: "2026-11-16"
 +------------------------------------------------------------+
 ```
 
-### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: bac7c2d35798` | `Tree: ac67baacbab6`)
+### [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`hardware` | `HEAD: 7197d2bed1fd` | `Tree: ac67baacbab6`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden`
 
 ```text

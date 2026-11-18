@@ -3,7 +3,7 @@ title: "Alchemical-3D — Domain Task Umbrella"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "task_umbrella"
-last_synced: "2026-11-16"
+last_synced: "2026-11-17"
 ---
 
 # 🧪 Alchemical-3D — Active Engineering Task Umbrella (`Tasks/Alchemical-3D_Tasks.md`)
@@ -15,7 +15,7 @@ last_synced: "2026-11-16"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `34 / 39` Tasks Complete (`87.2%`) | Open Tasks: `5` | Open `[TBD]`s: `10`
+**Progress Summary**: `36 / 39` Tasks Complete (`92.3%`) | Open Tasks: `3` | Open `[TBD]`s: `6`
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
@@ -24,10 +24,10 @@ last_synced: "2026-11-16"
 | [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L73`) | `c7eaca6` (`clean`, `2026-11-16`) | `0` | `0` | Next: Alembic_Toolhead clean and synced on origin/main; no open tasks |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L100`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Extras`](../Projects/Extras/Extras.md) (`#L103`) | `cfef0fd` (`clean`, `2026-11-16`) | `0` | `1` | Next: Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired |
-| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `b2946a6` (`clean`, `2026-11-16`) | `2` | `0` | Next: Optional Phase 5 MS365/Copilot assessment and Phase 6 Visual Studio advancements when needed |
+| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `b2946a6` (`clean`, `2026-11-16`) | `2` | `0` | Next: Optional Phase 6 Visual Studio advancements when needed |
 | [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`#L97`) | `29641c5` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`#L94`) | `b74920e` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
-| [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L86`) | `bac7c2d` (`clean`, `2026-11-16`) | `2` | `4` | Blocker: 4 unresolved BOM vs Assembly fastener/bearing/STL conflicts blocking modular split · Next: Resolve Pestle_Rotational_Bowden... |
+| [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L86`) | `7197d2b` (`clean`, `2026-11-17`) | `0` | `0` | Blocker: `None` (`0` open tasks, `0` open `[TBD]`s) · Next: `Pestle_Rotational_Bowden` is clean and synced on `origin/main` (`7197d2b`)... |
 | [`Pneuma_Remote_Air`](../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md) (`#L78`) | `0702c9c` (`clean`, `2026-11-10`) | `1` | `4` | Blocker: Open [TBD] physical fastener counts and TPU slicer parameters awaiting bench measurement. · Next: Physically count Rear_Cover... |
 <!-- AUTO-ROLLUP:END -->
 
@@ -67,7 +67,7 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 - [x] **[COMPLETED 2026-11-13] `[TASK #67 — OPTION A STATELESS PULSE + OUT-OF-TREE LOGBOOK]` Design & Ship On-Call Internal Telemetry & Bloat/Drift Pulse (`audit_skill_hygiene.py --telemetry-pulse` + `benchmark_homunculus.py --quick-pulse`/`--record-pulse`):** Shipped stateless zero-write `--telemetry-pulse` in Clean-Room `Homunculus` (`zero_host_writes: true`, unclipped `48ch OOT AGENTS.md Bytes`) paired with out-of-tree rolling logbook (`scripts/telemetry_pulse_history.jsonl`) in `Engineering` (`75/75 unittest OK`, `SBX-20261113_223553-111727fe`) ([v0.3.3 Worklog](../Projects/Homunculus/Version_Logs/v0.3.3_Wave2_Performance_and_Pulse_Worklog.md)).
 - [x] **[COMPLETED 2026-11-14] `[POST-v0.3.4 SPEED & EFFICIENCY PASS]` Execute `#2 Efficiency`, Fast-Path & Phase-5 `Quarantine/` SDK Release (`v0.3.5`, `68241080d62d` / `e47c2485977f`, `BMK-20261114_161845-a11beccd` at `5.97s` / `-69.9%`):** Compacted always-on rules (`13,241 B`, `-33.8%`), core skills (`6,533 w`, `-27.7%`, extracted `cleanup_and_builder_walkthroughs.md`), `AGENTS.md` (`14,594 B` in-repo `-31.6%` / `15,202 B` 48ch OOT / `1,266 B` memory `125 w`), added `SourceIndex` pure-JSON cache + multi-target `verify_claims.py`, parallelized `audit_data_boundary.py` + `audit_portability.py`, shipped `memory_gateway.py quarantine-note` + `TOP_LEVEL_QUARANTINE_FORBIDDEN` + `QUARANTINE_NOTE_V1`, verified via `79/79` unit tests (`38.119s`), `Compare-Light` `SBX-20261114_153225-b191d46c`, live `OS Dry-Run (+faults)` `SBX-20261114_160422-4bb67bd8` (`VRF-82b882012b0c`), `LL-052`, and [`v0.3.5 Worklog`](../Projects/Homunculus/Version_Logs/v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md) ([Homunculus_v0_3_5_Efficiency_and_FastPath_Plan.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_5_Efficiency_and_FastPath_Plan.md)).
 - [x] **[COMPLETED 2026-11-16] `[STAGE-2 HYDROGEN MIGRATION]` Apply Gemini 4 Hydrogen Ring-0 + `teach-me` (`BUILTIN_RING1`) Migration, `Decision_Profile.md` Sync, Task `#69`, & Sign-Before-Burn Parity (`82/82` tests OK, `SBX-20261116_152151-07f6b24f`):** Migrated `rules/co-engineering-partner.md`, `subagent-orchestrator`, `engineering-sandbox` (`sandbox_runner.py` `--model-id`/`--effort` telemetry + `MODEL_MISMATCH_BETWEEN_ARMS` + `f"[{effort}]"` receipt fix), `skill-architect`, `build_adapters.py` (`12` rebuilt adapters), `teach-me` (`SKILL.md`, `brief_authoring_playbook.md`, `teach_brief.py` `_FAST_HYDROGEN_TIERS`/`_DEEP_HYDROGEN_CARBON_TIERS`/`_BANNED_LITE_TIERS` + `gemini-4-hydrogen-low` ban), live `0444` `Profile/Decision_Profile.md` (`h-sudo seal-all`), fixed Task `#69` (`_is_ignored_ring_artifact(p, fw_root)` `relative_to` check in `homunculus_paths.py#L1341-L1353`), added sign-before-burn turnkey deferral to `homunculus_paths.py` (`sudo_unlock_files`, `sudo_seal_kernel`, `set_scope_lock_state`) and `sync_memory.py` (`seal_memory_governance`), synced `15` AST maps, verified `audit_portability.py` (`108` files, `0` violations), `audit_data_boundary.py` (`BOUNDARY_CLEAN`), `audit_skill_hygiene.py --strict-structure` (`0` defects), `audit_repo_docs.py` (`59` files, `0` issues), `homunculus_paths.py --verify-seal` (`PASS`, `seal_signing: "required"`), and `82/82` live unit tests (`37.433s`).
-- [ ] **`[PHASE 5 — POST-CORE]` `[ISOLATED]` Assess & Package `MS365 / Copilot` Edition (`Homunculus Lite`):** Evaluate `< 8,000`-char instruction ceiling, SharePoint/OneDrive grounding, Cloud Code Interpreter vs. Zero-CLI fallback, and `.github/copilot-instructions.md` after Phases 1–4 complete.
+- [ ] **`[MEMORY HYGIENE — TONIGHT]` `[LOAD-BEARING]` Design & Build Dedicated Memory Cleanup & Triage Skill/Rules (`project-memory` / `skill-architect`):** Run `skill-architect` (`--check-new`) to create a dedicated `Homunculus` skill and/or governance rules tailored to our memory cleanup procedure—establishing clear triage criteria (keep/re-anchor in `TIER0`–`TIER4` vs. consolidate into `TIER1` invariants vs. archive to `0444` `TIER5` with `Retirement Provenance` vs. delete noise) so we maximize active recall efficiency without holding onto stale bloat or prematurely deleting/demoting principles that may prove invaluable later.
 - [ ] **`[PHASE 6 — PRIORITY 2 WHEN NEEDED]` `[ISOLATED]` Visual Studio Advancements (`Auto-Layout`, `Electrical/Pinout`, `Sequence/State`):** Build and sandbox-verify inside `Homunculus` Visual Studio when needed, then trigger the workstation backport in `Orin_Workstation_Tasks.md`.
 
 ### Alembic_Toolhead
@@ -85,8 +85,8 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 
 ### Pestle_Rotational_Bowden
 - [x] **[COMPLETED 2026-11-16] `[LOAD-BEARING]` Fix 2 Studio-Grey Card Interior PNGs:** Re-ran `format_image.py --force` on `images/Pestle_Title_Formatted.png` (`1576x462`) and `images/PestleExploded3_Formatted.png` (`1794x1005`) to convert studio-grey card interiors to `#FFFFFF` (`format_image.py --inspect`: `2/2 [PASS]`; `audit_repo_docs.py`: `0` load-bearing issues, `3` isolated monolithic-doc warnings; `BOUNDARY_CLEAN`; uncommitted locally pending next `Pestle_Rotational_Bowden` tasks).
-- [ ] **`[LOAD-BEARING]` Resolve Internal Fastener & Heat-Set Conflicts Before Modular Split:** Reconcile `README.md` BOM vs. Assembly discrepancies (`7` vs. `6` `M3x5x4` heatsets; `SHCS` vs. `BHCS` on `M3x30`, `M3x35`, `M5x16`; `1` thrust bearing vs. Steps `10 & 12`; unreferenced `M3x16` and `M3x20` screws; 4 unlisted STL mounts/plates in `Releases/1.2/`).
-- [ ] **`[ISOLATED]` Modular Documentation Split & Footers:** Split monolithic `README.md` into `README.md`, `BOM.md`, `Print_Settings.md`, and `Assembly_Guide.md` (`Mode B1`), append AI transparency footers, and validate with `verify_claims.py`.
+- [x] **[COMPLETED 2026-11-17] `[LOAD-BEARING]` Resolve Internal Fastener & Heat-Set Conflicts (`0` Open `[TBD]`s):** Operator-verified resolutions applied in `README.md` and `Pestle_Rotational_Bowden_Hardware.md`: corrected `M3x5x4` heat-set BOM `7 -> 6` (`3` Main Body, `1` Lever, `2` Transmission Plate); standardized BOM & Steps `10–11` on `SHCS` (`M3x16`/`M3x20` retained as stack-depth sub-assembly fasteners); clarified `(1)` `F5-12M` thrust bearing at Step `12` with optional shim washers under the `M5` bolt head at Step `10`; mapped all `7` STLs + `Pestle_Rev-1.2.step` in `Releases/1.2/`.
+- [x] **[COMPLETED 2026-11-17] `[ISOLATED]` Monolithic `README.md` Brand Unification, CAD/STL Manifest, License & AI Footer (`7197d2b`, `VRF-fb1fbd62965b`):** Kept user-approved Monolithic `README.md` format (skipping multi-file split), added `Alchemical-3D` hex brand/color-swatch badges, navigation bar, `7`-STL + STEP manifest, KB-3D affiliate disclosure, `Related Ecosystem Projects`, `GPLv3` License section (`LICENSE.md`), Ko-fi/Discord block, and AI transparency footer; verified `verify_claims.py --fail-on-tbd` (`74/74 PASS`, `0` unbacked, `0` `[TBD]`), `audit_repo_docs.py` (`0` load-bearing issues), and `BOUNDARY_CLEAN`, committed and pushed `bac7c2d..7197d2b` (`main -> main`).
 
 ### Alchemical_Web_Docs
 - [x] **[COMPLETED 2026-11-02] MkDocs Image/Link Unification, Showcase Card Formatting & Claim Verification (`VRF-e5a13399a32f`):** Fixed `5` root-relative image/`mailto:` issues and `9` legacy domain/affiliate/typo items across `docs/*.md`, formatted `4` showcase PNGs (`#FFFFFF` `20px` card spec), appended AI footers, and verified `0` issues.
@@ -103,3 +103,8 @@ Single-writer canonical task and `[TBD]` resolution queue for all 10 repositorie
 ### Extras
 - [x] **[COMPLETED 2026-11-16] `[ISOLATED]` Author Calibration Cube `README.md` (`Optional`, `7c8db38..cfef0fd`, `VRF-f451a8fad091`):** Created `README.md` from Printables model `#318865` (`Alchemical_20mm_Cube`, `CC BY-NC 4.0`, Voron-inspired multi-test cube covering dimensional accuracy, overhangs, bridging, pressure advance, and circular accuracy), XY/Z shrinkage compensation (`scale_factor = 20.00 / measured_mm`), and verified `Alch_Cube_20mm_V4.stl` (`4.40 cm³`) + `Alchemical_20mm_Cube.stl` (`4.35 cm³`) telemetry; passed `audit_repo_docs.py` (`0` issues), `verify_claims.py --fail-on-tbd` (`14/14`, `0` unbacked, `0` `[TBD]`), and `BOUNDARY_CLEAN`, committed and pushed `main -> main` (`7c8db38..cfef0fd`).
 <!-- AUTO-PROJECT-TASKS:END -->
+
+---
+
+## 🧭 Untracked / On-Demand Future Expansion (No Active Checkbox)
+- **`Homunculus` `[PHASE 5 — POST-CORE]` `[ISOLATED]` Assess & Package `MS365 / Copilot` Edition (`Homunculus Lite`):** Moved to untracked (`2026-11-17`). When needed, evaluate `< 8,000`-char instruction ceiling, SharePoint/OneDrive grounding, Cloud Code Interpreter vs. Zero-CLI fallback, and `.github/copilot-instructions.md`.

@@ -23,6 +23,7 @@ import datetime as dt
 import inspect
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -1043,6 +1044,142 @@ def run_live_suite() -> tuple[list[BenchMetric], dict[str, Any]]:
             )
         )
 
+        # L12 & L13: Live V2.6.0 effort="auto" routing + .patch diff verify + Shadow Second-Eyes
+        probe_repo = td_p / "v26_probe"
+        probe_repo.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(alembic_bom, probe_repo / "BOM.md")
+        shutil.copy2(alembic_repo / "Print_Settings.md", probe_repo / "Print_Settings.md")
+        subprocess.run(["git", "-C", str(probe_repo), "init", "-q"], check=True)
+        subprocess.run(["git", "-C", str(probe_repo), "config", "user.name", "Bench Probe"], check=True)
+        subprocess.run(["git", "-C", str(probe_repo), "config", "user.email", "probe@localhost"], check=True)
+        subprocess.run(["git", "-C", str(probe_repo), "add", "BOM.md", "Print_Settings.md"], check=True)
+        subprocess.run(["git", "-C", str(probe_repo), "commit", "-q", "-m", "baseline"], check=True)
+        ps_probe = probe_repo / "Print_Settings.md"
+        ps_probe.write_text(
+            ps_probe.read_text(encoding="utf-8")
+            + "\n- Draft Electrical Note: extruder peak current `99.4 A` at `120 V` (`BOM.md` unverified stub)\n",
+            encoding="utf-8",
+        )
+
+        r_auto_std = apprentice_mcp_server.apprentice_digest(
+            prompt="List top 2 fastener rows in BOM.md citing BOM.md#Lstart-Lend verbatim. Zero preamble.",
+            context_files=["BOM.md"],
+            repo=str(probe_repo),
+            include_git_diff=False,
+            effort="auto",
+            invocation_tier="auto",
+            max_tokens=320,
+        )
+        r_auto_cross = apprentice_mcp_server.apprentice_digest(
+            prompt=(
+                "Compare BOM.md against Print_Settings.md and the working-tree git diff for contradictions "
+                "or unverified electrical specs. Cite exact file#Lstart-Lend verbatim; zero unit conversions. Zero preamble."
+            ),
+            context_files=["BOM.md", "Print_Settings.md"],
+            repo=str(probe_repo),
+            include_git_diff=True,
+            effort="auto",
+            invocation_tier="explicit",
+        )
+        auto_std_ok = bool(
+            r_auto_std.get("ok")
+            and r_auto_std.get("route_id") == "AUTO_STANDARD"
+            and r_auto_std.get("effort") == "standard"
+            and (r_auto_std.get("completion") or {}).get("finish_reason") == "stop"
+        )
+        auto_cross_ok = bool(
+            r_auto_cross.get("ok")
+            and r_auto_cross.get("route_id") == "HIGH_CROSS_SINGLE_SHOT"
+            and r_auto_cross.get("effort") == "high"
+            and (r_auto_cross.get("verify_claims") or {}).get("ran") is True
+            and (r_auto_cross.get("verify_claims") or {}).get("skipped_reason") != "git_diff_head_delta"
+            and r_auto_cross.get("claims_verified") is True
+            and (r_auto_cross.get("completion") or {}).get("finish_reason") == "stop"
+        )
+        l12_score = int(auto_std_ok) + int(auto_cross_ok)
+        forensics["L12"] = {
+            "auto_std": {
+                "ok": r_auto_std.get("ok"),
+                "route_id": r_auto_std.get("route_id"),
+                "effort": r_auto_std.get("effort"),
+                "finish": (r_auto_std.get("completion") or {}).get("finish_reason"),
+            },
+            "auto_cross_diff": {
+                "ok": r_auto_cross.get("ok"),
+                "route_id": r_auto_cross.get("route_id"),
+                "effort": r_auto_cross.get("effort"),
+                "verdict": r_auto_cross.get("verdict"),
+                "claims_verified": r_auto_cross.get("claims_verified"),
+                "verify_claims": r_auto_cross.get("verify_claims"),
+                "elapsed_s": (r_auto_cross.get("completion") or {}).get("elapsed_s"),
+            },
+        }
+        metrics.append(
+            BenchMetric(
+                id="L12_v26_auto_routing",
+                pillar="1. Accuracy & Truth",
+                name="V2.6 effort=auto routing (AUTO_STANDARD vs HIGH_CROSS_SINGLE_SHOT + .patch verify)",
+                value=l12_score,
+                unit="/ 2",
+                target="2",
+                higher_is_better=True,
+                status="PASS" if l12_score == 2 else "FAIL",
+                details=f"auto_std={auto_std_ok}, auto_cross_diff={auto_cross_ok}",
+            )
+        )
+
+        r_sh = apprentice_mcp_server.apprentice_shadow_review(
+            repo=str(probe_repo),
+            draft_files=["Print_Settings.md"],
+            context_files=["BOM.md"],
+            include_git_diff=True,
+            prompt=(
+                "List ONLY verified contradictions and [LOAD-BEARING] oracle findings citing exact "
+                "file#Lstart-Lend verbatim. Never calculate or convert units unless wrapped in [CALC: a = b]. Zero preamble."
+            ),
+            effort="auto",
+            invocation_tier="explicit",
+            async_job=False,
+        )
+        sh_cpu = r_sh.get("cpu_oracles") or {}
+        sh_tel = r_sh.get("completion_telemetry") or {}
+        sh_ok = bool(
+            r_sh.get("ok")
+            and r_sh.get("schema_version") == "SHADOW_SECOND_EYES_V1"
+            and r_sh.get("route_id") == "HIGH_CROSS_SINGLE_SHOT"
+            and (sh_cpu.get("verify_claims_drafts") or {}).get("ran") is True
+            and float(sh_cpu.get("elapsed_ms") or 9999.0) <= 2500.0
+            and (r_sh.get("verify_claims") or {}).get("ran") is True
+            and r_sh.get("claims_verified") is True
+            and sh_tel.get("finish_reason") == "stop"
+            and bool(str(r_sh.get("shadow_card") or "").strip())
+        )
+        forensics["L13"] = {
+            "ok": r_sh.get("ok"),
+            "schema_version": r_sh.get("schema_version"),
+            "route_id": r_sh.get("route_id"),
+            "verdict": r_sh.get("verdict"),
+            "claims_verified": r_sh.get("claims_verified"),
+            "cpu_elapsed_ms": sh_cpu.get("elapsed_ms"),
+            "gpu_elapsed_s": sh_tel.get("elapsed_s"),
+        }
+        metrics.append(
+            BenchMetric(
+                id="L13_shadow_second_eyes",
+                pillar="1. Accuracy & Truth",
+                name="V2.6 apprentice_shadow_review (CPU oracles + semantic second-eyes critic)",
+                value=float(sh_tel.get("elapsed_s") or 0.0),
+                unit="s",
+                target="<= 180.0s (CPU<=2.5s)",
+                higher_is_better=False,
+                status="PASS" if sh_ok else "FAIL",
+                details=(
+                    f"cpu={sh_cpu.get('elapsed_ms')}ms, verdict={r_sh.get('verdict')}, "
+                    f"backed={r_sh.get('claims_verified')}"
+                ),
+            )
+        )
+
     return metrics, forensics
 
 
@@ -1063,33 +1200,70 @@ def load_baseline(history_path: Path) -> dict[str, Any] | None:
     return last_any
 
 
+def _format_readable_notes(raw: str) -> str:
+    """Format dense key=value benchmark notes with clean break points for MarkText/Obsidian."""
+    txt = str(raw or "").strip().replace("|", "\\|")
+    if not txt:
+        return "—"
+    txt = txt.replace(", ", " · ")
+    txt = txt.replace("=", " = ").replace("<= ", "<= ").replace(">= ", ">= ")
+    txt = txt.replace("< = ", "<= ").replace("> = ", ">= ")
+    while "  " in txt:
+        txt = txt.replace("  ", " ")
+    return txt
+
+
 def render_markdown_report(run_obj: dict[str, Any], baseline: dict[str, Any] | None) -> str:
+    """Render compact 5-column pillar-grouped Markdown tables readable in MarkText & Obsidian."""
     base_map: dict[str, dict[str, Any]] = {}
     if baseline:
         for m in baseline.get("metrics") or []:
             base_map[m["id"]] = m
 
+    metrics = list(run_obj.get("metrics") or [])
+    n_pass = sum(1 for m in metrics if m.get("status") == "PASS")
+    n_fail = sum(1 for m in metrics if m.get("status") == "FAIL")
+    n_adv = sum(1 for m in metrics if m.get("status") == "ADVISORY")
+
     lines = [
-        f"# Bionic Sidecar Benchmark Report (`{run_obj['run_id']}`)",
+        f"# Apprentice Benchmark Report (`{run_obj['run_id']}`)",
         "",
         f"- **Timestamp (UTC):** `{run_obj['timestamp_utc']}` | **Label:** `{run_obj['label']}` | **Mode:** `{run_obj['mode']}`",
-        "",
-        "| Metric ID | Pillar | Baseline | Candidate | Delta | Target | Status | Details |",
-        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |",
+        f"- **Verdict Summary:** **`{n_pass} PASS`** · `{n_fail} FAIL` · `{n_adv} ADVISORY` *(grouped by Governing Priority Pillar)*",
     ]
-    for m in run_obj["metrics"]:
-        cand_disp = f"{m['value']} {m['unit']}".strip()
-        b = base_map.get(m["id"])
-        if b is not None and isinstance(m["value"], (int, float)) and isinstance(b["value"], (int, float)):
-            base_disp = f"{b['value']} {b['unit']}".strip()
-            delta = round(float(m["value"]) - float(b["value"]), 3)
-            delta_disp = f"{delta:+}"
-        else:
-            base_disp = "—"
-            delta_disp = "—"
-        lines.append(
-            f"| `{m['id']}` | {m['pillar']} | {base_disp} | {cand_disp} | {delta_disp} | {m['target']} | **{m['status']}** | {m['details']} |"
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for m in metrics:
+        p = str(m.get("pillar") or "Other")
+        grouped.setdefault(p, []).append(m)
+
+    for pillar in sorted(grouped.keys()):
+        lines.extend(
+            [
+                "",
+                f"## {pillar}",
+                "",
+                "| Metric | Result | Target | Status | Notes |",
+                "| :--- | :--- | :--- | :---: | :--- |",
+            ]
         )
+        for m in grouped[pillar]:
+            cand_disp = f"**{m['value']} {m['unit']}**".strip() if str(m.get("unit") or "").strip() else f"**{m['value']}**"
+            b = base_map.get(m["id"])
+            if b is not None and isinstance(m["value"], (int, float)) and isinstance(b["value"], (int, float)):
+                base_disp = f"{b['value']} {b['unit']}".strip()
+                delta = round(float(m["value"]) - float(b["value"]), 3)
+                res_cell = f"{cand_disp}<br>Base: {base_disp} ({delta:+})"
+            else:
+                res_cell = cand_disp
+            name_str = str(m.get("name") or m["id"]).replace("|", "\\|")
+            metric_cell = f"{name_str}<br>`{m['id']}`"
+            target_str = str(m.get("target") or "—").replace("(CPU<=", "(CPU <= ")
+            notes_str = _format_readable_notes(str(m.get("details") or ""))
+            lines.append(
+                f"| {metric_cell} | {res_cell} | {target_str} | **{m['status']}** | {notes_str} |"
+            )
+
     return "\n".join(lines) + "\n"
 
 
