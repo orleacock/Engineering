@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 186.12,
+  "avg_doc_len": 184.69,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -169,13 +169,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 58,
+          "end_line": 59,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L53-L58",
+          "line_range": "#L54-L59",
           "location": "main",
           "scope": "",
-          "start_line": 53,
+          "start_line": 54,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -188,13 +188,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 65,
+          "end_line": 66,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L60-L65",
+          "line_range": "#L61-L66",
           "location": "main",
           "scope": "",
-          "start_line": 60,
+          "start_line": 61,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -204,13 +204,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... -> Defer Turn-1 notices to PreInvocation pure systemMessage strings because metadata maps and premature SessionStart hooks collided with agy parsing; compare plugin trees (diff -rq) before reinstalling in bootstrap_workstation.sh and guard child spawns via _safe_subprocess_cwd() because inode swaps broke live cwd subprocesses; match...",
-          "end_line": 73,
+          "end_line": 74,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-20",
-          "line_range": "#L67-L73",
+          "line_range": "#L68-L74",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 67,
+          "start_line": 68,
           "tier": "TIER2",
           "title": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... (`2026-11-16`)",
           "touched_files": [
@@ -223,13 +223,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... -> Preserve duplicate per-file hunks via parse_and_validate_context_items() in apprentice_engine.py because path-keyed dicts collapsed multi-slice inputs; split unsliced vs sliced items, cap dense batches at max_slices_per_batch=4, and trigger Slice-Count Map-Reduce for dense multi-file slices (>=5 slices across >=3 files) in...",
-          "end_line": 81,
+          "end_line": 82,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-21",
-          "line_range": "#L75-L81",
+          "line_range": "#L76-L82",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 75,
+          "start_line": 76,
           "tier": "TIER2",
           "title": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... (`2026-11-16`)",
           "touched_files": [
@@ -243,13 +243,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... -> Enforce acquire_bjob_worker_slot FIFO locking with explicit except TimeoutError before except OSError, support repo-relative containment in validate_input_paths, lower chunk targets (22000B/450L) with >=768 STANDARD token floor and <=300s reduce budget, and support job_ids batch collection on job-collect/job-collect-any because...",
-          "end_line": 89,
+          "end_line": 90,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-22",
-          "line_range": "#L83-L89",
+          "line_range": "#L84-L90",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 83,
+          "start_line": 84,
           "tier": "TIER2",
           "title": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... (`2026-11-16`)",
           "touched_files": [
@@ -260,13 +260,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... -> Default to effort=auto via classify_hybrid_effort (STANDARD default + stage_patch lock, HIGH_CROSS_SINGLE_SHOT <=36KB, lossless Map -> 8192-cap HIGH Reduce >36KB), raise PROFILES fast cap to 3072, mount .patch sources via _mount_optional_patch_sources() on include_git_diff=True, isolate second-eyes CPU+semantic critique in...",
-          "end_line": 97,
+          "end_line": 98,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-23",
-          "line_range": "#L91-L97",
+          "line_range": "#L92-L98",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 91,
+          "start_line": 92,
           "tier": "TIER2",
           "title": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... (`2026-11-17`)",
           "touched_files": [
@@ -278,19 +278,36 @@
         {
           "archetype": "trade-off",
           "capsule_1line": "[TRADE-OFF] Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... -> Enforce portable Two-Posture Host-Tier Routing (EXECUTION_TIER <25KB native Speed-First vs FRONTIER_TIER >=8KB sync log sieves + Gate 3 #L read_file, #L context_files on stage_patch, and override-only verdict calls) with transcriptPath <16KB tail tier detection and [APPRENTICE HOST TIER SWITCH] notices...",
-          "end_line": 103,
+          "end_line": 106,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-24",
-          "line_range": "#L99-L103",
+          "line_range": "#L100-L106",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 99,
+          "start_line": 100,
           "tier": "TIER2",
           "title": "Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... (`2026-11-18`)",
           "touched_files": [
             "AGENTS.md",
             "SKILL.md",
             "apprentice_lifecycle_hook.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Pre-commit Z5 memory hygiene checks risked being skipped on verified_fastpath cache hits or missing... -> Execute audit_memory_hygiene.py --check-commit outside verified_fastpath fp_hit branches in git_pre_commit_boundary.sh and normalize relative local_path frontmatter against mem_dir (`git_pre_commit_boundary.sh` (`Workstation_Operations_Software.md`) (`SBX-20261118_150719-9fd47d0e`)).",
+          "end_line": 112,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-25",
+          "line_range": "#L108-L112",
+          "location": "main",
+          "scope": "script:git_pre_commit_boundary",
+          "start_line": 108,
+          "tier": "TIER2",
+          "title": "Pre-commit Z5 memory hygiene checks risked being skipped on verified_fastpath cache hits or missing... (`2026-11-18`)",
+          "touched_files": [
+            "audit_memory_hygiene.py",
+            "git_pre_commit_boundary.sh"
           ]
         },
         {
@@ -599,8 +616,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 186.12,
-      "proj_total_docs": 25,
+      "proj_avg_doc_len": 184.69,
+      "proj_total_docs": 26,
       "project": "Workstation_Operations"
     }
   },
@@ -619,12 +636,12 @@
     "Projects/Workstation_Operations/Workstation_Operations.md": {
       "lines": 122,
       "sections": 0,
-      "sha256": "b00557b62e6ffa79"
+      "sha256": "4de34b26df0dbe13"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 117,
-      "sections": 7,
-      "sha256": "0a6ec7118c0fa03f"
+      "lines": 126,
+      "sections": 8,
+      "sha256": "f9ab508abb4d74fa"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -634,10 +651,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 62,
       "sections": 0,
-      "sha256": "0d23519b44d71c15"
+      "sha256": "5df580096537aa4b"
     }
   },
-  "total_docs": 25,
+  "total_docs": 26,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "7084621d41f91c2c"
+  "vectors_digest": "6768999e404430da"
 }

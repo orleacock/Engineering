@@ -12,7 +12,7 @@ checkpoint_tree_hash: "6fe9f9569b4f"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-18"
-checkpoint_lessons_digest: "f5af0ce811953c14"
+checkpoint_lessons_digest: "596f67aab0722498"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -277,12 +277,12 @@ Repository: Homunculus | HEAD SHA: 09a3bf30d062 | Tree Hash: 6fe9f9569b4f
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-18`
-- **Checkpoint Provenance**: `HEAD SHA: 09a3bf30d062` | `Tree Hash: 6fe9f9569b4f` | `Worktree: clean` | `Last Verification: SBX-20261118_092640-a0469320`
+- **Checkpoint Provenance**: `HEAD SHA: 09a3bf30d062` | `Tree Hash: 6fe9f9569b4f` | `Worktree: clean` | `Last Verification: SBX-20261118_150719-9fd47d0e`
 - **Where We Stopped (Verified State & Context)**:
-  Graduated Homunculus v0.3.7 (09a3bf30d062 / tag v0.3.7, 113 files, 90/90 unittest OK, OpenSSH seal 55f51ef087c5 across 43 Ring-0 entries) + authored v0.3.6-v0.3.7 Worklog & W-5 Artifact Registry (#18-#20)
+  Closed out Tasks #71 & #72 on local /dev/tty: enrolled 8 fresh remote turnkeys, superseded LL-027/014/015/035/036 -> LL-055..059, sealed v0.3.7 AGENTS.md + EXT-07 (OpenSSH signed), and verified 0 Z5 defects across all 12 projects
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Tonight at local /dev/tty: run h-sudo enroll --count 8 (Task #71) and --supersede-lesson on legacy shorthand anchors + --seal-governance (Task #72). 2. Address Task #73 Swarm & Orchestrator Alignment when ready.
+  1. Cut immutable v0.3.7 RAID deliverable. 2. Address Task #73 ([SWARM & ORCHESTRATOR ALIGNMENT]) when ready.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

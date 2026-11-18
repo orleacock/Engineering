@@ -8,11 +8,11 @@ local_path: "/home/orin/Projects/Alchemical3D/Pneuma_Remote_Air"
 repo_head_sha: "0702c9c1c541"
 tree_hash: "c37739a571b2"
 checkpoint_head_sha: "0702c9c1c541"
-checkpoint_tree_hash: "dc295b6ec1e5"
+checkpoint_tree_hash: "c37739a571b2"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-10"
-checkpoint_lessons_digest: "23d19f2766961662"
+last_synced: "2026-11-18"
+checkpoint_lessons_digest: "300d460ff71ef035"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -130,13 +130,12 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: c37739a571b2
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-10`
-- **Checkpoint Provenance**: `HEAD SHA: 0702c9c1c541` | `Tree Hash: dc295b6ec1e5` | `Worktree: clean` | `Last Verification: VRF-01c5a7f61d28, VRF-886f22bb9de0, VRF-ea4740d35e19, VRF-c35e0e00f877`
+- **Last Session Timestamp**: `2026-11-18`
+- **Checkpoint Provenance**: `HEAD SHA: 0702c9c1c541` | `Tree Hash: c37739a571b2` | `Worktree: clean` | `Last Verification: VRF-01c5a7f61d28, VRF-886f22bb9de0, VRF-ea4740d35e19, VRF-c35e0e00f877`
 - **Where We Stopped (Verified State & Context)**:
-  Completed P3 Pneuma_Remote_Air rework at commit 0702c9c: formatted 6 assembly PNG cards, stripped inline CSS, set fail-safe shutdown_speed: 0 on pump_cool/pump_warm, standardized Dual-Pump BOM & Assembly Guide, split Print_Settings.md structural vs TPU tables, and verified 0 unbacked claims.
+  Matured LL-PNE-04 -> LL-PNE-10 (shutdown_speed: 0 live guardrail) and LL-PNE-07 -> LL-PNE-11 (v2.01 STL_Files/STEP_Files COTS Vacuum_Pump paths) via local /dev/tty --supersede-lesson (0 Z5 defects); repo remains clean at 0702c9c
 - **Active Project State Ledger & Blockers**: Open [TBD] physical fastener counts and TPU slicer parameters awaiting bench measurement.
 - **Next Session Kickstart & Discussion Points**:
-  1. Physically count Rear_Cover, Front_Cover, 2nd Pump_Mount heatset, and optional Table_Mount_TPU fasteners on bench.
-  2. Measure and record TPU Shore hardness and slicer parameters in Print_Settings.md.
+  1. Physically count Rear_Cover, Front_Cover, 2nd Pump_Mount heatset, and optional Table_Mount_TPU fasteners on bench. 2. Measure and record TPU Shore hardness and slicer parameters in Print_Settings.md.
 - **Open Discussion / Alignment Questions**: A1: Dual-Pump standard (2 pumps, 0 solenoid valves; legacy 1/8-NPT note) | A2: Verified fasteners kept, unconfirmed rows tagged [TBD] | A3: As-needed tube fittings vs grommets/plugs + TPU slicer [TBD]s | A4: shutdown_speed: 0 on part-cooling pumps, 1 on hotend heatsink fans
 <!-- SESSION-HANDOFF:END -->

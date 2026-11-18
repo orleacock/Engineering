@@ -4,8 +4,8 @@
 # Dynamically resolves Homunculus root via .homunculus.json or relative Homunculus/ folder (zero hardcoded paths).
 # === DEVELOPER & AI NAVIGATION MAP ===
 #   Owning Module : Parent Workstation Pre-Commit Boundary, Memory & Matrix Parity Gate (`scripts/git_pre_commit_boundary.sh`)
-#   Callees       : `homunculus_paths.py`, `audit_data_boundary.py --staged`, `verified_fastpath.py`, `sync_memory.py`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
-#   Section Index : Repo Root (#L12-L19) | Python Discovery (#L21-L29) | Single-Process Gate & AST Matrix Parity (#L32-L275)
+#   Callees       : `homunculus_paths.py`, `audit_data_boundary.py --staged`, `verified_fastpath.py`, `sync_memory.py`, `audit_memory_hygiene.py --check-commit`, AST Matrix Parity Gate against `Homunculus_Script_Skill_Interaction_Matrix.md`
+#   Section Index : Repo Root (#L12-L19) | Python Discovery (#L21-L29) | Single-Process Gate & AST Matrix Parity (#L32-L357)
 # === END NAVIGATION MAP ===
 set -euo pipefail
 
@@ -114,23 +114,39 @@ staged = subprocess.check_output(
 
 # Memory Integrity Gate
 mem_script = hom_root / "skills" / "project-memory" / "scripts" / "sync_memory.py"
+hyg_script = hom_root / "skills" / "memory-hygiene" / "scripts" / "audit_memory_hygiene.py"
 mem_dir: Path | None = None
-cfg_file = repo / ".homunculus.json"
-if cfg_file.is_file():
-    try:
-        rel_mem = json.loads(cfg_file.read_text(encoding="utf-8")).get("memory_dir", "")
-        if rel_mem:
-            cand_m = (repo / rel_mem).resolve()
-            if cand_m.is_dir() and repo in (cand_m, *cand_m.parents):
-                mem_dir = cand_m
-    except Exception:
-        pass
+env_mem = os.environ.get("HOMUNCULUS_MEMORY_ROOT", "").strip()
+if env_mem and Path(env_mem).is_dir():
+    mem_dir = Path(env_mem).resolve()
+if mem_dir is None:
+    for d in (repo, *repo.parents):
+        cfg_file = d / ".homunculus.json"
+        if cfg_file.is_file():
+            try:
+                rel_mem = json.loads(cfg_file.read_text(encoding="utf-8")).get("memory_dir", "")
+                if rel_mem:
+                    cand_m = (d / str(rel_mem)).resolve()
+                    if cand_m.is_dir():
+                        mem_dir = cand_m
+                        break
+            except Exception:
+                pass
 if mem_dir is None and (repo / "memory").is_dir():
     mem_dir = (repo / "memory").resolve()
 
-if mem_script.is_file() and mem_dir is not None and mem_dir.is_dir():
-    mem_rel = mem_dir.relative_to(repo).as_posix().rstrip("/")
-    if any(p.startswith(f"{mem_rel}/") for p in staged):
+mem_in_repo = False
+mem_rel = ""
+if mem_dir is not None and mem_dir.is_dir():
+    try:
+        rel_raw = mem_dir.resolve().relative_to(repo).as_posix().rstrip("/")
+        mem_rel = "" if rel_raw == "." else rel_raw
+        mem_in_repo = True
+    except ValueError:
+        mem_in_repo = False
+
+if mem_script.is_file() and mem_dir is not None and mem_dir.is_dir() and mem_in_repo:
+    if any((not mem_rel or p == mem_rel or p.startswith(f"{mem_rel}/")) for p in staged):
         vf_mod = None
         for vf_cand in (
             repo / "scripts" / "verified_fastpath.py",
@@ -173,6 +189,72 @@ if mem_script.is_file() and mem_dir is not None and mem_dir.is_dir():
                     vf_mod.record_memory_audit_fastpath(mem_dir, hom_root, repo_root=repo)
                 except OSError:
                     pass
+
+# Z5 Live Memory Hygiene Gate (never bypassed by verified_fastpath)
+if hyg_script.is_file() and mem_dir is not None and mem_dir.is_dir() and staged:
+    hyg_calls: list[list[str]] = []
+    if mem_in_repo:
+        proj_prefix = f"{mem_rel}/Projects/" if mem_rel else "Projects/"
+        staged_projects: set[str] = set()
+        global_mem_touched = False
+        for sp in staged:
+            if sp.startswith(proj_prefix):
+                parts = sp[len(proj_prefix):].split("/", 1)
+                if parts and parts[0]:
+                    staged_projects.add(parts[0])
+            elif not mem_rel or sp == mem_rel or sp.startswith(f"{mem_rel}/"):
+                global_mem_touched = True
+            elif sp.startswith("scripts/") and (mem_dir / "Projects" / "Workstation_Operations" / "Workstation_Operations.md").is_file():
+                staged_projects.add("Workstation_Operations")
+        if global_mem_touched:
+            hyg_calls = [["--memory-root", str(mem_dir), "--check-commit"]]
+        elif staged_projects:
+            hyg_calls = [["--memory-root", str(mem_dir), "--project", proj, "--check-commit"] for proj in sorted(staged_projects)]
+    elif (mem_dir / "Projects").is_dir():
+        ext_projects: set[str] = set()
+        for hub in sorted((mem_dir / "Projects").glob("*/*.md")):
+            if hub.stem != hub.parent.name:
+                continue
+            try:
+                head_txt = "\n".join(hub.read_text(encoding="utf-8", errors="ignore").splitlines()[:25])
+            except OSError:
+                continue
+            m_lp = re.search(r'^local_path:\s*["\']?([^"\'\r\n]+)["\']?\s*$', head_txt, re.M)
+            if not m_lp:
+                continue
+            lp_raw = m_lp.group(1).strip().replace("\\", "/")
+            cand_lp = (
+                Path(lp_raw)
+                if Path(lp_raw).is_absolute()
+                else Path(os.path.normpath(os.path.join(os.fspath(mem_dir), lp_raw)))
+            )
+            try:
+                if cand_lp.resolve() == repo:
+                    ext_projects.add(hub.stem)
+            except OSError:
+                pass
+        for proj in sorted(ext_projects):
+            hyg_calls.append(["--memory-root", str(mem_dir), "--project", proj, "--check-commit"])
+
+    if hyg_calls:
+        hyg_scripts_dir = str(hyg_script.parent)
+        if hyg_scripts_dir not in sys.path:
+            sys.path.insert(0, hyg_scripts_dir)
+        import audit_memory_hygiene
+        for h_argv in hyg_calls:
+            h_buf = io.StringIO()
+            with contextlib.redirect_stdout(h_buf), contextlib.redirect_stderr(h_buf):
+                h_rc = audit_memory_hygiene.main(h_argv)
+            if h_rc:
+                cmd_hint = " ".join([python_bin, str(hyg_script), *h_argv])
+                print(
+                    f"[BLOCKED] Homunculus pre-commit memory hygiene gate failed (run: {cmd_hint}):",
+                    file=sys.stderr,
+                )
+                h_out = h_buf.getvalue().rstrip()
+                if h_out:
+                    print(h_out, file=sys.stderr)
+                sys.exit(1)
 
 # Maintainer Script-Skill Interaction Matrix Parity Gate (active when Engineering maintainer matrix exists)
 matrix_path: Path | None = None

@@ -37,3 +37,17 @@ last_synced: "2026-11-18"
 - **Symptom / Failed Approach (`Historical / Rejected`):** Copying structural `ABS`/`ASA` print settings (`4` walls, `5` top/bottom layers, `40%` `Grid`/`Gyroid` infill) onto the three elastomer vibration-isolation parts (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) or inventing TPU Shore hardness from pretraining defaults.
 - **Root Cause:** Borrowing `40%` structural infill onto TPU makes vibration isolators rigid and transmits pump resonance directly into the frame/table.
 - **Verified Resolution & Canonical Owner:** Graduated into [`Verifiable_Accuracy_and_Anti_Hallucination`](../../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md) (`Ban Cross-Entity Borrowing`); TPU parameters remain quarantined as an explicit `[TBD]` in [`Pneuma_Remote_Air`](../Pneuma_Remote_Air.md) until measured.
+
+### `LL-PNE-04` [TIER5] — Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)
+- **Retirement Provenance (`TIER5` — `2026-11-18`):** Superseded by `LL-PNE-10` — Move historical shutdown_speed=1 reference into inert Historical Context so live guardrail matches Firmware/Pneuma_Control.cfg#L18 (shutdown_speed: 0)
+- **Superseded-By:** `LL-PNE-10`
+- **Symptom / Failed Approach (`Historical / Rejected`):** Previously, `Firmware/Pneuma_Control.cfg` defined `shutdown_speed: 1` on both `[fan_generic pump_cool]` and `[fan_generic pump_warm]` while commenting out `#kick_start_time: 0.5`.
+- **Root Cause:** `shutdown_speed: 1` forced both diaphragm pumps to run at 100% duty cycle on Klipper MCU shutdown or thermal fault, while inactive `kick_start_time` risked low-PWM startup stalls.
+- **Verified Resolution & Canonical Owner:** Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; [`Pneuma_Remote_Air`](../Pneuma_Remote_Air.md), [`Pneuma_Remote_Air_Hardware`](../Pneuma_Remote_Air_Hardware.md)).
+
+### `LL-PNE-07` [TIER5] — `Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift
+- **Retirement Provenance (`TIER5` — `2026-11-18`):** Superseded by `LL-PNE-11` — Re-anchor LL-PNE-07 from retired v1.x STL/Vacuum_Pump.stl path to live v2.01 STL_Files/Pneuma_201 - Vacuum_Pump.stl + pattern:cots_reference_cad
+- **Superseded-By:** `LL-PNE-11`
+- **Symptom / Failed Approach (`Historical / Rejected`):** Instructing users in `Assembly_Guide.md:20` to *"Print all parts in the STL folder"* without excluding `Vacuum_Pump.stl`, or assuming `100%` dimensional identity between `CAD/Pneuma_Remote_Air.step` and `STL/Vacuum_Pump.stl`.
+- **Root Cause:** `STL/Vacuum_Pump.stl` (`90.10 × 124.22 × 65.50 mm`, `2` bodies, `334.62 cm³`) is a COTS reference model of the two internal diaphragm pumps (`Pump v1` + `Pump v1(1)`), not a printable structural housing part. Furthermore, the STEP assembly positions the pump pair across `91.10 × 124.22 × 65.50 mm` (`1.00mm` X-axis spacing offset vs. the exported STL).
+- **Verified Resolution & Canonical Owner:** Explicitly segregated `Vacuum_Pump.stl` as a non-printed COTS reference model in [`Pneuma_Remote_Air`](../Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](../Pneuma_Remote_Air_Hardware.md).

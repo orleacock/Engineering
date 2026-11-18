@@ -4,7 +4,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "764164cb3201"
+inventory_sha256: "4786ad217920"
 last_synced: "2026-11-18"
 ---
 
@@ -23,7 +23,7 @@ last_synced: "2026-11-18"
 | `benchmark_apprentice.py` | `Python 3.10+` | Flags: `--mode`, `--label`, `--history-jsonl`, `--telemetry-log`, `--record-baseline`, `--append-history`, `--compare-baseline`, `--output-md`, `--json`, `--self-test` — Symbols: `BenchMetric()` (`#L56-L70`), `run_offline_suite()` (`#L170-L549`), `run_live_suite()` (`#L552-L1183`), `load_baseline()` (`#L1186-L1200`), `render_markdown_report()` (`#L1216-L1267`), `run_self_tests()` (`#L1270-L1291`), `main()` (`#L1294-L1384`) | `1388` | `7cb64f1c18` |
 | `benchmark_homunculus.py` | `Python 3.10+` | Flags: `--profile`, `--quick-pulse`, `--record-pulse`, `--homunculus-dir`, `--homunculus-root`, `--memory-root`, `--version-manifest`, `--history-jsonl`, `--ledger-md`, `--baseline-version`, `--record-baseline`, `--approve-advisory-reason`, `--append-ledger`, `--history-only`, `--output-md`, `--label`, `--transcript`, `--deliverable-dir`, `--sources`, `--model-id`, `--effort`, `--self-test`, `--inject-synthetic-regression`, `--json` — Symbols: `MetricRow()` (`#L91-L108`), `percentile()` (`#L111-L123`), `snapshot_host_hashes()` (`#L126-L163`), `run_cmd_timed()` (`#L166-L189`), `probe_bwrap_erofs()` (`#L192-L227`), `build_universal_spine()` (`#L2129-L2175`), `render_regression_autopsy_md()` (`#L2318-L2406`), `render_markdown_report()` (`#L2451-L2486`), `main()` (`#L2588-L2854`) | `2858` | `ea7fcec495` |
 | `bootstrap_workstation.sh` | `POSIX Bash` | Executable Script / Source | `347` | `1acd0dc74d` |
-| `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `275` | `195810f3e7` |
+| `git_pre_commit_boundary.sh` | `POSIX Bash` | Executable Script / Source | `357` | `1e0d9118c6` |
 | `h_sudo.sh` | `POSIX Bash` | Executable Script / Source | `176` | `33464fd019` |
 | `pre_push_engineering_guard.sh` | `POSIX Bash` | Executable Script / Source | `77` | `ac977c95b2` |
 | `snapshot_homunculus_version.py` | `Python 3.10+` | Flags: `--slug`, `--label`, `--raid-root`, `--homunculus-dir`, `--engineering-dir`, `--version-manifest`, `--allow-dirty`, `--skip-benchmark`, `--force-fresh-benchmark`, `--list`, `--verify`, `--dry-run`, `--json` — Symbols: `sanitize_slug()` (`#L74-L77`), `find_latest_same_dev_raid_snapshot()` (`#L89-L114`), `find_verified_benchmark_receipt()` (`#L117-L151`), `copy_tree_cow()` (`#L176-L358`), `collect_symlink_manifest()` (`#L376-L394`), `build_restore_script()` (`#L477-L684`), `build_reconstruction_index()` (`#L687-L747`), `verify_existing_snapshot()` (`#L790-L802`), `main()` (`#L805-L1107`) | `1111` | `fc6af3c4a4` |

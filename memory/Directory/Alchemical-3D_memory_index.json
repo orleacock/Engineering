@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 239.84,
+  "avg_doc_len": 242.48,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -662,45 +662,14 @@
         },
         {
           "archetype": "trap",
-          "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
-          "end_line": 178,
+          "capsule_1line": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... -> Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity....",
+          "end_line": 170,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-027",
-          "line_range": "#L165-L178",
+          "id": "LL-052",
+          "line_range": "#L165-L170",
           "location": "main",
           "scope": "",
           "start_line": 165,
-          "tier": "TIER0",
-          "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
-          "touched_files": [
-            "AGENTS.md",
-            "Agents.md",
-            "CLAUDE.md",
-            "SKILL.md",
-            "agents.md",
-            "audit_repo_docs.py",
-            "audit_skill_hygiene.py",
-            "build_adapters.py",
-            "co-engineering-partner.md",
-            "data-and-credential-safety.md",
-            "doc_templates.md",
-            "format_image.py",
-            "homunculus_paths.py",
-            "sandbox_runner.py",
-            "verifiable-accuracy.md",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "archetype": "trap",
-          "capsule_1line": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... -> Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity....",
-          "end_line": 185,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
-          "id": "LL-052",
-          "line_range": "#L180-L185",
-          "location": "main",
-          "scope": "",
-          "start_line": 180,
           "tier": "TIER2",
           "title": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... (`2026-11-14`)",
           "touched_files": [
@@ -713,13 +682,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... -> Defer remote turnkey burn until post-sign success via defer_turnkey_burn=True across homunculus_paths.py and seal_memory_governance(), evaluate .cache ignores relative to fw_root, pass resolved_effort into format_model_receipt_tag, and seal BUILTIN_RING1 updates via h-sudo seal (`scripts/homunculus_paths.py` (`Homunculus_Software.md`)...",
-          "end_line": 193,
+          "end_line": 178,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-053",
-          "line_range": "#L187-L193",
+          "line_range": "#L172-L178",
           "location": "main",
           "scope": "script:homunculus_paths",
-          "start_line": 187,
+          "start_line": 172,
           "tier": "TIER2",
           "title": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... (`2026-11-16`)",
           "touched_files": [
@@ -732,13 +701,13 @@
         {
           "archetype": "win",
           "capsule_1line": "[WIN] Historical lessons risked in-place edits or dead repo anchors across refactors, fallback verify_claims... -> Enforce Ring-0 skills/memory-hygiene/scripts/audit_memory_hygiene.py (--check-commit and --audit --suggest-promotions), skills/project-memory/scripts/sync_memory.py (atomic read-only chmod permission (0444) TIER5 --supersede-lesson with Historical Context (Inert Origin) and mutual --promote-principle gated by...",
-          "end_line": 198,
+          "end_line": 185,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-054",
-          "line_range": "#L195-L198",
+          "line_range": "#L180-L185",
           "location": "main",
           "scope": "",
-          "start_line": 195,
+          "start_line": 180,
           "tier": "TIER2",
           "title": "Historical lessons risked in-place edits or dead repo anchors across refactors, fallback verify_claims... (`2026-11-18`)",
           "touched_files": [
@@ -751,6 +720,27 @@
             "sandbox_runner.py",
             "sync_memory.py",
             "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Introducing a middle Agent.md tier, exceeding the 24,000-byte AGENTS.md cap via out-of-tree rel_prefix... -> Preserve the 2-Tier Single-Source Rule Architecture (AGENTS.md <= 22,500 B via RULE_BYTE_CAP_EXCEEDED, MISNAMED_AGENTS_MD_CASE, and ADAPTER_STALE_DRIFT in skills/skill-architect/scripts/audit_skill_hygiene.py and scripts/build_adapters.py), use Path(__file__).resolve() + homunculus_paths.py co-bundling across symlinks/copies/.zips...",
+          "end_line": 192,
+          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
+          "id": "LL-055",
+          "line_range": "#L187-L192",
+          "location": "main",
+          "scope": "",
+          "start_line": 187,
+          "tier": "TIER0",
+          "title": "Introducing a middle Agent.md tier, exceeding the 24,000-byte AGENTS.md cap via out-of-tree rel_prefix... (`2026-11-18`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "audit_skill_hygiene.py",
+            "build_adapters.py",
+            "co-engineering-partner.md",
+            "homunculus_paths.py"
           ]
         },
         {
@@ -993,54 +983,14 @@
         },
         {
           "archetype": "trap",
-          "capsule_1line": "Generative Impact of Skill Trims: Pointer-Hop Token Inversion & Action-Site Salience Loss (`Blind` vs.... -> Enforced five deterministic guards across `audit_skill_hygiene.py`, `skill-architect/SKILL.md`, `audit_repo_docs.py`, and `sandbox_runner.py`:",
-          "end_line": 135,
+          "capsule_1line": "One-Way Memory Vault Journal vs. Self-Contained Core Operational Files (`Zero Reverse Dependency`) -> As `LL-001` through `LL-015` were discovered and baked into parent workstation rules (`co-engineering-partner.md`), skills (`skill-architect`, `subagent-orchestrator`, `claim-verification`, `engineering-sandbox`, `technical-diagram-studio`), and `audit_skill_hygiene.py`, `55` references to `LL-xxx` ticket IDs and...",
+          "end_line": 130,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
-          "id": "LL-014",
-          "line_range": "#L122-L135",
+          "id": "LL-016",
+          "line_range": "#L122-L130",
           "location": "archive",
           "scope": "",
           "start_line": 122,
-          "tier": "TIER3",
-          "title": "Generative Impact of Skill Trims: Pointer-Hop Token Inversion & Action-Site Salience Loss (`Blind` vs. `Visible` Sandbox Discovery)",
-          "touched_files": [
-            "SKILL.md",
-            "audit_repo_docs.py",
-            "audit_skill_hygiene.py",
-            "sandbox_runner.py",
-            "verifiable-accuracy.md",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "archetype": "trap",
-          "capsule_1line": "Relative `./scripts/` CLI Paths & Isolated Excerpt Link Validation Friction -> (1) Added `RELATIVE_SCRIPT_PATH_HAZARD` detection to `audit_skill_hygiene.py` so any relative `./scripts/*.py` CLI invocation inside `SKILL.md` is flagged as a `[TURN-WASTE HAZARD]`, and patched all occurrences in `doc-and-card-studio/SKILL.md`; (2) added `--repo-root <path>` to `skills/doc-and-card-studio/scripts/audit_repo_docs.py`...",
-          "end_line": 142,
-          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
-          "id": "LL-015",
-          "line_range": "#L137-L142",
-          "location": "archive",
-          "scope": "",
-          "start_line": 137,
-          "tier": "TIER3",
-          "title": "Relative `./scripts/` CLI Paths & Isolated Excerpt Link Validation Friction",
-          "touched_files": [
-            "SKILL.md",
-            "audit_repo_docs.py",
-            "audit_skill_hygiene.py",
-            "format_image.py"
-          ]
-        },
-        {
-          "archetype": "trap",
-          "capsule_1line": "One-Way Memory Vault Journal vs. Self-Contained Core Operational Files (`Zero Reverse Dependency`) -> As `LL-001` through `LL-015` were discovered and baked into parent workstation rules (`co-engineering-partner.md`), skills (`skill-architect`, `subagent-orchestrator`, `claim-verification`, `engineering-sandbox`, `technical-diagram-studio`), and `audit_skill_hygiene.py`, `55` references to `LL-xxx` ticket IDs and...",
-          "end_line": 152,
-          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
-          "id": "LL-016",
-          "line_range": "#L144-L152",
-          "location": "archive",
-          "scope": "",
-          "start_line": 144,
           "tier": "TIER5",
           "title": "One-Way Memory Vault Journal vs. Self-Contained Core Operational Files (`Zero Reverse Dependency`)",
           "touched_files": [
@@ -1053,13 +1003,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Project-Scoped `<Project>_Lessons_Learned.md` Ledgers, 3-Tier Containment & `verify_claims.py`... -> Expanding `<Project>_Lessons_Learned.md` across active R&D projects introduces two architectural risks if done naively:",
-          "end_line": 162,
+          "end_line": 140,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-017",
-          "line_range": "#L154-L162",
+          "line_range": "#L132-L140",
           "location": "archive",
           "scope": "",
-          "start_line": 154,
+          "start_line": 132,
           "tier": "TIER3",
           "title": "Project-Scoped `<Project>_Lessons_Learned.md` Ledgers, 3-Tier Containment & `verify_claims.py` Failed-Attempt Quarantine",
           "touched_files": [
@@ -1072,13 +1022,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`Compare-Full (Pro)` System Audit: Unconditional Tier-B Claim Verification, Cross-Brain Scratch... -> Running a full-scale `Compare-Full (Pro)` A/B differential sandbox audit (`Blind-Full` `57627440-ba83-480c-b987-876e38af2c87` vs. `Visible-Full` `5b97ba5d-7d45-46c7-992a-768f5f237500`, evaluated via `SBX-20261104_090329-12245bb9`) across the entire operational script suite exposed four critical system mechanics and script-authority gaps:",
-          "end_line": 183,
+          "end_line": 161,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-018",
-          "line_range": "#L164-L183",
+          "line_range": "#L142-L161",
           "location": "archive",
           "scope": "",
-          "start_line": 164,
+          "start_line": 142,
           "tier": "TIER5",
           "title": "`Compare-Full (Pro)` System Audit: Unconditional Tier-B Claim Verification, Cross-Brain Scratch Boundaries, `CROSS_ARM_CONTAMINATION` & Fail-Closed Script Hardening",
           "touched_files": [
@@ -1103,13 +1053,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Standalone Zero-Vault / Zero-History Doctrine & Dynamic New-Project Discovery (Closing Hardcoded... -> Auditing how `Homunculus` behaves when deployed standalone without a pre-existing `<memory_root>/` vault or when a **brand-new project** is onboarded exposed four structural cracks whenever scripts rely on hardcoded project lists:",
-          "end_line": 196,
+          "end_line": 174,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-019",
-          "line_range": "#L185-L196",
+          "line_range": "#L163-L174",
           "location": "archive",
           "scope": "",
-          "start_line": 185,
+          "start_line": 163,
           "tier": "TIER3",
           "title": "Standalone Zero-Vault / Zero-History Doctrine & Dynamic New-Project Discovery (Closing Hardcoded Project-List Cracks)",
           "touched_files": [
@@ -1123,13 +1073,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Phase 2A\u20133B Clean-Room Construction, Complete Parent-System Flaw Ledger (`PF-01`\u2013`PF-16`) & Touch-2... -> During the clean-room construction of `Homunculus` (`Phases 2A, 2B, 3A & 3B` across `78` files in `/home/orin/Projects/Alchemical3D/Homunculus`) and the Touch-2 triangulated sandbox audit (`OS Dry-Run` `SBX-20261104_200652-ebb2f0ff` + `Compare-Light` `Blind-Light` `916e2de1-a58a-472e-b6af-ec6e8998b306` vs. `Visible-Light`...",
-          "end_line": 224,
+          "end_line": 202,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-020",
-          "line_range": "#L198-L224",
+          "line_range": "#L176-L202",
           "location": "archive",
           "scope": "",
-          "start_line": 198,
+          "start_line": 176,
           "tier": "TIER5",
           "title": "Phase 2A\u20133B Clean-Room Construction, Complete Parent-System Flaw Ledger (`PF-01`\u2013`PF-16`) & Touch-2 Sandbox Triangulation (`SBX-20261104_203744-63957361`)",
           "touched_files": [
@@ -1153,13 +1103,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Truth-Oracle Poisoning via Speculative Telemetry Heuristics (`INH-10`, `INH-17`, `INH-23`), Multi-Domain... -> When a deterministic telemetry script (`inspect_hardware_ecosystem.py`) injects speculative domain heuristics into `<Project>_Hardware.md`\u2014such as guessing COTS components from bore diameters (`\u00d86.00mm (Magnet)`, `\u00d89.50mm (PC4-M10)`) or computing estimated print weights (`solid_abs_g = vol * 1.04`, `est_print_abs_g = vol * 0.58`)\u2014it...",
-          "end_line": 231,
+          "end_line": 209,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-021",
-          "line_range": "#L226-L231",
+          "line_range": "#L204-L209",
           "location": "archive",
           "scope": "",
-          "start_line": 226,
+          "start_line": 204,
           "tier": "TIER3",
           "title": "Truth-Oracle Poisoning via Speculative Telemetry Heuristics (`INH-10`, `INH-17`, `INH-23`), Multi-Domain `QUALIFIER_GROUPS` (`27` Groups), & Unspecified Source Clause Suppression",
           "touched_files": [
@@ -1170,13 +1120,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Validator Crash (`rc=2`) Masquerading as `CAUGHT_FAIL_CLOSED` & Fault-Spec Setup Command Precedence... -> In `sandbox_runner.py`, treating any non-zero validator exit code (`v_rc != 0`) as `CAUGHT_FAIL_CLOSED` allowed `argparse` CLI flag errors (`rc=2`, e.g., passing `--draft` before `--draft` existed on `verify_claims.py` or `--repo-root` before `--repo-root` existed on `audit_portability.py`) to masquerade as caught adversarial faults....",
-          "end_line": 237,
+          "end_line": 215,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-022",
-          "line_range": "#L233-L237",
+          "line_range": "#L211-L215",
           "location": "archive",
           "scope": "",
-          "start_line": 233,
+          "start_line": 211,
           "tier": "TIER3",
           "title": "Validator Crash (`rc=2`) Masquerading as `CAUGHT_FAIL_CLOSED` & Fault-Spec Setup Command Precedence (`INH-18`, `INH-39`)",
           "touched_files": [
@@ -1188,13 +1138,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Unanchored Substring Sanitization (`word -> <Project_Alpha>word`), Regex Refactoring Regressions & Spaced... -> Always anchor identifier replacements to word boundaries (`\\b`), test regex changes against real multi-hyphen CAD filenames, keep standard SI symbols (`g`, `m`, `s`) active when preceded by numeric literals, and isolate organization-specific brand/compartment rules into declarative `homunculus_safety.json` / `.homunculus_brand.json`...",
-          "end_line": 244,
+          "end_line": 222,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-023",
-          "line_range": "#L239-L244",
+          "line_range": "#L217-L222",
           "location": "archive",
           "scope": "",
-          "start_line": 239,
+          "start_line": 217,
           "tier": "TIER3",
           "title": "Unanchored Substring Sanitization (`word -> <Project_Alpha>word`), Regex Refactoring Regressions & Spaced SI Unit Exclusion (`INH-01`, `INH-08`, `INH-13`, `INH-25`)",
           "touched_files": [
@@ -1207,13 +1157,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Methodical Pre-Deletion Callback Sweep, CoW Dry-Run Retirement Protocol & Strict Workstation vs.... -> Retiring legacy directories (`Homunculus_Backup`, `Obsidian_Notes`, `AI_Skill_Project`) or keeping personal add-ons (`gmail-workspace-assistant`) inside `Homunculus/addons/` without a pre-deletion callback sweep and CoW sandbox dry-run risks breaking hidden symlinks (`~/.config/obsidian/obsidian.json`, `~/.gemini/config/hooks.json`)...",
-          "end_line": 251,
+          "end_line": 229,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-024",
-          "line_range": "#L246-L251",
+          "line_range": "#L224-L229",
           "location": "archive",
           "scope": "",
-          "start_line": 246,
+          "start_line": 224,
           "tier": "TIER5",
           "title": "Methodical Pre-Deletion Callback Sweep, CoW Dry-Run Retirement Protocol & Strict Workstation vs. Clean-Room Separation (`Option A1/B1/C1`)",
           "touched_files": [
@@ -1227,13 +1177,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Antigravity Modular Rule `trigger: always_on` Frontmatter vs. Frontmatter-Free `AGENTS.md` / `CLAUDE.md`... -> Writing `Homunculus/rules/*.md` as bare Markdown without YAML frontmatter allowed clean concatenation into `AGENTS.md`/`CLAUDE.md`, but caused Antigravity CLI/IDE to silently skip `~/.gemini/config/rules/*.md` (omitting `<user_rules>` and the `Project State Ledger` from active prompts whenever no standalone `AGENTS.md`/`GEMINI.md`...",
-          "end_line": 258,
+          "end_line": 236,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-025",
-          "line_range": "#L253-L258",
+          "line_range": "#L231-L236",
           "location": "archive",
           "scope": "",
-          "start_line": 253,
+          "start_line": 231,
           "tier": "TIER3",
           "title": "Antigravity Modular Rule `trigger: always_on` Frontmatter vs. Frontmatter-Free `AGENTS.md` / `CLAUDE.md` Stripping",
           "touched_files": [
@@ -1246,13 +1196,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`teach-me` Fast-Path (`24 -> 11` Turns), Shell `.py`-Snooping Closure vs. Deterministic `verify_claims.py`... -> Early `teach-me` subagents burned `24` turns (`752s`) across 3 briefs due to blind `ls`/`find`/`os.listdir` directory wandering, reading `verify_claims.py` (`2,800+` lines) via shell `python3 -c` / `sed` / `grep` loopholes when `read_file` was banned, re-scaffolding files instead of relying on in-place `--auto-slug` rename, and...",
-          "end_line": 270,
+          "end_line": 248,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-026",
-          "line_range": "#L260-L270",
+          "line_range": "#L238-L248",
           "location": "archive",
           "scope": "",
-          "start_line": 260,
+          "start_line": 238,
           "tier": "TIER3",
           "title": "`teach-me` Fast-Path (`24 -> 11` Turns), Shell `.py`-Snooping Closure vs. Deterministic `verify_claims.py` Execution, `WARNING_CONTEXT_CITATION` `[Hint]` & Entity-Isolated `memory/Directory/` Box Trees",
           "touched_files": [
@@ -1266,13 +1216,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`Pairing D \u2014 Full-Spectrum Synthesis`: Dual-Surface `#Lstart-Lend` Script Navigation Maps (`20` Scripts /... -> Navigating large Python oracles (`verify_claims.py` at `2,879` lines, `sync_memory.py` at `2,223` lines, `sandbox_runner.py` at `1,353` lines) without a deterministic top-of-file index forced agents to burn `3\u20134` `read_file` turns (`~36.6k` tokens) hunting for target functions. However, hand-maintained `#Lstart-Lend` comment headers...",
-          "end_line": 283,
+          "end_line": 261,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-028",
-          "line_range": "#L272-L283",
+          "line_range": "#L250-L261",
           "location": "archive",
           "scope": "",
-          "start_line": 272,
+          "start_line": 250,
           "tier": "TIER3",
           "title": "`Pairing D \u2014 Full-Spectrum Synthesis`: Dual-Surface `#Lstart-Lend` Script Navigation Maps (`20` Scripts / `261` Symbols + `<Project>_Software.md` Anchors), Single-Pass Unified AST Kernel (`inspect_python_ast_and_map`), & Dual-Mode In-Process / Shared-`SourceIndex` Oracle Batching (`SBX-20261107_164747-0996f501`)",
           "touched_files": [
@@ -1290,13 +1240,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Antigravity Global Rule Injection (`~/.gemini/config/rules/`) in Custom `define_subagent` `stock-baseline`... -> Report both **Raw Billed Tokens** and **Factory-Stock Normalized Tokens** (`Total - N_turns * 8,379`) during active-workstation A/B benchmarks, and temporarily unmount `~/.gemini/config/rules/` + `~/.gemini/config/skills/` (or run inside an isolated `$HOME` via `sandbox_runner.py`) at release-candidate benchmarking to measure true...",
-          "end_line": 288,
+          "end_line": 266,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-029",
-          "line_range": "#L285-L288",
+          "line_range": "#L263-L266",
           "location": "archive",
           "scope": "",
-          "start_line": 285,
+          "start_line": 263,
           "tier": "TIER4",
           "title": "Antigravity Global Rule Injection (`~/.gemini/config/rules/`) in Custom `define_subagent` `stock-baseline` Benchmarks (`Two-Way Benchmark Distortion`)",
           "touched_files": [
@@ -1309,13 +1259,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`inspect_hardware_ecosystem.py` Stdout Middle-Truncation (`14,382B -> 8,162B`), JSON Key Guessing, &... -> In Rounds 1 and 2 of the `Homunculus` vs. `Stock` duel (`daee195a`, `c5be86ed`), running `inspect_hardware_ecosystem.py --repo <Hardware_Repo>` produced `14,382` bytes of stdout, exceeding `run_command`'s synchronous preview limit and truncating `6,220` bytes from the middle (wiping out the entire `STL Mesh Envelope` table and forcing...",
-          "end_line": 297,
+          "end_line": 275,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-030",
-          "line_range": "#L290-L297",
+          "line_range": "#L268-L275",
           "location": "archive",
           "scope": "",
-          "start_line": 290,
+          "start_line": 268,
           "tier": "TIER3",
           "title": "`inspect_hardware_ecosystem.py` Stdout Middle-Truncation (`14,382B -> 8,162B`), JSON Key Guessing, & Redundant `804`-Line `hw_telemetry.json` Paginated Reads",
           "touched_files": [
@@ -1327,13 +1277,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "The CAD Epistemic Boundary (`Structure vs. Engineer Design Intent`), STEP B-Rep Open Partial-Arc Fillets... -> In Round 3 (`235f6a3e`), `inspect_hardware_ecosystem.py` reported `Main_Body(1).step: \u00d83.00mm \u00d7 16 (.F. bore)` and `Front_Cover` / `Rear_Cover`: `\u00d83.00mm \u00d7 8 (.T. pin/boss)`. Seeing `16 (.F. bore)` at `\u00d83.00mm`, the subagent spent `18` turns running ad-hoc Python STEP scripts and **hallucinated that `Main_Body` requires...",
-          "end_line": 307,
+          "end_line": 285,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-031",
-          "line_range": "#L299-L307",
+          "line_range": "#L277-L285",
           "location": "archive",
           "scope": "",
-          "start_line": 299,
+          "start_line": 277,
           "tier": "TIER3",
           "title": "The CAD Epistemic Boundary (`Structure vs. Engineer Design Intent`), STEP B-Rep Open Partial-Arc Fillets (`R1.50mm` Snap Grooves/Lips vs. Closed `360\u00b0` Cylinders), & `Option 2B-Armored` Separation into `addons/hardware-cad-inspector/`",
           "touched_files": [
@@ -1346,13 +1296,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`verify_claims.py --dump-whitelist` Premature `VRF-...` Receipt Bypass & URL Numeric Token Poisoning -> Removed `Receipt: VRF-...` from `--dump-whitelist` stdout (`=== Pre-Draft Verified Whitelist (Run with --target After Drafting for VRF Receipt) ===`) and stripped `https?://[^\\s)\\]>\\\"'`]+` URLs in `SourceIndex._index_text()`. In Round 4 (`2a634b1b`), the subagent ran post-draft `verify_claims.py --target` and achieved `0...",
-          "end_line": 313,
+          "end_line": 291,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-033",
-          "line_range": "#L309-L313",
+          "line_range": "#L287-L291",
           "location": "archive",
           "scope": "",
-          "start_line": 309,
+          "start_line": 287,
           "tier": "TIER3",
           "title": "`verify_claims.py --dump-whitelist` Premature `VRF-...` Receipt Bypass & URL Numeric Token Poisoning",
           "touched_files": [
@@ -1362,13 +1312,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`verify_claims.py` Over-Strict Prose-Grammar Regex Traps vs. Structural Truth (`41`-Turn Decompilation... -> When `Homunculus R4` (`2a634b1b`) ran post-draft `verify_claims.py --target <Target_Audit_Report.md>` on Turn 33 (`S065`), `verify_claims.py` flagged `25` unbacked claims: `6` were real pretraining leaks (`12V`, `24V`, `100\u00b0C`, `0.40 mm`, `2020`, `0.8`), but **`19` were false positives** on accurate, source-backed engineering prose:",
-          "end_line": 325,
+          "end_line": 303,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-034",
-          "line_range": "#L315-L325",
+          "line_range": "#L293-L303",
           "location": "archive",
           "scope": "",
-          "start_line": 315,
+          "start_line": 293,
           "tier": "TIER3",
           "title": "`verify_claims.py` Over-Strict Prose-Grammar Regex Traps vs. Structural Truth (`41`-Turn Decompilation Loop in Round 4)",
           "touched_files": [
@@ -1378,53 +1328,14 @@
         },
         {
           "archetype": "trap",
-          "capsule_1line": "Closing the `python3 -c \"import verify_claims, inspect; inspect.getsource(...)\"` Backdoor (`39` Snoop... -> In Round 4 (`2a634b1b`), after `read_file` and shell `grep`/`sed`/`cat` on `verify_claims.py` were prohibited (`LL-005` / `LL-026`), the subagent circumvented the ban on Turn 34 by running `python3 -c \"import sys, inspect; sys.path.insert(0, '...'); import verify_claims; print(inspect.getsource(verify_claims.audit_target))\"`. It...",
-          "end_line": 331,
-          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
-          "id": "LL-035",
-          "line_range": "#L327-L331",
-          "location": "archive",
-          "scope": "",
-          "start_line": 327,
-          "tier": "TIER3",
-          "title": "Closing the `python3 -c \"import verify_claims, inspect; inspect.getsource(...)\"` Backdoor (`39` Snoop Calls in R4) via Runtime Anti-Introspection Guard & Hard `2-Pass` Verification Ceiling",
-          "touched_files": [
-            "SKILL.md",
-            "sandbox_runner.py",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "archetype": "trap",
-          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` (`6` Wasted Turns), Single-Agent Serialized 1-by-1... -> In Round 4 (`2a634b1b`):",
-          "end_line": 340,
-          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
-          "id": "LL-036",
-          "line_range": "#L333-L340",
-          "location": "archive",
-          "scope": "",
-          "start_line": 333,
-          "tier": "TIER3",
-          "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` (`6` Wasted Turns), Single-Agent Serialized 1-by-1 `read_file` Calls (`7` Turns), & Prompt-Cache TTL Expiry (`+136,766` Uncached Tokens on `T69`)",
-          "touched_files": [
-            "README.md",
-            "SKILL.md",
-            "audit_repo_docs.py",
-            "co-engineering-partner.md",
-            "inspect_hardware_ecosystem.py",
-            "verify_claims.py"
-          ]
-        },
-        {
-          "archetype": "trap",
           "capsule_1line": "Round 5 Dueling Sandbox Victory (`37` Turns vs. `Stock R5` `47`; `0` Unbacked Claims vs. `45`)... -> After applying `LL-034`, `LL-035`, and `LL-036`, `Homunculus R5` beat `Stock R5` across every accuracy, turn, fresh-token, and wall-clock metric (`37` turns vs `47`, `8m 17s` vs `11m 41s`, `163.8k` vs `210.4k` fresh input tokens, `0` snoops, `0` ad-hoc CAD scripts, `0` unbacked claims with `319` supported vs `Stock R5`'s `45` unbacked...",
-          "end_line": 359,
+          "end_line": 322,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-037",
-          "line_range": "#L342-L359",
+          "line_range": "#L305-L322",
           "location": "archive",
           "scope": "",
-          "start_line": 342,
+          "start_line": 305,
           "tier": "TIER3",
           "title": "Round 5 Dueling Sandbox Victory (`37` Turns vs. `Stock R5` `47`; `0` Unbacked Claims vs. `45`), `[TBD_SPECULATIVE_GUESS]` Smuggling Closure, `[Line Text]` + Parallel `edit_file` Batching, & Option C5 Multi-Vector Red-Team Hardening",
           "touched_files": [
@@ -1438,13 +1349,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "5-Sprint Stateful Memory Rebuild: 3-Stage Station/Detached Resolution, `TIER0`\u2013`TIER5` Gravity Store... -> Implemented 3-Stage repo resolution (`DIRECT_STATION` $\\rightarrow$ `REANCHORED_WORKSPACE` + `--rebind-station` $\\rightarrow$ `DETACHED_CACHE`), `TIER0`\u2013`TIER5` gravity window (`<=3 TIER0 + <=7 TIER2` in main, `TIER3`\u2013`TIER5` in `Archive/` with auto-exclusion in `verify_claims.py`), entity-partitioned hybrid recall (`<=450`-token...",
-          "end_line": 366,
+          "end_line": 329,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-038",
-          "line_range": "#L361-L366",
+          "line_range": "#L324-L329",
           "location": "archive",
           "scope": "",
-          "start_line": 361,
+          "start_line": 324,
           "tier": "TIER3",
           "title": "5-Sprint Stateful Memory Rebuild: 3-Stage Station/Detached Resolution, `TIER0`\u2013`TIER5` Gravity Store, Entity-Partitioned Hybrid Recall, & `script_contracts.json` Preflight Gate (`2026-11-09`)",
           "touched_files": [
@@ -1457,13 +1368,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "5-Slot Governance Architecture, `0444` Memory Rule Seal (`governance_seal.json`), `TIER5` Provenance &... -> Authored `Governance_and_Constraint_Architecture.md` (`5`-Slot Base Protection Format + `EXT-01..NN` Expansion Registry), added `--lock-memory-rules` (`0444`) + `--seal-governance` (`Directory/governance_seal.json` + hash-chained `Directory/governance_audit_log.jsonl`), enforced `GOVERNANCE_EVENT_REQUIRED` + inline...",
-          "end_line": 373,
+          "end_line": 336,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-039",
-          "line_range": "#L368-L373",
+          "line_range": "#L331-L336",
           "location": "archive",
           "scope": "",
-          "start_line": 368,
+          "start_line": 331,
           "tier": "TIER3",
           "title": "5-Slot Governance Architecture, `0444` Memory Rule Seal (`governance_seal.json`), `TIER5` Provenance & Recall/Link Hardening (`2026-11-09`)",
           "touched_files": [
@@ -1475,13 +1386,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive... -> Removed --allow-lessons-source, enforced 0444 Archive/ + <=30L transcript cap + v1.1 monotonic TIER5 hashes, N1 non-numeric recall, 3.3-Unified-A portable anchors, Stage-2 disaster recovery, and Option 4D commit-lesson gate. (`skills/project-memory/scripts/sync_memory.py` (`Homunculus_Software.md`)...",
-          "end_line": 380,
+          "end_line": 343,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-040",
-          "line_range": "#L375-L380",
+          "line_range": "#L338-L343",
           "location": "archive",
           "scope": "",
-          "start_line": 375,
+          "start_line": 338,
           "tier": "TIER3",
           "title": "Compare-Full and pre-deployment sandboxes exposed --allow-lessons-source laundering, unwindowed Archive... (`2026-11-10`)",
           "touched_files": [
@@ -1494,13 +1405,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... -> Added composite --kickstart dedup, banned Model:inherit across all subagents with Workspace:branch for mutating frames, renamed voice /learn to /voice-learn, added --agy-skills-json + non-destructive hooks.json sync, and added Carbon PostToolUse + BROKEN_DOC_LINK_OR_SCRIPT checks (SBX-20261110_162015-7ddf774e) (`build_adapters.py`...",
-          "end_line": 387,
+          "end_line": 350,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-043",
-          "line_range": "#L382-L387",
+          "line_range": "#L345-L350",
           "location": "archive",
           "scope": "",
-          "start_line": 382,
+          "start_line": 345,
           "tier": "TIER3",
           "title": "Composite Turn-1 --kickstart + --preflight duplicated SUBSYSTEM-INVARIANTS; adapters lacked Antigravity... (`2026-11-10`)",
           "touched_files": [
@@ -1513,13 +1424,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... -> Made memory Templates sparse by default behind opt-in --eject-templates, switched per-project Templates creation to lazy on-demand --create-project-template, aligned templates/memory/AGENTS.md with zero-shell read_file Turn-One task triage, pointed render_diagram at Diagram_Palettes.json override discovery, and added fail-closed...",
-          "end_line": 394,
+          "end_line": 357,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-046",
-          "line_range": "#L389-L394",
+          "line_range": "#L352-L357",
           "location": "archive",
           "scope": "",
-          "start_line": 389,
+          "start_line": 352,
           "tier": "TIER3",
           "title": "Eager memory template ejection and pre-created empty project template directories drifted behind canonical... (`2026-11-11`)",
           "touched_files": [
@@ -1534,13 +1445,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... -> Added multi-surface transcript_full.jsonl discovery + [TRUNCATED_TRANSCRIPT_FIELD] fail-closed gate, on-demand git rev-parse --verify SHA checks, VERTEX_POINT bbox-only fallback + unconditional inspect_hardware_ecosystem delegation, and EROFS_RE numeric-counter guard (SBX-20261110_141516-73c9069d, SBX-20261110_143655-1ecf0fa7)...",
-          "end_line": 401,
+          "end_line": 364,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-041",
-          "line_range": "#L396-L401",
+          "line_range": "#L359-L364",
           "location": "archive",
           "scope": "",
-          "start_line": 396,
+          "start_line": 359,
           "tier": "TIER3",
           "title": "Multi-surface Antigravity transcripts risked silent truncation; verify_claims spawned eager git rev-list... (`2026-11-10`)",
           "touched_files": [
@@ -1553,13 +1464,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... -> Moved vectors to gitignored .cache/*_scoring_vectors.json (-92.3% tracked JSON) with transparent cold hydration, added atomic_write_text + unified structural tree hashing, cached ASTs by v3:{content_sha} with RO host seeding, and hoisted directory/blob scans for 2.1x-4.8x speedups (SBX-20261110_150832-70629ecd...",
-          "end_line": 408,
+          "end_line": 371,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-042",
-          "line_range": "#L403-L408",
+          "line_range": "#L366-L371",
           "location": "archive",
           "scope": "",
-          "start_line": 403,
+          "start_line": 366,
           "tier": "TIER3",
           "title": "Tracked _memory_index.json bloated to 1.34MB with BM25/3-gram vectors; cold bwrap runs re-walked AST/stamp... (`2026-11-10`)",
           "touched_files": [
@@ -1571,13 +1482,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... -> Deployed 17_Combo_C9_HeldT0 + Option A TIER0 Two-Lane in sync_memory.py (BM25F 2.5x/1.5x/1.0x, word-trigram Dice>=0.52, strict 0.0 numeric weight, relevance-sorted TIER0[:3] with ID-only unmatched line + --kickstart TIER0 capsules, S3 Adaptive Top-K 3..6, S5 submodular MMR, S6_Budgeted <=1,350c GUARDRAIL CONTEXT ONLY hydration, D-3A...",
-          "end_line": 415,
+          "end_line": 378,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-044",
-          "line_range": "#L410-L415",
+          "line_range": "#L373-L378",
           "location": "archive",
           "scope": "",
-          "start_line": 410,
+          "start_line": 373,
           "tier": "TIER3",
           "title": "A 59-probe memory stress benchmark exposed 6 zero-hit blind spots (compound words, accented tokens... (`2026-11-11`)",
           "touched_files": [
@@ -1590,13 +1501,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... -> Added multi-level .homunculus.json umbrella fallback preserving standalone client non-hijack in homunculus_paths.py, expanded entity-isolated AUTO-ROLLUP tables in sync_memory.py with live checkpoints plus entity-safe relative link rewriting, and split zero-shell read_file Turn-1 portfolio triage from --kickstart project work within...",
-          "end_line": 422,
+          "end_line": 385,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-045",
-          "line_range": "#L417-L422",
+          "line_range": "#L380-L385",
           "location": "archive",
           "scope": "",
-          "start_line": 417,
+          "start_line": 380,
           "tier": "TIER3",
           "title": "Cold-start Turn-1 read-only task portfolio triage triggered multi-turn shell permission loops because CWD... (`2026-11-11`)",
           "touched_files": [
@@ -1609,13 +1520,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... -> Enforce Three-Ring isolation with kernel_seal.json and sudo-only Ring-Zero leases, execute _enforce_gateway_kernel_seal across main and resolve_memory_root in memory_gateway.py, block direct Ring-One and Ring-Two sync_memory imports or vault writes via AST BYPASSED_MEMORY_GATEWAY in audit_skill_hygiene.py, and preserve existing...",
-          "end_line": 429,
+          "end_line": 392,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-047",
-          "line_range": "#L424-L429",
+          "line_range": "#L387-L392",
           "location": "archive",
           "scope": "",
-          "start_line": 424,
+          "start_line": 387,
           "tier": "TIER3",
           "title": "Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience... (`2026-11-11`)",
           "touched_files": [
@@ -1629,13 +1540,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... -> Route all teach-me promotions and context seeds exclusively through memory_gateway.py (MEMORY_SDK_V1) with atomic rollback, gate Directory/ sync to promote_document, enforce max(Trigger_Floor, Inline_Tag) + require_depth=True, slice 60-word theory strictly from H2 Section 1, and snap >=14-char compound modifiers before trailing nouns....",
-          "end_line": 437,
+          "end_line": 400,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-048",
-          "line_range": "#L431-L437",
+          "line_range": "#L394-L400",
           "location": "archive",
           "scope": "skill:teach-me",
-          "start_line": 431,
+          "start_line": 394,
           "tier": "TIER3",
           "title": "Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... (`2026-11-12`)",
           "touched_files": [
@@ -1649,13 +1560,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... -> Restrict attest_subagent_execution writes strictly to <study_briefs_root> and /brain/<uuid>/scratch/, block <memory_root>/ in init_brief --out, and strip backticks before FALSE_TBD_KNOWN_IN_SOURCE lookup. (`skills/teach-me/scripts/teach_brief.py` (`Homunculus_Software.md`), `tests/test_teach_me.py` (`Homunculus_Software.md`)...",
-          "end_line": 445,
+          "end_line": 408,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-049",
-          "line_range": "#L439-L445",
+          "line_range": "#L402-L408",
           "location": "archive",
           "scope": "skill:teach-me",
-          "start_line": 439,
+          "start_line": 402,
           "tier": "TIER3",
           "title": "Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... (`2026-11-12`)",
           "touched_files": [
@@ -1666,13 +1577,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... -> Consolidate pre-commit hooks into 1 Python process, pre-filter >=16 plain UTF-8 files via _rg_prefilter_utf8_files (bypassing SHA-256 hash rules, custom regexes, symlinks, ZIPs, UTF-16/32, NUL bytes, and files >16 MB), expose audit_skill_hygiene.py --telemetry-pulse (stateless zero-write) paired with out-of-tree...",
-          "end_line": 452,
+          "end_line": 415,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-050",
-          "line_range": "#L447-L452",
+          "line_range": "#L410-L415",
           "location": "archive",
           "scope": "",
-          "start_line": 447,
+          "start_line": 410,
           "tier": "TIER3",
           "title": "Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... (`2026-11-13`)",
           "touched_files": [
@@ -1688,13 +1599,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... -> Added opt-in OpenSSH ssh-keygen -Y seal and lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1; local_config or inline storage; default off; zero private-key reads via .pub + SSH_AUTH_SOCK + Claude permissions.deny) and upgraded --telemetry-pulse + ME07 to section-aware LL-[A-Z0-9-]+ scoped/unscoped...",
-          "end_line": 459,
+          "end_line": 422,
           "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
           "id": "LL-051",
-          "line_range": "#L454-L459",
+          "line_range": "#L417-L422",
           "location": "archive",
           "scope": "",
-          "start_line": 454,
+          "start_line": 417,
           "tier": "TIER3",
           "title": "Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... (`2026-11-14`)",
           "touched_files": [
@@ -1704,6 +1615,191 @@
             "kernel_seal.json",
             "sync_memory.py",
             "test_v030_memory_platform.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation... -> Introducing a separate hand-edited `Agent.md` middle tier (or middleman router subagent) splits `always_on` governance across two sources of truth, adds an extra subagent relay hop, and triggers casing failures on case-sensitive Linux filesystems (`Agent.md` vs. `AGENTS.md`). Worse, pre-diet `adapters/agents_md/AGENTS.md` weighed...",
+          "end_line": 439,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-027",
+          "line_range": "#L424-L439",
+          "location": "archive",
+          "scope": "",
+          "start_line": 424,
+          "tier": "TIER5",
+          "title": "2-Tier Single-Source Rule Architecture vs. Middle `Agent.md` Tier: `24,000`-Byte `AGENTS.md` Truncation Cliff, Out-of-Tree `rel_prefix` Inflation, Antigravity Double-Injection Guard, Symlink/`prefer_copy`/`.zip` `homunculus_paths` Resolution & Pre-Draft Template Slot Lock",
+          "touched_files": [
+            "AGENTS.md",
+            "Agents.md",
+            "CLAUDE.md",
+            "SKILL.md",
+            "agents.md",
+            "audit_repo_docs.py",
+            "audit_skill_hygiene.py",
+            "build_adapters.py",
+            "co-engineering-partner.md",
+            "data-and-credential-safety.md",
+            "doc_templates.md",
+            "format_image.py",
+            "homunculus_paths.py",
+            "sandbox_runner.py",
+            "verifiable-accuracy.md",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Generative Impact of Skill Trims: Pointer-Hop Token Inversion & Action-Site Salience Loss (`Blind` vs.... -> Enforced five deterministic guards across `audit_skill_hygiene.py`, `skill-architect/SKILL.md`, `audit_repo_docs.py`, and `sandbox_runner.py`:",
+          "end_line": 456,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-014",
+          "line_range": "#L441-L456",
+          "location": "archive",
+          "scope": "",
+          "start_line": 441,
+          "tier": "TIER5",
+          "title": "Generative Impact of Skill Trims: Pointer-Hop Token Inversion & Action-Site Salience Loss (`Blind` vs. `Visible` Sandbox Discovery)",
+          "touched_files": [
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "audit_skill_hygiene.py",
+            "sandbox_runner.py",
+            "verifiable-accuracy.md",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Replacing compact inline skill guidance with 1-line cross-skill pointers triggered +2,160-token... -> Enforce [KEEP \u2014 OPERATIONAL CLI / FLAG ANCHOR], [KEEP \u2014 ACTION-SITE DOMAIN INSTANTIATION], and <=140-word [KEEP INLINE] guards in skills/skill-architect/SKILL.md and skills/skill-architect/scripts/audit_skill_hygiene.py, Check #7b fastener-dodging gates in skills/doc-and-card-studio/scripts/audit_repo_docs.py, and...",
+          "end_line": 463,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-056",
+          "line_range": "#L458-L463",
+          "location": "archive",
+          "scope": "",
+          "start_line": 458,
+          "tier": "TIER3",
+          "title": "Replacing compact inline skill guidance with 1-line cross-skill pointers triggered +2,160-token... (`2026-11-18`)",
+          "touched_files": [
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "audit_skill_hygiene.py",
+            "sandbox_runner.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Relative `./scripts/` CLI Paths & Isolated Excerpt Link Validation Friction -> (1) Added `RELATIVE_SCRIPT_PATH_HAZARD` detection to `audit_skill_hygiene.py` so any relative `./scripts/*.py` CLI invocation inside `SKILL.md` is flagged as a `[TURN-WASTE HAZARD]`, and patched all occurrences in `doc-and-card-studio/SKILL.md`; (2) added `--repo-root <path>` to `skills/doc-and-card-studio/scripts/audit_repo_docs.py`...",
+          "end_line": 472,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-015",
+          "line_range": "#L465-L472",
+          "location": "archive",
+          "scope": "",
+          "start_line": 465,
+          "tier": "TIER5",
+          "title": "Relative `./scripts/` CLI Paths & Isolated Excerpt Link Validation Friction",
+          "touched_files": [
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "audit_skill_hygiene.py",
+            "format_image.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Relative ./scripts/*.py CLI invocations in skill runbooks failed when agent cwd differed from the skill... -> Enforce RELATIVE_SCRIPT_PATH_HAZARD in skills/skill-architect/scripts/audit_skill_hygiene.py requiring <HOMUNCULUS_ROOT> or <skill_dir> paths across skills/doc-and-card-studio/SKILL.md, and pass --repo-root <path> to skills/doc-and-card-studio/scripts/audit_repo_docs.py when validating isolated scratch drafts...",
+          "end_line": 479,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-057",
+          "line_range": "#L474-L479",
+          "location": "archive",
+          "scope": "",
+          "start_line": 474,
+          "tier": "TIER3",
+          "title": "Relative ./scripts/*.py CLI invocations in skill runbooks failed when agent cwd differed from the skill... (`2026-11-18`)",
+          "touched_files": [
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "audit_skill_hygiene.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Closing the `python3 -c \"import verify_claims, inspect; inspect.getsource(...)\"` Backdoor (`39` Snoop... -> In Round 4 (`2a634b1b`), after `read_file` and shell `grep`/`sed`/`cat` on `verify_claims.py` were prohibited (`LL-005` / `LL-026`), the subagent circumvented the ban on Turn 34 by running `python3 -c \"import sys, inspect; sys.path.insert(0, '...'); import verify_claims; print(inspect.getsource(verify_claims.audit_target))\"`. It...",
+          "end_line": 487,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-035",
+          "line_range": "#L481-L487",
+          "location": "archive",
+          "scope": "",
+          "start_line": 481,
+          "tier": "TIER5",
+          "title": "Closing the `python3 -c \"import verify_claims, inspect; inspect.getsource(...)\"` Backdoor (`39` Snoop Calls in R4) via Runtime Anti-Introspection Guard & Hard `2-Pass` Verification Ceiling",
+          "touched_files": [
+            "SKILL.md",
+            "sandbox_runner.py",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Subagents bypassed file-read bans on verify_claims.py by running python3 -c 'import verify_claims... -> Enforce runtime _enforce_anti_snoop_gate() + 1-line [Fix Hint] output in skills/claim-verification/scripts/verify_claims.py, lock the Max 2-Pass verification ceiling in skills/claim-verification/SKILL.md, and detect import/inspect.getsource snoops via SHELL_PY_SNOOP_RE in skills/engineering-sandbox/scripts/sandbox_runner.py...",
+          "end_line": 494,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-058",
+          "line_range": "#L489-L494",
+          "location": "archive",
+          "scope": "",
+          "start_line": 489,
+          "tier": "TIER3",
+          "title": "Subagents bypassed file-read bans on verify_claims.py by running python3 -c 'import verify_claims... (`2026-11-18`)",
+          "touched_files": [
+            "SKILL.md",
+            "sandbox_runner.py",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` (`6` Wasted Turns), Single-Agent Serialized 1-by-1... -> In Round 4 (`2a634b1b`):",
+          "end_line": 505,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-036",
+          "line_range": "#L496-L505",
+          "location": "archive",
+          "scope": "",
+          "start_line": 496,
+          "tier": "TIER5",
+          "title": "Symlink-Blind `find` in `~/.gemini/config/skills/` (`6` Wasted Turns), Single-Agent Serialized 1-by-1 `read_file` Calls (`7` Turns), & Prompt-Cache TTL Expiry (`+136,766` Uncached Tokens on `T69`)",
+          "touched_files": [
+            "README.md",
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "co-engineering-partner.md",
+            "inspect_hardware_ecosystem.py",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Symlink-blind find commands on ~/.gemini/config/skills/ returned empty output (wasting 6 turns), and... -> Resolve oracle scripts directly from <skills> entries via <skill_dir>/scripts/<script>.py (such as skills/claim-verification/scripts/verify_claims.py, skills/doc-and-card-studio/scripts/audit_repo_docs.py, and addons/hardware-cad-inspector/scripts/inspect_hardware_ecosystem.py) without find/ls, and batch 4\u20138 read_file calls per turn...",
+          "end_line": 512,
+          "file": "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md",
+          "id": "LL-059",
+          "line_range": "#L507-L512",
+          "location": "archive",
+          "scope": "",
+          "start_line": 507,
+          "tier": "TIER3",
+          "title": "Symlink-blind find commands on ~/.gemini/config/skills/ returned empty output (wasting 6 turns), and... (`2026-11-18`)",
+          "touched_files": [
+            "SKILL.md",
+            "audit_repo_docs.py",
+            "co-engineering-partner.md",
+            "inspect_hardware_ecosystem.py",
+            "verify_claims.py"
           ]
         },
         {
@@ -1751,8 +1847,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 299.38,
-      "proj_total_docs": 56,
+      "proj_avg_doc_len": 297.89,
+      "proj_total_docs": 61,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2058,30 +2154,14 @@
       "lessons": [
         {
           "archetype": "trap",
-          "capsule_1line": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`) -> Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; `Pneuma_Remote_Air`, `Pneuma_Remote_Air_Hardware`).",
+          "capsule_1line": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation -> Documented in `Pneuma_Remote_Air`'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.",
           "end_line": 39,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
-          "id": "LL-PNE-04",
+          "id": "LL-PNE-06",
           "line_range": "#L36-L39",
           "location": "main",
           "scope": "",
           "start_line": 36,
-          "tier": "TIER2",
-          "title": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)",
-          "touched_files": [
-            "Pneuma_Control.cfg"
-          ]
-        },
-        {
-          "archetype": "trap",
-          "capsule_1line": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation -> Documented in `Pneuma_Remote_Air`'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.",
-          "end_line": 44,
-          "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
-          "id": "LL-PNE-06",
-          "line_range": "#L41-L44",
-          "location": "main",
-          "scope": "",
-          "start_line": 41,
           "tier": "TIER2",
           "title": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation",
           "touched_files": [
@@ -2090,30 +2170,14 @@
         },
         {
           "archetype": "trap",
-          "capsule_1line": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift -> Explicitly segregated `Vacuum_Pump.stl` as a non-printed COTS reference model in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware`.",
-          "end_line": 49,
-          "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
-          "id": "LL-PNE-07",
-          "line_range": "#L46-L49",
-          "location": "main",
-          "scope": "",
-          "start_line": 46,
-          "tier": "TIER2",
-          "title": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift",
-          "touched_files": [
-            "Assembly_Guide.md"
-          ]
-        },
-        {
-          "archetype": "trap",
           "capsule_1line": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count -> Tracked in `Pneuma_Remote_Air` (`[TBD: missing_Tube_Fitting_stl_and_grommet_port_count]`) and `Pneuma_Remote_Air_Hardware`.",
-          "end_line": 54,
+          "end_line": 44,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-08",
-          "line_range": "#L51-L54",
+          "line_range": "#L41-L44",
           "location": "main",
           "scope": "",
-          "start_line": 51,
+          "start_line": 41,
           "tier": "TIER2",
           "title": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count",
           "touched_files": [
@@ -2124,17 +2188,50 @@
         {
           "archetype": "trap",
           "capsule_1line": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation -> Documented in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware` so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.",
-          "end_line": 59,
+          "end_line": 49,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-09",
-          "line_range": "#L56-L59",
+          "line_range": "#L46-L49",
           "location": "main",
           "scope": "",
-          "start_line": 56,
+          "start_line": 46,
           "tier": "TIER2",
           "title": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation",
           "touched_files": [
             "Pneuma_Control.cfg"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... -> Keep shutdown_speed: 0 on both [fan_generic pump_cool] and [fan_generic pump_warm] in Firmware/Pneuma_Control.cfg so part-cooling air pumps de-energize cleanly on Klipper MCU shutdown (`Firmware/Pneuma_Control.cfg` (`Pneuma_Remote_Air_Hardware.md`) (`0702c9c`)).",
+          "end_line": 56,
+          "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
+          "id": "LL-PNE-10",
+          "line_range": "#L51-L56",
+          "location": "main",
+          "scope": "",
+          "start_line": 51,
+          "tier": "TIER2",
+          "title": "Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... (`2026-11-18`)",
+          "touched_files": [
+            "Pneuma_Control.cfg"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Instructing builders to print every file in the STL directory without excluding COTS reference models... -> Explicitly segregate STL_Files/Pneuma_201 - Vacuum_Pump.stl and STEP_Files/Pneuma_201 - Vacuum_Pump.step as non-printed COTS reference models across BOM.md, Assembly_Guide.md, and Pneuma_Remote_Air_Hardware.md (`STL_Files/Pneuma_201 - Vacuum_Pump.stl` (`Pneuma_Remote_Air_Hardware.md`), `STEP_Files/Pneuma_201 - Vacuum_Pump.step`...",
+          "end_line": 64,
+          "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
+          "id": "LL-PNE-11",
+          "line_range": "#L58-L64",
+          "location": "main",
+          "scope": "pattern:cots_reference_cad",
+          "start_line": 58,
+          "tier": "TIER2",
+          "title": "Instructing builders to print every file in the STL directory without excluding COTS reference models... (`2026-11-18`)",
+          "touched_files": [
+            "Assembly_Guide.md",
+            "BOM.md"
           ]
         },
         {
@@ -2207,6 +2304,38 @@
         },
         {
           "archetype": "trap",
+          "capsule_1line": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`) -> Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; `Pneuma_Remote_Air`, `Pneuma_Remote_Air_Hardware`).",
+          "end_line": 46,
+          "file": "Projects/Pneuma_Remote_Air/Archive/Pneuma_Remote_Air_Lessons_Archive.md",
+          "id": "LL-PNE-04",
+          "line_range": "#L41-L46",
+          "location": "archive",
+          "scope": "",
+          "start_line": 41,
+          "tier": "TIER5",
+          "title": "Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)",
+          "touched_files": [
+            "Pneuma_Control.cfg"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift -> Explicitly segregated `Vacuum_Pump.stl` as a non-printed COTS reference model in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware`.",
+          "end_line": 53,
+          "file": "Projects/Pneuma_Remote_Air/Archive/Pneuma_Remote_Air_Lessons_Archive.md",
+          "id": "LL-PNE-07",
+          "line_range": "#L48-L53",
+          "location": "archive",
+          "scope": "",
+          "start_line": 48,
+          "tier": "TIER5",
+          "title": "`Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift",
+          "touched_files": [
+            "Assembly_Guide.md"
+          ]
+        },
+        {
+          "archetype": "trap",
           "capsule_1line": "[PLAYBOOK] Alchemical-3D Hardware Repository Unification, CAD/Firmware/BOM Reconciliation & Dual-Lesson Reinforcement... -> 1. Read <Project>.md, <Project>_Hardware.md, <Project>_Lessons_Learned.md, and <Project>_Playbooks.md in 1 parallel turn and run --recall. -> 2. Run audit_repo_docs.py and inspect_hardware_ecosystem.py (--sync-manifest when needed) without ad-hoc CAD parsing. -> 3. Reconcile BOM/Assembly/Print_Settings prose using inline [TBD: ...]...",
           "end_line": 25,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md",
@@ -2230,8 +2359,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 152.4,
-      "proj_total_docs": 10,
+      "proj_avg_doc_len": 170.0,
+      "proj_total_docs": 12,
       "project": "Pneuma_Remote_Air"
     }
   },
@@ -2323,19 +2452,19 @@
       "sha256": "820f21013153001a"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
-      "lines": 459,
-      "sections": 49,
-      "sha256": "9cb7a3f7763c80f5"
+      "lines": 512,
+      "sections": 54,
+      "sha256": "81ca5e54ec02f1aa"
     },
     "Projects/Homunculus/Homunculus.md": {
       "lines": 291,
       "sections": 0,
-      "sha256": "74a9339b43f1423e"
+      "sha256": "8361287be95fb42e"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 203,
+      "lines": 195,
       "sections": 5,
-      "sha256": "57db7092b0625b19"
+      "sha256": "2500089f193fa583"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2403,14 +2532,14 @@
       "sha256": "2edd89680ff7901b"
     },
     "Projects/Pneuma_Remote_Air/Archive/Pneuma_Remote_Air_Lessons_Archive.md": {
-      "lines": 39,
-      "sections": 4,
-      "sha256": "d3c3ab9cc8d3e66e"
+      "lines": 53,
+      "sections": 6,
+      "sha256": "0abb9e87d919000c"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md": {
-      "lines": 142,
+      "lines": 141,
       "sections": 0,
-      "sha256": "70849cb106a257bc"
+      "sha256": "165d92ab154f7476"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md": {
       "lines": 82,
@@ -2418,9 +2547,9 @@
       "sha256": "2c50249ab1cd8be8"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md": {
-      "lines": 59,
+      "lines": 64,
       "sections": 5,
-      "sha256": "eddfd72774142bee"
+      "sha256": "a631ed0b3c811d6e"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md": {
       "lines": 25,
@@ -2428,7 +2557,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 85,
+  "total_docs": 92,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "e03ae8f62cb76edd"
+  "vectors_digest": "e11b780e788271d3"
 }

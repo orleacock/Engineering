@@ -33,20 +33,10 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 
 ## 1. Engineering Post-Mortems & Troubleshooting Entries
 
-### `LL-PNE-04` [TIER2] — Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)
-- **Symptom / Failed Approach (`Historical / Rejected`):** Previously, `Firmware/Pneuma_Control.cfg` defined `shutdown_speed: 1` on both `[fan_generic pump_cool]` and `[fan_generic pump_warm]` while commenting out `#kick_start_time: 0.5`.
-- **Root Cause:** `shutdown_speed: 1` forced both diaphragm pumps to run at 100% duty cycle on Klipper MCU shutdown or thermal fault, while inactive `kick_start_time` risked low-PWM startup stalls.
-- **Verified Resolution & Canonical Owner:** Resolved in commit `0702c9c` (`Firmware/Pneuma_Control.cfg` updated to `shutdown_speed: 0` on `pump_cool` and `pump_warm`, retaining `shutdown_speed: 1` solely on `[heater_fan]` hotend heatsink fans; [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md), [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md)).
-
 ### `LL-PNE-06` [TIER2] — `Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation
 - **Symptom / Failed Approach (`Historical / Rejected`):** Assuming `Main_Body.stl` contains only `5` or `7` `Ø4.70mm` (`R2.35mm`) heat-set insert pockets based solely on `BOM.md:6,12` (`5` Rear Cover + `2` Optional Table Mount = `7` inserts).
 - **Root Cause:** `Main_Body.stl` physically contains `8` `Ø4.70mm` heat-set insert pockets (`5` on the rear cover flange at `X = -65.00mm`, `2` on the bottom table-mount bosses at `Y = -58.50mm`, plus `1` unindexed auxiliary boss at `(21.0, 2.0, -32.2)`). Additionally, `BOM.md:6,12` lists `2` optional table-mount inserts (`Main Body (Optional)`) but `0` corresponding M3 mounting screws.
 - **Verified Resolution & Canonical Owner:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md)'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.
-
-### `LL-PNE-07` [TIER2] — `Vacuum_Pump.stl` COTS Reference Model in `STL/` & `1.00mm` X-Axis STEP/STL Drift
-- **Symptom / Failed Approach (`Historical / Rejected`):** Instructing users in `Assembly_Guide.md:20` to *"Print all parts in the STL folder"* without excluding `Vacuum_Pump.stl`, or assuming `100%` dimensional identity between `CAD/Pneuma_Remote_Air.step` and `STL/Vacuum_Pump.stl`.
-- **Root Cause:** `STL/Vacuum_Pump.stl` (`90.10 × 124.22 × 65.50 mm`, `2` bodies, `334.62 cm³`) is a COTS reference model of the two internal diaphragm pumps (`Pump v1` + `Pump v1(1)`), not a printable structural housing part. Furthermore, the STEP assembly positions the pump pair across `91.10 × 124.22 × 65.50 mm` (`1.00mm` X-axis spacing offset vs. the exported STL).
-- **Verified Resolution & Canonical Owner:** Explicitly segregated `Vacuum_Pump.stl` as a non-printed COTS reference model in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md).
 
 ### `LL-PNE-08` [TIER2] — Phantom `Tube_Fitting.stl` Reference & `5 × Ø12.00mm` Ports vs. `6` `TPU_Grommet` BOM Count
 - **Symptom / Failed Approach (`Historical / Rejected`):** Referencing `Tube_Fitting.stl` as an existing file in `STL/` (`Assembly_Guide.md:54`) or claiming `Main_Body.stl` has `6` `Ø12.00mm` ports to match the `6` `TPU_Grommet.stl` listed in `BOM.md:22`.
@@ -57,3 +47,18 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 - **Symptom / Failed Approach (`Historical / Rejected`):** Assuming the stock `[gcode_macro M106]` in `Firmware/Pneuma_Control.cfg:22-30` supports independent slicer `M106 P<index> S<value>` addressing for `pump_cool` vs. `pump_warm`.
 - **Root Cause:** The stock `[gcode_macro M106]` checks only `params.S` (`SET_FAN_SPEED FAN=pump_cool SPEED={s}`) and leaves `SET_FAN_SPEED FAN=pump_warm` commented out (`#`), ignoring `params.P`.
 - **Verified Resolution & Canonical Owner:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md) so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.
+
+### `LL-PNE-10` [TIER2] [TRAP] — Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... (`2026-11-18`)
+- **Historical Context (Inert Origin):** Matured from LL-PNE-04 (resolved in 0702c9c where pre-fix Pneuma_Control.cfg set shutdown_speed: 1 on diaphragm pumps instead of reserving full-speed fail-safe behavior solely for hotend [heater_fan] sections).
+- **Lineage:** Derived from `LL-PNE-04` ([`Archive/Pneuma_Remote_Air_Lessons_Archive.md#L41-L46`](Archive/Pneuma_Remote_Air_Lessons_Archive.md#L41-L46))
+- **Symptom / Trap:** Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run continuously during an MCU fault or emergency stop.
+- **Root Cause:** Diaphragm part-cooling pumps wired as [fan_generic] sections must de-energize on MCU shutdown rather than inheriting hotend heatsink fan fail-safe assumptions.
+- **Verified Resolution, Guardrail & Applicability Boundary:** Keep shutdown_speed: 0 on both [fan_generic pump_cool] and [fan_generic pump_warm] in Firmware/Pneuma_Control.cfg so part-cooling air pumps de-energize cleanly on Klipper MCU shutdown (`Firmware/Pneuma_Control.cfg` ([`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md)) (`0702c9c`)).
+
+### `LL-PNE-11` [TIER2] [TRAP] — Instructing builders to print every file in the STL directory without excluding COTS reference models... (`2026-11-18`)
+- **Scope:** `pattern:cots_reference_cad`
+- **Historical Context (Inert Origin):** Matured from LL-PNE-07 (v1.x STL/Vacuum_Pump.stl & CAD/Pneuma_Remote_Air.step COTS reference model exclusion) onto v2.01 STL_Files/ and STEP_Files/ paths.
+- **Lineage:** Derived from `LL-PNE-07` ([`Archive/Pneuma_Remote_Air_Lessons_Archive.md#L48-L53`](Archive/Pneuma_Remote_Air_Lessons_Archive.md#L48-L53))
+- **Symptom / Trap:** Instructing builders to print every file in the STL directory without excluding COTS reference models causes wasted prints, and STEP assembly pump spacing can differ slightly from standalone COTS STL exports.
+- **Root Cause:** STL_Files/Pneuma_201 - Vacuum_Pump.stl (90.10 x 124.22 x 65.50 mm, 2 bodies, 334.62 cm3) and STEP_Files/Pneuma_201 - Vacuum_Pump.step are non-printed COTS diaphragm pump reference models rather than printable housing parts.
+- **Verified Resolution, Guardrail & Applicability Boundary:** Explicitly segregate STL_Files/Pneuma_201 - Vacuum_Pump.stl and STEP_Files/Pneuma_201 - Vacuum_Pump.step as non-printed COTS reference models across BOM.md, Assembly_Guide.md, and Pneuma_Remote_Air_Hardware.md (`STL_Files/Pneuma_201 - Vacuum_Pump.stl` ([`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md)), `STEP_Files/Pneuma_201 - Vacuum_Pump.step` ([`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md)), `BOM.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md)), `Assembly_Guide.md` ([`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md))).
