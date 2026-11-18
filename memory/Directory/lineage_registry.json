@@ -1,0 +1,62 @@
+{
+  "records": {
+    "LIN-541fd2a351ef": {
+      "archetype": "trade-off",
+      "lineage_id": "LIN-541fd2a351ef",
+      "principle_id": "PRIN-02",
+      "promoted_at": "2026-11-18",
+      "reason": "Transferable context-budgeting and cross-deployment symlink path resolution architecture",
+      "scope": "domain:architecture",
+      "source_compartment": "cleanroom",
+      "source_disposition": "keep-active",
+      "source_entity": "Alchemical-3D",
+      "source_lesson_id": "LL-027",
+      "source_project": "Homunculus",
+      "tier": "TIER2"
+    },
+    "LIN-d5193389260b": {
+      "archetype": "trap",
+      "lineage_id": "LIN-d5193389260b",
+      "principle_id": "PRIN-01",
+      "promoted_at": "2026-11-18",
+      "reason": "Universal boundary separating deterministic structural validation from human engineering intent",
+      "scope": "domain:verification",
+      "source_compartment": "cleanroom",
+      "source_disposition": "keep-active",
+      "source_entity": "Alchemical-3D",
+      "source_lesson_id": "LL-032",
+      "source_project": "Homunculus",
+      "tier": "TIER2"
+    },
+    "LIN-ed0e3df3e520": {
+      "archetype": "win",
+      "lineage_id": "LIN-ed0e3df3e520",
+      "principle_id": "PRIN-04",
+      "promoted_at": "2026-11-18",
+      "reason": "Reusable latency optimization preserving deterministic safety and zero unsafe deserialization",
+      "scope": "domain:software",
+      "source_compartment": "cleanroom",
+      "source_disposition": "keep-active",
+      "source_entity": "Alchemical-3D",
+      "source_lesson_id": "LL-050",
+      "source_project": "Homunculus",
+      "tier": "TIER2"
+    },
+    "LIN-f1d9ee5282f8": {
+      "archetype": "trap",
+      "lineage_id": "LIN-f1d9ee5282f8",
+      "principle_id": "PRIN-03",
+      "promoted_at": "2026-11-18",
+      "reason": "Prevents pointer-hop token inversion and catches coaching-masked regressions across agent workflows",
+      "scope": "domain:verification",
+      "source_compartment": "cleanroom",
+      "source_disposition": "keep-active",
+      "source_entity": "Alchemical-3D",
+      "source_lesson_id": "LL-014",
+      "source_project": "Homunculus",
+      "tier": "TIER2"
+    }
+  },
+  "salt_hex": "339b7a35f1f43c8caaa20c1e8c8d30a3a40612ff2289c4fe6a437d1f37835d5b",
+  "schema_version": "1.0"
+}

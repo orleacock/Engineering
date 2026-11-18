@@ -6,7 +6,7 @@ compartment: "private"
 note_type: "reference"
 authoritative: false
 status: "NON_AUTHORITATIVE_REFERENCE"
-last_synced: "2026-11-16"
+last_synced: "2026-11-18"
 ---
 
 # 📊 Homunculus Version & Standardized Benchmark Ledger (`v0.Y.Z`)
@@ -465,6 +465,95 @@ Part of the [`README.md`](../../README.md) and companion version scorecard for [
 #### Run-Specific Forensic Notes *(Decoupled from Standardized Metric Rows)*
 
 - [COURSE_D_APPROVED_TRADEOFF] Course D approved (2026-11-16): Stage-2 Gemini 4 Hydrogen/Carbon routing migration (+458 B rules/*.md leaving 7,448 B headroom below 22.5k B AGENTS.md cap; +158 w core skills leaving 3,809 w headroom), Task #69, and 82/82 unittest expansion.
+
+---
+
+### Standardized Benchmark Run: `full-system-suite` (`v0.3.7` vs. Baseline `v0.3.6`) — v0.3.7 Official Pinned Baseline (Memory Hygiene, Lineage & Principles)
+
+- **Run ID & Timestamp**: `BMK-20261118_130529-861e59ca` (`2026-11-18T13:05:29-06:00`)
+- **Engine Provenance**: `/home/orin/Projects/Alchemical3D/Homunculus` | Version: `v0.3.7` | `HEAD`: `09a3bf30d062` | `Tree`: `2ced8c482baa` (`113` files, `clean`)
+- **Overall Verdict**: **`BASELINE_PINNED`** (`Hard Blocks: 0` | `Advisories: 2` | `Wall-Clock: 6.46s`)
+
+#### Part A — Universal 4-Pillar Spine (`12` Locked Metrics)
+
+##### Meta
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `1` | **Version & Tree Provenance** | **`v0.3.7 (09a3bf30 / 2ced8c48)`** (—)<br>Base: `v0.3.6 (77d39ad4 / b380a119)` · Prev: `v0.3.6 (77d39ad4 / b380a119)` | `Clean or -dev+<tree8>` | **PINNED** |
+
+##### #1 Accuracy
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `2` | **Positive Controls Pass Rate** | **`17 / 17 (100.0%)`** (0 (no change))<br>Base: `17 / 17 (100.0%)` · Prev: `17 / 17 (100.0%)` | `100.0%` | **PASS** |
+| `3` | **Adversarial +faults Catch Rate** | **`14 / 14 (100.0%)`** (0 (no change))<br>Base: `14 / 14 (100.0%)` · Prev: `14 / 14 (100.0%)` | `100.0%` | **PASS** |
+| `4` | **False Positives / False Negatives** | **`FP: 0 / FN: 0`** (0 (no change))<br>Base: `FP: 0 / FN: 0` · Prev: `FP: 0 / FN: 0` | `FP: 0 / FN: 0` | **PASS** |
+| `5` | **Automated Unit Test Suite** | **`90 / 90 (100.0%)`** (0 (no change))<br>Base: `82 / 82 (100.0%)` · Prev: `82 / 82 (100.0%)` | `100.0%` | **PASS** |
+
+##### #2 Efficiency
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `6` | **Always-On 3-Rule Footprint** | **`13,699 B / 1566 w (~2114 tok)`** (0 (no change))<br>Base: `13,699 B / 1566 w (~2114 tok)` · Prev: `13,699 B / 1566 w (~2114 tok)` | `<= 21,500 B (~3,600 tok)` | **PASS** |
+| `7` | **AGENTS.md Ceiling & Headroom** | **`15,145 B (headroom: 7,355 B)`** (+93 B (+0.6%))<br>Base: `15,052 B (headroom: 7,448 B)` · Prev: `15,052 B (headroom: 7,448 B)` | `<= 22,500 B (24k hard)` | **PASS** |
+| `8` | **Target Subsystem Context / Packet Tax** | **`87,383 B (3 rules + 9 core SKILL.md files)`** (+11495.00 units (+15.1%))<br>Base: `75,888 B (3 rules + 9 core SKILL.md files)` · Prev: `75,888 B (3 rules + 9 core SKILL.md files)` | `<= 115,000 B (modular sum <= 129,500 B)` | **ADVISORY** |
+| `9` | **Subagent Trajectory (Turns / Tokens / Cache %)** | **`n/a (CLI bench)`** (—)<br>Base: `n/a (CLI bench)` · Prev: `n/a (CLI bench)` | `<= Baseline` | **PINNED** |
+
+##### #3 Safety
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `10` | **Live Host Mutations & EROFS Blocks** | **`mut: 0 / erofs: 1`** (0 (no change))<br>Base: `mut: 0 / erofs: 0` · Prev: `mut: 0 / erofs: 0` | `mut: 0 / erofs >= 1` | **PASS** |
+| `11` | **Boundary, Portability & Governance Seal** | **`B:0 / P:0 / G:PASS`** (0 (no change))<br>Base: `B:0 / P:0 / G:PASS` · Prev: `B:0 / P:0 / G:PASS` | `B:0 / P:0 / G:PASS` | **PASS** |
+
+##### #4 Speed
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `12` | **Execution Latency (p50 / p95 / Total) & Spawns** | **`p50: 170ms / p95: 538ms / 6.46s (44 bench + 12 ut spawns)`** (-1.68 s (-20.6%))<br>Base: `p50: 193ms / p95: 816ms / 8.14s (44 bench + 12 ut spawns)` · Prev: `p50: 193ms / p95: 816ms / 8.14s (44 bench + 12 ut spawns)` | `<= Baseline + 15%` | **IMPROVED** |
+
+#### Part B — Fixed Subsystem Profile: `full-system-suite` (`16` Locked Metrics)
+
+##### #1 Accuracy
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `1` | **True-Positive Hallucinations Caught** | **`7 / 7 (100.0%)`** (0 (no change))<br>Base: `7 / 7 (100.0%)` · Prev: `7 / 7 (100.0%)` | `100.0%` | **PASS** |
+| `2` | **False-Positive Valid Prose Flagged** | **`0`** (0 (no change))<br>Base: `0` · Prev: `0` | `0` | **PASS** |
+| `5` | **Top-3 Semantic/ID Recall Hit Rate** | **`100.0% (5/5)`** (0 (no change))<br>Base: `100.0% (5/5)` · Prev: `100.0% (5/5)` | `100.0%` | **PASS** |
+| `6` | **N1 Numeric/Unit Query Weight Leak Rate** | **`0.0%`** (0 (no change))<br>Base: `0.0%` · Prev: `0.0%` | `0.0%` | **PASS** |
+| `15` | **Markdown Files Audited & Pass Rate** | **`62 / 62 (100.0%)`** (0 (no change))<br>Base: `59 / 59 (100.0%)` · Prev: `59 / 59 (100.0%)` | `100.0%` | **PASS** |
+| `16` | **Closed 360° Cylinder vs. Open Fillet Filter** | **`PASS (Ø3.20mm kept, R1.50mm fillet excluded)`** (0 (no change))<br>Base: `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` · Prev: `PASS (Ø3.20mm kept, R1.50mm fillet excluded)` | `PASS` | **PASS** |
+
+##### #3 Safety
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `3` | **Runtime Anti-Snoop Gate Triggers** | **`PASS (blocked)`** (0 (no change))<br>Base: `PASS (blocked)` · Prev: `PASS (blocked)` | `PASS` | **PASS** |
+| `9` | **v1.1 Governance Seal & Tamper Block** | **`PASS`** (0 (no change))<br>Base: `PASS` · Prev: `PASS` | `PASS` | **PASS** |
+
+##### #4 Speed
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `4` | **CLI Cold-Start Verification Latency (median)** | **`131.28 ms`** (-36.72 ms (-21.9%))<br>Base: `168.00 ms` · Prev: `168.00 ms` | `<= Baseline + 15%` | **IMPROVED** |
+| `10` | **--kickstart Cold-Resume Latency** | **`169.09 ms`** (-64.22 ms (-27.5%))<br>Base: `233.31 ms` · Prev: `233.31 ms` | `<= Baseline + 15%` | **IMPROVED** |
+
+##### #2 Efficiency
+
+| # | Metric | Candidate (`v0.3.7`) vs Base (`v0.3.6`) / Prev | Ceiling / Target | Status |
+| :---: | :--- | :--- | :--- | :---: |
+| `7` | **--preflight Decision Packet Tokens (avg / max)** | **`avg 632 / max 639 tok`** (-8 tok (-1.2%))<br>Base: `avg 633 / max 647 tok` · Prev: `avg 633 / max 647 tok` | `<= 1,800 tok` | **IMPROVED** |
+| `8` | **Active _Lessons_Learned.md Max Line Count** | **`203 L`** (-21 lines (-9.4%))<br>Base: `224 L` · Prev: `224 L` | `<= 420 L` | **IMPROVED** |
+| `11` | **Combined 3-Rule Always-On Turn Tax** | **`13,699 B / 1566 w (~2114 tok)`** (0 (no change))<br>Base: `13,699 B / 1566 w (~2114 tok)` · Prev: `13,699 B / 1566 w (~2114 tok)` | `<= 21,500 B (~3,600 tok)` | **PASS** |
+| `12` | **In-Repo AGENTS.md Byte Size & Headroom** | **`15,145 B (headroom: 7,355 B)`** (+93 B (+0.6%))<br>Base: `15,052 B (headroom: 7,448 B)` · Prev: `15,052 B (headroom: 7,448 B)` | `<= 22,500 B` | **PASS** |
+| `13` | **Out-of-Tree Expanded AGENTS.md Byte Size** | **`15,944 B (headroom: 8,056 B)`** (+140 B (+0.9%))<br>Base: `15,804 B (headroom: 8,196 B)` · Prev: `15,804 B (headroom: 8,196 B)` | `<= 24,000 B hard cap` | **PASS** |
+| `14` | **Active Core Skills Footprint** | **`10 skills / 7,868 w (~10,622 tok)`** (+1,177 words (+17.6%))<br>Base: `9 skills / 6,691 w (~9,033 tok)` · Prev: `9 skills / 6,691 w (~9,033 tok)` | `<= 10,500 w (~14,175 tok)` | **ADVISORY** |
+
+#### Run-Specific Forensic Notes *(Decoupled from Standardized Metric Rows)*
+
+- [COURSE_D_APPROVED_TRADEOFF] Course D: Intentional v0.3.7 addition of 10th core Ring-0 skill (skills/memory-hygiene/) and 4-archetype lineage/Principles support; remains well under 10,500w and 115,000B ceilings with 0 hard blocks.
 
 ---
 

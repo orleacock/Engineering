@@ -5,7 +5,7 @@ palette_id: gruvbox_dark
 aliases: [Gruvbox_Dark_Color_Template, gruvbox_dark, gruvbox_local]
 entity: "shared"
 compartment: "public"
-last_synced: "2026-11-05"
+last_synced: "2026-11-17"
 ---
 
 # 🎨 Gruvbox Dark Local Machine & Diagram Color Template
@@ -245,3 +245,14 @@ plasma-apply-colorscheme GruvboxDark
 # Revert to Breeze Dark at any time:
 plasma-apply-colorscheme BreezeDark
 ```
+
+---
+
+## 7. Hybrid Carbon (`#1D1D1D`) Konsole & Kate Variant (`Gruvbox_Dark_Carbon`)
+
+Combines the authentic **Gruvbox Dark** ANSI/syntax palette with the neutral matte carbon `#1D1D1D` (`29, 29, 29`) canvas from `Alchemical3D_Color_Template`:
+
+- **KDE Konsole (`~/.local/share/konsole/Gruvbox_Dark_Carbon.colorscheme`)**: Bound to `~/.local/share/konsole/Riced.profile` (`ColorScheme=Gruvbox_Dark_Carbon`). Keeps `Background=29,29,29` (`#1D1D1D`), `BackgroundFaint=24,24,24` (`#181818`), and `BackgroundIntense=40,40,40` (`#282828`), raises `Color0` to `#7C6F64` (`124,111,100`) and `Color0Faint` to `#665C54` (`102,92,84`) so dim ANSI text remains legible on `#1D1D1D`, and preserves all classic Gruvbox `Color1`–`Color7` + `Foreground` slots from Section 5.
+- **KDE Kate (`~/.local/share/org.kde.syntax-highlighting/themes/Gruvbox_Dark_Carbon.theme`)**: Registered as `"Gruvbox Dark (Carbon)"` and bound in `~/.config/katerc` (`[KTextEditor Renderer] Color Theme=Gruvbox Dark (Carbon)`, `Auto Color Theme Selection=false`, `[UiSettings] ColorScheme=AlchemicalDark`, `[filetree] editShade=66,123,88`, `viewShade=80,73,69`):
+  - **Editor Surfaces**: `BackgroundColor` `#1d1d1d`, `CurrentLine` `#242424`, `IconBorder` `#181818`, `TextSelection` `#345741` (smoked Gruvbox Deep Aqua).
+  - **Syntax Roles**: `Normal` `#ebdbb2`, `Keyword` `#fb4934` (bold), `ControlFlow` `#fe8019` (bold), `Function` & `String` `#b8bb26`, `DataType` & `BuiltIn` `#fabd2f`, `Import` / `Preprocessor` / `VerbatimString` `#8ec07c`, `Variable` / `SpecialString` `#83a598`, `DecVal` / `Float` / `BaseN` / `Constant` `#d3869b`, and `Comment` `#928374` (italic).

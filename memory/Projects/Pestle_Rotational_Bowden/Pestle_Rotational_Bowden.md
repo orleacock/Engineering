@@ -5,13 +5,13 @@ compartment: "public"
 project_type: "hardware"
 status: "Beta"
 local_path: "/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden"
-repo_head_sha: "bac7c2d35798"
+repo_head_sha: "7197d2bed1fd"
 tree_hash: "ac67baacbab6"
-checkpoint_head_sha: "bac7c2d35798"
-checkpoint_tree_hash: "ac67baacbab6"
+checkpoint_head_sha: "7197d2bed1fd"
+checkpoint_tree_hash: "3a96e1b5aa29"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-16"
+last_synced: "2026-11-17"
 checkpoint_lessons_digest: "fc97389b91340449"
 ---
 
@@ -38,13 +38,13 @@ Part of the [`README.md`](../../README.md) • CAD Telemetry: [`Pestle_Rotationa
 ## 📍 Repository & File Inventory
 - **Local Path:** `/home/orin/Projects/Alchemical3D/Pestle_Rotational_Bowden`
 - **GitHub Remote:** `https://github.com/Alchemical-3D/Pestle_Rotational_Bowden`
-- **Living Documentation:** `README.md` *(currently monolithic — awaiting modular split into `BOM.md`, `Print_Settings.md`, `Assembly_Guide.md`)*, `LICENSE.md`
+- **Living Documentation:** `README.md` *(user-approved Monolithic format with Print Settings, `7`-STL + STEP CAD index, Affiliate Disclosure, Reconciled BOM + Assembly Steps `1`–`14`, GPLv3 License, Ko-fi/Discord & AI Transparency Footer)*, `LICENSE.md` (`GPLv3`)
 - **CAD & Image Directories:** `Releases/1.2/` (`1` assembly STEP `Pestle_Rev-1.2.step`, `7` STLs), `images/` — Full geometry telemetry in [`Pestle_Rotational_Bowden_Hardware`](Pestle_Rotational_Bowden_Hardware.md)
 - **Standards Applied:** [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), `Author_Voice_and_Cadence`, [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md), `Image_and_Style_Rules`, `Subagent_and_Memory_Architecture`
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Pestle_Rotational_Bowden | HEAD SHA: bac7c2d35798 | Tree Hash: ac67baacbab6
+Repository: Pestle_Rotational_Bowden | HEAD SHA: 7197d2bed1fd | Tree Hash: ac67baacbab6
   images/
   images/Pestle1.png
   images/Pestle2.png
@@ -99,11 +99,9 @@ Repository: Pestle_Rotational_Bowden | HEAD SHA: bac7c2d35798 | Tree Hash: ac67b
 > [!WARNING]
 > Figures inside this ledger are quarantined by `verify_claims.py` and are **not** treated as authorized source truth until resolved.
 
-- **Git & Provenance Baseline (`2026-11-16`):** `main:clean` at commit `bac7c2d` (`d94ad4c..bac7c2d` pushed to `origin/main`; `format_image.py --inspect`: `2/2 [PASS]` `#FFFFFF` card spec; `audit_repo_docs.py`: `0` load-bearing issues, `3` isolated monolithic-layout warnings; `audit_data_boundary.py`: `BOUNDARY_CLEAN`).
-- **`[TBD: CONFLICT — Heat-Set Insert Count: BOM (7) vs Assembly Step 1 (6)]`:** `README.md:65` BOM specifies `(7) M3x5x4mm` heat-set inserts, whereas `README.md:100` Step 1 accounts for only `6` (`3` Main Body + `1` Lever + `2` Transmission/Motor Plate).
-- **`[TBD: CONFLICT — Fastener Head Style: BOM (SHCS) vs Steps 10–11 (BHCS)]`:** `README.md:67-71` BOM specifies `SHCS` for `M3x30mm` (`2`), `M3x35mm` (`2`), and `M5x16mm` (`1`), whereas `README.md:120,122` Steps 10–11 call out `BHCS` for those exact fasteners, and BOM rows `(1) M3x16mm SHCS` + `(1) M3x20mm SHCS` are unreferenced in assembly steps.
-- **`[TBD: CONFLICT — F5-12M Thrust Bearing Qty: BOM (1) vs Assembly Steps 10 & 12]`:** `README.md:66` BOM lists `(1)` `F5-12M` thrust bearing (`3`-piece race/washer set), whereas `README.md:120,124` references thrust bearing placement in both Step 10 and Step 12—clarify single `3`-piece bearing orientation vs. `2` bearings during modular split.
-- **`[TBD: unlisted_mount_stl_fasteners]`:** `4` STLs in `Releases/1.2/` (`[a]_pestle_rotation_brace.stl`, `pestle_motor_plate.stl`, `pestle_2020_extrusion_mount.stl`, `pestle_3DFused_gantry_mount.stl`) are not explicitly mapped by filename in `README.md` tables.
+- **Git & Provenance Baseline (`2026-11-17`):** `main:clean` at commit `7197d2b` (`bac7c2d..7197d2b` pushed to `origin/main`; `verify_claims.py --fail-on-tbd`: `74/74 PASS`, `VRF-fb1fbd62965b`, `0` unbacked, `0` `[TBD]`; `audit_repo_docs.py`: `0` load-bearing issues, `3` expected monolithic-structure warnings; `audit_data_boundary.py --staged`: `BOUNDARY_CLEAN`; `format_image.py --inspect`: `2/2 [PASS]` `#FFFFFF` card spec).
+- **Resolved Conflicts (`2026-11-17` Operator Verification):** (1) Corrected `M3x5x4` heat-set BOM `7` $\rightarrow$ `6` (`3` Main Body, `1` Lever, `2` Transmission Plate); (2) standardized BOM & Assembly Steps `10`–`11` on `SHCS` and retained `(1) M3x16mm` + `(1) M3x20mm SHCS` as stack-depth sub-assembly screws; (3) confirmed `(1) F5-12M` thrust bearing at Step `12` with optional shim washers under the `M5` bolt head at Step `10`; (4) documented all `7` STLs (`Releases/1.2/STLs/`) + `Pestle_Rev-1.2.step` in `README.md`.
+- **Open `[TBD]` Items:** `None` (`0` open `[TBD]`s).
 
 ## 🎯 Active Tasks
 *(Transcluded live from `### Pestle_Rotational_Bowden` in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md))*
@@ -112,11 +110,11 @@ Repository: Pestle_Rotational_Bowden | HEAD SHA: bac7c2d35798 | Tree Hash: ac67b
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: bac7c2d35798` | `Tree Hash: ac67baacbab6` | `Worktree: clean` | `Last Verification: format_image:2/2-PASS,audit_repo_docs:0-load-bearing,BOUNDARY_CLEAN`
+- **Last Session Timestamp**: `2026-11-17`
+- **Checkpoint Provenance**: `HEAD SHA: 7197d2bed1fd` | `Tree Hash: 3a96e1b5aa29` | `Worktree: clean` | `Last Verification: verify_claims:74/74-PASS (VRF-fb1fbd62965b), audit_repo_docs:0-load-bearing, BOUNDARY_CLEAN`
 - **Where We Stopped (Verified State & Context)**:
-  Committed and pushed #FFFFFF-formatted Pestle_Title_Formatted.png and PestleExploded3_Formatted.png (d94ad4c..bac7c2d) to origin/main
-- **Active Project State Ledger & Blockers**: 4 unresolved BOM vs Assembly fastener/bearing/STL conflicts blocking modular split
+  Resolved all 4 hardware/fastener/STL conflicts with operator confirmation, unified monolithic `README.md`, committed (`7197d2b`), and pushed `bac7c2d..7197d2b` (`main -> main`) to `origin/main`.
+- **Active Project State Ledger & Blockers**: `None` (`0` open tasks, `0` open `[TBD]`s)
 - **Next Session Kickstart & Discussion Points**:
-  1. Resolve Pestle_Rotational_Bowden internal fastener/heat-set/bearing/STL conflicts before modular split
+  1. `Pestle_Rotational_Bowden` is clean and synced on `origin/main` (`7197d2b`); no open tasks remain.
 <!-- SESSION-HANDOFF:END -->

@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-14"
+last_synced: "2026-11-18"
 ---
 
 # 🗄️ Homunculus — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)
@@ -425,5 +425,35 @@ last_synced: "2026-11-14"
 - **Symptom / Trap:** Consumer skill and add-on iterations risked splash-unlocking core memory scripts out of convenience, non-sync subcommands in memory_gateway.py initially deferred kernel seal checks until sync_memory loading, and extension-based executable chmod locking dirtied git fileMode status.
 - **Root Cause:** Blanket core unlock mechanics lived in always-on prompts without privilege ring separation or a multi-lens extension SDK, gateway seal verification only ran inside _load_sync_memory, and _set_file_lock_mode forced executable bits onto non-executable Python scripts.
 - **Verified Resolution & Permanent Guardrail:** Enforce Three-Ring isolation with kernel_seal.json and sudo-only Ring-Zero leases, execute _enforce_gateway_kernel_seal across main and resolve_memory_root in memory_gateway.py, block direct Ring-One and Ring-Two sync_memory imports or vault writes via AST BYPASSED_MEMORY_GATEWAY in audit_skill_hygiene.py, and preserve existing executable bits in _set_file_lock_mode. (`scripts/homunculus_paths.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `scripts/memory_gateway.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261111_191946-190fb4b6`)).
+
+---
+
+### `LL-048` [TIER3] — Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags... (`2026-11-12`)
+- **Symptom / Trap:** Direct <memory_root> file writes in teach_brief.py bypassed MEMORY_SDK_V1 AST gates, read-only flags recreated Directory/, flash tags downgraded score>=2 queries, and compound modifiers truncated trailing head nouns.
+- **Root Cause:** Pre-v0.3.0 teach_brief.py wrote raw Markdown to Standards_and_Specs/ and Lessons_Learned.md without memory_gateway.py, called ensure_directory_fresh() unconditionally in main(), omitted --query, and broke _pack_tokens() on compound modifiers.
+- **Verified Resolution & Permanent Guardrail:** Route all teach-me promotions and context seeds exclusively through memory_gateway.py (MEMORY_SDK_V1) with atomic rollback, gate Directory/ sync to promote_document, enforce max(Trigger_Floor, Inline_Tag) + require_depth=True, slice 60-word theory strictly from H2 Section 1, and snap >=14-char compound modifiers before trailing nouns. (`skills/teach-me/scripts/teach_brief.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/teach-me/SKILL.md` ([`Homunculus.md`](../Homunculus.md)), `skills/teach-me/references/brief_authoring_playbook.md` ([`Homunculus.md`](../Homunculus.md)), `tests/test_teach_me.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261112_074727-9c5fafef`)).
+
+- **Scope:** `skill:teach-me`
+---
+
+### `LL-049` [TIER3] — Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and... (`2026-11-12`)
+- **Symptom / Trap:** Subagent write-allowlist accepted /tmp paths, init-brief --out could point inside <memory_root>/, and backticked source keys evaded FALSE_TBD_KNOWN_IN_SOURCE.
+- **Root Cause:** Broad /tmp prefix matching, unvalidated --out boundary vs <memory_root>/, and raw key tokenization without markdown backtick stripping.
+- **Verified Resolution & Permanent Guardrail:** Restrict attest_subagent_execution writes strictly to <study_briefs_root> and /brain/<uuid>/scratch/, block <memory_root>/ in init_brief --out, and strip backticks before FALSE_TBD_KNOWN_IN_SOURCE lookup. (`skills/teach-me/scripts/teach_brief.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `tests/test_teach_me.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261112_102511-82bb9701 / VRF-50d40cd3a27e`)).
+
+- **Scope:** `skill:teach-me`
+---
+
+### `LL-050` [TIER3] — Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8... (`2026-11-13`)
+- **Symptom / Trap:** Pre-commit hooks spawned 4-5 Python processes per commit, worktree boundary scans read every clean UTF-8 file in Python, clean-room lacked a stateless ceiling/latency pulse gauge, and canary testing exposed quoted >= inside --thread-context plus [TBD] inside Anchor: fenced hunks.
+- **Root Cause:** Shell hooks invoked homunculus_paths.py, audit_data_boundary.py, and sync_memory.py in separate processes; audit_worktree lacked a safe ripgrep pre-filter; teach_brief.py matched >= inside quoted arguments; and verify_claims.py scanned [TBD] markers inside verified Anchor: hunks and incomplete source rows.
+- **Verified Resolution & Permanent Guardrail:** Consolidate pre-commit hooks into 1 Python process, pre-filter >=16 plain UTF-8 files via _rg_prefilter_utf8_files (bypassing SHA-256 hash rules, custom regexes, symlinks, ZIPs, UTF-16/32, NUL bytes, and files >16 MB), expose audit_skill_hygiene.py --telemetry-pulse (stateless zero-write) paired with out-of-tree benchmark_homunculus.py (--quick-pulse, --record-pulse, and TMPDIR-isolated parallel unittest), and exclude quoted shell operators plus verified Anchor: hunks from false-positive gates. (`scripts/audit_data_boundary.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `templates/hooks/pre-commit.sh` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261113_212856-5f119836 / BMK-20261113_212923-f8ab1f59`)).
+
+---
+
+### `LL-051` [TIER3] — Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or... (`2026-11-14`)
+- **Symptom / Trap:** Same-UID processes could recompute unsigned SHA-256 seal digests in kernel_seal.json or governance_seal.json or synthesize unsigned sudo_lease.json files, while --telemetry-pulse matched only numeric LL-\d+ headings and conflated skill-scoped TIER2 lessons with unscoped global TIER2 budgets.
+- **Root Cause:** Plain SHA-256 seal digests lacked an asymmetric ssh-agent trust boundary, and run_telemetry_pulse / ME07 used a line-only LL-\d+ regex without tracking hyphenated lesson IDs or - **Scope:** metadata.
+- **Verified Resolution & Permanent Guardrail:** Added opt-in OpenSSH ssh-keygen -Y seal and lease signatures (homunculus.kernel.v1, homunculus.governance.v1, homunculus.lease.v1; local_config or inline storage; default off; zero private-key reads via .pub + SSH_AUTH_SOCK + Claude permissions.deny) and upgraded --telemetry-pulse + ME07 to section-aware LL-[A-Z0-9-]+ scoped/unscoped TIER2 accounting (<=7 unscoped, <=9 total). (scripts/homunculus_paths.py, skills/project-memory/scripts/sync_memory.py, skills/skill-architect/scripts/audit_skill_hygiene.py, tests/test_v030_memory_platform.py (SBX-20261114_101413-c32af7d0)).
 
 ---

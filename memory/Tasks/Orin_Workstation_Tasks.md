@@ -3,7 +3,7 @@ title: "Orin Workstation — Domain Task Umbrella"
 entity: "Orin_Workstation"
 compartment: "private"
 note_type: "task_umbrella"
-last_synced: "2026-11-17"
+last_synced: "2026-11-18"
 ---
 
 # 🖥️ Orin_Workstation — Active Engineering Task Umbrella (`Tasks/Orin_Workstation_Tasks.md`)
@@ -15,18 +15,19 @@ last_synced: "2026-11-17"
 ---
 
 <!-- AUTO-ROLLUP:START -->
-**Progress Summary**: `13 / 15` Tasks Complete (`86.7%`) | Open Tasks: `2` | Open `[TBD]`s: `0`
+**Progress Summary**: `14 / 16` Tasks Complete (`87.5%`) | Open Tasks: `2` | Open `[TBD]`s: `0`
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-17`) | `2` | `0` | Next: Start a fresh Antigravity CLI session so the in-memory apprentice_sidecar MCP process reloads disk updates. 2. Address tonight's... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-18`) | `2` | `0` | Next: Commit Homunculus v0.3.7 worktree + Engineering memory umbrella when ready. 2. Monitor real-time Apprentice telemetry across... |
 <!-- AUTO-ROLLUP:END -->
 
 ---
 
 <!-- AUTO-PROJECT-TASKS:START -->
 ## Workstation_Operations
-- [x] **[COMPLETED 2026-11-17] Upgrade `Apprentice` Sidecar to `v2.6.0` (Hybrid `effort="auto"` Router, `8192` Reduce Cap, `.patch` Diff Verification, `apprentice_shadow_review` & Portable Tuning Guide) (`SBX-20261117_160850-0a2a9043`):** Added size-aware `classify_hybrid_effort()` (`STANDARD` default + `stage_patch` lock; `HIGH_CROSS_SINGLE_SHOT` `<=36KB`; lossless `HYBRID_MAP_STD_REDUCE_HIGH` `>36KB` with `8192`-cap Reduce & `3072` fast output cap), replaced `git_diff_head_delta` verify skip with `_mount_optional_patch_sources()`, shipped 5th MCP tool `apprentice_shadow_review` (`SHADOW_SECOND_EYES_V1` fusing sub-second CPU oracles + local semantic contradiction critic), and authored [`PORTABILITY_AND_TUNING_GUIDE.md`](../../scripts/apprentice_plugin/skills/apprentice/references/PORTABILITY_AND_TUNING_GUIDE.md) (`VRF-6452d6626694`, `VRF-e8e78815a3e4`); verified `27` engine + `29` MCP + `13` hook + `9` benchmark checks, `agy plugin validate --strict` PASS, CoW sandbox `6/6` controls + `6/6` `+faults`, and live Bionic `HIGH_CROSS_SINGLE_SHOT` (`healed`, `30/30` backed) + `SHADOW_SECOND_EYES_V1` (`248.0ms` CPU oracles).
+- [x] **[COMPLETED 2026-11-18] Ship Portable Two-Posture Host-Tier `Apprentice` Routing (`EXECUTION_TIER` vs. `FRONTIER_TIER`) & Live Dual-Tier Canary Verification (`SBX-20261118_113305-1dc484d9`, `BMK-APPRENTICE-20261118_174153`):** Added portable `Host-Tier Postures` across `apprentice_plugin/rules/AGENTS.md` and `apprentice_plugin/skills/apprentice/SKILL.md` (`EXECUTION_TIER` Speed-First `<25KB` native for `Hydrogen`/`Sonnet` vs. `FRONTIER_TIER` Accuracy-Locked Quota-Shield for `Carbon`/`Argon`/`Opus` with mandatory `Gate 3` `#L` `read_file`, synchronous `<25KB` `STANDARD` log sieves, and override-only `verdict` calls, `0` `Orchestrator`/`exit_plan_mode` lock-in); added `classify_host_model_tier()` (`APPRENTICE_HOST_TIER` -> `modelName` -> `<16KB` `transcriptPath` tail fallback) and single-turn `[APPRENTICE HOST TIER SWITCH]` injection in `apprentice/apprentice_lifecycle_hook.py` (`14/14` self-tests PASS); verified `VRF-b5ce8d39310a` (`0` unbacked claims), CoW sandbox `4/4` controls + `4/4` `+faults`, `BMK-APPRENTICE-20261118_174153` (`8/8` offline PASS), and live canaries `0485618f` (`Hydrogen` `50.0s`) + `c9df9b28` (`Carbon` `BC-0286`/`BC-0287` `clean`, `-93.9%` raw log bytes, `90.8%` epoch usable).
+- [x] **[COMPLETED 2026-11-17] Upgrade `Apprentice` Sidecar to `v2.6.0` (Hybrid `effort="auto"` Router, `8192` Reduce Cap, `.patch` Diff Verification, `apprentice_shadow_review` & Portable Tuning Guide) (`SBX-20261117_160850-0a2a9043`):** Added size-aware `classify_hybrid_effort()` (`STANDARD` default + `stage_patch` lock; `HIGH_CROSS_SINGLE_SHOT` `<=36KB`; lossless `HYBRID_MAP_STD_REDUCE_HIGH` `>36KB` with `8192`-cap Reduce & `3072` fast output cap), replaced `git_diff_head_delta` verify skip with `_mount_optional_patch_sources()`, shipped 5th MCP tool `apprentice_shadow_review` (`SHADOW_SECOND_EYES_V1` fusing sub-second CPU oracles + local semantic contradiction critic), and authored `apprentice_plugin/skills/apprentice/references/PORTABILITY_AND_TUNING_GUIDE.md` (`VRF-6452d6626694`, `VRF-e8e78815a3e4`); verified `27` engine + `29` MCP + `13` hook + `9` benchmark checks, `agy plugin validate --strict` PASS, CoW sandbox `6/6` controls + `6/6` `+faults`, and live Bionic `HIGH_CROSS_SINGLE_SHOT` (`healed`, `30/30` backed) + `SHADOW_SECOND_EYES_V1` (`248.0ms` CPU oracles).
 - [x] **[COMPLETED 2026-11-16] Consolidate `Workstation_Operations` `TIER2` Ledger (`4` Active `<= 9` Ceiling), Apprentice `LL-WS-20`/`21` & `TIER5` Archival (`LL-WS-12`–`LL-WS-19`)**
 - [x] **[COMPLETED 2026-11-16] Migrate `bionic-sidecar` to Standalone Multi-Backend `Apprentice` Plugin & Preserve Telemetry (`server_version=2.5.0` Live):** Refactored into `apprentice_engine.py` (`24/24` self-tests PASS; multi-backend `auto`/`bionic`/`ollama`/`llamacpp`/`openai_compat`), `apprentice/apprentice_mcp_server.py` (`27/27` PASS), `apprentice/apprentice_lifecycle_hook.py` (`13/13` PASS), `apprentice_plugin/` (`agy plugin validate --strict` PASS), and `benchmark_apprentice.py` (`9/9` offline metrics PASS); preserved legacy scorecard & quota telemetry into `~/.cache/apprentice_plugin/` (`Apprentice Calls = 26/7 (healed=8) [82.9% usable, 17.1% corr | -3.6% vs v2.3]`, `2814340` direct / `13579092` weighted frontier-eq tok); updated `bootstrap_workstation.sh` and restarted CLI onto active `apprentice_sidecar` MCP.
 

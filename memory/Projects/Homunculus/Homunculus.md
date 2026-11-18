@@ -3,16 +3,16 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 project_type: "software"
-status: "v0.3.6 Released (Stage-2 Gemini 4 Hydrogen/Carbon + Task #69, BMK-20261116_162239-819753e1)"
+status: "v0.3.7 Graduated & Tagged (09a3bf30d062 / tree 2ced8c482baa — Memory Hygiene, Lineage & Principles)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "b2946a631482"
-tree_hash: "687d25be9af7"
-checkpoint_head_sha: "b2946a631482"
-checkpoint_tree_hash: "687d25be9af7"
+repo_head_sha: "09a3bf30d062"
+tree_hash: "6fe9f9569b4f"
+checkpoint_head_sha: "09a3bf30d062"
+checkpoint_tree_hash: "6fe9f9569b4f"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-16"
-checkpoint_lessons_digest: "730a2d566f413e6f"
+last_synced: "2026-11-18"
+checkpoint_lessons_digest: "f5af0ce811953c14"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -60,16 +60,16 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; **`v0.3.6`** tagged at **`77d39ad4890f`** (`tree b380a119d6e8`, **`BMK-20261116_162239-819753e1`** `BASELINE_PINNED` at `8.14s`, `17/17` positive controls `PASS`, `14/14` `+faults` `PASS`, **`82 / 82` `unittest OK`**, `homunculus_paths.py --verify-seal` `PASS` across `40` OpenSSH-sealed entries, `0` portability, boundary, doc, or hygiene defects) across **`108` clean-room tracked files** with [`Homunculus_Software.md`](Homunculus_Software.md))
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; **`v0.3.7`** tagged at **`09a3bf30d062`** (`tree 2ced8c482baa`, `17/17` positive controls `PASS`, `14/14` `+faults` `PASS`, **`90 / 90` `unittest OK`**, `homunculus_paths.py --verify-seal` `PASS` across `43` OpenSSH-sealed entries, `0` portability, boundary, doc, or hygiene defects) across **`113` clean-room tracked files** with [`Homunculus_Software.md`](Homunculus_Software.md))
 - **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
 - **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
-- **Clean-Room Module Directories (`108` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`9` core skills across `Ring 0` kernel skills + `Ring 1` consumer skills, plus `skills/skill-architect/references/{ring0_sudo_protocol,cleanup_and_builder_walkthroughs}.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/` including `AGENTS.md` + `Quarantine_Note.md`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`)
+- **Clean-Room Module Directories (`113` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`10` core skills across `Ring 0` kernel skills including `memory-hygiene` + `Ring 1` consumer skills, plus `skills/skill-architect/references/{ring0_sudo_protocol,cleanup_and_builder_walkthroughs}.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/` including `AGENTS.md`, `Engineering_Principles.md` + `Quarantine_Note.md`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`, `test_v037_memory_hygiene.py`)
 - **CAD & Firmware Directories:** _None (Pure Software / AI Skill & Tooling Suite)_
 - **Standards Applied:** [`Governance_and_Constraint_Architecture`](../../Standards_and_Specs/Governance_and_Constraint_Architecture.md), [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), [`Author_Voice_and_Cadence`](../../Standards_and_Specs/Author_Voice_and_Cadence.md), [`Image_and_Style_Rules`](../../Standards_and_Specs/Image_and_Style_Rules.md), [`Alchemical3D_Color_Template`](../../Templates/Color_Palettes/Alchemical3D_Color_Template.md), [`Homunculus_Talking_Points`](Homunculus_Talking_Points.md), [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
+Repository: Homunculus | HEAD SHA: 09a3bf30d062 | Tree Hash: 6fe9f9569b4f
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -142,6 +142,10 @@ Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
   skills/engineering-sandbox/scripts/
   skills/engineering-sandbox/scripts/sandbox_runner.py
   skills/engineering-sandbox/SKILL.md
+  skills/memory-hygiene/
+  skills/memory-hygiene/scripts/
+  skills/memory-hygiene/scripts/audit_memory_hygiene.py
+  skills/memory-hygiene/SKILL.md
   skills/pre-commit-gate/
   skills/pre-commit-gate/SKILL.md
   skills/project-memory/
@@ -196,6 +200,7 @@ Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
   templates/memory/
   templates/memory/AGENTS.md
   templates/memory/Decision_Profile.md
+  templates/memory/Engineering_Principles.md
   templates/memory/Global_Standards_Index.md
   templates/memory/Memory_Map_README.md
   templates/memory/Project_Hardware.md
@@ -215,6 +220,7 @@ Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
   tests/test_project_memory.py
   tests/test_teach_me.py
   tests/test_v030_memory_platform.py
+  tests/test_v037_memory_hygiene.py
   .gitignore
   HOMUNCULUS_START_HERE.md
   install.ps1
@@ -270,13 +276,13 @@ Repository: Homunculus | HEAD SHA: b2946a631482 | Tree Hash: 687d25be9af7
 
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-16`
-- **Checkpoint Provenance**: `HEAD SHA: b2946a631482` | `Tree Hash: 687d25be9af7` | `Worktree: clean` | `Last Verification: SBX-20261116_152151-07f6b24f`
+- **Last Session Timestamp**: `2026-11-18`
+- **Checkpoint Provenance**: `HEAD SHA: 09a3bf30d062` | `Tree Hash: 6fe9f9569b4f` | `Worktree: clean` | `Last Verification: SBX-20261118_092640-a0469320`
 - **Where We Stopped (Verified State & Context)**:
-  Stage-2 Gemini 4 Hydrogen migration committed and live on origin/main (b2946a6, 82/82 unit tests OK)
+  Graduated Homunculus v0.3.7 (09a3bf30d062 / tag v0.3.7, 113 files, 90/90 unittest OK, OpenSSH seal 55f51ef087c5 across 43 Ring-0 entries) + authored v0.3.6-v0.3.7 Worklog & W-5 Artifact Registry (#18-#20)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Optional Phase 5 MS365/Copilot assessment and Phase 6 Visual Studio advancements when needed
+  1. Tonight at local /dev/tty: run h-sudo enroll --count 8 (Task #71) and --supersede-lesson on legacy shorthand anchors + --seal-governance (Task #72). 2. Address Task #73 Swarm & Orchestrator Alignment when ready.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

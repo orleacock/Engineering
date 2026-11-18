@@ -20,17 +20,19 @@ Security & Trust Boundary:
   Contract      : `scripts/script_contracts.json` [`verified_fastpath.py`]
   CLI Flags     : --record-memory-audit, --check-memory-audit, --record-vrf, --check, --targets, --sources, --receipt, --memory-root, --homunculus-root, --repo, --force-fresh, --json
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def _now_iso (#L57-L58)                        | def _is_fastpath_disabled (#L61-L66)
-    - def _default_repo_root (#L69-L70)              | def resolve_homunculus_root (#L73-L111)
-    - def _fallback_cache_path (#L114-L116)          | def resolve_cache_path (#L119-L132)
-    - def _empty_store (#L135-L140)                  | def _load_store (#L143-L159)
-    - def _write_json_atomic_0600 (#L162-L178)       | def _save_store_atomic (#L181-L190)
-    - def _sha256_file (#L193-L203)                  | def compute_memory_audit_fingerprint (#L206-L257)
-    - def record_memory_audit_fastpath (#L260-L292)  | def check_memory_audit_fastpath (#L295-L343)
-    - def _expand_input_paths (#L346-L362)           | def _vrf_record_key (#L365-L367)
-    - def _compute_vrf_bundle_sha256 (#L370-L384)    | def record_vrf_fastpath (#L387-L445)
-    - def _verify_vrf_record (#L448-L513)            | def _path_is_within (#L516-L517)
-    - def check_fastpath (#L520-L631)                | def main (#L634-L715)
+    - def _now_iso (#L60-L61)                        | def _is_fastpath_disabled (#L64-L69)
+    - def _default_repo_root (#L72-L73)              | def resolve_homunculus_root (#L76-L114)
+    - def _fallback_cache_path (#L117-L119)          | def resolve_cache_path (#L122-L135)
+    - def _empty_store (#L138-L143)                  | def _load_store (#L146-L162)
+    - def _write_json_atomic_0600 (#L165-L181)       | def _save_store_atomic (#L184-L193)
+    - def _sha256_file (#L196-L206)                  | def _extract_frontmatter_local_path (#L209-L225)
+    - def _resolve_mounted_repo_dir (#L228-L248)     | def _snapshot_mounted_repos (#L251-L286)
+    - def compute_memory_audit_fingerprint (#L289-L343) | def record_memory_audit_fastpath (#L346-L378)
+    - def check_memory_audit_fastpath (#L381-L429)   | def _expand_input_paths (#L432-L448)
+    - def _vrf_record_key (#L451-L453)               | def _compute_vrf_bundle_sha256 (#L456-L470)
+    - def record_vrf_fastpath (#L473-L531)           | def _verify_vrf_record (#L534-L599)
+    - def _path_is_within (#L602-L603)               | def check_fastpath (#L606-L717)
+    - def main (#L720-L801)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -42,6 +44,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import time
@@ -203,11 +206,91 @@ def _sha256_file(path: Path) -> tuple[str, int]:
     return h.hexdigest(), size
 
 
+def _extract_frontmatter_local_path(hub_path: Path) -> str:
+    try:
+        lines = hub_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+    except OSError:
+        return ""
+    if not lines or lines[0].strip() != "---":
+        return ""
+    for ln in lines[1:40]:
+        s = ln.strip()
+        if s == "---":
+            break
+        if s.lower().startswith("local_path:"):
+            val = s.split(":", 1)[1].strip()
+            if len(val) >= 2 and val[0] == val[-1] and val[0] in ("'", '"'):
+                val = val[1:-1]
+            return val.strip().replace("\\", "/")
+    return ""
+
+
+def _resolve_mounted_repo_dir(mem: Path, hub_path: Path, hom: Path | None) -> Path | None:
+    raw_lp = _extract_frontmatter_local_path(hub_path)
+    if not raw_lp:
+        return None
+    cand = Path(raw_lp)
+    if not cand.is_absolute():
+        cand = Path(os.path.normpath(os.path.join(os.fspath(mem), raw_lp)))
+    if cand.is_dir() and os.path.realpath(cand) != os.path.realpath(hub_path.parent):
+        return cand.resolve()
+    raw_parts = [p for p in raw_lp.split("/") if p]
+    repo_base = raw_parts[-1] if raw_parts else hub_path.stem
+    parent_grp = raw_parts[-2] if len(raw_parts) >= 2 else ""
+    if repo_base.lower() == "homunculus" and hom is not None and hom.is_dir():
+        return hom.resolve()
+    for base in (mem.parent, mem.parent.parent):
+        if not base.is_dir():
+            continue
+        for re_cand in ((base / parent_grp / repo_base) if parent_grp else None, base / repo_base):
+            if re_cand is not None and re_cand.is_dir() and re_cand.resolve() not in (hub_path.parent.resolve(), mem):
+                return re_cand.resolve()
+    return None
+
+
+def _snapshot_mounted_repos(mem: Path, hom: Path | None) -> dict[str, list[Any]]:
+    out: dict[str, list[Any]] = {}
+    proj_dir = mem / "Projects"
+    if not proj_dir.is_dir():
+        return out
+    for hub in sorted(proj_dir.glob("*/*.md")):
+        if hub.stem != hub.parent.name:
+            continue
+        key = f"__repo__/{hub.stem}"
+        mounted = _resolve_mounted_repo_dir(mem, hub, hom)
+        if mounted is None:
+            out[key] = ["DETACHED", -1]
+            continue
+        if not (mounted / ".git").exists():
+            out[key] = ["UNTRACKED", 0]
+            continue
+        try:
+            hp = subprocess.run(
+                ["git", "-C", str(mounted), "rev-parse", "HEAD"],
+                capture_output=True, text=True, timeout=2, check=False,
+            )
+            sp = subprocess.run(
+                ["git", "-C", str(mounted), "status", "--porcelain"],
+                capture_output=True, text=True, timeout=2, check=False,
+            )
+            head = hp.stdout.strip() if hp.returncode == 0 else "NO_HEAD"
+            porc_lines = [ln.strip() for ln in sp.stdout.splitlines() if ln.strip()] if sp.returncode == 0 else ["STATUS_ERR"]
+            if sp.returncode == 0:
+                payload = "\n".join([head, *porc_lines]).encode("utf-8")
+                digest = hashlib.sha256(payload).hexdigest()
+            else:
+                digest = "GIT_ERR"
+            out[key] = [digest, len(porc_lines)]
+        except (subprocess.SubprocessError, OSError):
+            out[key] = ["GIT_ERR", -1]
+    return out
+
+
 def compute_memory_audit_fingerprint(
     memory_root: Path,
     homunculus_root: Path | None = None,
 ) -> dict[str, Any]:
-    """Compute a deterministic Merkle SHA-256 fingerprint across `memory_root/` and validator scripts."""
+    """Compute a deterministic Merkle SHA-256 fingerprint across `memory_root/`, validators & mounted repos."""
     mem = memory_root.expanduser().resolve()
     hom = (
         homunculus_root.expanduser().resolve()
@@ -235,6 +318,7 @@ def compute_memory_audit_fingerprint(
     sentinel_scripts = {
         "__homunculus__/sync_memory.py": (hom / "skills" / "project-memory" / "scripts" / "sync_memory.py") if hom else None,
         "__homunculus__/homunculus_paths.py": (hom / "scripts" / "homunculus_paths.py") if hom else None,
+        "__homunculus__/audit_memory_hygiene.py": (hom / "skills" / "memory-hygiene" / "scripts" / "audit_memory_hygiene.py") if hom else None,
     }
     for key, spath in sentinel_scripts.items():
         if spath is not None and spath.is_file():
@@ -242,6 +326,8 @@ def compute_memory_audit_fingerprint(
             file_hashes[key] = [digest, sz]
         else:
             file_hashes[key] = ["MISSING", -1]
+
+    file_hashes.update(_snapshot_mounted_repos(mem, hom))
 
     ordered_items = [[k, file_hashes[k][0], file_hashes[k][1]] for k in sorted(file_hashes)]
     tree_sha256 = hashlib.sha256(

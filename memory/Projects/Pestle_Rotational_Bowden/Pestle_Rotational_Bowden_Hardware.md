@@ -58,4 +58,7 @@ Linked Parent Note: [`Pestle_Rotational_Bowden`](Pestle_Rotational_Bowden.md) | 
 <!-- AUTO-HARDWARE-CFG:END -->
 
 ## 4. Verified Fasteners, Inserts & BOM Schedule
-- Populate verified hardware counts from authoritative assembly sources (`verify_claims.py` whitelist).
+Confirmed by operator (`2026-11-17`) and reconciled against `README.md` (`Rev 1.2` baseline):
+- **Heat-Set Inserts:** `(6)` `M3x5x4mm` brass heat-set inserts (`3` Main Body, `1` Lever, `2` Transmission Plate; BOM `7` corrected to `6`).
+- **Fasteners (All `SHCS`):** `(1)` `M3x16mm SHCS`, `(1)` `M3x20mm SHCS` (sub-assembly stack-depth fasteners), `(2)` `M3x30mm SHCS`, `(2)` `M3x35mm SHCS`, `(1)` `M5x16mm SHCS`, `(1)` `M5` Hex Nut.
+- **Bearings, COTS & Drive Hardware:** `(1)` `F5-12M` `5mm ID x 12mm OD x 4mm` Thrust Bearing (placed between Rotational Cross Brace and mount in Step 12; optional shim washers under `M5` bolt head in Step 10), `(3)` `PC4-M6` Bowden connectors, `(1)` `BondTech BMG Internals Kit` (`50T` `5mm` primary gear, `(2)` `5mm OD / 3mm ID` needle bearing assemblies over `(1)` short `3mm` bearing steel rod, `MR85ZZ` bearings, thumbscrew spring), `(1)` `LDO NEMA 14` stepper (`36STH20-1004AHG-9T`), `(1)` `Loctite 222MS` Threadlocker (metal-to-metal only; keep off `ABS`/`ASA` polymer parts).

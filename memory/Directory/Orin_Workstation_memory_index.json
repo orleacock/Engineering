@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 183.04,
+  "avg_doc_len": 186.12,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-17",
+  "last_synced": "2026-11-18",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -146,18 +146,36 @@
             "apprentice_engine.py",
             "apprentice_mcp_server.py"
           ]
+        },
+        {
+          "governing_lls": [
+            "LL-WS-24"
+          ],
+          "must_keep": "EXECUTION_TIER <25KB native Speed-First vs FRONTIER_TIER Quota-Shield with Gate 3 #L read_file; transcriptPath <16KB tail fallback; override-only verdict calls; zero Orchestrator/exit_plan_mode lock-in",
+          "retired_bloat": "Orchestrator exit_plan_mode sidecar coupling; hardcoded Qwen3.6-35B-A3B banner strings; redundant verdict=clean calls after verify_claims=True; uncontextualized stage_patch signature guessing",
+          "scope": "script:apprentice",
+          "subsystem": "Apprentice Host-Tier Routing (classify_host_model_tier)",
+          "tier": "TIER1",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "Workstation_Operations.md",
+            "Workstation_Operations_Software.md",
+            "apprentice_lifecycle_hook.py"
+          ]
         }
       ],
       "lessons": [
         {
+          "archetype": "trap",
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 56,
+          "end_line": 58,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L51-L56",
+          "line_range": "#L53-L58",
           "location": "main",
           "scope": "",
-          "start_line": 51,
+          "start_line": 53,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -168,14 +186,15 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 63,
+          "end_line": 65,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L58-L63",
+          "line_range": "#L60-L65",
           "location": "main",
           "scope": "",
-          "start_line": 58,
+          "start_line": 60,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -183,14 +202,15 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... -> Defer Turn-1 notices to PreInvocation pure systemMessage strings because metadata maps and premature SessionStart hooks collided with agy parsing; compare plugin trees (diff -rq) before reinstalling in bootstrap_workstation.sh and guard child spawns via _safe_subprocess_cwd() because inode swaps broke live cwd subprocesses; match...",
-          "end_line": 71,
+          "end_line": 73,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-20",
-          "line_range": "#L65-L71",
+          "line_range": "#L67-L73",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 65,
+          "start_line": 67,
           "tier": "TIER2",
           "title": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... (`2026-11-16`)",
           "touched_files": [
@@ -201,14 +221,15 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... -> Preserve duplicate per-file hunks via parse_and_validate_context_items() in apprentice_engine.py because path-keyed dicts collapsed multi-slice inputs; split unsliced vs sliced items, cap dense batches at max_slices_per_batch=4, and trigger Slice-Count Map-Reduce for dense multi-file slices (>=5 slices across >=3 files) in...",
-          "end_line": 79,
+          "end_line": 81,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-21",
-          "line_range": "#L73-L79",
+          "line_range": "#L75-L81",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 73,
+          "start_line": 75,
           "tier": "TIER2",
           "title": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... (`2026-11-16`)",
           "touched_files": [
@@ -220,14 +241,15 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... -> Enforce acquire_bjob_worker_slot FIFO locking with explicit except TimeoutError before except OSError, support repo-relative containment in validate_input_paths, lower chunk targets (22000B/450L) with >=768 STANDARD token floor and <=300s reduce budget, and support job_ids batch collection on job-collect/job-collect-any because...",
-          "end_line": 87,
+          "end_line": 89,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-22",
-          "line_range": "#L81-L87",
+          "line_range": "#L83-L89",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 81,
+          "start_line": 83,
           "tier": "TIER2",
           "title": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... (`2026-11-16`)",
           "touched_files": [
@@ -236,14 +258,15 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... -> Default to effort=auto via classify_hybrid_effort (STANDARD default + stage_patch lock, HIGH_CROSS_SINGLE_SHOT <=36KB, lossless Map -> 8192-cap HIGH Reduce >36KB), raise PROFILES fast cap to 3072, mount .patch sources via _mount_optional_patch_sources() on include_git_diff=True, isolate second-eyes CPU+semantic critique in...",
-          "end_line": 93,
+          "end_line": 97,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-23",
-          "line_range": "#L89-L93",
+          "line_range": "#L91-L97",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 89,
+          "start_line": 91,
           "tier": "TIER2",
           "title": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... (`2026-11-17`)",
           "touched_files": [
@@ -253,6 +276,25 @@
           ]
         },
         {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... -> Enforce portable Two-Posture Host-Tier Routing (EXECUTION_TIER <25KB native Speed-First vs FRONTIER_TIER >=8KB sync log sieves + Gate 3 #L read_file, #L context_files on stage_patch, and override-only verdict calls) with transcriptPath <16KB tail tier detection and [APPRENTICE HOST TIER SWITCH] notices...",
+          "end_line": 103,
+          "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
+          "id": "LL-WS-24",
+          "line_range": "#L99-L103",
+          "location": "main",
+          "scope": "script:apprentice",
+          "start_line": 99,
+          "tier": "TIER2",
+          "title": "Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... (`2026-11-18`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "apprentice_lifecycle_hook.py"
+          ]
+        },
+        {
+          "archetype": "trap",
           "capsule_1line": "Directory-Scoped Git `[includeIf]` Identities & SSH Alias Locks -> Configured directory-scoped `[includeIf]` rules in `~/.gitconfig`, dedicated SSH aliases (`github-orleacock`, `github-alchemical`), and `audit_data_boundary.py` remote/email locks in `git_pre_commit_boundary.sh` (`Workstation_Operations.md`).",
           "end_line": 22,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -269,6 +311,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Parent `/home/orin/Projects` Umbrella `.homunculus.json` Sync -> Added `umbrella_configs/Projects.homunculus.json` and wired `bootstrap_workstation.sh` to sync `/home/orin/Projects/{.homunculus.json,.geminiignore}` (`Workstation_Operations_Software.md`).",
           "end_line": 27,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -285,6 +328,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Gmail MCP `visibility_radar` for Non-Visible Unread Threads -> Built `visibility_radar` into `gmail_mcp_server.py` and `gmail-workspace-assistant/SKILL.md` to surface non-visible unread threads alongside inbox triage (`Workstation_Operations_Software.md`).",
           "end_line": 32,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -301,6 +345,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Pre-Commit AST/CLI & Maintainer Matrix Parity Gate -> Wired `audit_skill_hygiene.py`, `sync_memory.py --audit`, and AST/CLI parity checks into `git_pre_commit_boundary.sh` (`SBX-20261107_091652-1f171c12`; `Workstation_Operations.md`).",
           "end_line": 37,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -319,6 +364,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Provisioning Optional `Homunculus/addons/*` Symlinks in `bootstrap_workstation.sh` -> Updated workstation skill symlink provisioning to link enabled drop-in add-ons from `Homunculus/addons/*` alongside core `Homunculus/skills/*` (`Workstation_Operations.md`).",
           "end_line": 42,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -334,6 +380,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Symlink-Blind `find` in `~/.gemini/config/skills/` vs. Direct `<skills>` Path Derivation -> Documented symlink structure in `Workstation_Operations` and banned `find` in favor of direct `<skill_dir>/scripts/<script>.py` path derivation from `<skills>` (`Workstation_Operations.md`).",
           "end_line": 49,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -349,6 +396,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Dual Homunculus copies risked split-brain authority; benchmark REGRESSION_ADVISORY exit 2 collided with... -> Consolidated /home/orin/Projects/Alchemical3D/Homunculus as the sole local/remote repo (/Homunculus/ gitignored in Engineering), assigned exit 4 to REGRESSION_ADVISORY (exit 1 Hard Block, exit 0 PASS), and locked RAID deliverables 0444/0555 via snapshot_homunculus_version.py (SBX-20261110_115958-408697dc)...",
           "end_line": 56,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -364,6 +412,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... -> Hardened restore_version.sh with HOMUNCULUS_RESTORE_HOME_OVERRIDE, mcp_config.redacted_reference.json (0600), and surgical symlink pruning; deduplicated full-system-suite unit-test execution + cryptographic (HEAD, tree_hash) benchmark receipt reuse; added same-device Btrfs --reflink=always RAID seeding with SHA-256 reconciliation...",
           "end_line": 63,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -382,6 +431,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Serial file-level unittest sharding bottlenecked full-system-suite at 19.82 seconds, Stage-X memory audits... -> Use execution-order-safe LPT unittest method sharding in benchmark_homunculus.py, deduplicate only Stage-X sync_memory --audit via verified_fastpath.py while keeping audit_data_boundary --staged live, and symlink Alchemical3D git hooks. (`benchmark_homunculus.py` (`Workstation_Operations_Software.md`), `verified_fastpath.py`...",
           "end_line": 70,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -400,6 +450,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Stage 5.1/5.2 local sidecar pilots (Pestle_Rotational_Bowden & Alembic_Toolhead) hit wrapper CLI flag... -> Embed author in HTML provenance comment & pre-check destination overwrite inside `local_sidecar.py`; set `max_tokens >= 2200` with prompt bans on unbacked acronym expansions/affiliate query params/deleted-diff `#L` anchors; pair sidecar outputs with `audit_repo_docs.py` + `verify_claims.py` avoiding duplicate basenames or foreign...",
           "end_line": 79,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -418,6 +469,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Turn-1 Bionic UNLOADED banner vanished on remote session start due to agy 1.5.9 panic in... -> Defer Turn-1 state notice from SessionStart to PreInvocation using pure systemMessage strings (zero metadata/terminationBehavior), check diff -rq before agy plugin install in bootstrap_workstation.sh, and enforce _safe_subprocess_cwd across local_sidecar.py and bionic_mcp_server.py. (`local_sidecar.py`...",
           "end_line": 88,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -433,6 +485,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "V2.3.1 HIGH offloads burned 66-89% tokens in <think> blocks (164-279s), truncated lines >320 chars, lost... -> Retain V2.4.1 CONCISE_HIGH_THINKING_HINT, pack_chunk_batches, and effort-preserving BOM-cross-sliced surgical repair; pass async_job=True on parallel or multi-file HIGH MCP digests so runs never collide with the 180s synchronous MCP transport timeout; invoke governed scripts via canonical /home/orin/Projects/Alchemical3D/Homunculus...",
           "end_line": 97,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -448,6 +501,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Concurrent full deep HIGH streams in --parallel 2 thrashed CPU MoE threads (<20-28 tok/s, 270s socket... -> Keep V2.4.2 exclusive=True single-slot serialization for full deep calls (>=3072 tok, reasoning!=none) while preserving max_slots=2 for mapper batches/fast calls; keep 135s MCP_SYNC_WAIT_CAP_SECONDS auto-promotion + job-collect clamp; keep TRUSTED_INVOCATION_ROOTS symlink check; maintain uniform...",
           "end_line": 106,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -461,6 +515,7 @@
           "touched_files": []
         },
         {
+          "archetype": "trap",
           "capsule_1line": "gpu-daily --parallel 4 kept idle batch slots vs max_slots<=2, and STANDARD chunked map-reduce reduce... -> Keep gpu-daily tightened to --parallel 2, run length continuation outside if use_auto_chunk: using reduce_prompt, grant up to 3072 STANDARD reduce tokens, and enable 135s auto-async guard for >36KB digests. (`local_sidecar.py` (`Workstation_Operations_Software.md`), `bionic_sidecar/bionic_mcp_server.py`...",
           "end_line": 115,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -476,6 +531,7 @@
           ]
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Multiple #Lstart-Lend slices of the same file passed to Bionic overwrote earlier slices in a Path-keyed... -> Preserve per-slice context via parse_and_validate_context_items() across local_sidecar.py and bionic_mcp_server.py; route repair passes through shared _run_full_repair_with_guard() (4096-6144 deep tok cap, 1x2048 continuation hop, reject clipped/regressed/vacuous-zero repairs) (`local_sidecar.py` (`Workstation_Operations_Software.md`)...",
           "end_line": 124,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -489,6 +545,7 @@
           "touched_files": []
         },
         {
+          "archetype": "trap",
           "capsule_1line": "V2.4.4 audit (BC-0225/BC-0228) uncovered .patch files omitted from verify_claims --sources, mixed... -> Lock 49152 gpu-daily as fixed baseline (retain gpu-max optional); add .patch/.diff + [:20] unbacked slice; split unsliced vs #L slices in chunker and _is_heavy_chunked_sync_candidate; use _format_compact_verify_failures() and LL_WS_12_GUARD frontmatter/patch rules; widen async sub-timeouts (120-180s), cont_max_toks (2560/3072), and...",
           "end_line": 133,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -502,6 +559,7 @@
           "touched_files": []
         },
         {
+          "archetype": "trap",
           "capsule_1line": "Blindly raising max_slices_per_batch=6 on dense Python silently dropped BASE_GUARD (base_covered=false)... -> Keep max_slices_per_batch=4; trigger Slice-Count Map-Reduce cleanly for >=5 explicit #L slices across >=3 files in bionic_mcp_server.py (100% 18/18 recall); switch stage_patch Pass-2 repair to fast mode with prioritized <=20KB #L context + AST sleep antipattern check; inject non-sleep injectable-clock .py Pass-1 staging rules; keep...",
           "end_line": 142,
           "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md",
@@ -518,7 +576,8 @@
           ]
         },
         {
-          "capsule_1line": "[PLAYBOOK] Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, h_sudo.sh seal-all / --sudo-seal & --lock-memory-rules) and benchmark_homunculus.py --profile full-system-suite. 2. Commit clean...",
+          "archetype": "trap",
+          "capsule_1line": "[PLAYBOOK] Workstation Homunculus v0.Y.Z release promotion, full-system-suite benchmark gate, and immutable 0444 RAID... -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, sync_memory.py --lock-memory-rules, homunculus_paths.py --sudo-seal / h_sudo.sh seal-all) and benchmark_homunculus.py --profile...",
           "end_line": 25,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md",
           "id": "PB-WS-01",
@@ -527,7 +586,7 @@
           "scope": "",
           "start_line": 22,
           "tier": "TIER2",
-          "title": "Homunculus Release Benchmark, Version Bump & Immutable RAID Deliverable (`2026-11-16`)",
+          "title": "Workstation Homunculus v0.Y.Z release promotion, full-system-suite benchmark gate, and immutable 0444 RAID... (`2026-11-18`)",
           "touched_files": [
             "audit_data_boundary.py",
             "audit_portability.py",
@@ -540,8 +599,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 183.04,
-      "proj_total_docs": 24,
+      "proj_avg_doc_len": 186.12,
+      "proj_total_docs": 25,
       "project": "Workstation_Operations"
     }
   },
@@ -558,27 +617,27 @@
       "sha256": "ed8662be4e8a4afa"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 123,
+      "lines": 122,
       "sections": 0,
-      "sha256": "ec05234ff8b59482"
+      "sha256": "b00557b62e6ffa79"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 107,
-      "sections": 6,
-      "sha256": "f885c810baedaf15"
+      "lines": 117,
+      "sections": 7,
+      "sha256": "0a6ec7118c0fa03f"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
       "sections": 1,
-      "sha256": "16ece275880a3e7f"
+      "sha256": "fad3f88e68089c02"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 62,
       "sections": 0,
-      "sha256": "bbe5f3d40723ae49"
+      "sha256": "0d23519b44d71c15"
     }
   },
-  "total_docs": 24,
+  "total_docs": 25,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "cf2c33a6b0440f40"
+  "vectors_digest": "7084621d41f91c2c"
 }

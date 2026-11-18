@@ -4,8 +4,8 @@ entity: "Orin_Workstation"
 compartment: "private"
 telemetry_domain: "software"
 local_path: "../scripts"
-inventory_sha256: "23b45349c1bf"
-last_synced: "2026-11-17"
+inventory_sha256: "764164cb3201"
+last_synced: "2026-11-18"
 ---
 
 # Workstation_Operations — Software, CLI & Schema Telemetry (`_Software.md`)
@@ -27,9 +27,9 @@ last_synced: "2026-11-17"
 | `h_sudo.sh` | `POSIX Bash` | Executable Script / Source | `176` | `33464fd019` |
 | `pre_push_engineering_guard.sh` | `POSIX Bash` | Executable Script / Source | `77` | `ac977c95b2` |
 | `snapshot_homunculus_version.py` | `Python 3.10+` | Flags: `--slug`, `--label`, `--raid-root`, `--homunculus-dir`, `--engineering-dir`, `--version-manifest`, `--allow-dirty`, `--skip-benchmark`, `--force-fresh-benchmark`, `--list`, `--verify`, `--dry-run`, `--json` — Symbols: `sanitize_slug()` (`#L74-L77`), `find_latest_same_dev_raid_snapshot()` (`#L89-L114`), `find_verified_benchmark_receipt()` (`#L117-L151`), `copy_tree_cow()` (`#L176-L358`), `collect_symlink_manifest()` (`#L376-L394`), `build_restore_script()` (`#L477-L684`), `build_reconstruction_index()` (`#L687-L747`), `verify_existing_snapshot()` (`#L790-L802`), `main()` (`#L805-L1107`) | `1111` | `fc6af3c4a4` |
-| `verified_fastpath.py` | `Python 3.10+` | Flags: `--record-memory-audit`, `--check-memory-audit`, `--record-vrf`, `--check`, `--targets`, `--sources`, `--receipt`, `--memory-root`, `--homunculus-root`, `--repo`, `--force-fresh`, `--json` — Symbols: `resolve_homunculus_root()` (`#L73-L111`), `resolve_cache_path()` (`#L119-L132`), `compute_memory_audit_fingerprint()` (`#L206-L257`), `record_memory_audit_fastpath()` (`#L260-L292`), `check_memory_audit_fastpath()` (`#L295-L343`), `record_vrf_fastpath()` (`#L387-L445`), `check_fastpath()` (`#L520-L631`), `main()` (`#L634-L715`) | `719` | `7902e75020` |
+| `verified_fastpath.py` | `Python 3.10+` | Flags: `--record-memory-audit`, `--check-memory-audit`, `--record-vrf`, `--check`, `--targets`, `--sources`, `--receipt`, `--memory-root`, `--homunculus-root`, `--repo`, `--force-fresh`, `--json` — Symbols: `resolve_homunculus_root()` (`#L76-L114`), `resolve_cache_path()` (`#L122-L135`), `compute_memory_audit_fingerprint()` (`#L289-L343`), `record_memory_audit_fastpath()` (`#L346-L378`), `check_memory_audit_fastpath()` (`#L381-L429`), `record_vrf_fastpath()` (`#L473-L531`), `check_fastpath()` (`#L606-L717`), `main()` (`#L720-L801`) | `805` | `d048fd0598` |
 | `version_manager.py` | `Python 3.10+` | Flags: `--homunculus-dir`, `--manifest`, `--status`, `--init-baseline`, `--sync-manifest`, `--bump`, `--reason`, `--allow-v1-public-release`, `--rollback`, `--dry-run`, `--json` — Symbols: `compute_content_tree_hash()` (`#L79-L105`), `get_git_state()` (`#L111-L160`), `load_or_create_manifest()` (`#L163-L200`), `resolve_effective_version_status()` (`#L203-L251`), `ensure_git_tag()` (`#L254-L277`), `bump_version()` (`#L280-L352`), `rollback_engine()` (`#L355-L414`), `main()` (`#L417-L556`) | `560` | `5908a68c2a` |
-| `apprentice/apprentice_lifecycle_hook.py` | `Python 3.10+` | Flags: `--self-test`, `--check-command`, `--simulate-event`, `--simulate-state`, `--json` — Symbols: `probe_bionic_state()` (`#L167-L204`), `evaluate_session_or_invocation()` (`#L283-L401`), `evaluate_pre_tool_use()` (`#L630-L750`), `dispatch_hook_payload()` (`#L753-L759`), `run_self_tests()` (`#L835-L1159`), `main()` (`#L1162-L1218`) | `1222` | `ca5f6b45b4` |
+| `apprentice/apprentice_lifecycle_hook.py` | `Python 3.10+` | Flags: `--self-test`, `--check-command`, `--simulate-event`, `--simulate-state`, `--json` — Symbols: `probe_bionic_state()` (`#L173-L210`), `classify_host_model_tier()` (`#L301-L333`), `evaluate_session_or_invocation()` (`#L355-L492`), `evaluate_pre_tool_use()` (`#L721-L841`), `dispatch_hook_payload()` (`#L844-L850`), `run_self_tests()` (`#L926-L1320`), `main()` (`#L1323-L1379`) | `1383` | `da63fe1541` |
 | `apprentice/apprentice_mcp_server.py` | `Python 3.10+` | Flags: `--self-test`, `--status`, `--json` — Symbols: `select_collision_free_sources()` (`#L119-L157`), `sanitize_quarantine_placeholder_links()` (`#L160-L175`), `apprentice_control()` (`#L735-L760`), `apprentice_digest()` (`#L2351-L2385`), `apprentice_repo_audit()` (`#L2944-L2986`), `apprentice_stage_patch()` (`#L3550-L3588`), `apprentice_shadow_review()` (`#L3856-L3890`), `run_self_tests()` (`#L3897-L5526`), `main()` (`#L5529-L5550`) | `5554` | `6cce91b254` |
 | `gmail_mcp/gmail_mcp_server.py` | `Python 3.10+` | Flags: `--status`, `--import-client-secret`, `--auth`, `--no-browser` — Symbols: `get_config_dir()` (`#L90-L94`), `get_attachment_jail_dir()` (`#L97-L127`), `ensure_secure_dir()` (`#L130-L137`), `verify_secret_file_security()` (`#L140-L156`), `write_secret_json()` (`#L159-L176`), `verify_token_scopes()` (`#L239-L249`), `build_gmail_web_urls()` (`#L473-L481`), `build_draft_payload()` (`#L484-L532`), `resolve_quarantined_attachment_path()` (`#L535-L567`), `main()` (`#L1028-L1045`) | `1049` | `6f37644530` |
 <!-- AUTO-SOFTWARE-MODULES:END -->
@@ -41,7 +41,7 @@ last_synced: "2026-11-17"
 <!-- AUTO-SOFTWARE-SCHEMAS:START -->
 | Schema / Config File | Format | Top-Level Keys / Contract Version | SHA-256 Prefix |
 | :--- | :--- | :--- | :--- |
-| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `ae31373181` |
+| `homunculus_version.json` | `JSON` | `schema_version`, `engine_version`, `release_stage`, `public_release_target`, `baseline_tag`, `baseline_head_sha` | `c9737da642` |
 | `apprentice_plugin/hooks.json` | `JSON` | `apprentice-guard` | `d78f19ae9e` |
 | `apprentice_plugin/mcp_config.json` | `JSON` | `mcpServers` | `b1329fa2b4` |
 | `apprentice_plugin/plugin.json` | `JSON` | `name`, `version` | `5730f6c226` |

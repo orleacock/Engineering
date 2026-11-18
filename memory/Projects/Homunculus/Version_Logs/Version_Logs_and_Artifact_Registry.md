@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "private"
 note_type: "version_worklog"
 authoritative: false
-last_synced: "2026-11-16"
+last_synced: "2026-11-18"
 ---
 
 # 📚 Homunculus — Version Worklogs & Non-Destructive Artifact Registry (`W-1` & `W-5`)
@@ -28,6 +28,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 | **`v0.3.3`** | [`v0.3.3_Wave2_Performance_and_Pulse_Worklog.md`](v0.3.3_Wave2_Performance_and_Pulse_Worklog.md) | `LOCKED_HISTORICAL` | Wave 2 graduation (`43ebac1c849e`, `BMK-20261113_230808-9c7213da` at `15.29s` / `-52.1%`, `SBX-20261113_230606-cb97d55e` / `LL-WS-10`, `telemetry_pulse_history.jsonl`, and Gate 1.5 `/teach-me` re-attestation `6fb61c8e` / `VRF-0f8ded23c6c4` `ATTEST: PASS`): `S-A` `A2` single-process hooks, `B1` safe `rg` UTF-8 pre-filter, `Task #66`, and `Task #67` Option A stateless `--telemetry-pulse` + OOT `--quick-pulse`/`--record-pulse`. |
 | **`v0.3.4`** | [`v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md`](v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md) | `LOCKED_HISTORICAL` | Wave 3 (`C1`) graduation (`3996460a1e68`, `BMK-20261114_115712-942d545c` at `19.82s` Course D approved, live `/dev/tty` `seal_signing: "required"` in `local_config`, `SBX-20261114_101413-c32af7d0`, `v0.3.4-post-seal-enrolled` pulse, and `LL-051`): opt-in OpenSSH `ssh-keygen -Y` seal/lease signing (`homunculus.kernel.v1`, `homunculus.governance.v1`, `homunculus.lease.v1`; `local_config` & `inline`; default `off`; `0` private-key reads; `Claude permissions.deny`; `h-sudo enroll-signer`), section-aware `LL-[A-Z0-9-]+` scoped-`TIER2` telemetry accounting (`--telemetry-pulse` & `ME07`), and `TIER2` compaction (`LL-051`). |
 | **`v0.3.5`** | [`v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md`](v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md) | `LOCKED_HISTORICAL` | Speed, efficiency & `Quarantine/` SDK release (`68241080d62d` / `e47c2485977f`, `BMK-20261114_161845-a11beccd` at `5.97s` / `-69.9%`, `v0.3.5-post-seal-graduated` pulse, `79/79` tests, `SBX-20261114_153225-b191d46c`, `SBX-20261114_160422-4bb67bd8` / `VRF-82b882012b0c`, `LL-052`, `LL-WS-11`): always-on rule/skill/`AGENTS.md` diet (`cleanup_and_builder_walkthroughs.md` ref split), `verify_claims.py` pure-JSON `SourceIndex` cache + multi-target + backtick-`[TBD]` fix, parallel `audit_data_boundary.py`/`audit_portability.py`, `Projects/<P>/Quarantine/` `quarantine-note` + `TOP_LEVEL_QUARANTINE_FORBIDDEN`, and out-of-tree `verified_fastpath.py` + LPT benchmark sharding. |
+| **`v0.3.6` – `v0.3.7`** | [`v0.3.6_to_v0.3.7_Hydrogen_and_Memory_Hygiene_Worklog.md`](v0.3.6_to_v0.3.7_Hydrogen_and_Memory_Hygiene_Worklog.md) | `LOCKED_GRADUATED` | `v0.3.6` Stage-2 Gemini 4 Hydrogen/Carbon migration (`77d39ad4890f`, `BMK-20261116_162239-819753e1` at `8.14s`, `82/82` tests, `LL-053`) + `v0.3.7` Memory Hygiene, Lineage & Principles graduation (`09a3bf3`, `90/90` tests, `SBX-20261118_092640-a0469320`, `Ring 0` `skills/memory-hygiene/`, `4`-archetype schema, atomic `0444` `TIER5` `--supersede-lesson`, `Principles/Engineering_Principles.md` + `LIN-<12hex>` `lineage_registry.json`, `PRIN-01`–`04`, `LL-054`), plus companion `Apprentice v2.6.0` & Two-Posture Host-Tier Routing (`Engineering` `825ad9b`, `SBX-20261118_122931-46d1b2e2`, `LL-WS-23`, `LL-WS-24`) and `4` rejected approaches. |
 
 ---
 
@@ -43,7 +44,7 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 
 ---
 
-## 3. External Conversation Artifact Registry (`17` Bundles — `0` Deleted)
+## 3. External Conversation Artifact Registry (`20` Bundles — `0` Deleted)
 
 | # | Class | Session / Bundle | Artifact & Companion Files | Version / Role & Preservation Note |
 | :---: | :---: | :--- | :--- | :--- |
@@ -64,6 +65,9 @@ Part of [`Homunculus.md`](../Homunculus.md) • Companion to [`Alchemical-3D_Tas
 | `15` | `CLASS-E` | `eaa8998c` | [Homunculus_v0_3_2_CMOS_Reboot_Handoff.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_2_CMOS_Reboot_Handoff.md) | Point-in-time `2026-11-13` `v0.3.2` Wave-1 pre-CMOS reboot checkpoint handoff (`2dc4fb129fb7`, dual `0444` seal, post-CMOS `v0.3.2` tag + `Course D` `BMK-*` baseline resume runbook). |
 | `16` | `CLASS-E` | `eaa8998c` | [Homunculus_v0_3_3_Session_Handoff_Package.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_3_Session_Handoff_Package.md) | Point-in-time `2026-11-13` `v0.3.3` session handoff snapshot after Wave 2 graduation (`43ebac1c849e`, `BMK-20261113_230808-9c7213da`) queuing Wave 3 (`C1`). |
 | `17` | `CLASS-A` | `eaa8998c` | [Homunculus_v0_3_5_Efficiency_and_FastPath_Plan.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_5_Efficiency_and_FastPath_Plan.md) | `v0.3.5` + `Workstation_Operations` Efficiency, Fast-Path (`verified_fastpath.py`), `SourceIndex` cache, and Phase-5 `Quarantine/` SDK release plan (`68241080d62d`). |
+| `18` | `CLASS-A` | `eaa8998c` | [Apprentice_v2_6_Hybrid_Routing_and_Shadow_Eyes_Plan.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Apprentice_v2_6_Hybrid_Routing_and_Shadow_Eyes_Plan.md) | Companion `Apprentice v2.6.0` execution plan (`classify_hybrid_effort`, `8192` Reduce cap, `.patch` claim verification, and `apprentice_shadow_review` `SHADOW_SECOND_EYES_V1`). Historical (`Apprentice v2.6.0`). |
+| `19` | `CLASS-B` | `eaa8998c` | [Combined_Homunculus_Apprentice_vs_Stock_Card.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Combined_Homunculus_Apprentice_vs_Stock_Card.md) | Empirical 6-task replay & full-system comparison card (`Homunculus v0.3.6` + `Apprentice v2.6.0` vs. Stock CLI; `-92.8%` context bytes, `-97.7%` weighted eq-tokens). Historical (`v0.3.6` / `Apprentice v2.6.0`). |
+| `20` | `CLASS-A` | `eaa8998c` / `1106cd9a` | [Homunculus_v0_3_7_Memory_Hygiene_and_Principles_Plan.md](file:///home/orin/.gemini/antigravity-cli/brain/eaa8998c-3cc6-42a4-bbbf-d64b0fc0ce40/Homunculus_v0_3_7_Memory_Hygiene_and_Principles_Plan.md) | `v0.3.7` Memory Hygiene, 4-Archetype Schema, Atomic `0444` `TIER5` Supersession, and Decontaminated `Principles/` Hub architecture plan (`09a3bf3`). Historical (`v0.3.7`). |
 
 ---
 

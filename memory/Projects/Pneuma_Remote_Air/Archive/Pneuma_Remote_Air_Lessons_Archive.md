@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-09"
+last_synced: "2026-11-18"
 ---
 
 # 🗄️ Pneuma_Remote_Air — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)
@@ -26,3 +26,14 @@ last_synced: "2026-11-09"
 - **Symptom / Failed Approach (`Historical / Rejected`):** Naively grepping `CYLINDRICAL_SURFACE(..., 1.5)` in `CAD/Pneuma_Remote_Air.step` and claiming `Pump_Top_Cover.stl` and `Filter_Top_Cover.stl` are fastened by `16 × M3` screws (`8` per cover).
 - **Root Cause:** In B-Rep STEP geometry, both a closed `360°` M3 through-hole (`Ø3.00mm`) and a partial-arc `R1.50mm` fillet or snap-fit relief groove use `CYLINDRICAL_SURFACE(..., 1.5)`. The `8` `R1.50mm` surfaces per top cover are open partial-arc snap-fit/press-fit relief grooves/lips (`Assembly_Guide.md:61,66`), not closed bolt holes.
 - **Verified Resolution & Canonical Owner:** Graduated into the CAD Epistemic Boundary (`ZERO_ADHOC_CAD_PARSING`): raw CAD geometry is never parsed ad-hoc to invent fastener counts or mating topology; top covers are documented strictly per `Assembly_Guide.md:61,66` as toolless snap-fit / press-fit covers ([`Pneuma_Remote_Air_Hardware`](../Pneuma_Remote_Air_Hardware.md)).
+
+### `LL-PNE-02` [TIER3] — Coupled 6mm OD Umbilical & Pressure-Side Sealing (`Alembic_Toolhead` Coupled)
+- **Symptom / Failed Approach (`Historical / Rejected`):** Line-pressure drop at threaded fittings (`>= 70 kPa`), acoustic/air gaps between `Rear_Cover` and `Main_Body`, or choked airflow reaching [`Alembic_Toolhead`](../../Alembic_Toolhead/Alembic_Toolhead.md).
+- **Root Cause:** Protruding `M3x5x4mm` brass heat-set inserts hold `Rear_Cover` proud of `Main_Body`; unsealed pressure-side NPT threads leak positive pressure; tight bend radii kink the `6mm OD` umbilical line.
+- **Verified Resolution & Canonical Owner:** Seat all `M3x5x4mm` inserts strictly flush, wrap Teflon tape on pressure-side threads, and route the `6mm OD` umbilical with generous sweep radii ([`Pneuma_Remote_Air`](../Pneuma_Remote_Air.md)).
+- **Shared Interface Link:** Coupled with [`Alembic_Toolhead_Lessons_Learned`](../../Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md).
+
+### `LL-PNE-03` [TIER3] — Anti-Cross-Entity Polymer Borrowing (`TPU` Vibration Isolators vs. `ABS/ASA` Enclosure)
+- **Symptom / Failed Approach (`Historical / Rejected`):** Copying structural `ABS`/`ASA` print settings (`4` walls, `5` top/bottom layers, `40%` `Grid`/`Gyroid` infill) onto the three elastomer vibration-isolation parts (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) or inventing TPU Shore hardness from pretraining defaults.
+- **Root Cause:** Borrowing `40%` structural infill onto TPU makes vibration isolators rigid and transmits pump resonance directly into the frame/table.
+- **Verified Resolution & Canonical Owner:** Graduated into [`Verifiable_Accuracy_and_Anti_Hallucination`](../../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md) (`Ban Cross-Entity Borrowing`); TPU parameters remain quarantined as an explicit `[TBD]` in [`Pneuma_Remote_Air`](../Pneuma_Remote_Air.md) until measured.

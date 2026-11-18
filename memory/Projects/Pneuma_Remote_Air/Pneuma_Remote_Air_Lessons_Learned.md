@@ -4,7 +4,7 @@ parent_note: "Pneuma_Remote_Air"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-13"
+last_synced: "2026-11-18"
 ---
 
 # 🧠 Pneuma Remote Air — Engineering Lessons Learned & Post-Mortem Ledger (`Pneuma_Remote_Air_Lessons_Learned`)
@@ -32,17 +32,6 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 ---
 
 ## 1. Engineering Post-Mortems & Troubleshooting Entries
-
-### `LL-PNE-02` [TIER2] — Coupled 6mm OD Umbilical & Pressure-Side Sealing (`Alembic_Toolhead` Coupled)
-- **Symptom / Failed Approach (`Historical / Rejected`):** Line-pressure drop at threaded fittings (`>= 70 kPa`), acoustic/air gaps between `Rear_Cover` and `Main_Body`, or choked airflow reaching [`Alembic_Toolhead`](../Alembic_Toolhead/Alembic_Toolhead.md).
-- **Root Cause:** Protruding `M3x5x4mm` brass heat-set inserts hold `Rear_Cover` proud of `Main_Body`; unsealed pressure-side NPT threads leak positive pressure; tight bend radii kink the `6mm OD` umbilical line.
-- **Verified Resolution & Canonical Owner:** Seat all `M3x5x4mm` inserts strictly flush, wrap Teflon tape on pressure-side threads, and route the `6mm OD` umbilical with generous sweep radii ([`Pneuma_Remote_Air`](Pneuma_Remote_Air.md)).
-- **Shared Interface Link:** Coupled with [`Alembic_Toolhead_Lessons_Learned`](../Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md).
-
-### `LL-PNE-03` [TIER2] — Anti-Cross-Entity Polymer Borrowing (`TPU` Vibration Isolators vs. `ABS/ASA` Enclosure)
-- **Symptom / Failed Approach (`Historical / Rejected`):** Copying structural `ABS`/`ASA` print settings (`4` walls, `5` top/bottom layers, `40%` `Grid`/`Gyroid` infill) onto the three elastomer vibration-isolation parts (`TPU_Grommet.stl`, `Table_Mount_TPU.stl`, `Plug_Grommet_TPU.stl`) or inventing TPU Shore hardness from pretraining defaults.
-- **Root Cause:** Borrowing `40%` structural infill onto TPU makes vibration isolators rigid and transmits pump resonance directly into the frame/table.
-- **Verified Resolution & Canonical Owner:** Graduated into [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md) (`Ban Cross-Entity Borrowing`); TPU parameters remain quarantined as an explicit `[TBD]` in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) until measured.
 
 ### `LL-PNE-04` [TIER2] — Klipper `shutdown_speed: 1` Emergency-Stop Full-Blast Hazard (Resolved in `0702c9c`)
 - **Symptom / Failed Approach (`Historical / Rejected`):** Previously, `Firmware/Pneuma_Control.cfg` defined `shutdown_speed: 1` on both `[fan_generic pump_cool]` and `[fan_generic pump_warm]` while commenting out `#kick_start_time: 0.5`.

@@ -3,8 +3,8 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "a168f3d642e0"
-last_synced: "2026-11-17"
+tree_hash: "ab8ebc132895"
+last_synced: "2026-11-18"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -32,6 +32,8 @@ last_synced: "2026-11-17"
 │   ├── Alchemical-3D_Directory.md
 │   ├── Alchemical-3D_memory_index.json
 │   └── Directory_Index.md
+├── Principles/
+│   └── Engineering_Principles.md
 ├── Profile/
 │   └── Decision_Profile.md
 ├── Projects/
@@ -81,6 +83,7 @@ last_synced: "2026-11-17"
 │   │   │   ├── v0.3.3_Wave2_Performance_and_Pulse_Worklog.md
 │   │   │   ├── v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md
 │   │   │   ├── v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md
+│   │   │   ├── v0.3.6_to_v0.3.7_Hydrogen_and_Memory_Hygiene_Worklog.md
 │   │   │   └── Version_Logs_and_Artifact_Registry.md
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
@@ -382,7 +385,7 @@ last_synced: "2026-11-17"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: b2946a631482` | `Tree: 687d25be9af7`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 09a3bf30d062` | `Tree: 6fe9f9569b4f`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -463,6 +466,10 @@ last_synced: "2026-11-17"
 │   │   ├── scripts/
 │   │   │   └── sandbox_runner.py
 │   │   └── SKILL.md
+│   ├── memory-hygiene/
+│   │   ├── scripts/
+│   │   │   └── audit_memory_hygiene.py
+│   │   └── SKILL.md
 │   ├── pre-commit-gate/
 │   │   └── SKILL.md
 │   ├── project-memory/
@@ -517,6 +524,7 @@ last_synced: "2026-11-17"
 │   ├── memory/
 │   │   ├── AGENTS.md
 │   │   ├── Decision_Profile.md
+│   │   ├── Engineering_Principles.md
 │   │   ├── Global_Standards_Index.md
 │   │   ├── Memory_Map_README.md
 │   │   ├── Project_Hardware.md
@@ -535,7 +543,8 @@ last_synced: "2026-11-17"
 │   ├── test_foundation.py
 │   ├── test_project_memory.py
 │   ├── test_teach_me.py
-│   └── test_v030_memory_platform.py
+│   ├── test_v030_memory_platform.py
+│   └── test_v037_memory_hygiene.py
 ├── .git/ (excluded)
 ├── .gitignore
 ├── HOMUNCULUS_START_HERE.md

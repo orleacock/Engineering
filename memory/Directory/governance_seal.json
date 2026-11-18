@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-17",
-  "latest_audit_entry_sha256": "32f7ea738681765ac10d5999a455c8365385eeaba3d8c38e4ec924b89c32afdc",
+  "latest_audit_entry_sha256": "759627e6e122cdc522c801eaee86ea183bf493311d92a4555302a5c4cbeb9cf5",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -172,5 +172,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "e345f2e0310db152cc7ce50d9da11ac8eb3b7e5765dac2670883a0a40c0f6a89"
+  "seal_root_sha256": "cce508d73a34038244b05ad8a346179dec8f94663fb544d06ffc632f69ad2865"
 }

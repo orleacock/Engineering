@@ -1,8 +1,8 @@
 ---
 title: "Memory & Workspace Directory Index"
 type: "directory-index"
-tree_hash: "988ac5c297c6"
-last_synced: "2026-11-11"
+tree_hash: "0cf5747542d6"
+last_synced: "2026-11-18"
 ---
 
 # 🗂️ Engineering Memory — Directory Lookup Hub (`Directory/`)
@@ -27,6 +27,8 @@ last_synced: "2026-11-11"
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
 │   └── Directory_Index.md
+├── Principles/
+│   └── Engineering_Principles.md
 ├── Standards_and_Specs/
 │   ├── Alchemical_Ecosystem_Links_and_Brand.md
 │   ├── Alchemical_Style_and_Voice_Guide.md
