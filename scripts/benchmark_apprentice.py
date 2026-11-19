@@ -18,8 +18,10 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import contextlib
 import dataclasses
 import datetime as dt
+import hashlib
 import inspect
 import json
 import os
@@ -70,7 +72,83 @@ class BenchMetric:
         return dataclasses.asdict(self)
 
 
-def _run_subprocess(cmd: list[str], *, timeout_s: int = 60) -> tuple[int, float, str, str]:
+def _snapshot_live_prod_files() -> dict[str, tuple[bool, int, str]]:
+    """Record (exists, byte_size, sha256) of live production Apprentice cache files to guarantee zero benchmark bleed."""
+    tracked = {
+        "scorecard": apprentice_engine.DEFAULT_SCORECARD_PATH,
+        "telemetry": apprentice_engine.DEFAULT_TELEMETRY_LOG,
+        "archive": apprentice_engine.DEFAULT_SCORECARD_ARCHIVE_PATH,
+    }
+    snap: dict[str, tuple[bool, int, str]] = {}
+    for label, fp in tracked.items():
+        if fp.is_file():
+            raw = fp.read_bytes()
+            snap[label] = (True, len(raw), hashlib.sha256(raw).hexdigest())
+        else:
+            snap[label] = (False, 0, "")
+    return snap
+
+
+def _assert_live_prod_untouched(
+    before: dict[str, tuple[bool, int, str]],
+    after: dict[str, tuple[bool, int, str]],
+) -> None:
+    drifted = [k for k in before if before[k] != after.get(k)]
+    if drifted:
+        raise RuntimeError(
+            f"[LIVE_SCORECARD_CONTAMINATION_DETECTED] Benchmark mutated live production cache files ({drifted}): "
+            f"before={before} vs after={after}"
+        )
+
+
+@contextlib.contextmanager
+def _isolated_bench_env(tel_path: Path):
+    """Redirect Apprentice telemetry, scorecard, archive, and BJOB files away from live production cache."""
+    resolved_tel = Path(os.path.expanduser(str(tel_path))).resolve(strict=False)
+    live_cache_root = apprentice_engine.DEFAULT_CACHE_DIR.resolve(strict=False)
+    live_tel = apprentice_engine.DEFAULT_TELEMETRY_LOG.resolve(strict=False)
+    live_sc = apprentice_engine.DEFAULT_SCORECARD_PATH.resolve(strict=False)
+    if resolved_tel in {live_tel, live_sc} or resolved_tel.parent == live_cache_root:
+        raise ValueError(
+            f"[BENCH_ISOLATION_VIOLATION] benchmark_apprentice refuses live production path '{resolved_tel}'; "
+            f"use '{apprentice_engine.DEFAULT_BENCH_TELEMETRY_LOG}' or an isolated temporary path."
+        )
+    bench_dir = resolved_tel.parent
+    bench_dir.mkdir(parents=True, exist_ok=True)
+    managed_keys = (
+        "APPRENTICE_TELEMETRY_LOG",
+        "APPRENTICE_SCORECARD_PATH",
+        "APPRENTICE_SCORECARD_ARCHIVE_PATH",
+        "APPRENTICE_JOBS_DIR",
+        "BIONIC_SIDECAR_TELEMETRY_LOG",
+        "BIONIC_SIDECAR_SCORECARD_PATH",
+        "BIONIC_SIDECAR_JOBS_DIR",
+    )
+    saved = {k: os.environ.get(k) for k in managed_keys}
+    try:
+        for k in managed_keys:
+            os.environ.pop(k, None)
+        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(resolved_tel)
+        yield {
+            "APPRENTICE_TELEMETRY_LOG": str(resolved_tel),
+            "derived_scorecard_path": str(apprentice_engine._resolve_scorecard_path()),
+            "derived_archive_path": str(apprentice_engine._resolve_scorecard_archive_path()),
+            "derived_jobs_dir": str(apprentice_engine._resolve_jobs_dir()),
+        }
+    finally:
+        for k, prev in saved.items():
+            if prev is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = prev
+
+
+def _run_subprocess(
+    cmd: list[str],
+    *,
+    timeout_s: int = 60,
+    env: dict[str, str] | None = None,
+) -> tuple[int, float, str, str]:
     t0 = time.perf_counter()
     proc = subprocess.run(
         cmd,
@@ -79,6 +157,7 @@ def _run_subprocess(cmd: list[str], *, timeout_s: int = 60) -> tuple[int, float,
         text=True,
         timeout=timeout_s,
         check=False,
+        env=env,
     )
     return proc.returncode, round(time.perf_counter() - t0, 3), proc.stdout, proc.stderr
 
@@ -173,7 +252,19 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     forensics: dict[str, Any] = {}
 
     # O1: Built-in unit self-test suites
-    py_mcp = str(AGY_VENV_PYTHON) if AGY_VENV_PYTHON.is_file() else sys.executable
+    py_mcp = sys.executable
+    if AGY_VENV_PYTHON.is_file() and os.access(AGY_VENV_PYTHON, os.X_OK):
+        try:
+            probe_v = subprocess.run([str(AGY_VENV_PYTHON), "-c", "import sys"], capture_output=True, timeout=3, check=False)
+            if probe_v.returncode == 0:
+                py_mcp = str(AGY_VENV_PYTHON)
+        except OSError:
+            py_mcp = sys.executable
+    clean_ut_env = {
+        k: v
+        for k, v in os.environ.items()
+        if not k.startswith(("APPRENTICE_", "BIONIC_SIDECAR_"))
+    }
     self_test_cmds = [
         ("apprentice_engine", [sys.executable, "-B", str(SCRIPT_DIR / "apprentice_engine.py"), "--self-test"]),
         ("apprentice_lifecycle_hook", [sys.executable, "-B", str(SCRIPT_DIR / "apprentice" / "apprentice_lifecycle_hook.py"), "--self-test"]),
@@ -182,7 +273,7 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
     suites_passed = 0
     suite_times: dict[str, float] = {}
     for label, cmd in self_test_cmds:
-        rc, dt_s, out, err = _run_subprocess(cmd, timeout_s=45)
+        rc, dt_s, out, err = _run_subprocess(cmd, timeout_s=45, env=clean_ut_env)
         suite_times[label] = dt_s
         if rc == 0:
             suites_passed += 1
@@ -405,24 +496,36 @@ def run_offline_suite(telemetry_log: Path) -> tuple[list[BenchMetric], dict[str,
         )
     )
 
-    # O7: Lifetime scorecard seed, healed classification, slow_self_heal (>45s), & idempotent verdict
+    # O7: Lifetime scorecard seed, healed classification, slow_self_heal (>45s), idempotent verdict, & bench cache isolation
     o7_ok = False
+    o7_snap_before = _snapshot_live_prod_files()
     with tempfile.TemporaryDirectory(prefix="bionic_bench_o7_") as td_o7:
-        old_t7 = os.environ.get("APPRENTICE_TELEMETRY_LOG")
         t7 = Path(td_o7) / "tel.jsonl"
-        os.environ["APPRENTICE_TELEMETRY_LOG"] = str(t7)
+        live_blocked = False
         try:
+            with _isolated_bench_env(apprentice_engine.DEFAULT_TELEMETRY_LOG):
+                pass
+        except ValueError:
+            live_blocked = True
+        with _isolated_bench_env(t7):
             t7.write_text(json.dumps({"cmd": "query", "finish_reason": "stop", "elapsed_s": 2.0}) + "\n", encoding="utf-8")
             rec_h = apprentice_engine.record_call_outcome(verdict="healed", cmd="stage-code", effort="high", mode="deep", elapsed_s=10.0, heal_elapsed_s=48.0)
             rec_c = apprentice_engine.record_call_outcome(verdict="clean", cmd="query", effort="standard", mode="fast", elapsed_s=3.0)
             v1 = apprentice_engine.apply_call_verdict(rec_c["call_id"], "corrected", note="o7")
             v2 = apprentice_engine.apply_call_verdict(rec_c["call_id"], "corrected", note="o7_repeat")
-            o7_ok = (rec_h["slow_self_heal"] is True and rec_h["healed"] == 1 and v1["clean"] == 1 and v1["corrected"] == 1 and v2["corrected"] == 1)
-        finally:
-            if old_t7 is None:
-                os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
-            else:
-                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t7
+            arch_iso = apprentice_engine._resolve_scorecard_archive_path().parent == Path(td_o7).resolve(strict=False)
+            jobs_iso = apprentice_engine._resolve_jobs_dir().parent == Path(td_o7).resolve(strict=False)
+            o7_ok = (
+                live_blocked
+                and arch_iso
+                and jobs_iso
+                and rec_h["slow_self_heal"] is True
+                and rec_h["healed"] == 1
+                and v1["clean"] == 1
+                and v1["corrected"] == 1
+                and v2["corrected"] == 1
+            )
+    _assert_live_prod_untouched(o7_snap_before, _snapshot_live_prod_files())
     metrics.append(
         BenchMetric(
             id="O7_scorecard_and_healed",
@@ -1268,12 +1371,15 @@ def render_markdown_report(run_obj: dict[str, Any], baseline: dict[str, Any] | N
 
 
 def run_self_tests() -> dict[str, Any]:
-    """Deterministic offline check of benchmark schema, verification helper, and comparison formatter."""
+    """Deterministic offline check of benchmark schema, cache isolation, verification helper, and comparison formatter."""
+    snap_before = _snapshot_live_prod_files()
     with tempfile.TemporaryDirectory() as td:
         td_p = Path(td)
         hist = td_p / "hist.jsonl"
-        metrics, _ = run_offline_suite(td_p / "missing_tel.jsonl")
+        with _isolated_bench_env(td_p / "missing_tel.jsonl"):
+            metrics, _ = run_offline_suite(td_p / "missing_tel.jsonl")
         assert len(metrics) == 9, f"expected 9 offline metrics, got {len(metrics)}"
+        assert all(m.status == "PASS" for m in metrics), f"offline failure: {[m.to_dict() for m in metrics if m.status != 'PASS']}"
         sample_run = {
             "schema_version": SCHEMA_VERSION,
             "run_id": "BMK-TEST",
@@ -1288,7 +1394,16 @@ def run_self_tests() -> dict[str, Any]:
         assert loaded is not None and loaded["run_id"] == "BMK-TEST"
         md = render_markdown_report(sample_run, loaded)
         assert "O1_unit_suites" in md and "O8_slice_and_kv_guard" in md and "O9_v23_graduation_guards" in md
-    return {"ok": True, "checks": ["offline_9_metrics", "baseline_jsonl_roundtrip", "markdown_comparison_table"]}
+    _assert_live_prod_untouched(snap_before, _snapshot_live_prod_files())
+    return {
+        "ok": True,
+        "checks": [
+            "offline_9_metrics",
+            "bench_cache_isolation_zero_live_drift",
+            "baseline_jsonl_roundtrip",
+            "markdown_comparison_table",
+        ],
+    }
 
 
 def main() -> int:
@@ -1296,7 +1411,7 @@ def main() -> int:
     parser.add_argument("--mode", choices=("offline", "live", "all"), default="offline")
     parser.add_argument("--label", default="candidate")
     parser.add_argument("--history-jsonl", default=str(DEFAULT_HISTORY_JSONL))
-    parser.add_argument("--telemetry-log", default=str(apprentice_engine.DEFAULT_TELEMETRY_LOG))
+    parser.add_argument("--telemetry-log", default=str(apprentice_engine.DEFAULT_BENCH_TELEMETRY_LOG))
     parser.add_argument("--record-baseline", action="store_true")
     parser.add_argument("--append-history", action="store_true")
     parser.add_argument("--compare-baseline", action="store_true")
@@ -1311,44 +1426,52 @@ def main() -> int:
         return 0
 
     tel_path = Path(os.path.expanduser(args.telemetry_log))
+    prod_snap_before = _snapshot_live_prod_files()
     metrics: list[BenchMetric] = []
     forensics: dict[str, Any] = {}
-    if args.mode in {"offline", "all"}:
-        m_off, f_off = run_offline_suite(tel_path)
-        metrics.extend(m_off)
-        forensics["offline"] = f_off
-    if args.mode in {"live", "all"}:
-        m_live, f_live = run_live_suite()
-        metrics.extend(m_live)
-        forensics["live"] = f_live
-        # Refresh O5_eta_mape after live runs so it measures fresh V2 telemetry, and add Q1 quota savings
-        fresh_o5 = _compute_o5_eta_metric(tel_path)
-        metrics = [fresh_o5 if m.id == "O5_eta_mape" else m for m in metrics]
-        q_res = apprentice_engine.estimate_quota_savings(tel_path)
-        sc_live = apprentice_engine.load_or_init_scorecard(telemetry_log=tel_path)
-        forensics["quota_savings"] = q_res
-        forensics["lifetime_scorecard"] = sc_live
-        b_eff = q_res["by_effort"]
-        tot_k = round(q_res["total_weighted_frontier_equiv_tokens"] / 1000.0, 1)
-        std_k = round(b_eff["standard"]["weighted_frontier_equiv_tokens"] / 1000.0, 1)
-        high_k = round(b_eff["high"]["weighted_frontier_equiv_tokens"] / 1000.0, 1)
-        direct_k = round(q_res["total_direct_offloaded_tokens"] / 1000.0, 1)
-        metrics.append(
-            BenchMetric(
-                id="Q1_quota_saved_k_tok",
-                pillar="2. Efficiency",
-                name="Cloud frontier-equivalent quota saved (STANDARD vs HIGH)",
-                value=tot_k,
-                unit="k eq-tok",
-                target="> 0.0",
-                higher_is_better=True,
-                status="PASS" if tot_k > 0.0 else "FAIL",
-                details=(
-                    f"std={std_k}k ({b_eff['standard']['calls']} calls), "
-                    f"high={high_k}k ({b_eff['high']['calls']} calls), direct={direct_k}k"
-                ),
-            )
-        )
+    try:
+        with _isolated_bench_env(tel_path) as bench_env:
+            forensics["bench_cache_env"] = bench_env
+            if args.mode in {"offline", "all"}:
+                m_off, f_off = run_offline_suite(tel_path)
+                metrics.extend(m_off)
+                forensics["offline"] = f_off
+            if args.mode in {"live", "all"}:
+                m_live, f_live = run_live_suite()
+                metrics.extend(m_live)
+                forensics["live"] = f_live
+                # Refresh O5_eta_mape after live runs so it measures fresh V2 telemetry, and add Q1 quota savings
+                fresh_o5 = _compute_o5_eta_metric(tel_path)
+                metrics = [fresh_o5 if m.id == "O5_eta_mape" else m for m in metrics]
+                q_res = apprentice_engine.estimate_quota_savings(tel_path)
+                sc_live = apprentice_engine.load_or_init_scorecard(telemetry_log=tel_path)
+                forensics["quota_savings"] = q_res
+                forensics["bench_scorecard"] = sc_live
+                b_eff = q_res["by_effort"]
+                tot_k = round(q_res["total_weighted_frontier_equiv_tokens"] / 1000.0, 1)
+                std_k = round(b_eff["standard"]["weighted_frontier_equiv_tokens"] / 1000.0, 1)
+                high_k = round(b_eff["high"]["weighted_frontier_equiv_tokens"] / 1000.0, 1)
+                direct_k = round(q_res["total_direct_offloaded_tokens"] / 1000.0, 1)
+                metrics.append(
+                    BenchMetric(
+                        id="Q1_quota_saved_k_tok",
+                        pillar="2. Efficiency",
+                        name="Cloud frontier-equivalent quota saved (STANDARD vs HIGH)",
+                        value=tot_k,
+                        unit="k eq-tok",
+                        target="> 0.0",
+                        higher_is_better=True,
+                        status="PASS" if tot_k > 0.0 else "FAIL",
+                        details=(
+                            f"std={std_k}k ({b_eff['standard']['calls']} calls), "
+                            f"high={high_k}k ({b_eff['high']['calls']} calls), direct={direct_k}k"
+                        ),
+                    )
+                )
+        _assert_live_prod_untouched(prod_snap_before, _snapshot_live_prod_files())
+    except (ValueError, RuntimeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 3
 
     now_utc = dt.datetime.now(dt.timezone.utc)
     run_id = f"BMK-APPRENTICE-{now_utc.strftime('%Y%m%d_%H%M%S')}"

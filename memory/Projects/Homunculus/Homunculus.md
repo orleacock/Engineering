@@ -5,14 +5,14 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.3.7 Graduated & Tagged (09a3bf30d062 / tree 2ced8c482baa — Memory Hygiene, Lineage & Principles)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "09a3bf30d062"
-tree_hash: "6fe9f9569b4f"
-checkpoint_head_sha: "09a3bf30d062"
-checkpoint_tree_hash: "6fe9f9569b4f"
+repo_head_sha: "1e84832c9a01"
+tree_hash: "b6b8ac5ad1cf"
+checkpoint_head_sha: "1e84832c9a01"
+checkpoint_tree_hash: "b6b8ac5ad1cf"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-18"
-checkpoint_lessons_digest: "596f67aab0722498"
+checkpoint_lessons_digest: "ecf9ba23485e8fc2"
 ---
 
 ## 🧭 Homunculus Companion Notes & Project Navigation
@@ -69,7 +69,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: 09a3bf30d062 | Tree Hash: 6fe9f9569b4f
+Repository: Homunculus | HEAD SHA: 1e84832c9a01 | Tree Hash: b6b8ac5ad1cf
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -221,6 +221,7 @@ Repository: Homunculus | HEAD SHA: 09a3bf30d062 | Tree Hash: 6fe9f9569b4f
   tests/test_teach_me.py
   tests/test_v030_memory_platform.py
   tests/test_v037_memory_hygiene.py
+  tests/test_v038_option_d_plus.py
   .gitignore
   HOMUNCULUS_START_HERE.md
   install.ps1
@@ -277,12 +278,12 @@ Repository: Homunculus | HEAD SHA: 09a3bf30d062 | Tree Hash: 6fe9f9569b4f
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-18`
-- **Checkpoint Provenance**: `HEAD SHA: 09a3bf30d062` | `Tree Hash: 6fe9f9569b4f` | `Worktree: clean` | `Last Verification: SBX-20261118_150719-9fd47d0e`
+- **Checkpoint Provenance**: `HEAD SHA: 1e84832c9a01` | `Tree Hash: b6b8ac5ad1cf` | `Worktree: clean` | `Last Verification: SBX-20261118_203920-eda0e867 | Compare-Light SBX-20261118_202914-134a8559 | 94/94 unittest OK`
 - **Where We Stopped (Verified State & Context)**:
-  Closed out Tasks #71 & #72 on local /dev/tty: enrolled 8 fresh remote turnkeys, superseded LL-027/014/015/035/036 -> LL-055..059, sealed v0.3.7 AGENTS.md + EXT-07 (OpenSSH signed), and verified 0 Z5 defects across all 12 projects
+  Committed and pushed Homunculus v0.3.8 Option D+ (1e84832) with Stage Z1 Host_Runtime exclusion and dogfooded add_project_lesson fixes
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Cut immutable v0.3.7 RAID deliverable. 2. Address Task #73 ([SWARM & ORCHESTRATOR ALIGNMENT]) when ready.
+  1. Optionally index relative source paths alongside basenames in verify_claims.py SourceIndex in next release. 2. Run benchmark_homunculus.py full-system-suite after workstation commit.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

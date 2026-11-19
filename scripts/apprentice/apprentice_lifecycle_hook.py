@@ -60,15 +60,27 @@ GOVERNED_PY_SCRIPTS = frozenset(
         "apprentice_engine.py",
         "apprentice_lifecycle_hook.py",
         "apprentice_mcp_server.py",
-        "benchmark_apprentice.py",
-        "sandbox_runner.py",
         "audit_data_boundary.py",
+        "audit_memory_hygiene.py",
         "audit_portability.py",
         "audit_repo_docs.py",
         "audit_skill_hygiene.py",
+        "benchmark_apprentice.py",
+        "benchmark_apprentice_high.py",
+        "benchmark_apprentice_standard.py",
+        "benchmark_homunculus.py",
+        "format_image.py",
+        "homunculus_paths.py",
+        "inspect_hardware_ecosystem.py",
         "memory_gateway.py",
+        "render_diagram.py",
+        "sandbox_runner.py",
+        "snapshot_homunculus_version.py",
         "sync_memory.py",
+        "teach_brief.py",
+        "verified_fastpath.py",
         "verify_claims.py",
+        "version_manager.py",
     }
 )
 LMS_BLOCKED_SUBCMDS = frozenset({"daemon", "server", "load", "unload", "chat"})
@@ -1228,6 +1240,17 @@ def run_self_tests() -> dict[str, Any]:
                     }
                 )
                 assert g_res["decision"] == "allow", f"Expected allow on symlinked skill script: {g_res}"
+            hp_script = Path("/home/orin/Projects/Alchemical3D/Homunculus/scripts/homunculus_paths.py")
+            if hp_script.exists():
+                hp_res = evaluate_pre_tool_use(
+                    {
+                        "toolCall": {
+                            "name": "run_command",
+                            "args": {"CommandLine": f"python3 -B {hp_script} --map /home/orin/Projects/Engineering/scripts/apprentice_engine.py"},
+                        }
+                    }
+                )
+                assert hp_res["decision"] == "allow", f"Expected allow on homunculus_paths --map: {hp_res}"
             tmp_link = Path(td) / "sync_memory.py"
             real_sync = Path("/home/orin/Projects/Alchemical3D/Homunculus/skills/project-memory/scripts/sync_memory.py")
             if real_sync.exists():

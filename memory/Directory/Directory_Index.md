@@ -1,7 +1,7 @@
 ---
 title: "Memory & Workspace Directory Index"
 type: "directory-index"
-tree_hash: "0cf5747542d6"
+tree_hash: "238f62dce42c"
 last_synced: "2026-11-18"
 ---
 
@@ -27,6 +27,10 @@ last_synced: "2026-11-18"
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
 │   └── Directory_Index.md
+├── Host_Runtime/
+│   ├── Pages/
+│   │   └── Host_Runtime_Lessons_Vol_02.md
+│   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
 ├── Standards_and_Specs/

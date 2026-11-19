@@ -95,6 +95,7 @@ LL_WS_12_GUARD = (
     "5. Insert explicit `[TBD: <specific_missing_spec>]` whenever counts, sizes, or ratings are absent.\n"
     "6. NEVER cite lines inside YAML frontmatter (`---`...`---`); start citations after closing `---`.\n"
     "7. When inspecting a `.patch`/`.diff` without downstream repo files in context, cite ONLY the `.patch` file's own `#L` line numbers (<= its total lines).\n"
+    "8. NEVER emit concatenated hash-chains (`#file1.md#L1#file2.md#L2`), colon line refs (`[file.md:L1]`), or inverted `(#L1 file.md)` syntax; write separate `file1.md#L1-L2` and `file2.md#L3-L4` anchors within each file's actual line count.\n"
 )
 
 
@@ -215,11 +216,65 @@ def _maybe_apply_prev_verdict(
 
 
 _VERIFY_ALLOWED_EXTS = frozenset(
-    {".md", ".py", ".cfg", ".json", ".toml", ".yaml", ".yml", ".csv", ".txt", ".sh", ".ini", ".patch", ".diff"}
+    {".md", ".py", ".cfg", ".json", ".toml", ".yaml", ".yml", ".csv", ".txt", ".log", ".sh", ".ini", ".patch", ".diff"}
 )
 _NON_AUTH_DIR_PARTS = frozenset({"quarantine", "study_briefs", "addon_staging"})
-_NON_AUTH_FILENAMES = frozenset({"lessons_learned_template.md", "project_playbooks.md"})
+_NON_AUTH_FILENAMES = frozenset(
+    {
+        "lessons_learned_template.md",
+        "project_playbooks.md",
+        "engineering_principles.md",
+        "engineering_principles_archive.md",
+    }
+)
 _NON_AUTH_SUFFIXES = ("_lessons_learned.md", "_lessons_archive.md", "_playbooks.md")
+
+
+def _parse_md_frontmatter_quick(path: Path) -> dict[str, str]:
+    """Read YAML frontmatter header fields (<4 KB) from a Markdown file without external dependencies."""
+    if path.suffix.lower() != ".md" or not path.is_file():
+        return {}
+    try:
+        with path.open("rb") as fh:
+            head = fh.read(4096).decode("utf-8", errors="ignore").lstrip("\ufeff")
+    except OSError:
+        return {}
+    if not head.startswith("---"):
+        return {}
+    lines = head.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}
+    out: dict[str, str] = {}
+    for ln in lines[1:]:
+        s = ln.strip()
+        if s == "---":
+            break
+        if ":" not in s or s.startswith("#"):
+            continue
+        k, v = s.split(":", 1)
+        k_clean = k.strip().lower()
+        v_clean = v.strip().strip("\"'")
+        if k_clean:
+            out[k_clean] = v_clean
+    return out
+
+
+def _is_non_authoritative_md_frontmatter(path: Path) -> bool:
+    fm = _parse_md_frontmatter_quick(path)
+    if not fm:
+        return False
+    if fm.get("authoritative", "").lower() == "false":
+        return True
+    if fm.get("status", "").upper() == "NON_AUTHORITATIVE_REFERENCE":
+        return True
+    if fm.get("epistemic_tag", "").upper() == "EXTERNAL":
+        return True
+    if fm.get("external", "").lower() == "true":
+        return True
+    ext_ref = fm.get("external_references", "").strip()
+    if ext_ref and ext_ref.lower() not in {"[]", "none", "null", "false", "0"}:
+        return True
+    return False
 
 
 def _filter_authoritative_verify_sources(paths: list[Path]) -> list[Path]:
@@ -235,9 +290,252 @@ def _filter_authoritative_verify_sources(paths: list[Path]) -> list[Path]:
             continue
         if res.suffix.lower() not in _VERIFY_ALLOWED_EXTS and res.name not in ("LICENSE", "CNAME"):
             continue
-        if res.is_file():
-            filtered.append(raw_p)
+        if not res.is_file():
+            continue
+        if _is_non_authoritative_md_frontmatter(res):
+            continue
+        filtered.append(raw_p)
     return filtered
+
+
+def _filter_sources_by_target_entities(paths: list[Path], target_files: list[Path]) -> list[Path]:
+    """Prevent multi-entity memory vault discovery from mixing conflicting entity: sources."""
+    target_entities = {
+        fm["entity"]
+        for tf in target_files
+        for fm in (_parse_md_frontmatter_quick(Path(os.path.expanduser(str(tf))).resolve(strict=False)),)
+        if fm.get("entity") and fm["entity"] != "*"
+    }
+    if not target_entities:
+        return paths
+    kept: list[Path] = []
+    for raw_p in paths:
+        res = Path(os.path.expanduser(str(raw_p))).resolve(strict=False)
+        fm = _parse_md_frontmatter_quick(res)
+        src_ent = fm.get("entity", "")
+        if src_ent and src_ent != "*" and src_ent not in target_entities:
+            continue
+        kept.append(raw_p)
+    return kept
+
+
+_HASH_CHAIN_CITATION_RE = re.compile(
+    r"(?:^|[\s(\[`])(#?[A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6}#L\d+(?:[-–—]L?\d+)?#[A-Za-z0-9_./-]+)"
+)
+_COLON_LINE_CITATION_RE = re.compile(r"\b([A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6}:L\d+(?:[-–—]L?\d+)?)\b")
+_INVERTED_LINE_CITATION_RE = re.compile(
+    r"(?:^|[\s(\[`])(#L\d+(?:[-–—]L?\d+)?\s+[A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6})\b"
+)
+_ANGLED_FILE_ANCHOR_RE = re.compile(
+    r"(<[A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6}>#L\d+(?:[-–—]L?\d+)?)"
+)
+_EXPLICIT_FILE_ANCHOR_RE = re.compile(
+    r"(?<![A-Za-z0-9_#])([A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6})#L(\d+)(?:[-–—]L?(\d+))?"
+)
+
+
+def _source_path_match_keys(src_path: Path, repo_root: Path | None = None) -> tuple[str, set[str]]:
+    """Return lowercase basename plus relative/trailing-suffix POSIX keys for multi-dir disambiguation."""
+    res_s = Path(os.path.expanduser(str(src_path))).resolve(strict=False)
+    bn = res_s.name.lower()
+    suffixes: set[str] = {bn}
+    parts_low: tuple[str, ...] = tuple(p.lower() for p in res_s.parts if p not in {"/", "\\"})
+    if repo_root is not None:
+        try:
+            rel_posix = res_s.relative_to(Path(os.path.expanduser(str(repo_root))).resolve(strict=False)).as_posix().lower()
+            suffixes.add(rel_posix)
+            parts_low = tuple(p for p in rel_posix.split("/") if p)
+        except ValueError:
+            pass
+    for k in range(2, min(len(parts_low), 5) + 1):
+        suffixes.add("/".join(parts_low[-k:]))
+    return bn, suffixes
+
+
+def _anchor_matches_source(pref: str, bn_low: str, suffix_keys: set[str], cand_count: int) -> bool:
+    """Match anchor prefix against path suffixes when path-qualified, otherwise basename."""
+    if not pref:
+        return True
+    norm = pref.replace("\\", "/").lstrip("./").lower()
+    if "/" in norm:
+        return norm in suffix_keys
+    return norm == bn_low or cand_count == 1
+
+
+def _detect_citation_format_defects(
+    text_body: str,
+    auth_sources: list[Path],
+    repo_root: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Deterministically catch malformed #L hash-chains, colon refs, inverted refs, and out-of-bounds line anchors."""
+    by_path_suffix: dict[str, int] = {}
+    by_basename: dict[str, int] = {}
+    for src in auth_sources:
+        res_s = Path(os.path.expanduser(str(src))).resolve(strict=False)
+        if not res_s.is_file():
+            continue
+        try:
+            n_lines = max(1, len(res_s.read_text(encoding="utf-8", errors="replace").splitlines()))
+        except OSError:
+            continue
+        bn, sfx_keys = _source_path_match_keys(res_s, repo_root)
+        by_basename[bn] = max(by_basename.get(bn, 0), n_lines)
+        for sk in sfx_keys:
+            if "/" in sk:
+                by_path_suffix[sk] = max(by_path_suffix.get(sk, 0), n_lines)
+
+    defects: list[dict[str, Any]] = []
+    in_fence = False
+    for line_no, raw_ln in enumerate(text_body.splitlines(), start=1):
+        if re.match(r"^[ \t]*```", raw_ln):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        for m_hc in _HASH_CHAIN_CITATION_RE.finditer(raw_ln):
+            defects.append(
+                {
+                    "line": line_no,
+                    "type": "MALFORMED_HASH_CHAIN_CITATION",
+                    "claim": f"Concatenated multi-file citation '{m_hc.group(1)}'; split into separate `file.ext#Lstart-Lend` anchors.",
+                }
+            )
+        for m_col in _COLON_LINE_CITATION_RE.finditer(raw_ln):
+            defects.append(
+                {
+                    "line": line_no,
+                    "type": "MALFORMED_COLON_LINE_CITATION",
+                    "claim": f"Colon line reference '{m_col.group(1)}'; use `#L` syntax (`file.ext#Lstart-Lend`).",
+                }
+            )
+        for m_inv in _INVERTED_LINE_CITATION_RE.finditer(raw_ln):
+            defects.append(
+                {
+                    "line": line_no,
+                    "type": "MALFORMED_INVERTED_LINE_CITATION",
+                    "claim": f"Inverted line anchor '{m_inv.group(1)}'; put filename before `#L` (`file.ext#Lstart-Lend`).",
+                }
+            )
+        for m_ang in _ANGLED_FILE_ANCHOR_RE.finditer(raw_ln):
+            defects.append(
+                {
+                    "line": line_no,
+                    "type": "MALFORMED_ANGLED_FILE_ANCHOR",
+                    "claim": f"Angle-bracketed filename '{m_ang.group(1)}'; write `file.ext#Lstart-Lend` without `<` `>`.",
+                }
+            )
+        for m_anc in _EXPLICIT_FILE_ANCHOR_RE.finditer(raw_ln):
+            f_tok, s_str, e_str = m_anc.group(1), m_anc.group(2), m_anc.group(3)
+            s_i = int(s_str)
+            e_i = int(e_str) if e_str is not None else s_i
+            if s_i < 1 or e_i < s_i:
+                defects.append(
+                    {
+                        "line": line_no,
+                        "type": "MALFORMED_REVERSED_LINE_ANCHOR",
+                        "claim": f"Invalid/reversed line span '{m_anc.group(0)}' (start={s_i}, end={e_i}).",
+                    }
+                )
+                continue
+            norm_tok = f_tok.replace("\\", "/").lstrip("./").lower()
+            bn_tok = Path(norm_tok).name.lower()
+            max_ln = by_path_suffix.get(norm_tok) if "/" in norm_tok else None
+            if max_ln is None:
+                max_ln = by_basename.get(bn_tok)
+            if max_ln is not None and e_i > max_ln:
+                defects.append(
+                    {
+                        "line": line_no,
+                        "type": "OUT_OF_BOUNDS_LINE_ANCHOR",
+                        "claim": f"Anchor '{m_anc.group(0)}' exceeds {max_ln} total lines in {f_tok}.",
+                    }
+                )
+    return defects
+
+
+def _discover_linked_sibling_repo_anchors(
+    text_body: str,
+    auth_sources: list[Path],
+    mem_root: Path,
+) -> list[Path]:
+    """Attach 1 non-colliding authoritative anchor per same-entity sibling git repo whose SHA is cited in text_body."""
+    cand_shas = sorted(set(re.findall(r"\b[0-9a-f]{7,40}\b", text_body.lower())))
+    if not cand_shas or not mem_root.is_dir():
+        return []
+    mem_res = mem_root.resolve(strict=False)
+    used_basenames = {Path(os.path.expanduser(str(p))).name.lower() for p in auth_sources}
+    covered_dirs = {Path(os.path.expanduser(str(p))).resolve(strict=False).parent for p in auth_sources}
+    extra_anchors: list[Path] = []
+    seen_local_repos: set[Path] = set()
+
+    for src in auth_sources:
+        src_res = Path(os.path.expanduser(str(src))).resolve(strict=False)
+        if not apprentice_engine._is_path_within(src_res, mem_res) or src_res.suffix.lower() != ".md":
+            continue
+        src_fm = _parse_md_frontmatter_quick(src_res)
+        src_ent = src_fm.get("entity", "")
+        hub_candidates: list[Path] = []
+        if src_fm.get("local_path"):
+            hub_candidates.append(src_res)
+        try:
+            src_txt = src_res.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            src_txt = ""
+        for m_hub in re.finditer(r"Projects/([A-Za-z0-9_.-]+)/\1\.md", src_txt):
+            hub_p = (mem_res / "Projects" / m_hub.group(1) / f"{m_hub.group(1)}.md").resolve(strict=False)
+            if hub_p.is_file():
+                hub_candidates.append(hub_p)
+
+        for hub_p in hub_candidates:
+            hub_fm = _parse_md_frontmatter_quick(hub_p)
+            hub_ent = hub_fm.get("entity", "")
+            if src_ent and src_ent != "*" and hub_ent and hub_ent != "*" and hub_ent != src_ent:
+                continue
+            lp_raw = hub_fm.get("local_path", "").strip()
+            if not lp_raw:
+                continue
+            lp_res = Path(os.path.expanduser(lp_raw)).resolve(strict=False)
+            if lp_res in seen_local_repos or lp_res in covered_dirs or not (lp_res / ".git").exists():
+                continue
+            if apprentice_engine._inspect_path_security(lp_res):
+                continue
+            seen_local_repos.add(lp_res)
+            sha_matched = False
+            for sha_tok in cand_shas:
+                try:
+                    gp = subprocess.run(
+                        ["git", "--no-optional-locks", "-C", str(lp_res), "rev-parse", "--verify", "--quiet", f"{sha_tok}^{{commit}}"],
+                        capture_output=True,
+                        text=True,
+                        timeout=1.5,
+                        check=False,
+                    )
+                    if gp.returncode == 0:
+                        sha_matched = True
+                        break
+                except Exception:
+                    continue
+            if not sha_matched:
+                continue
+            for cand_f in sorted(lp_res.iterdir()):
+                if not cand_f.is_file() or cand_f.is_symlink():
+                    continue
+                if cand_f.name.lower() in used_basenames:
+                    continue
+                if cand_f.suffix.lower() not in _VERIFY_ALLOWED_EXTS and cand_f.name not in ("LICENSE", "CNAME"):
+                    continue
+                if apprentice_engine._inspect_path_security(cand_f):
+                    continue
+                if _is_non_authoritative_md_frontmatter(cand_f):
+                    continue
+                try:
+                    if cand_f.stat().st_size <= 65536:
+                        extra_anchors.append(cand_f)
+                        used_basenames.add(cand_f.name.lower())
+                        break
+                except OSError:
+                    continue
+    return extra_anchors
 
 
 def _run_verify_claims_check(
@@ -247,9 +545,30 @@ def _run_verify_claims_check(
     mem_root: Path,
     cwd_path: Path,
     project_dir: Path | None = None,
+    format_sources: list[Path] | None = None,
+    repo_root: Path | None = None,
 ) -> dict[str, Any]:
     auth_sources = _filter_authoritative_verify_sources(sources)
+    if auth_sources:
+        auth_sources = [*auth_sources, *_discover_linked_sibling_repo_anchors(text_body, auth_sources, mem_root)]
+    citation_defects = _detect_citation_format_defects(
+        text_body,
+        format_sources or auth_sources,
+        repo_root=repo_root or cwd_path,
+    )
     if not verify_claims_path.is_file() or not auth_sources:
+        if citation_defects:
+            return {
+                "ran": True,
+                "returncode": 1,
+                "elapsed_ms": 0.1,
+                "supported": 0,
+                "unbacked": len(citation_defects),
+                "tbd_count": 0,
+                "backed_pct": 0.0,
+                "vrf_token": None,
+                "unbacked_claims": citation_defects[:20],
+            }
         return {
             "ran": False,
             "skipped_reason": "no_authoritative_sources" if sources else "no_sources",
@@ -292,23 +611,27 @@ def _run_verify_claims_check(
             except json.JSONDecodeError:
                 report = {}
         sup = int(report.get("supported_count", 0))
-        unb = int(report.get("unbacked_count", 0))
+        unb = int(report.get("unbacked_count", 0)) + len(citation_defects)
         tbd = int(report.get("tbd_count", 0))
         tot = sup + unb
         pct = round(100.0 * sup / tot, 1) if tot > 0 else 100.0
+        eff_rc = 1 if (vp.returncode == 0 and citation_defects) else vp.returncode
         res: dict[str, Any] = {
             "ran": True,
-            "returncode": vp.returncode,
+            "returncode": eff_rc,
             "elapsed_ms": elapsed_ms,
             "supported": sup,
             "unbacked": unb,
             "tbd_count": tbd,
             "backed_pct": pct,
-            "vrf_token": report.get("vrf_token"),
+            "vrf_token": report.get("vrf_token") if not citation_defects else None,
         }
-        if vp.returncode != 0:
-            if report.get("unbacked_claims"):
-                res["unbacked_claims"] = report["unbacked_claims"][:20]
+        if citation_defects:
+            res["citation_format_defects"] = citation_defects[:20]
+        if eff_rc != 0:
+            merged_unbacked = [*citation_defects, *list(report.get("unbacked_claims") or [])]
+            if merged_unbacked:
+                res["unbacked_claims"] = merged_unbacked[:20]
             elif vp.stdout.strip() or vp.stderr.strip():
                 res["stdout_tail"] = ((vp.stdout or "") + "\n" + (vp.stderr or "")).strip()[-800:]
         return res
@@ -393,15 +716,27 @@ def _run_cpu_truth_oracles(
     audit_boundary_path = hom_root / "scripts" / "audit_data_boundary.py"
 
     draft_vrf: dict[str, Any] = {"ran": False}
-    clean_drafts = [p for p in draft_files if p.is_file() and p.suffix.lower() == ".md"]
-    clean_srcs, src_warns = select_collision_free_sources(repo_resolved, verify_sources) if verify_sources else ([], [])
+    clean_drafts = [p.resolve(strict=False) for p in draft_files if p.is_file() and p.suffix.lower() == ".md"]
+    draft_excl = {
+        x
+        for d in clean_drafts
+        for x in (d, d.with_name(f"{d.stem}_card{d.suffix}").resolve(strict=False))
+    }
+    auth_verify_srcs = [
+        p
+        for p in _filter_sources_by_target_entities(_filter_authoritative_verify_sources(verify_sources), clean_drafts)
+        if Path(os.path.expanduser(str(p))).resolve(strict=False) not in draft_excl
+    ]
+    clean_srcs, src_warns = select_collision_free_sources(repo_resolved, auth_verify_srcs) if auth_verify_srcs else ([], [])
     if clean_drafts and clean_srcs and verify_claims_path.is_file():
+        draft_txt_combined = "\n".join(df.read_text(encoding="utf-8", errors="ignore") for df in clean_drafts)
+        sib_anchors = _discover_linked_sibling_repo_anchors(draft_txt_combined, clean_srcs, mem_root)
         cmd_v = [
             sys.executable,
             "-B",
             str(verify_claims_path),
             "--sources",
-            *[str(s) for s in clean_srcs],
+            *[str(s) for s in [*clean_srcs, *sib_anchors]],
             "--memory-root",
             str(mem_root),
             "--json",
@@ -428,7 +763,10 @@ def _run_cpu_truth_oracles(
             "unbacked": int(rep_v.get("unbacked_count", 0)),
             "tbd_count": int(rep_v.get("tbd_count", 0)),
             "vrf_token": rep_v.get("vrf_token"),
-            "targets": [d.name for d in clean_drafts],
+            "targets": [
+                d.relative_to(repo_resolved).as_posix() if apprentice_engine._is_path_within(d, repo_resolved) else d.name
+                for d in clean_drafts
+            ],
             "source_warnings": src_warns,
         }
 
@@ -696,6 +1034,11 @@ def _apprentice_control_sync(
 ) -> dict[str, Any]:
     """Inspect Bionic status, manage async jobs/verdicts/epochs, or run user-confirmed remote lifecycle actions."""
     _ensure_live_process_cwd()
+    recorded_call_id: str | None = None
+    inference_started = False
+    inf_t0 = time.perf_counter()
+    inf_effort = "standard"
+    inf_mode = "fast"
     try:
         return _control_action_impl(
             action=action,
@@ -816,11 +1159,15 @@ def _filter_chunk_extract_lines(raw_text: str) -> str:
 
 def _extract_anchor_spans(text: str) -> list[tuple[str, int, int]]:
     spans: list[tuple[str, int, int]] = []
-    for m in re.finditer(r"([A-Za-z0-9_./-]+)?#L(\d+)(?:[-–—]L?(\d+))?", text):
-        pref = Path(m.group(1)).name.lower() if m.group(1) else ""
+    for m in re.finditer(r"([A-Za-z0-9_./-]+)?[#:]L(\d+)(?:[-–—]L?(\d+))?", text):
+        pref = m.group(1).replace("\\", "/").lstrip("./").lower() if m.group(1) else ""
         s_i = int(m.group(2))
         e_i = int(m.group(3)) if m.group(3) else s_i
         spans.append((pref, min(s_i, e_i), max(s_i, e_i)))
+    for m_inv in re.finditer(r"#L(\d+)(?:[-–—]L?(\d+))?\s+([A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,6})", text):
+        s_i = int(m_inv.group(1))
+        e_i = int(m_inv.group(2)) if m_inv.group(2) else s_i
+        spans.append((m_inv.group(3).replace("\\", "/").lstrip("./").lower(), min(s_i, e_i), max(s_i, e_i)))
     return spans
 
 
@@ -878,20 +1225,30 @@ def _build_chunked_repair_context(
         return f"{prompt_str.strip()}\n\n{fb}" if fb else prompt_str.strip()
 
     # Deduplicate resolved paths across multiple #L slices and order files with failing claims FIRST
+    cand_cnt = len(validated_files)
     prioritized_files = sorted(
         list(dict.fromkeys(validated_files)),
-        key=lambda vf: (0 if (vf.name.lower() in fail_low or any(p == vf.name.lower() for p, _, _ in cited_spans)) else 1),
+        key=lambda vf: (
+            0
+            if (
+                lambda bn_k, sfx_k: (
+                    vf.name.lower() in fail_low
+                    or any(_anchor_matches_source(p, bn_k, sfx_k, cand_cnt) for p, _, _ in cited_spans)
+                )
+            )(*_source_path_match_keys(vf, repo_resolved))
+            else 1
+        ),
     )
 
     slices_out: list[str] = [prompt_str.strip()]
     budget_bytes = 36000
     used_bytes = len(slices_out[0].encode("utf-8"))
     for vf in prioritized_files:
-        vf_low = vf.name.lower()
+        vf_low, vf_sfx = _source_path_match_keys(vf, repo_resolved)
         file_ranges = [
             (s_i, e_i)
             for pref, s_i, e_i in cited_spans
-            if not pref or pref == vf_low or len(validated_files) == 1
+            if _anchor_matches_source(pref, vf_low, vf_sfx, cand_cnt)
         ]
         all_lines = vf.read_text(encoding="utf-8", errors="replace").splitlines()
         n_lines = len(all_lines)
@@ -909,7 +1266,11 @@ def _build_chunked_repair_context(
                 merged[-1] = (merged[-1][0], max(merged[-1][1], we))
             else:
                 merged.append((ws, we))
-        rel_disp = str(vf.relative_to(repo_resolved)) if repo_resolved else vf.name
+        rel_disp = (
+            vf.relative_to(repo_resolved).as_posix()
+            if (repo_resolved is not None and apprentice_engine._is_path_within(vf, repo_resolved))
+            else vf.name
+        )
         for ws, we in merged:
             numbered = "\n".join(f"{idx}: {all_lines[idx - 1]}" for idx in range(ws, we + 1))
             blk = f"\n### CONTEXT SLICE: {rel_disp}#L{ws}-L{we}\n{numbered}\n"
@@ -944,12 +1305,15 @@ def _surgical_repair_unbacked_lines(
     cmd_name_prefix: str,
     project_dir: Path | None = None,
     sanitize_links: bool = False,
+    min_lines: int = 6,
+    format_sources: list[Path] | None = None,
 ) -> dict[str, Any] | None:
     """Repair ONLY the specific failing lines on 1..12 unbacked claims across <=8 draft lines while preserving verified lines."""
     unbacked_list = list(vrf_res.get("unbacked_claims") or [])
     draft_lines = draft_text.splitlines()
     non_empty_count = sum(1 for ln in draft_lines if ln.strip())
-    if non_empty_count < 6 or int(vrf_res.get("supported") or 0) < 4 or not (1 <= len(unbacked_list) <= 12):
+    min_supported = 1 if min_lines < 6 else 4
+    if non_empty_count < min_lines or int(vrf_res.get("supported") or 0) < min_supported or not (1 <= len(unbacked_list) <= 12):
         return None
 
     target_nums: list[int] = []
@@ -1009,12 +1373,18 @@ def _surgical_repair_unbacked_lines(
     slice_budget = 20000
     used_slice_bytes = 0
     cand_files = context_sources or clean_sources
+    cand_cnt = len(cand_files)
+    want_patch_slice = (
+        "UNBACKED_PROVENANCE_REF" in flagged_text
+        or "OUT_OF_BOUNDS_LINE_ANCHOR" in flagged_text
+        or "WARNING_CONTEXT_CITATION" in flagged_text
+    )
     for vf in cand_files:
-        vf_low = vf.name.lower()
+        vf_low, vf_sfx = _source_path_match_keys(vf, repo_resolved)
         file_ranges = [
             (s_i, e_i)
             for pref, s_i, e_i in spans
-            if not pref or pref == vf_low or len(cand_files) == 1
+            if _anchor_matches_source(pref, vf_low, vf_sfx, cand_cnt)
         ]
         all_src = vf.read_text(encoding="utf-8", errors="replace").splitlines()
         n_src = len(all_src)
@@ -1023,25 +1393,58 @@ def _surgical_repair_unbacked_lines(
         # Extract any "Source line N" mentioned in WARNING_CONTEXT_CITATION diagnostic text
         for sm in re.finditer(r"Source line\s+(\d+)", flagged_text):
             src_ln = int(sm.group(1))
-            if vf_low in flagged_low or len(cand_files) == 1:
+            if vf_low in flagged_low or cand_cnt == 1:
                 file_ranges.append((max(1, src_ln - 2), src_ln + 6))
-        if not file_ranges and vf_low in flagged_low:
-            file_ranges = [(1, min(n_src, 70))]
+        if not file_ranges and (vf_low in flagged_low or (want_patch_slice and vf_low == "working_tree_delta.patch")):
+            file_ranges = [(1, min(n_src, 120 if vf_low == "working_tree_delta.patch" else 70))]
         if not file_ranges:
             continue
-        windows = sorted((max(1, s_i - 18), min(n_src, e_i + 18)) for s_i, e_i in file_ranges)
+        windows = sorted(
+            (min(n_src, max(1, min(s_i, n_src) - 18)), min(n_src, max(1, e_i + 18)))
+            for s_i, e_i in file_ranges
+        )
         merged: list[tuple[int, int]] = []
         for ws, we in windows:
             if merged and ws <= merged[-1][1] + 1:
                 merged[-1] = (merged[-1][0], max(merged[-1][1], we))
             else:
                 merged.append((ws, we))
-        rel_disp = str(vf.relative_to(repo_resolved)) if repo_resolved else vf.name
+        rel_disp = (
+            vf.relative_to(repo_resolved).as_posix()
+            if (repo_resolved is not None and apprentice_engine._is_path_within(vf, repo_resolved))
+            else vf.name
+        )
         for ws, we in merged:
             numbered = "\n".join(f"{idx}: {all_src[idx - 1]}" for idx in range(ws, we + 1))
             blk = f"\n### SOURCE SLICE: {rel_disp}#L{ws}-L{we}\n{numbered}\n"
             blk_b = len(blk.encode("utf-8"))
             if used_slice_bytes + blk_b > slice_budget and slice_blocks:
+                break
+            slice_blocks.append(blk)
+            used_slice_bytes += blk_b
+
+    if not slice_blocks:
+        # Un-cited flagged bullets (e.g. QUANTITY_UNIT / SPELLED_QUANTITY with no #L anchor) still need source ground truth
+        fb_cand = sorted(
+            cand_files,
+            key=lambda p: (0 if p.name == "working_tree_delta.patch" else (2 if p.name == "shadow_cpu_oracles.txt" else 1)),
+        )
+        for vf in fb_cand:
+            if not vf.is_file():
+                continue
+            all_src = vf.read_text(encoding="utf-8", errors="replace").splitlines()
+            if not all_src:
+                continue
+            end_ln = min(len(all_src), 120 if vf.name == "working_tree_delta.patch" else 80)
+            rel_disp = (
+                vf.relative_to(repo_resolved).as_posix()
+                if (repo_resolved is not None and apprentice_engine._is_path_within(vf, repo_resolved))
+                else vf.name
+            )
+            numbered = "\n".join(f"{idx}: {all_src[idx - 1]}" for idx in range(1, end_ln + 1))
+            blk = f"\n### SOURCE SLICE: {rel_disp}#L1-L{end_ln}\n{numbered}\n"
+            blk_b = len(blk.encode("utf-8"))
+            if used_slice_bytes + blk_b > 12000 and slice_blocks:
                 break
             slice_blocks.append(blk)
             used_slice_bytes += blk_b
@@ -1080,7 +1483,8 @@ def _surgical_repair_unbacked_lines(
         "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; replace missing specs with `[TBD: <missing_spec>]`.\n"
         "4. In `[CALC: ...]`, the left of `=` MUST contain ONLY source-verbatim numbers/operators (NEVER words like `Total` or unprinted subtotals) — or omit `[CALC:]`.\n"
         "5. If a cited source line lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier in that bullet.\n"
-        "6. For QUALIFIED_QUANTITY(...) failures, a source table qualifies that quantity (e.g., '~2' / 'approx' / '(2)' instead of bare 'Qty 2') — use the exact qualified quantity from source OR output 'L<n>: DELETE' if that item is already covered by another BOM bullet.\n\n"
+        "6. For QUALIFIED_QUANTITY(...) failures, a source table qualifies that quantity (e.g., '~2' / 'approx' / '(2)' instead of bare 'Qty 2') — use the exact qualified quantity from source OR output 'L<n>: DELETE' if that item is already covered by another BOM bullet.\n"
+        "7. For MALFORMED_*_CITATION or OUT_OF_BOUNDS_LINE_ANCHOR failures, never concatenate '#file1#L1#file2#L2', '[file:L1]', or '(#L1 file)'; split into separate 'file1.md#L1-L2' and 'file2.md#L3-L4' tokens strictly <= each file's line count in SOURCE SLICES.\n\n"
         f"Verification failures:\n{fail_detail}\n\n"
         f"Flagged draft lines:\n{flagged_block}\n\n"
         + "\n".join(slice_blocks)
@@ -1163,6 +1567,8 @@ def _surgical_repair_unbacked_lines(
         mem_root,
         cwd_check,
         project_dir=project_dir,
+        format_sources=format_sources,
+        repo_root=repo_resolved,
     )
     return {
         "verified": vrf_after.get("returncode") == 0,
@@ -1203,6 +1609,19 @@ def _run_full_repair_with_guard(
     repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
     repair_tok_cap = min(max(max_budget, 4096), 6144) if effective_mode == "deep" else max_budget
     repair_timeout = 180.0 if effective_mode == "deep" else 135.0
+    sys_b = len(sys_prompt.encode("utf-8"))
+    repair_eta = apprentice_engine.estimate_eta(
+        mode=repair_mode,
+        prompt_bytes=sys_b + len(repair_prompt.encode("utf-8")),
+        max_tokens=repair_tok_cap,
+        max_eta_seconds=repair_timeout,
+        expected_turns=1,
+        has_code_context=False,
+        loaded_ctx_override=loaded_ctx,
+        calibrated_output=True,
+        cmd_name=telemetry_cmd,
+        sys_prompt_bytes=sys_b,
+    )
 
     t0 = time.perf_counter()
     res2 = apprentice_engine.invoke_chat_completion(
@@ -1215,17 +1634,18 @@ def _run_full_repair_with_guard(
         timeout_s=repair_timeout,
         preflight_checked=True,
         loaded_ctx=loaded_ctx,
+        est_prompt_tokens=repair_eta["est_prompt_tokens"],
         allow_high_floor=False,
     )
     dt = round(time.perf_counter() - t0, 3)
     apprentice_engine.record_usage_telemetry(
         {
             "cmd": telemetry_cmd,
-            "effort": eta["effort"],
+            "effort": repair_eta["effort"],
             "invocation_tier": tier,
             "mode": repair_mode,
-            "est_prompt_tokens": res2["prompt_tokens"],
-            "predicted_eta_s": eta["predicted_eta_s"],
+            "est_prompt_tokens": repair_eta["est_prompt_tokens"],
+            "predicted_eta_s": repair_eta["predicted_eta_s"],
             "max_eta_seconds": repair_timeout,
             "tripped": False,
             "is_retry": True,
@@ -1389,6 +1809,11 @@ def _apprentice_digest_sync(
 ) -> dict[str, Any]:
     """Compress bounded files, `#Lstart-Lend` slices, or git diffs via local Bionic (auto/standard/high, async_job & verify_claims)."""
     _ensure_live_process_cwd()
+    recorded_call_id: str | None = None
+    inference_started = False
+    inf_t0 = time.perf_counter()
+    inf_effort = "standard"
+    inf_mode = "fast"
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
@@ -1613,8 +2038,8 @@ def _apprentice_digest_sync(
                         f"Overall user goal (other parallel batches inspect any remaining files/sections):\n"
                         f"{prompt.strip()}\n\n"
                         f"TASK FOR THIS BATCH:\n"
-                        f"Extract ONLY matching items, fasteners (exact size + head style), metrics, rules, or facts DIRECTLY RELEVANT to the user goal from each file in this batch using terse lossless rows (`File | Item/Rule | Exact Literal/Qty/Spec | <relative_path>#L<start>-L<end>`, max ~24 rows).\n"
-                        f"- Cover relevant parts of EVERY file listed in this batch; preserve exact counts/specs cleanly and skip unrelated noise; cite exact `<relative_path>#L<start>-L<end>` verbatim (`StartLine <= EndLine`).\n"
+                        f"Extract ONLY matching items, fasteners (exact size + head style), metrics, rules, or facts DIRECTLY RELEVANT to the user goal from each file in this batch using terse lossless rows (`File | Item/Rule | Exact Literal/Qty/Spec | path/file.ext#Lstart-Lend`, max ~24 rows).\n"
+                        f"- Cover relevant parts of EVERY file listed in this batch; preserve exact counts/specs cleanly and skip unrelated noise; cite exact `path/file.ext#Lstart-Lend` verbatim (`StartLine <= EndLine`, no angle brackets).\n"
                         f"- Do NOT emit `[TBD]` for items absent from these files unless specifically asked.\n"
                         f"- Only reply `NONE` if ALL files in this batch contain ZERO relevant facts. Zero preamble."
                     )
@@ -1647,6 +2072,10 @@ def _apprentice_digest_sync(
                 return idx, span_label, ch_res, ch_assembled
 
             t_chunk0 = time.perf_counter()
+            inference_started = True
+            inf_t0 = t_chunk0
+            inf_effort = wave_eta["effort"]
+            inf_mode = effective_mode
             try:
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
                     chunk_outcomes = list(pool.map(_run_batch, enumerate(batches)))
@@ -1673,7 +2102,7 @@ def _apprentice_digest_sync(
                         "finish_reason": "error",
                     }
                 )
-                apprentice_engine.record_call_outcome(
+                sc_err_ch = apprentice_engine.record_call_outcome(
                     verdict="corrected",
                     cmd="apprentice_digest",
                     effort=wave_eta["effort"],
@@ -1681,6 +2110,7 @@ def _apprentice_digest_sync(
                     elapsed_s=err_dt,
                     note=str(exc)[:180],
                 )
+                recorded_call_id = sc_err_ch.get("call_id")
                 raise
 
             chunk_outcomes.sort(key=lambda it: it[0])
@@ -1713,7 +2143,7 @@ def _apprentice_digest_sync(
                     f"{prompt.strip()}\n\n"
                     "Below are verbatim per-slice extracts from the target file(s). "
                     "Merge, deduplicate, and filter them so ONLY exact items requested above remain. "
-                    "Preserve every exact `<file>#L<start>-L<end>` anchor and literal verbatim; never alter line numbers or invent values. "
+                    "Preserve every exact `file.ext#Lstart-Lend` anchor (without `<` `>` angle brackets) and literal verbatim; never alter line numbers or invent values. "
                     "Never invent parenthetical example numbers (e.g., 0.8mm), prefix `Warning:`/`Caution:` on any `[!WARNING]`/`[!CAUTION]` citation, "
                     "and ensure any `[CALC: ...]` uses ONLY literal source numbers on the left of `=`. Zero preamble.\n\n"
                     + "\n\n".join(kept_labeled_blocks)
@@ -1844,8 +2274,8 @@ def _apprentice_digest_sync(
             effective_prompt = prompt.strip()
             if effort_norm == "standard" and max_toks >= 256:
                 effective_prompt += (
-                    "\n\n[Format: terse `- ` bullets starting on line 1; include ONLY requested fields + `#Lstart-Lend` "
-                    "(omit unrequested table columns/notes, intro sentences, prompt summary counts, and uncalculated group totals).]"
+                    "\n\n[Format: terse `- ` bullets starting on line 1; include ONLY requested fields + `file.ext#Lstart-Lend` "
+                    "(always include bare filename before `#L` with zero `<` `>` angle brackets; omit unrequested table columns/notes, intro sentences, prompt summary counts, and uncalculated group totals).]"
                 )
             elif effort_norm == "high":
                 effective_prompt += CONCISE_HIGH_THINKING_HINT
@@ -1878,6 +2308,10 @@ def _apprentice_digest_sync(
                 include_git_diff=eff_diff,
             )
             t_call0 = time.perf_counter()
+            inference_started = True
+            inf_t0 = t_call0
+            inf_effort = eta["effort"]
+            inf_mode = effective_mode
             try:
                 res = apprentice_engine.invoke_chat_completion(
                     api_url=api_url,
@@ -1911,7 +2345,7 @@ def _apprentice_digest_sync(
                         "finish_reason": "error",
                     }
                 )
-                apprentice_engine.record_call_outcome(
+                sc_err_ss = apprentice_engine.record_call_outcome(
                     verdict="corrected",
                     cmd="apprentice_digest",
                     effort=eta["effort"],
@@ -1920,6 +2354,7 @@ def _apprentice_digest_sync(
                     soft_eta_exceeded=eta["soft_eta_exceeded"],
                     note=str(exc)[:180],
                 )
+                recorded_call_id = sc_err_ss.get("call_id")
                 raise
 
             apprentice_engine.record_usage_telemetry(
@@ -2023,12 +2458,13 @@ def _apprentice_digest_sync(
         if verify_claims and (validated_files or include_git_diff):
             hom_root, mem_root = _resolve_homunculus_and_memory()
             verify_claims_path = hom_root / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
-            if validated_files and repo_resolved is not None:
-                base_sources, _ = select_collision_free_sources(repo_resolved, validated_files)
+            auth_val_files = _filter_authoritative_verify_sources(validated_files)
+            if auth_val_files and repo_resolved is not None:
+                base_sources, _ = select_collision_free_sources(repo_resolved, auth_val_files)
             else:
                 seen_bn: set[str] = set()
                 base_sources = []
-                for vf in validated_files:
+                for vf in auth_val_files:
                     if vf.name not in seen_bn:
                         seen_bn.add(vf.name)
                         base_sources.append(vf)
@@ -2039,7 +2475,15 @@ def _apprentice_digest_sync(
                 diff_src_text,
                 include_git_diff=bool(include_git_diff),
             ) as (clean_sources, _mounted_patch):
-                vrf_res = _run_verify_claims_check(res["content"], clean_sources, verify_claims_path, mem_root, cwd_check)
+                vrf_res = _run_verify_claims_check(
+                    res["content"],
+                    clean_sources,
+                    verify_claims_path,
+                    mem_root,
+                    cwd_check,
+                    format_sources=validated_files,
+                    repo_root=repo_resolved or cwd_check,
+                )
                 if vrf_res.get("ran"):
                     if vrf_res.get("returncode") == 0:
                         claims_verified = True
@@ -2053,7 +2497,7 @@ def _apprentice_digest_sync(
                             surg = _surgical_repair_unbacked_lines(
                                 draft_text=draft_for_heal,
                                 vrf_res=vrf_for_heal,
-                                context_sources=clean_sources,
+                                context_sources=list(dict.fromkeys([*validated_files, *clean_sources])),
                                 clean_sources=clean_sources,
                                 repo_resolved=repo_resolved,
                                 verify_claims_path=verify_claims_path,
@@ -2065,6 +2509,7 @@ def _apprentice_digest_sync(
                                 tier=tier,
                                 eta=eta,
                                 cmd_name_prefix="apprentice_digest",
+                                format_sources=validated_files,
                             )
                         except Exception:
                             surg = None
@@ -2112,7 +2557,7 @@ def _apprentice_digest_sync(
                                 "1. DELETE any intro or heading sentence so line 1 starts directly with `- `.\n"
                                 "2. DELETE any unbacked summary counts echoed from the prompt, uncalculated group totals, or invalid `[CALC: ...]` labels (if `[CALC: ...]` is used, the left side of `=` MUST contain ONLY source-verbatim integers/operators like `[CALC: 4 + 1 + 1 + 2 = 8]` — NEVER variable words like `Total` AND NEVER derived subtotals not literally printed in source lines; expand sums into literal source numbers or omit `[CALC:]` completely).\n"
                                 "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; if a cited source slice lies inside a `> [!WARNING]` or `> [!CAUTION]` block, explicitly include `Warning:` or `Caution:` / the hazard qualifier on that bullet; for QUALIFIED_QUANTITY(...) failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or remove redundant duplicates.\n"
-                                "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines) instead of missing external files; insert `[TBD: ...]` for missing values.\n\n"
+                                "4. Keep ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present in the context above; NEVER cite YAML frontmatter (`---`...`---`) lines, NEVER concatenate `#file1#L1#file2#L2` / `[file:L1]` / `(#L1 file)` anchors, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines) instead of missing external files; insert `[TBD: ...]` for missing values.\n\n"
                                 f"Previous draft:\n{draft_for_heal}\n"
                             )
                             try:
@@ -2173,11 +2618,12 @@ def _apprentice_digest_sync(
             soft_eta_exceeded=eta.get("soft_eta_exceeded", False),
             note=(heal_error or "")[:180],
         )
-        sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
+        recorded_call_id = sc_rec.get("call_id")
+        sc_fmt = _scorecard_suffix(recorded_call_id)
         out_payload: dict[str, Any] = {
             "ok": True,
             "schema_version": apprentice_engine.SCHEMA_VERSION,
-            "call_id": sc_rec.get("call_id"),
+            "call_id": recorded_call_id,
             "verdict": verdict,
             "effort": eta["effort"],
             "route_id": route_plan["route_id"],
@@ -2215,9 +2661,20 @@ def _apprentice_digest_sync(
             "user_notice": f"[APPRENTICE NOTICE] ETA breaker handed digest back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
-        sc_str = _scorecard_suffix()
+        if inference_started and recorded_call_id is None:
+            sc_fb = apprentice_engine.record_call_outcome(
+                verdict="corrected",
+                cmd="apprentice_digest",
+                effort=inf_effort,
+                mode=inf_mode,
+                elapsed_s=round(time.perf_counter() - inf_t0, 3),
+                note=str(exc)[:180],
+            )
+            recorded_call_id = sc_fb.get("call_id")
+        sc_str = _scorecard_suffix(recorded_call_id)
         return {
             "ok": False,
+            "call_id": recorded_call_id,
             "error_code": "DIGEST_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
@@ -2403,9 +2860,11 @@ def _discover_repo_sources(repo_resolved: Path) -> list[Path]:
         rel_parts = cand.relative_to(repo_resolved).parts
         if SKIP_SOURCE_DIRS & set(rel_parts):
             continue
+        if _NON_AUTH_DIR_PARTS & {seg.lower() for seg in rel_parts}:
+            continue
         if cand.suffix.lower() in exts and not apprentice_engine._inspect_path_security(cand):
             out.append(cand)
-    return out
+    return _filter_authoritative_verify_sources(out)
 
 
 def _apprentice_repo_audit_sync(
@@ -2429,6 +2888,11 @@ def _apprentice_repo_audit_sync(
 ) -> dict[str, Any]:
     """Fused repo audit: preflight -> audit_repo_docs -> Bionic sweep -> Quarantine note -> verify_claims Pass 1."""
     _ensure_live_process_cwd()
+    recorded_call_id: str | None = None
+    inference_started = False
+    inf_t0 = time.perf_counter()
+    inf_effort = "standard"
+    inf_mode = "fast"
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
@@ -2578,6 +3042,10 @@ def _apprentice_repo_audit_sync(
             include_git_diff=eff_diff,
         )
         t_call0 = time.perf_counter()
+        inference_started = True
+        inf_t0 = t_call0
+        inf_effort = eta["effort"]
+        inf_mode = effective_mode
         try:
             res = apprentice_engine.invoke_chat_completion(
                 api_url=api_url,
@@ -2611,7 +3079,7 @@ def _apprentice_repo_audit_sync(
                     "finish_reason": "error",
                 }
             )
-            apprentice_engine.record_call_outcome(
+            sc_err_ra = apprentice_engine.record_call_outcome(
                 verdict="corrected",
                 cmd="apprentice_repo_audit",
                 effort=eta["effort"],
@@ -2620,6 +3088,7 @@ def _apprentice_repo_audit_sync(
                 soft_eta_exceeded=eta["soft_eta_exceeded"],
                 note=str(exc)[:180],
             )
+            recorded_call_id = sc_err_ra.get("call_id")
             raise
 
         apprentice_engine.record_usage_telemetry(
@@ -2709,9 +3178,14 @@ def _apprentice_repo_audit_sync(
 
         # 3. Sanitize placeholder links & collision-free verify_claims (with optional .patch diff grounding) BEFORE gateway write
         sanitized_content, links_fixed = sanitize_quarantine_placeholder_links(res["content"])
-        raw_sources = validated_files if validated_files else discovered_repo_sources
-        base_clean_sources, src_warnings = select_collision_free_sources(repo_resolved, raw_sources)
         proj_mem_dir = mem_root / "Projects" / project
+        proj_hub_md = proj_mem_dir / f"{project}.md"
+        entity_targets = validated_files if validated_files else ([proj_hub_md] if proj_hub_md.is_file() else [])
+        raw_sources = _filter_sources_by_target_entities(
+            _filter_authoritative_verify_sources(validated_files if validated_files else discovered_repo_sources),
+            entity_targets,
+        )
+        base_clean_sources, src_warnings = select_collision_free_sources(repo_resolved, raw_sources)
 
         with _mount_optional_patch_sources(
             base_clean_sources,
@@ -2781,7 +3255,7 @@ def _apprentice_repo_audit_sync(
                         "CRITICAL REPAIR RULES:\n"
                         "1. DELETE any intro sentence (such as 'Based on ...') and delete any unbacked prompt summary counts or uncalculated group totals.\n"
                         "2. Rewrite accurately using ONLY exact source literals, units, counts, and `#Lstart-Lend` anchors present verbatim in the files above (any `[CALC: ...]` tag MUST have pure numeric arithmetic using literal source numbers on the left of `=`, NEVER words like `Total` or derived subtotals).\n"
-                        "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; NEVER cite YAML frontmatter (`---`...`---`) lines, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines); for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
+                        "3. Never invent parenthetical example numbers/units like `(e.g., 0.8mm)`; prefix `Warning:` or `Caution:` / hazard qualifier if citing `[!WARNING]`/`[!CAUTION]` blocks; NEVER cite YAML frontmatter (`---`...`---`) lines, NEVER concatenate `#file1#L1#file2#L2` / `[file:L1]` / `(#L1 file)` anchors, and on `.patch`/`.diff` audits cite ONLY the `.patch`'s own `#L` lines (`<=` its total lines); for `QUALIFIED_QUANTITY(...)` failures, use the exact qualified quantity from source (e.g., `~2` / `approx` / `(2)` instead of bare `Qty 2`) or drop duplicates; replace any unbacked or uncertain value with `[TBD: <specific_missing_spec>]`.\n\n"
                         f"Previous draft:\n{draft_for_scrub}\n"
                     )
                     try:
@@ -2886,11 +3360,12 @@ def _apprentice_repo_audit_sync(
             soft_eta_exceeded=eta["soft_eta_exceeded"],
             note=(heal_error or "")[:180],
         )
-        sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
+        recorded_call_id = sc_rec.get("call_id")
+        sc_fmt = _scorecard_suffix(recorded_call_id)
         return {
             "ok": True,
             "schema_version": apprentice_engine.SCHEMA_VERSION,
-            "call_id": sc_rec.get("call_id"),
+            "call_id": recorded_call_id,
             "verdict": verdict,
             "effort": eta["effort"],
             "route_id": route_plan["route_id"],
@@ -2930,9 +3405,20 @@ def _apprentice_repo_audit_sync(
             "user_notice": f"[APPRENTICE NOTICE] Repo audit ETA breaker handed back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
-        sc_str = _scorecard_suffix()
+        if inference_started and recorded_call_id is None:
+            sc_fb = apprentice_engine.record_call_outcome(
+                verdict="corrected",
+                cmd="apprentice_repo_audit",
+                effort=inf_effort,
+                mode=inf_mode,
+                elapsed_s=round(time.perf_counter() - inf_t0, 3),
+                note=str(exc)[:180],
+            )
+            recorded_call_id = sc_fb.get("call_id")
+        sc_str = _scorecard_suffix(recorded_call_id)
         return {
             "ok": False,
+            "call_id": recorded_call_id,
             "error_code": "AUDIT_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
@@ -3035,6 +3521,9 @@ def _run_smoke_test(
     staged_file: Path,
     safe_staging: Path,
     smoke_args: list[str] | None,
+    *,
+    repo_resolved: Path | None = None,
+    context_files: list[Path] | None = None,
 ) -> dict[str, Any]:
     """Run an optional argv-only smoke check on a staged Python artifact inside scratch/."""
     if smoke_args is None:
@@ -3042,6 +3531,24 @@ def _run_smoke_test(
     clean_args = [str(a) for a in smoke_args]
     if any("\x00" in a for a in clean_args):
         raise apprentice_engine.SidecarFirewallError("[SECURITY_FIREWALL_BLOCKED] Invalid null byte in smoke_test_args.")
+    env = os.environ.copy()
+    env.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+    extra_py_paths: list[str] = []
+    if repo_resolved is not None and repo_resolved.is_dir():
+        for cand_d in (repo_resolved, repo_resolved / "scripts", repo_resolved / "src"):
+            if cand_d.is_dir():
+                cand_s = str(cand_d)
+                if cand_s not in extra_py_paths:
+                    extra_py_paths.append(cand_s)
+    for ctx_f in context_files or []:
+        ctx_p = Path(os.path.expanduser(str(ctx_f))).resolve(strict=False).parent
+        if ctx_p.is_dir() and (repo_resolved is None or apprentice_engine._is_path_within(ctx_p, repo_resolved)):
+            ctx_s = str(ctx_p)
+            if ctx_s not in extra_py_paths:
+                extra_py_paths.append(ctx_s)
+    if extra_py_paths:
+        existing_pp = env.get("PYTHONPATH", "").strip()
+        env["PYTHONPATH"] = os.pathsep.join([*extra_py_paths, existing_pp] if existing_pp else extra_py_paths)
     try:
         proc = subprocess.run(
             [sys.executable, "-B", str(staged_file), *clean_args],
@@ -3050,6 +3557,7 @@ def _run_smoke_test(
             text=True,
             timeout=15,
             check=False,
+            env=env,
         )
         return {
             "ran": True,
@@ -3059,6 +3567,85 @@ def _run_smoke_test(
         }
     except subprocess.TimeoutExpired as exc:
         return {"ran": True, "ok": False, "returncode": None, "output_tail": f"smoke test timed out after 15s: {exc}"}
+
+
+_KNOWN_LOCAL_WORKSTATION_MODULES = frozenset(
+    {
+        "apprentice",
+        "apprentice_engine",
+        "apprentice_mcp_server",
+        "apprentice_lifecycle_hook",
+        "benchmark_apprentice",
+        "sync_memory",
+        "memory_gateway",
+        "verify_claims",
+        "sandbox_runner",
+        "audit_data_boundary",
+        "audit_portability",
+        "audit_repo_docs",
+        "format_image",
+        "render_diagram",
+        "teach_brief",
+        "audit_skill_hygiene",
+        "inspect_hardware_ecosystem",
+        "homunculus_paths",
+    }
+)
+
+
+def _detect_uncontextualized_local_imports(
+    staged_file: Path,
+    validated_files: list[Path],
+    compare_path: Path | None,
+    repo_resolved: Path | None,
+) -> str | None:
+    """Flag staged Python scripts that import local workstation/repo modules when context_files and compare_against are both empty."""
+    if staged_file.suffix.lower() != ".py" or not staged_file.is_file():
+        return None
+    if validated_files or compare_path is not None:
+        return None
+    try:
+        tree = ast.parse(staged_file.read_text(encoding="utf-8", errors="replace"))
+    except (OSError, SyntaxError):
+        return None
+
+    repo_py_stems: set[str] = set()
+    if repo_resolved is not None and repo_resolved.is_dir():
+        for scan_dir in (repo_resolved, repo_resolved / "scripts", repo_resolved / "src"):
+            if not scan_dir.is_dir():
+                continue
+            try:
+                for entry in scan_dir.iterdir():
+                    if entry.is_file() and entry.suffix.lower() == ".py" and entry.stem != "__init__":
+                        repo_py_stems.add(entry.stem)
+            except OSError:
+                continue
+
+    stdlib_names = set(getattr(sys, "stdlib_module_names", ())) | {"__future__", "typing_extensions"}
+    flagged: set[str] = set()
+    for node in ast.walk(tree):
+        mods: list[str] = []
+        if isinstance(node, ast.Import):
+            mods.extend(alias.name.split(".")[0] for alias in node.names if alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            if node.level and node.level > 0:
+                flagged.add(f".{node.module or ''}")
+                continue
+            if node.module:
+                mods.append(node.module.split(".")[0])
+        for mod in mods:
+            if not mod or mod == staged_file.stem or mod in stdlib_names:
+                continue
+            if mod in _KNOWN_LOCAL_WORKSTATION_MODULES or mod in repo_py_stems:
+                flagged.add(mod)
+
+    if not flagged:
+        return None
+    joined = ", ".join(sorted(flagged))
+    return (
+        f"[UNCONTEXTUALIZED_LOCAL_IMPORT] Staged script imports local module(s) ({joined}) without "
+        "context_files or compare_against; pass target module #L slices in context_files to prevent signature hallucination."
+    )
 
 
 def _detect_sleep_selftest_antipattern(staged_file: Path) -> str | None:
@@ -3164,6 +3751,11 @@ def _apprentice_stage_patch_sync(
 ) -> dict[str, Any]:
     """Stage isolated scratch code/patch + py_compile + optional smoke check with dedicated self-heal retry."""
     _ensure_live_process_cwd()
+    recorded_call_id: str | None = None
+    inference_started = False
+    inf_t0 = time.perf_counter()
+    inf_effort = "standard"
+    inf_mode = "fast"
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
         route_stage = apprentice_engine.classify_hybrid_effort(
@@ -3260,6 +3852,10 @@ def _apprentice_stage_patch_sync(
             sys_prompt_bytes=sys_bytes,
         )
         t_call0 = time.perf_counter()
+        inference_started = True
+        inf_t0 = t_call0
+        inf_effort = eta1["effort"]
+        inf_mode = effective_mode
         try:
             res1 = apprentice_engine.invoke_chat_completion(
                 api_url=api_url,
@@ -3293,7 +3889,7 @@ def _apprentice_stage_patch_sync(
                     "finish_reason": "error",
                 }
             )
-            apprentice_engine.record_call_outcome(
+            sc_err_sp = apprentice_engine.record_call_outcome(
                 verdict="corrected",
                 cmd="apprentice_stage_patch",
                 effort=eta1["effort"],
@@ -3302,6 +3898,7 @@ def _apprentice_stage_patch_sync(
                 soft_eta_exceeded=eta1["soft_eta_exceeded"],
                 note=str(exc)[:180],
             )
+            recorded_call_id = sc_err_sp.get("call_id")
             raise
 
         apprentice_engine.record_usage_telemetry(
@@ -3334,21 +3931,42 @@ def _apprentice_stage_patch_sync(
             compare_against=compare_path,
             telemetry={"eta": eta1, **{k: v for k, v in res1.items() if k != "content"}},
         )
-        if receipt["py_compile_ok"] is not False and not fence_err1:
+        unctx_import_err = (
+            _detect_uncontextualized_local_imports(Path(receipt["staged_file"]), validated_files, compare_path, repo_resolved)
+            if receipt["py_compile_ok"] is not False
+            else None
+        )
+        if receipt["py_compile_ok"] is not False and not fence_err1 and not unctx_import_err:
             eff_smoke_args1, auto_smoke1 = _resolve_effective_smoke_args(Path(receipt["staged_file"]), smoke_test_args)
-            smoke_res = _run_smoke_test(Path(receipt["staged_file"]), safe_staging, eff_smoke_args1)
+            smoke_res = _run_smoke_test(
+                Path(receipt["staged_file"]),
+                safe_staging,
+                eff_smoke_args1,
+                repo_resolved=repo_resolved,
+                context_files=validated_files,
+            )
             if auto_smoke1:
                 smoke_res["auto_detected"] = True
+                smoke_res["smoke_provenance"] = "llm_self_authored"
+            else:
+                smoke_res["smoke_provenance"] = "caller_supplied" if eff_smoke_args1 is not None else "none"
         else:
-            smoke_res = {"ran": False, "ok": True}
+            smoke_res = {"ran": False, "ok": not bool(unctx_import_err), "smoke_provenance": "none"}
 
         attempts = 2 if res1.get("reasoning_recovered") else 1
         repair_retried = bool(res1.get("reasoning_recovered"))
         heal_elapsed_s = 0.0
-        handed_back_reason: str | None = None
+        handed_back_reason: str | None = unctx_import_err
         fence_err2: str | None = None
         res2: dict[str, Any] | None = None
-        needs_heal = (receipt["py_compile_ok"] is False) or bool(fence_err1) or (smoke_res.get("ran") and not smoke_res.get("ok"))
+        needs_heal = (
+            not unctx_import_err
+            and (
+                (receipt["py_compile_ok"] is False)
+                or bool(fence_err1)
+                or (smoke_res.get("ran") and not smoke_res.get("ok"))
+            )
+        )
 
         if needs_heal:
             repair_mode = "fast" if effective_mode in ("fast", "deep") else effective_mode
@@ -3363,6 +3981,7 @@ def _apprentice_stage_patch_sync(
                 if sleep_warn:
                     diag_err = f"{diag_err}\n{sleep_warn}"
             faulty_code = apprentice_engine.extract_staged_code(res1["content"])
+            numbered_faulty = "\n".join(f"{idx}: {ln}" for idx, ln in enumerate(faulty_code.splitlines(), 1))
             repair_ctx_block = _build_stage_repair_context(
                 validated_files,
                 slice_items,
@@ -3372,11 +3991,12 @@ def _apprentice_stage_patch_sync(
             fence_lang = "python" if is_py_target else ""
             repair_prompt = (
                 f"{prompt.strip()}{repair_ctx_block}\n\nPrevious draft failed local validation with:\n{diag_err}\n"
-                "Fix the issue cleanly (reconciling implementation and any `--self-test` assertions with the "
-                "prompt contract and authoritative context above; prefer deterministic synchronous assertions "
-                "or an optional injectable `clock=time.monotonic` callable over private-attribute mutations or "
-                "blocking `time.sleep(>=0.1)` races) and return ONLY the complete corrected file in one code fence.\n\n"
-                f"Faulty draft:\n```{fence_lang}\n{faulty_code}\n```\n"
+                "Fix the root cause cleanly (inspect any traceback line numbers in the numbered Faulty draft below, "
+                "trace failing fields backward through input normalization/regex/parsing before copying existing logic, "
+                "prefer deterministic synchronous assertions or an optional injectable `clock=time.monotonic` callable over "
+                "private-attribute mutations or blocking `time.sleep(>=0.1)` races) and return ONLY the complete unnumbered "
+                "corrected file in one code fence.\n\n"
+                f"Faulty draft (numbered for traceback debugging — omit line numbers in your output):\n```{fence_lang}\n{numbered_faulty}\n```\n"
             )
             if repair_mode == "deep":
                 repair_prompt += CONCISE_HIGH_THINKING_HINT
@@ -3385,10 +4005,15 @@ def _apprentice_stage_patch_sync(
                 "and emit the complete corrected file immediately.]"
             )
             repair_bytes = sys_bytes + len(repair_prompt.encode("utf-8"))
+            repair_out_budget = (
+                min(4096, max(max_toks, 3072))
+                if (repair_mode != "cpu-bg" and is_py_target)
+                else max_toks
+            )
             repair_eta = apprentice_engine.estimate_eta(
                 mode=repair_mode,
                 prompt_bytes=repair_bytes,
-                max_tokens=max_toks,
+                max_tokens=repair_out_budget,
                 max_eta_seconds=repair_budget,
                 expected_turns=1,
                 has_code_context=True,
@@ -3410,7 +4035,7 @@ def _apprentice_stage_patch_sync(
                         mode=repair_mode,
                         system_prompt=sys_prompt,
                         user_content=repair_prompt,
-                        max_tokens=max_toks,
+                        max_tokens=repair_out_budget,
                         timeout_s=repair_timeout_s,
                         preflight_checked=True,
                         loaded_ctx=loaded_ctx,
@@ -3459,12 +4084,28 @@ def _apprentice_stage_patch_sync(
                         telemetry=consolidated_telemetry,
                     )
                     if receipt["py_compile_ok"] is not False and not fence_err2:
-                        eff_smoke_args2, auto_smoke2 = _resolve_effective_smoke_args(Path(receipt["staged_file"]), smoke_test_args)
-                        smoke_res = _run_smoke_test(Path(receipt["staged_file"]), safe_staging, eff_smoke_args2)
-                        if auto_smoke2:
-                            smoke_res["auto_detected"] = True
+                        unctx_import_err = _detect_uncontextualized_local_imports(
+                            Path(receipt["staged_file"]), validated_files, compare_path, repo_resolved
+                        )
+                        if unctx_import_err:
+                            handed_back_reason = unctx_import_err
+                            smoke_res = {"ran": False, "ok": False, "smoke_provenance": "none"}
+                        else:
+                            eff_smoke_args2, auto_smoke2 = _resolve_effective_smoke_args(Path(receipt["staged_file"]), smoke_test_args)
+                            smoke_res = _run_smoke_test(
+                                Path(receipt["staged_file"]),
+                                safe_staging,
+                                eff_smoke_args2,
+                                repo_resolved=repo_resolved,
+                                context_files=validated_files,
+                            )
+                            if auto_smoke2:
+                                smoke_res["auto_detected"] = True
+                                smoke_res["smoke_provenance"] = "llm_self_authored"
+                            else:
+                                smoke_res["smoke_provenance"] = "caller_supplied" if eff_smoke_args2 is not None else "none"
                     else:
-                        smoke_res = {"ran": False, "ok": False}
+                        smoke_res = {"ran": False, "ok": False, "smoke_provenance": "none"}
                 except Exception as heal_exc:
                     heal_elapsed_s = round(time.perf_counter() - t_heal0, 3)
                     handed_back_reason = f"Repair retry failed (kept Pass 1 draft): {heal_exc}"
@@ -3479,6 +4120,7 @@ def _apprentice_stage_patch_sync(
         final_ok = (
             (receipt["py_compile_ok"] is not False)
             and (not active_fence_err)
+            and (not unctx_import_err)
             and (active_finish == "stop")
             and (not smoke_res.get("ran") or bool(smoke_res.get("ok")))
         )
@@ -3500,10 +4142,11 @@ def _apprentice_stage_patch_sync(
             soft_eta_exceeded=eta1["soft_eta_exceeded"],
             note=handed_back_reason or "",
         )
-        sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
+        recorded_call_id = sc_rec.get("call_id")
+        sc_fmt = _scorecard_suffix(recorded_call_id)
         return {
             "ok": final_ok,
-            "call_id": sc_rec.get("call_id"),
+            "call_id": recorded_call_id,
             "verdict": verdict,
             "effort": eta1["effort"],
             "invocation_tier": tier,
@@ -3536,9 +4179,20 @@ def _apprentice_stage_patch_sync(
             "user_notice": f"[APPRENTICE NOTICE] Patch staging ETA breaker handed back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
-        sc_str = _scorecard_suffix()
+        if inference_started and recorded_call_id is None:
+            sc_fb = apprentice_engine.record_call_outcome(
+                verdict="corrected",
+                cmd="apprentice_stage_patch",
+                effort=inf_effort,
+                mode=inf_mode,
+                elapsed_s=round(time.perf_counter() - inf_t0, 3),
+                note=str(exc)[:180],
+            )
+            recorded_call_id = sc_fb.get("call_id")
+        sc_str = _scorecard_suffix(recorded_call_id)
         return {
             "ok": False,
+            "call_id": recorded_call_id,
             "error_code": "STAGE_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
@@ -3609,6 +4263,11 @@ def _apprentice_shadow_review_sync(
 ) -> dict[str, Any]:
     """Parallel Second-Set-of-Eyes card: CPU truth oracles + compact local semantic contradiction critic."""
     _ensure_live_process_cwd()
+    recorded_call_id: str | None = None
+    inference_started = False
+    inf_t0 = time.perf_counter()
+    inf_effort = "standard"
+    inf_mode = "fast"
     try:
         prev_res = _maybe_apply_prev_verdict(prev_call_id, prev_verdict, prev_verdict_note)
         api_url = apprentice_engine.validate_loopback_url(apprentice_engine.resolve_default_api_url())
@@ -3690,9 +4349,12 @@ def _apprentice_shadow_review_sync(
 
         hom_root, mem_root = _resolve_homunculus_and_memory()
         verify_claims_path = hom_root / "skills" / "claim-verification" / "scripts" / "verify_claims.py"
-        discovered = _discover_repo_sources(repo_resolved)
-        draft_set = set(draft_paths)
-        verify_sources = [p for p in (validated_all or discovered) if p not in draft_set] or discovered
+        discovered = _filter_sources_by_target_entities(_discover_repo_sources(repo_resolved), validated_all)
+        draft_set = {p.resolve(strict=False) for p in draft_paths}
+        non_draft_explicit = [p for p in validated_all if p.resolve(strict=False) not in draft_set]
+        verify_sources = _filter_authoritative_verify_sources(non_draft_explicit) or [
+            p for p in discovered if p.resolve(strict=False) not in draft_set
+        ]
 
         # Stage 1: Sub-second CPU Truth Oracles
         py_targets = [p for p in validated_all if p.suffix.lower() == ".py"]
@@ -3718,7 +4380,9 @@ def _apprentice_shadow_review_sync(
             f"Task: {review_goal}\n"
             "Inspect the CPU Oracle findings, context files, and working-tree diff below. Surface ONLY high-signal semantic "
             "contradictions, safety/caution violations, hardware/API mismatches, or regression risks (<=450 words, terse `- ` bullets "
-            "with exact verbatim `<file>#L<start>-L<end>` anchors). Zero preamble.\n\n"
+            "with exact verbatim `file.ext#Lstart-Lend` anchors without angle brackets). "
+            "Preserve `Warning:`/`Caution:`/`never` qualifiers when citing prohibition/warning lines, and prefer "
+            "`working_tree_delta.patch#Lstart-Lend` for diff hunks of non-authoritative templates/ledgers or duplicate-basename docs. Zero preamble.\n\n"
             f"{oracle_brief}"
         )
         if effort_norm == "high":
@@ -3734,6 +4398,7 @@ def _apprentice_shadow_review_sync(
             sys_prompt=sys_prompt,
             context_slices=slices_for_llm,
             diff_repo_wide=not bool(context_files or draft_files),
+            compact_git_diff=False,
         )
         loaded_ctx = srv.get("loaded_context_length")
         eff_max_toks = apprentice_engine.resolve_effective_max_tokens(effective_mode, max_tokens)
@@ -3757,18 +4422,55 @@ def _apprentice_shadow_review_sync(
             sys_prompt_bytes=sys_bytes,
             include_git_diff=eff_diff,
         )
-        res = apprentice_engine.invoke_chat_completion(
-            api_url=api_url,
-            model_id=apprentice_engine.DEFAULT_MODEL_ID,
-            mode=effective_mode,
-            system_prompt=sys_prompt,
-            user_content=assembled,
-            max_tokens=eff_max_toks,
-            timeout_s=min(max(max_eta + 90.0, 210.0), 300.0) if effective_mode == "deep" else min(max(max_eta + 60.0, 150.0), 300.0),
-            preflight_checked=True,
-            loaded_ctx=loaded_ctx,
-            est_prompt_tokens=eta["est_prompt_tokens"],
-        )
+        t_sh0 = time.perf_counter()
+        inference_started = True
+        inf_t0 = t_sh0
+        inf_effort = eta["effort"]
+        inf_mode = effective_mode
+        try:
+            res = apprentice_engine.invoke_chat_completion(
+                api_url=api_url,
+                model_id=apprentice_engine.DEFAULT_MODEL_ID,
+                mode=effective_mode,
+                system_prompt=sys_prompt,
+                user_content=assembled,
+                max_tokens=eff_max_toks,
+                timeout_s=min(max(max_eta + 90.0, 210.0), 300.0) if effective_mode == "deep" else min(max(max_eta + 60.0, 150.0), 300.0),
+                preflight_checked=True,
+                loaded_ctx=loaded_ctx,
+                est_prompt_tokens=eta["est_prompt_tokens"],
+            )
+        except Exception as exc:
+            err_dt = round(time.perf_counter() - t_sh0, 3)
+            apprentice_engine.record_usage_telemetry(
+                {
+                    "cmd": "apprentice_shadow_review",
+                    "effort": eta["effort"],
+                    "invocation_tier": tier,
+                    "mode": effective_mode,
+                    "est_prompt_tokens": eta["est_prompt_tokens"],
+                    "predicted_eta_s": eta["predicted_eta_s"],
+                    "max_eta_seconds": max_eta,
+                    "tripped": False,
+                    "soft_eta_exceeded": eta["soft_eta_exceeded"],
+                    "http_error": True,
+                    "verdict": "corrected",
+                    "elapsed_s": err_dt,
+                    "observed_tg_tok_s": None,
+                    "finish_reason": "error",
+                }
+            )
+            sc_err_sh = apprentice_engine.record_call_outcome(
+                verdict="corrected",
+                cmd="apprentice_shadow_review",
+                effort=eta["effort"],
+                mode=effective_mode,
+                elapsed_s=err_dt,
+                soft_eta_exceeded=eta.get("soft_eta_exceeded", False),
+                note=str(exc)[:180],
+            )
+            recorded_call_id = sc_err_sh.get("call_id")
+            raise
         apprentice_engine.record_usage_telemetry(
             {
                 "cmd": "apprentice_shadow_review",
@@ -3788,31 +4490,90 @@ def _apprentice_shadow_review_sync(
                 "finish_reason": res["finish_reason"],
             }
         )
-        clean_base, _ = select_collision_free_sources(repo_resolved, context_for_llm)
+        clean_base, _ = select_collision_free_sources(repo_resolved, _filter_authoritative_verify_sources(context_for_llm))
+        shadow_healed = False
+        heal_elapsed_s = 0.0
         with _mount_optional_patch_sources(
             clean_base,
             assembled,
             include_git_diff=bool(include_git_diff),
             extra_text_sources={"shadow_cpu_oracles.txt": oracle_brief},
         ) as (v_srcs, _mp):
-            vrf_card = _run_verify_claims_check(res["content"], v_srcs, verify_claims_path, mem_root, repo_resolved)
+            vrf_card = _run_verify_claims_check(
+                res["content"],
+                v_srcs,
+                verify_claims_path,
+                mem_root,
+                repo_resolved,
+                format_sources=context_for_llm,
+                repo_root=repo_resolved,
+            )
+            if vrf_card.get("ran") and vrf_card.get("returncode") != 0 and res.get("finish_reason") == "stop":
+                t_sh_heal0 = time.perf_counter()
+                try:
+                    surg_sh = _surgical_repair_unbacked_lines(
+                        draft_text=res["content"],
+                        vrf_res=vrf_card,
+                        context_sources=list(dict.fromkeys([*context_for_llm, *v_srcs])),
+                        clean_sources=v_srcs,
+                        repo_resolved=repo_resolved,
+                        verify_claims_path=verify_claims_path,
+                        mem_root=mem_root,
+                        cwd_check=repo_resolved,
+                        api_url=api_url,
+                        sys_prompt=sys_prompt,
+                        loaded_ctx=loaded_ctx,
+                        tier=tier,
+                        eta=eta,
+                        cmd_name_prefix="apprentice_shadow_review",
+                        min_lines=1,
+                        format_sources=context_for_llm,
+                    )
+                except Exception:
+                    surg_sh = None
+                if surg_sh is not None:
+                    res = {
+                        **res,
+                        "prompt_tokens": int(res.get("prompt_tokens") or 0) + int(surg_sh["prompt_tokens"]),
+                        "completion_tokens": int(res.get("completion_tokens") or 0) + int(surg_sh["completion_tokens"]),
+                    }
+                    if surg_sh.get("verified"):
+                        heal_elapsed_s = round(time.perf_counter() - t_sh_heal0, 3)
+                        res = {**res, "content": surg_sh["content"]}
+                        vrf_card = {
+                            "ran": True,
+                            "returncode": 0,
+                            "elapsed_ms": surg_sh["vrf_after"].get("elapsed_ms"),
+                            "surgical_repair": True,
+                            "initial": vrf_card,
+                            "after_heal": surg_sh["vrf_after"],
+                        }
+                        shadow_healed = True
 
         vrf_ok = (not vrf_card.get("ran")) or (vrf_card.get("returncode") == 0)
-        verdict = "clean" if (res["finish_reason"] == "stop" and vrf_ok) else "corrected"
+        if res["finish_reason"] == "stop" and vrf_ok:
+            verdict = "healed" if shadow_healed else "clean"
+        else:
+            verdict = "corrected"
+        total_shadow_s = round(float(res["elapsed_s"]) + heal_elapsed_s, 3)
         sc_rec = apprentice_engine.record_call_outcome(
             verdict=verdict,
             cmd="apprentice_shadow_review",
             effort=eta["effort"],
             mode=effective_mode,
-            elapsed_s=float(res["elapsed_s"]),
+            elapsed_s=total_shadow_s,
+            heal_elapsed_s=heal_elapsed_s,
             soft_eta_exceeded=eta.get("soft_eta_exceeded", False),
         )
-        sc_fmt = _scorecard_suffix(sc_rec.get("call_id"))
+        recorded_call_id = sc_rec.get("call_id")
+        sc_fmt = _scorecard_suffix(recorded_call_id)
         return {
             "ok": True,
             "schema_version": "SHADOW_SECOND_EYES_V1",
-            "call_id": sc_rec.get("call_id"),
+            "call_id": recorded_call_id,
             "verdict": verdict,
+            "verify_healed": shadow_healed,
+            "heal_elapsed_s": heal_elapsed_s,
             "effort": eta["effort"],
             "route_id": route_plan["route_id"],
             "cpu_oracles": cpu_oracles,
@@ -3825,7 +4586,7 @@ def _apprentice_shadow_review_sync(
             "scorecard": sc_fmt,
             "user_notice": (
                 f"[APPRENTICE NOTICE] Shadow Second-Eyes Card ({eta['effort']}/{effective_mode}, "
-                f"route={route_plan['route_id']}) completed in {res['elapsed_s']}s (cpu_oracles={cpu_oracles['elapsed_ms']}ms, "
+                f"route={route_plan['route_id']}) completed in {total_shadow_s}s (cpu_oracles={cpu_oracles['elapsed_ms']}ms, "
                 f"verdict={verdict}). | {sc_fmt}"
             ),
         }
@@ -3842,9 +4603,20 @@ def _apprentice_shadow_review_sync(
             "user_notice": f"[APPRENTICE NOTICE] Shadow review ETA breaker handed back to frontier thread. | {sc_str}",
         }
     except Exception as exc:
-        sc_str = _scorecard_suffix()
+        if inference_started and recorded_call_id is None:
+            sc_fb = apprentice_engine.record_call_outcome(
+                verdict="corrected",
+                cmd="apprentice_shadow_review",
+                effort=inf_effort,
+                mode=inf_mode,
+                elapsed_s=round(time.perf_counter() - inf_t0, 3),
+                note=str(exc)[:180],
+            )
+            recorded_call_id = sc_fb.get("call_id")
+        sc_str = _scorecard_suffix(recorded_call_id)
         return {
             "ok": False,
+            "call_id": recorded_call_id,
             "error_code": "SHADOW_REVIEW_ERROR",
             "error": str(exc),
             "scorecard": sc_str,
@@ -5515,6 +6287,142 @@ def run_self_tests() -> dict[str, Any]:
             srv30.shutdown()
             srv30.server_close()
     checks.append("v26_hybrid_auto_routing_8192_reduce_patch_verify_and_shadow_review")
+
+    # 31. V2.5 Phase-1/2 deterministic guards: Quarantine discovery exclusion, malformed #L validator, uncontextualized local import guard, smoke_provenance, and HTTP error call_id propagation
+    with tempfile.TemporaryDirectory() as td31:
+        p31 = Path(td31)
+        r31 = p31 / "repo"
+        (r31 / "Projects" / "Demo" / "Quarantine").mkdir(parents=True)
+        (r31 / "BOM.md").write_text("---\nentity: \"Alpha\"\n---\n# BOM\n- M3x8 SHCS: Qty 4\n- M3x12 BHCS: Qty 2\n", encoding="utf-8")
+        (r31 / "OtherEntity.md").write_text("---\nentity: \"Beta\"\n---\n# Other\n- M5x16 SHCS: Qty 8\n", encoding="utf-8")
+        (r31 / "NonAuth.md").write_text("---\nauthoritative: false\n---\n# Draft\n- Qty 99\n", encoding="utf-8")
+        (r31 / "Projects" / "Demo" / "Quarantine" / "Quarantine_README.md").write_text("# Quarantined\n", encoding="utf-8")
+        disc31 = _discover_repo_sources(r31)
+        assert [p.name for p in disc31] == ["BOM.md", "OtherEntity.md"], f"Quarantine/non-auth leaked into discovery: {disc31}"
+        ent_f31 = _filter_sources_by_target_entities(disc31, [r31 / "BOM.md"])
+        assert [p.name for p in ent_f31] == ["BOM.md"], f"Cross-entity leaked: {ent_f31}"
+
+        defects31 = _detect_citation_format_defects(
+            "- Bad chain #BOM.md#L4#Guide.md#L9\n- Bad colon [BOM.md:L5]\n- Bad inv (#L4 BOM.md)\n- Bad angled <BOM.md>#L5\n- Bad OOB BOM.md#L4-L99\n- Valid BOM.md#L5-L6\n",
+            [r31 / "BOM.md"],
+        )
+        def_types31 = {d["type"] for d in defects31}
+        assert {
+            "MALFORMED_HASH_CHAIN_CITATION",
+            "MALFORMED_COLON_LINE_CITATION",
+            "MALFORMED_INVERTED_LINE_CITATION",
+            "MALFORMED_ANGLED_FILE_ANCHOR",
+            "OUT_OF_BOUNDS_LINE_ANCHOR",
+        }.issubset(def_types31), f"missing citation defect types: {defects31}"
+        assert all(d["line"] != 6 for d in defects31), f"false positive on valid anchor: {defects31}"
+
+        st_bad_py = p31 / "staged_bad.py"
+        st_bad_py.write_text("import json\nimport verify_claims\nprint(verify_claims)\n", encoding="utf-8")
+        imp_err31 = _detect_uncontextualized_local_imports(st_bad_py, [], None, r31)
+        assert imp_err31 is not None and "verify_claims" in imp_err31, f"expected unctx import block: {imp_err31}"
+        assert _detect_uncontextualized_local_imports(st_bad_py, [r31 / "BOM.md"], None, r31) is None
+
+        # Verify .log accepted for claim verification and _run_smoke_test PYTHONPATH resolves repo modules
+        log31 = r31 / "sandbox.log"
+        log31.write_text("[FAIL] EROFS_BLOCKED_WRITE line 1\n", encoding="utf-8")
+        assert _filter_authoritative_verify_sources([log31]) == [log31], ".log source must not be skipped"
+        helper_mod31 = r31 / "local_mod31.py"
+        helper_mod31.write_text("VAL = 42\n", encoding="utf-8")
+        stg_dir31 = p31 / "stg31"
+        stg_dir31.mkdir(mode=0o700)
+        smoke_py31 = stg_dir31 / "check31.py"
+        smoke_py31.write_text("import sys, local_mod31\nassert '--self-test' in sys.argv and local_mod31.VAL == 42\n", encoding="utf-8")
+        sm_res31 = _run_smoke_test(smoke_py31, stg_dir31, ["--self-test"], repo_resolved=r31, context_files=[helper_mod31])
+        assert sm_res31["ran"] and sm_res31["ok"], f"contextualized smoke PYTHONPATH failed: {sm_res31}"
+    checks.append("v25_quarantine_filter_citation_defects_and_uncontextualized_import_guard")
+
+    # 32. V2.6.1 path-suffix citation bounds across collided basenames + shadow_review surgical heal
+    with tempfile.TemporaryDirectory() as td32:
+        p32 = Path(td32)
+        r32 = p32 / "repo"
+        (r32 / "skills" / "short_skill").mkdir(parents=True)
+        (r32 / "skills" / "long_skill").mkdir(parents=True)
+        (r32 / "skills" / "short_skill" / "SKILL.md").write_text("# Short\nRule A\nRule B\nRule C\nRule D\n", encoding="utf-8")
+        long_lines = ["# Long Skill"] + [f"Line {i}: value={i}" for i in range(2, 96)]
+        (r32 / "skills" / "long_skill" / "SKILL.md").write_text("\n".join(long_lines) + "\n", encoding="utf-8")
+        defs32 = _detect_citation_format_defects(
+            "- Valid `skills/long_skill/SKILL.md#L84-L85`\n- Invalid `skills/short_skill/SKILL.md#L10`\n- Invalid `skills/long_skill/SKILL.md#L120`\n",
+            [r32 / "skills" / "short_skill" / "SKILL.md", r32 / "skills" / "long_skill" / "SKILL.md"],
+            repo_root=r32,
+        )
+        assert len(defs32) == 2 and all(d["line"] != 1 for d in defs32), f"path-suffix line bounds misfired: {defs32}"
+
+        subprocess.run(["git", "init", "-q", str(r32)], check=True)
+        subprocess.run(["git", "-C", str(r32), "config", "user.email", "t@example.com"], check=True)
+        subprocess.run(["git", "-C", str(r32), "config", "user.name", "Tester"], check=True)
+        (r32 / "Spec.md").write_text("# Spec\nPWM_FREQ_HZ = 20000\nMAX_DUTY_PCT = 85\nSHUTDOWN_TIMEOUT_MS = 150\nOVERCURRENT_RETRY = 3\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(r32), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(r32), "commit", "-q", "-m", "init"], check=True)
+        (r32 / "Spec.md").write_text("# Spec\nPWM_FREQ_HZ = 20000\nMAX_DUTY_PCT = 85\nSHUTDOWN_TIMEOUT_MS = 250\nOVERCURRENT_RETRY = 3\n", encoding="utf-8")
+
+        class _ShHealHandler(http.server.BaseHTTPRequestHandler):
+            def do_GET(self) -> None:
+                body = json.dumps({"data": [{"id": apprentice_engine.DEFAULT_MODEL_ID, "state": "loaded", "loaded_context_length": 49152, "max_context_length": 49152}]}).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_POST(self) -> None:
+                ln = int(self.headers.get("Content-Length") or "0")
+                req_d = json.loads(self.rfile.read(ln).decode("utf-8"))
+                u_msg = "\n".join(str(m.get("content") or "") for m in req_d.get("messages") or [])
+                if "SURGICAL LINE REPAIR" in u_msg:
+                    ans = "L4: - Diff updated `SHUTDOWN_TIMEOUT_MS = 250` cleanly (`working_tree_delta.patch#L5`)."
+                else:
+                    ans = (
+                        "- `PWM_FREQ_HZ = 20000` matches (`Spec.md#L2`).\n"
+                        "- `MAX_DUTY_PCT = 85` matches (`Spec.md#L3`).\n"
+                        "- `OVERCURRENT_RETRY = 3` matches (`Spec.md#L5`).\n"
+                        "- Diff updated `SHUTDOWN_TIMEOUT_MS = 250` cleanly (see `999ms` phantom claim)."
+                    )
+                body = json.dumps(
+                    {"choices": [{"index": 0, "message": {"role": "assistant", "content": ans}, "finish_reason": "stop"}], "usage": {"prompt_tokens": 120, "completion_tokens": 45}}
+                ).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args: object) -> None:
+                return
+
+        srv32 = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _ShHealHandler)
+        thr32 = threading.Thread(target=srv32.serve_forever, daemon=True)
+        thr32.start()
+        saved32 = {k: os.environ.get(k) for k in ("APPRENTICE_API_URL", "BIONIC_SIDECAR_API_URL", "APPRENTICE_TELEMETRY_LOG", "APPRENTICE_SCORECARD_PATH", "APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT")}
+        try:
+            os.environ["APPRENTICE_API_URL"] = f"http://127.0.0.1:{srv32.server_address[1]}/v1"
+            os.environ["BIONIC_SIDECAR_API_URL"] = os.environ["APPRENTICE_API_URL"]
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(p32 / "tel32.jsonl")
+            os.environ["APPRENTICE_SCORECARD_PATH"] = str(p32 / "sc32.json")
+            os.environ["APPRENTICE_ALLOW_CUSTOM_LOOPBACK_PORT"] = "1"
+            sh32 = _apprentice_shadow_review_sync(
+                repo=str(r32),
+                draft_files=["Spec.md"],
+                context_files=["skills/short_skill/SKILL.md", "skills/long_skill/SKILL.md"],
+                include_git_diff=True,
+                effort="auto",
+                async_job=False,
+            )
+            assert sh32["ok"] and sh32["verdict"] == "healed" and sh32["verify_healed"] is True, f"expected compact shadow heal: {sh32}"
+            assert sh32["cpu_oracles"]["verify_claims_drafts"]["targets"] == ["Spec.md"]
+        finally:
+            for k, v in saved32.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+            srv32.shutdown()
+            srv32.server_close()
+    checks.append("v261_path_suffix_citation_bounds_and_shadow_review_surgical_heal")
 
     return {
         "schema_version": "APPRENTICE_MCP_V1",

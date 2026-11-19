@@ -4,7 +4,7 @@ parent_note: "Pestle_Rotational_Bowden"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-08"
+last_synced: "2026-11-18"
 ---
 
 # 🧠 Pestle Rotational Bowden — Engineering Lessons Learned & Post-Mortem Ledger (`Pestle_Rotational_Bowden_Lessons_Learned`)

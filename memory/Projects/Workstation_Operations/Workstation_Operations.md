@@ -6,13 +6,13 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "868c6ff4621c"
+tree_hash: "7adb62cc6fb3"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "868c6ff4621c"
+checkpoint_tree_hash: "7adb62cc6fb3"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-18"
-checkpoint_lessons_digest: "34c8ad0f81d3d7d1"
+checkpoint_lessons_digest: "ba09f43cc2060a11"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -56,12 +56,12 @@ checkpoint_lessons_digest: "34c8ad0f81d3d7d1"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-18`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 868c6ff4621c` | `Worktree: untracked` | `Last Verification: SBX-20261118_150719-9fd47d0e`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 7adb62cc6fb3` | `Worktree: untracked` | `Last Verification: SBX-20261118_205811-ca257d09 | BC-0292 | H5 PASS 3/3`
 - **Where We Stopped (Verified State & Context)**:
-  Armed Z5 (audit_memory_hygiene.py --check-commit) in git_pre_commit_boundary.sh (SBX-20261118_150719-9fd47d0e: 2/2 controls, 2/2 +faults), recorded LL-WS-25, and completed Tasks #71/#72 ahead of v0.3.7 RAID deliverable cut
+  Shipped Apprentice v2.6.1 weak-spot fixes (BC-0292 HEALED, H5 PASS 3/3) and promoted Homunculus v0.3.8 Option D+ into live Engineering/memory with Host_Runtime shelf
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Cut immutable v0.3.7 RAID deliverable (snapshot_homunculus_version.py --label memory_hygiene_v037). 2. Address Task #39 (Project State Ledger & Apprentice field) when ready.
+  1. Monitor Apprentice v2.6.1 scorecard on multi-file commits. 2. Optionally index relative source paths in verify_claims.py SourceIndex in next release.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -70,7 +70,7 @@ checkpoint_lessons_digest: "34c8ad0f81d3d7d1"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 868c6ff4621c
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 7adb62cc6fb3
   apprentice/
   apprentice/apprentice_lifecycle_hook.py
   apprentice/apprentice_mcp_server.py
@@ -96,6 +96,8 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 868c6ff4621c
   apprentice_benchmark_history.jsonl
   apprentice_engine.py
   benchmark_apprentice.py
+  benchmark_apprentice_high.py
+  benchmark_apprentice_standard.py
   benchmark_history.jsonl
   benchmark_homunculus.py
   bootstrap_workstation.sh

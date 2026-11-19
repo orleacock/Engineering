@@ -213,7 +213,7 @@
     "Projects/NetCom_Engineering_Assistant/Archive/NetCom_Engineering_Assistant_Lessons_Archive.md": {
       "lines": 29,
       "sections": 2,
-      "sha256": "3ce0953b80adc576"
+      "sha256": "6149f5a38f35ffa8"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md": {
       "lines": 209,
@@ -223,7 +223,7 @@
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md": {
       "lines": 68,
       "sections": 7,
-      "sha256": "08955dea6cee1188"
+      "sha256": "8bc6e0befc83b9c0"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md": {
       "lines": 50,
@@ -233,5 +233,5 @@
   },
   "total_docs": 9,
   "vectors_cache_rel": ".cache/NetCom_scoring_vectors.json",
-  "vectors_digest": "2ce401ed04905912"
+  "vectors_digest": "4bbbaac603040a0e"
 }

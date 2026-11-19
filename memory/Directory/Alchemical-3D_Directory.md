@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "ab8ebc132895"
+tree_hash: "fc979bf47f57"
 last_synced: "2026-11-18"
 ---
 
@@ -32,6 +32,10 @@ last_synced: "2026-11-18"
 │   ├── Alchemical-3D_Directory.md
 │   ├── Alchemical-3D_memory_index.json
 │   └── Directory_Index.md
+├── Host_Runtime/
+│   ├── Pages/
+│   │   └── Host_Runtime_Lessons_Vol_02.md
+│   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
 ├── Profile/
@@ -71,7 +75,15 @@ last_synced: "2026-11-18"
 │   │   └── Extras_Lessons_Learned.md
 │   ├── Homunculus/
 │   │   ├── Archive/
-│   │   │   └── Homunculus_Lessons_Archive.md
+│   │   │   ├── Homunculus_Lessons_Archive.md
+│   │   │   ├── Homunculus_Lessons_Archive_Vol_02.md
+│   │   │   ├── Homunculus_Lessons_Archive_Vol_03.md
+│   │   │   ├── Homunculus_Lessons_Archive_Vol_04.md
+│   │   │   ├── Homunculus_Lessons_Archive_Vol_05.md
+│   │   │   ├── Homunculus_Lessons_Archive_Vol_06.md
+│   │   │   └── Homunculus_Lessons_Archive_Vol_07.md
+│   │   ├── Pages/
+│   │   │   └── Homunculus_Lessons_Vol_02.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Version_Logs/
@@ -385,7 +397,7 @@ last_synced: "2026-11-18"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 09a3bf30d062` | `Tree: 6fe9f9569b4f`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 1e84832c9a01` | `Tree: b6b8ac5ad1cf`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text
@@ -544,7 +556,8 @@ last_synced: "2026-11-18"
 │   ├── test_project_memory.py
 │   ├── test_teach_me.py
 │   ├── test_v030_memory_platform.py
-│   └── test_v037_memory_hygiene.py
+│   ├── test_v037_memory_hygiene.py
+│   └── test_v038_option_d_plus.py
 ├── .git/ (excluded)
 ├── .gitignore
 ├── HOMUNCULUS_START_HERE.md

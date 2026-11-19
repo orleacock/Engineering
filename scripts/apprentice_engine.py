@@ -22,53 +22,53 @@ Pure Python 3.10+ standard library (zero third-party packages).
   CLI Flags     : --backend, --api-url, --model, --system-prompt, --json, --self-test, --prompt-tokens, --homunculus-root, --memory-root, --project, --name, --title, --reason, --overwrite, --staging-dir, --target-filename, --compare-against, action, --profile, --user-confirmed, --dry-run, --epoch-label, --no-archive, --job-file, --job-id, --wait-seconds, --timeout-seconds, --limit, --call-id, --verdict, --note, --effort, --mode, --invocation-tier, --prompt, --prompt-file, --context-file, --repo, --include-git-diff, --max-tokens, --max-eta-seconds, --expected-turns, --force-slow
                   status, check-eta, query, audit-to-quarantine, stage-code, control, self-test
   Symbol Index  (jump directly via read_file StartLine/EndLine):
-    - def resolve_backend_adapter (#L162-L186)       | def migrate_legacy_bionic_cache (#L189-L251)
-    - def resolve_effort_and_mode (#L403-L417)       | def has_cross_audit_intent (#L420-L423)
-    - def classify_hybrid_effort (#L426-L513)        | def extract_diff_patch_text (#L516-L523)
-    - def has_effective_git_diff (#L526-L528)        | def parse_context_spec (#L531-L541)
-    - class SidecarFirewallError (#L544-L545)        | class SidecarEtaTrippedError (#L548-L553)
-    - def load_system_prompt (#L556-L567)            | def validate_loopback_url (#L570-L601)
-    - def _safe_subprocess_cwd (#L604-L627)          | def _safe_abspath (#L630-L636)
-    - def _is_path_within (#L639-L644)               | def _inspect_path_security (#L647-L677)
-    - def _find_git_toplevel (#L680-L686)            | def is_code_heavy_payload (#L689-L693)
-    - def parse_and_validate_context_items (#L696-L723) | def parse_and_validate_context_specs (#L726-L738)
-    - def validate_input_paths (#L741-L800)          | def validate_staging_dir (#L803-L866)
-    - def resolve_effective_max_tokens (#L869-L879)  | def estimate_eta (#L882-L1020)
-    - def _http_json_request (#L1023-L1043)          | def _deduplicate_full_context_diff (#L1046-L1123)
-    - def plan_line_preserving_chunks (#L1126-L1187) | def pack_chunk_batches (#L1190-L1242)
-    - def estimate_chunked_eta (#L1245-L1292)        | def assemble_prompt_payload (#L1295-L1446)
-    - def resolve_default_api_url (#L1449-L1460)     | def _resolve_kv_state_path (#L1463-L1472)
-    - def _pid_alive (#L1475-L1484)                  | def acquire_kv_budget (#L1488-L1599)
-    - def has_active_exclusive_kv_slot (#L1602-L1620) | def invoke_chat_completion (#L1623-L1792)
-    - def extract_staged_code (#L1795-L1805)         | def _read_prompt_arg (#L1808-L1815)
-    - def resolve_max_eta_seconds (#L1818-L1824)     | def _resolve_telemetry_log (#L1827-L1837)
-    - def _resolve_scorecard_path (#L1840-L1856)     | def _resolve_jobs_dir (#L1859-L1875)
-    - def _write_private_json_atomic (#L1878-L1896)  | def _resolve_scorecard_archive_path (#L1899-L1905)
-    - def _seed_counts_from_telemetry (#L1908-L1940) | def compute_scorecard_metrics (#L1943-L1976)
-    - def load_or_init_scorecard (#L1979-L2016)      | def record_call_outcome (#L2019-L2085)
-    - def apply_call_verdict (#L2088-L2137)          | def format_lifetime_scorecard (#L2140-L2158)
-    - def reset_scorecard (#L2161-L2260)             | def estimate_quota_savings (#L2263-L2323)
-    - def record_usage_telemetry (#L2326-L2352)      | def summarize_usage_telemetry (#L2355-L2399)
-    - def probe_server_models (#L2402-L2505)         | def preflight_live_inference (#L2508-L2522)
-    - def _enforce_eta_or_raise (#L2525-L2610)       | def cmd_status (#L2613-L2649)
-    - def cmd_check_eta (#L2652-L2708)               | def cmd_query (#L2711-L2854)
-    - def cmd_audit_to_quarantine (#L2857-L3054)     | def _write_private_staging_file (#L3057-L3066)
-    - def stage_code_artifact (#L3069-L3148)         | def cmd_stage_code (#L3151-L3294)
-    - def build_concrete_model_config (#L3304-L3393) | def _read_hw_counters (#L3396-L3435)
-    - def _probe_lms_daemon (#L3438-L3455)           | def _run_lms_cmd (#L3458-L3471)
-    - def _has_gui_display_socket (#L3474-L3484)     | def _control_plan (#L3487-L3519)
-    - def _control_status (#L3522-L3538)             | def _control_load (#L3541-L3605)
-    - def _control_start_headless (#L3608-L3664)     | def _control_unload (#L3667-L3689)
-    - def _control_stop_server (#L3692-L3706)        | def _safe_job_file (#L3709-L3719)
-    - def submit_async_job (#L3722-L3760)            | def acquire_bjob_worker_slot (#L3764-L3867)
-    - def _execute_job_worker (#L3870-L3912)         | def get_job_status (#L3915-L3954)
-    - def collect_any_jobs (#L3957-L3994)            | def list_jobs (#L3997-L4015)
-    - def _normalize_control_cli_action (#L4018-L4021) | def cmd_control (#L4024-L4074)
-    - def cmd_job_worker (#L4077-L4078)              | def cmd_job_status (#L4081-L4084)
-    - def cmd_job_collect (#L4087-L4090)             | def cmd_job_wait (#L4093-L4096)
-    - def cmd_job_list (#L4099-L4102)                | def cmd_verdict (#L4105-L4108)
-    - def run_self_tests (#L4111-L5060)              | def build_parser (#L5063-L5168)
-    - def main (#L5171-L5209)
+    - def resolve_backend_adapter (#L167-L191)       | def migrate_legacy_bionic_cache (#L194-L256)
+    - def resolve_effort_and_mode (#L408-L422)       | def has_cross_audit_intent (#L425-L428)
+    - def classify_hybrid_effort (#L431-L524)        | def extract_diff_patch_text (#L527-L534)
+    - def has_effective_git_diff (#L537-L539)        | def parse_context_spec (#L542-L552)
+    - class SidecarFirewallError (#L555-L556)        | class SidecarEtaTrippedError (#L559-L564)
+    - def load_system_prompt (#L567-L578)            | def validate_loopback_url (#L581-L612)
+    - def _safe_subprocess_cwd (#L615-L638)          | def _safe_abspath (#L641-L647)
+    - def _is_path_within (#L650-L655)               | def _inspect_path_security (#L658-L688)
+    - def _find_git_toplevel (#L691-L697)            | def is_code_heavy_payload (#L700-L704)
+    - def parse_and_validate_context_items (#L707-L734) | def parse_and_validate_context_specs (#L737-L749)
+    - def validate_input_paths (#L752-L811)          | def validate_staging_dir (#L814-L880)
+    - def resolve_effective_max_tokens (#L883-L893)  | def estimate_eta (#L896-L1040)
+    - def _http_json_request (#L1043-L1063)          | def _deduplicate_full_context_diff (#L1066-L1143)
+    - def plan_line_preserving_chunks (#L1146-L1207) | def pack_chunk_batches (#L1210-L1262)
+    - def estimate_chunked_eta (#L1265-L1328)        | def assemble_prompt_payload (#L1331-L1483)
+    - def resolve_default_api_url (#L1486-L1497)     | def _resolve_kv_state_path (#L1500-L1509)
+    - def _pid_alive (#L1512-L1521)                  | def acquire_kv_budget (#L1525-L1636)
+    - def has_active_exclusive_kv_slot (#L1639-L1657) | def invoke_chat_completion (#L1660-L1829)
+    - def extract_staged_code (#L1832-L1842)         | def _read_prompt_arg (#L1845-L1852)
+    - def resolve_max_eta_seconds (#L1855-L1861)     | def _resolve_telemetry_log (#L1864-L1874)
+    - def _resolve_scorecard_path (#L1877-L1893)     | def _resolve_jobs_dir (#L1896-L1912)
+    - def _write_private_json_atomic (#L1915-L1933)  | def _resolve_scorecard_archive_path (#L1936-L1945)
+    - def _seed_counts_from_telemetry (#L1948-L1980) | def compute_scorecard_metrics (#L1983-L2016)
+    - def load_or_init_scorecard (#L2019-L2056)      | def record_call_outcome (#L2059-L2125)
+    - def apply_call_verdict (#L2128-L2177)          | def format_lifetime_scorecard (#L2180-L2198)
+    - def reset_scorecard (#L2201-L2300)             | def estimate_quota_savings (#L2303-L2363)
+    - def record_usage_telemetry (#L2366-L2392)      | def summarize_usage_telemetry (#L2395-L2439)
+    - def probe_server_models (#L2442-L2545)         | def preflight_live_inference (#L2548-L2562)
+    - def _enforce_eta_or_raise (#L2565-L2650)       | def cmd_status (#L2653-L2689)
+    - def cmd_check_eta (#L2692-L2748)               | def cmd_query (#L2751-L2894)
+    - def cmd_audit_to_quarantine (#L2897-L3094)     | def _write_private_staging_file (#L3097-L3106)
+    - def stage_code_artifact (#L3109-L3188)         | def cmd_stage_code (#L3191-L3334)
+    - def build_concrete_model_config (#L3344-L3433) | def _read_hw_counters (#L3436-L3475)
+    - def _probe_lms_daemon (#L3478-L3495)           | def _run_lms_cmd (#L3498-L3511)
+    - def _has_gui_display_socket (#L3514-L3524)     | def _control_plan (#L3527-L3559)
+    - def _control_status (#L3562-L3578)             | def _control_load (#L3581-L3645)
+    - def _control_start_headless (#L3648-L3704)     | def _control_unload (#L3707-L3729)
+    - def _control_stop_server (#L3732-L3746)        | def _safe_job_file (#L3749-L3759)
+    - def submit_async_job (#L3762-L3800)            | def acquire_bjob_worker_slot (#L3804-L3907)
+    - def _execute_job_worker (#L3910-L3991)         | def get_job_status (#L3994-L4033)
+    - def collect_any_jobs (#L4036-L4073)            | def list_jobs (#L4076-L4094)
+    - def _normalize_control_cli_action (#L4097-L4100) | def cmd_control (#L4103-L4153)
+    - def cmd_job_worker (#L4156-L4157)              | def cmd_job_status (#L4160-L4163)
+    - def cmd_job_collect (#L4166-L4169)             | def cmd_job_wait (#L4172-L4175)
+    - def cmd_job_list (#L4178-L4181)                | def cmd_verdict (#L4184-L4187)
+    - def run_self_tests (#L4190-L5226)              | def build_parser (#L5229-L5334)
+    - def main (#L5337-L5375)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -126,6 +126,11 @@ DEFAULT_SCORECARD_PATH = DEFAULT_CACHE_DIR / "apprentice_scorecard.json"
 DEFAULT_SCORECARD_ARCHIVE_PATH = DEFAULT_CACHE_DIR / "apprentice_scorecard_archive.jsonl"
 DEFAULT_KV_STATE_PATH = DEFAULT_CACHE_DIR / "kv_pool_state.json"
 DEFAULT_JOBS_DIR = DEFAULT_CACHE_DIR / "jobs"
+DEFAULT_BENCH_CACHE_DIR = DEFAULT_CACHE_DIR / "bench"
+DEFAULT_BENCH_TELEMETRY_LOG = DEFAULT_BENCH_CACHE_DIR / "apprentice_usage_telemetry.jsonl"
+DEFAULT_BENCH_SCORECARD_PATH = DEFAULT_BENCH_CACHE_DIR / "apprentice_scorecard.json"
+DEFAULT_BENCH_SCORECARD_ARCHIVE_PATH = DEFAULT_BENCH_CACHE_DIR / "apprentice_scorecard_archive.jsonl"
+DEFAULT_BENCH_JOBS_DIR = DEFAULT_BENCH_CACHE_DIR / "jobs"
 
 BACKEND_ADAPTERS: dict[str, dict[str, Any]] = {
     "bionic": {
@@ -483,18 +488,24 @@ def classify_hybrid_effort(
 
     if eff_in == "high" or (eff_in == "auto" and needs_cross_audit):
         is_cross = cross_intent or kind in {"repo_audit", "shadow_review"}
-        return {
-            "route_id": (
+        if kind == "shadow_review":
+            route_id = "HIGH_CROSS_SINGLE_SHOT" if fits_single_shot else "HIGH_SHADOW_BOUNDED_SINGLE_SHOT"
+            skip_chunk = True
+        else:
+            route_id = (
                 "HIGH_CROSS_SINGLE_SHOT"
                 if (is_cross and fits_single_shot)
                 else ("HYBRID_MAP_STD_REDUCE_HIGH" if is_cross else "HIGH_NON_AUDIT_FAST_MERGE")
-            ),
+            )
+            skip_chunk = bool(is_cross and fits_single_shot)
+        return {
+            "route_id": route_id,
             "effective_effort": "high",
             "effective_mode": "deep",
             "map_mode": "fast",
             "reduce_reasoning_effort": "high" if is_cross else "none",
             "reduce_max_tokens_cap": 8192 if is_cross else 3072,
-            "skip_chunking_for_cross_audit": bool(is_cross and fits_single_shot),
+            "skip_chunking_for_cross_audit": skip_chunk,
             "trigger_reason": (
                 f"{'Explicit HIGH' if eff_in == 'high' else 'Auto-promoted cross-audit'} "
                 f"(files={distinct_files}, diff={include_git_diff}, bytes={total_raw_bytes})."
@@ -837,6 +848,9 @@ def validate_staging_dir(staging_dir: Path) -> Path:
     tmp_abs = Path(os.path.abspath(tempfile.gettempdir()))
     tmp_res = tmp_abs.resolve(strict=False)
     cache_bases = (
+        Path(os.path.abspath(str(home_resolved / ".cache" / "apprentice_plugin"))),
+        (home_resolved / ".cache" / "apprentice_plugin").resolve(strict=False),
+        Path(os.path.abspath("/home/orin/.cache/apprentice_plugin")),
         Path(os.path.abspath(str(home_resolved / ".cache" / "homunculus_bionic_plugin"))),
         (home_resolved / ".cache" / "homunculus_bionic_plugin").resolve(strict=False),
         Path(os.path.abspath("/home/orin/.cache/homunculus_bionic_plugin")),
@@ -848,9 +862,9 @@ def validate_staging_dir(staging_dir: Path) -> Path:
     )
 
     def _is_allowed_stage_candidate(cand: Path) -> bool:
-        if (_is_path_within(cand, tmp_abs) and cand != tmp_abs) or (
-            _is_path_within(cand, tmp_res) and cand != tmp_res
-        ):
+        if cand in (tmp_abs, tmp_res, Path("/tmp")):
+            return False
+        if _is_path_within(cand, tmp_abs) or _is_path_within(cand, tmp_res):
             return True
         if any(_is_path_within(cand, cb) for cb in cache_bases):
             return True
@@ -934,7 +948,7 @@ def estimate_eta(
             elif out_budget <= 160:
                 single_out = round(out_budget * 0.85) if body_tok >= 400 else max(12, round(out_budget * 0.45))
             elif include_git_diff and out_budget >= 1000:
-                single_out = min(out_budget, 960)
+                single_out = min(out_budget, max(96, min(960, round(body_tok * 0.45))))
             else:
                 ratio = 0.11 if body_tok < 1000 else 0.16
                 base_fast_out = min(int(prof["typical_output_tokens"]), max(65, round(body_tok * ratio)))
@@ -943,10 +957,16 @@ def estimate_eta(
             if "stage" in cmd_low:
                 user_body_bytes = max(0, prompt_bytes - sys_prompt_bytes)
                 if target_code_bytes > 0:
-                    est_patch_tok = max(42, round((target_code_bytes / 2.8) * 1.35) + 20)
-                    single_out = min(single_out, est_patch_tok)
+                    est_patch_tok = max(42, round((target_code_bytes / 3.45) * 1.15) + 25)
+                    if cmd_low.endswith("_retry") and target_code_bytes >= 800:
+                        single_out = min(out_budget, est_patch_tok)
+                    else:
+                        single_out = min(single_out, est_patch_tok)
                 elif prompt_bytes > 0 and user_body_bytes <= 500:
                     single_out = min(single_out, max(55, round(user_body_bytes * 0.32)))
+                elif user_body_bytes > 500 and est_prompt_tokens < 2500:
+                    # Greenfield spec synthesis (>500B prompt) outputs ~500-1400 tok rather than tiny 240-tok diff patches
+                    single_out = min(out_budget, max(single_out, min(1450, max(450, round(user_body_bytes * 0.58)))))
                 elif est_prompt_tokens < 2000:
                     single_out = min(single_out, 240)
         est_output_tokens = single_out * turns
@@ -1254,9 +1274,10 @@ def estimate_chunked_eta(
     loaded_ctx_override: int | None = None,
     needs_cross_slice_reasoning: bool = False,
 ) -> dict[str, Any]:
-    """Estimate multi-wave mapper + scaled reduce ETA for chunked digests against empirical latency."""
-    waves = max(1, math.ceil(max(1, batch_count) / 2))
-    avg_batch_bytes = sys_prompt_bytes + int(total_payload_bytes / max(1, batch_count)) + prompt_bytes + 350
+    """Estimate multi-wave mapper + scaled reduce ETA for chunked digests against empirical GPU bandwidth."""
+    batches = max(1, int(batch_count))
+    waves = max(1, math.ceil(batches / 2))
+    avg_batch_bytes = sys_prompt_bytes + int(total_payload_bytes / batches) + prompt_bytes + 350
     wave_eta = estimate_eta(
         mode="fast",
         prompt_bytes=avg_batch_bytes,
@@ -1269,19 +1290,34 @@ def estimate_chunked_eta(
         cmd_name="apprentice_digest",
         sys_prompt_bytes=sys_prompt_bytes,
     )
-    if batch_count <= 1:
+    if batches <= 1:
         total_pred = round(float(wave_eta["predicted_eta_s"]), 2)
     else:
+        prof_fast = PROFILES["fast"]
         prof = PROFILES[effective_mode if effective_mode in PROFILES else "fast"]
-        est_reduce_in_tok = 900 * batch_count + 500
+        bytes_per_tok = 2.80 if has_code_context else 3.45
+        # Aggregate GPU memory bandwidth across --parallel 2 slots scales ~0.88-0.90x sequential time,
+        # NOT 0.50x per-wave halving, because both workers share one KV/MoE memory bus.
+        uncached_sys_b = sys_prompt_bytes * (1.0 + 0.20 * (batches - 1))
+        total_mapper_in_tok = max(
+            1.0,
+            (total_payload_bytes + batches * (prompt_bytes + 350) + uncached_sys_b) / bytes_per_tok,
+        )
+        mapper_out_per_batch = 480 if has_code_context else (420 if effective_mode == "deep" else 320)
+        mapper_prefill_s = (total_mapper_in_tok / float(prof_fast["pp_tok_s"])) * 0.90
+        mapper_decode_s = ((batches * mapper_out_per_batch) / float(prof_fast["tg_tok_s"])) * 0.90
+
+        est_reduce_in_tok = 900 * batches + 500
         if needs_cross_slice_reasoning:
-            est_reduce_out_tok = min(3200, 1400 + 380 * batch_count)
+            est_reduce_out_tok = min(3200, 1400 + 380 * batches)
         elif effective_mode == "deep":
-            est_reduce_out_tok = min(2200, 650 + 320 * batch_count)
+            est_reduce_out_tok = min(2200, 650 + 320 * batches)
+        elif has_code_context:
+            est_reduce_out_tok = min(2200, 620 + 280 * batches)
         else:
-            est_reduce_out_tok = min(1950, 420 + 280 * batch_count)
+            est_reduce_out_tok = min(1950, 420 + 280 * batches)
         reduce_s = (est_reduce_in_tok / float(prof["pp_tok_s"])) + (est_reduce_out_tok / float(prof["tg_tok_s"])) + 1.0
-        total_pred = round(waves * float(wave_eta["predicted_eta_s"]) + reduce_s, 2)
+        total_pred = round(mapper_prefill_s + mapper_decode_s + reduce_s + (0.60 * waves), 2)
     return {
         **wave_eta,
         "effort": PROFILES.get(effective_mode, {}).get("effort", wave_eta["effort"]),
@@ -1302,6 +1338,7 @@ def assemble_prompt_payload(
     slice_ranges: dict[Path, tuple[int, int]] | list[tuple[int, int] | None] | None = None,
     context_slices: list[tuple[int, int] | None] | None = None,
     diff_repo_wide: bool = False,
+    compact_git_diff: bool = True,
 ) -> tuple[str, list[dict[str, Any]]]:
     """Assemble bounded line-numbered (and optionally #Lstart-Lend sliced) files + scoped safe git diff."""
     sections: list[str] = [user_prompt.strip()]
@@ -1413,7 +1450,7 @@ def assemble_prompt_payload(
         diff_text = ""
         if safe_rels:
             diff_args = ["git", "--no-optional-locks", "-C", str(repo_root), "diff", "--no-ext-diff"]
-            if full_context_rels and {Path(r).as_posix() for r in safe_rels}.issubset(full_context_rels):
+            if compact_git_diff and full_context_rels and {Path(r).as_posix() for r in safe_rels}.issubset(full_context_rels):
                 diff_args.append("--unified=0")
             diff_args.extend(["--", *safe_rels])
             diff_proc = subprocess.run(
@@ -1426,7 +1463,7 @@ def assemble_prompt_payload(
             if diff_proc.returncode != 0:
                 raise RuntimeError(f"git diff failed in {repo_root}: {diff_proc.stderr.strip()}")
             diff_text = diff_proc.stdout.strip()
-            if diff_text and full_context_rels:
+            if diff_text and compact_git_diff and full_context_rels:
                 diff_text = _deduplicate_full_context_diff(diff_text, full_context_rels, full_context_texts)
 
         filter_note = ""
@@ -1902,6 +1939,9 @@ def _resolve_scorecard_archive_path(
 ) -> Path:
     if archive_path is not None:
         return archive_path
+    env_p = os.environ.get("APPRENTICE_SCORECARD_ARCHIVE_PATH", "").strip()
+    if env_p:
+        return Path(os.path.expanduser(env_p))
     return _resolve_scorecard_path(scorecard_path).parent / "apprentice_scorecard_archive.jsonl"
 
 
@@ -3868,16 +3908,18 @@ def acquire_bjob_worker_slot(
 
 
 def _execute_job_worker(job_file: Path) -> int:
-    """Run an async sprint job spec and atomically persist the result."""
+    """Run an async sprint job spec and atomically persist the result (recording orphan crashes as corrected)."""
     import importlib.util
 
+    t_w0 = time.perf_counter()
     raw_rec = json.loads(job_file.read_text(encoding="utf-8"))
     spec = raw_rec.get("spec") or {}
     kind = str(spec.get("kind") or "digest")
     kwargs = dict(spec.get("kwargs") or {})
     kwargs["async_job"] = False
-    effort_norm, _ = resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
+    effort_norm, eff_mode_guess = resolve_effort_and_mode(kwargs.get("effort"), kwargs.get("mode"))
     slot_effort = "high" if effort_norm == "high" else "standard"
+    non_scored_codes = {"SECURITY_FIREWALL_BLOCKED", "ETA_CIRCUIT_BREAKER_TRIPPED"}
 
     mcp_path = Path(__file__).resolve().parent / "apprentice" / "apprentice_mcp_server.py"
     try:
@@ -3898,14 +3940,51 @@ def _execute_job_worker(job_file: Path) -> int:
             result = fn_map[kind](**kwargs)
             if isinstance(result, dict):
                 result["bjob_queue_wait_s"] = qslot.get("queue_wait_s", 0.0)
+        if isinstance(result, dict) and not result.get("ok") and not result.get("call_id"):
+            err_code = str(result.get("error_code") or "")
+            if err_code not in non_scored_codes:
+                sc_orphan = record_call_outcome(
+                    verdict="corrected",
+                    cmd=f"apprentice_{kind}",
+                    effort=slot_effort,
+                    mode=eff_mode_guess,
+                    elapsed_s=round(time.perf_counter() - t_w0, 3),
+                    note=f"bjob_failed_no_call_id: {result.get('error') or err_code}"[:180],
+                )
+                result["call_id"] = sc_orphan.get("call_id")
+                result["verdict"] = "corrected"
         raw_rec["status"] = "completed" if result.get("ok") else "failed"
+        raw_rec["call_id"] = result.get("call_id") if isinstance(result, dict) else None
         raw_rec["result"] = result
         raw_rec["error"] = result.get("error") if not result.get("ok") else None
         raw_rec["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
         _write_private_json_atomic(job_file, raw_rec)
         return 0 if result.get("ok") else 1
     except Exception as exc:
+        err_dt = round(time.perf_counter() - t_w0, 3)
+        orphan_cid: str | None = None
+        if not isinstance(exc, (SidecarFirewallError, SidecarEtaTrippedError)):
+            try:
+                sc_exc = record_call_outcome(
+                    verdict="corrected",
+                    cmd=f"apprentice_{kind}",
+                    effort=slot_effort,
+                    mode=eff_mode_guess,
+                    elapsed_s=err_dt,
+                    note=f"bjob_worker_exception: {exc}"[:180],
+                )
+                orphan_cid = sc_exc.get("call_id")
+            except Exception:
+                orphan_cid = None
         raw_rec["status"] = "failed"
+        raw_rec["call_id"] = orphan_cid
+        raw_rec["result"] = {
+            "ok": False,
+            "call_id": orphan_cid,
+            "verdict": "corrected" if orphan_cid else None,
+            "error_code": "BJOB_WORKER_ERROR",
+            "error": str(exc),
+        }
         raw_rec["error"] = str(exc)
         raw_rec["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
         _write_private_json_atomic(job_file, raw_rec)
@@ -4740,6 +4819,17 @@ def run_self_tests() -> dict[str, Any]:
         )
         assert "+NEW_BOLT_SPEC" in dedup_slice, "Sliced context should keep full '+' diff hunks verbatim"
 
+        raw_diff_full, _ = assemble_prompt_payload(
+            user_prompt="shadow diff check",
+            context_files=[bom_dd],
+            repo_root=repo_dd,
+            include_git_diff=True,
+            sys_prompt="sys",
+            compact_git_diff=False,
+        )
+        assert "+NEW_BOLT_SPEC" in raw_diff_full, "compact_git_diff=False must keep full '+' diff hunks"
+        assert "see verbatim BOM.md#L" not in raw_diff_full, "compact_git_diff=False must not emit see verbatim placeholders"
+
     eta_stg_small = estimate_eta(
         mode="fast",
         prompt_bytes=2600,
@@ -4771,6 +4861,7 @@ def run_self_tests() -> dict[str, Any]:
     with tempfile.TemporaryDirectory() as td_v23:
         td_p23 = Path(td_v23)
         tlog23 = td_p23 / "sidecar_usage_telemetry.jsonl"
+        old_t23_app = os.environ.pop("APPRENTICE_TELEMETRY_LOG", None)
         old_t23 = os.environ.get("BIONIC_SIDECAR_TELEMETRY_LOG")
         os.environ["BIONIC_SIDECAR_TELEMETRY_LOG"] = str(tlog23)
         try:
@@ -4816,6 +4907,8 @@ def run_self_tests() -> dict[str, Any]:
             assert rst_same["previous_epoch"]["epoch_label"] == "pre-v2.3", f"same-epoch reset clobbered prev_epoch: {rst_same}"
             assert rst_same["previous_epoch"]["usable_pct"] == 50.0, f"bad prev usable_pct: {rst_same}"
         finally:
+            if old_t23_app is not None:
+                os.environ["APPRENTICE_TELEMETRY_LOG"] = old_t23_app
             if old_t23 is None:
                 os.environ.pop("BIONIC_SIDECAR_TELEMETRY_LOG", None)
             else:
@@ -4929,6 +5022,16 @@ def run_self_tests() -> dict[str, Any]:
     )
     assert chk_std["predicted_eta_s"] >= 50.0, f"expected realistic std chunked eta >=50s: {chk_std}"
     assert chk_high["predicted_eta_s"] > chk_std["predicted_eta_s"], f"expected cross-slice high eta > std: {chk_high}"
+    chk_code8 = estimate_chunked_eta(
+        effective_mode="fast",
+        prompt_bytes=300,
+        sys_prompt_bytes=900,
+        total_payload_bytes=171505,
+        batch_count=8,
+        max_eta_seconds=60.0,
+        has_code_context=True,
+    )
+    assert 165.0 <= chk_code8["predicted_eta_s"] <= 265.0, f"8-batch code digest ETA drifted from ~225s envelope: {chk_code8}"
     checks.append("v244_kv_wait_telemetry_and_chunked_eta_calibration")
 
     # 22. Multi-backend adapter resolution & Ollama / OpenAI-compat probe checks
@@ -5050,7 +5153,70 @@ def run_self_tests() -> dict[str, Any]:
     assert "diff --git a/a.py b/a.py" in _patch_txt and "+X = 42" in _patch_txt, f"bad patch extract: {_patch_txt}"
     assert has_effective_git_diff("Intro\n### GIT WORKING-TREE DIFF (Repo)\n(clean/no matching safe unstaged diff)\n", True) is False
     assert has_effective_git_diff("Intro\n### GIT WORKING-TREE DIFF (Repo)\n```diff\n+X = 42\n```\n", True) is True
+    _rt_sh_big = classify_hybrid_effort(tool_kind="shadow_review", prompt="Audit contradictions", distinct_files=3, total_raw_bytes=72000, requested_effort="auto")
+    assert _rt_sh_big["route_id"] == "HIGH_SHADOW_BOUNDED_SINGLE_SHOT" and _rt_sh_big["skip_chunking_for_cross_audit"] is True, _rt_sh_big
     checks.append("hybrid_effort_classifier_and_diff_patch_extract")
+
+    # 27. V2.5 bench cache isolation paths, tiny-diff ETA calibration, and orphan BJOB worker accounting
+    assert DEFAULT_BENCH_CACHE_DIR == DEFAULT_CACHE_DIR / "bench"
+    assert DEFAULT_BENCH_TELEMETRY_LOG.parent == DEFAULT_BENCH_CACHE_DIR
+    _eta_tiny_diff = estimate_eta(
+        mode="fast",
+        prompt_bytes=1200,
+        sys_prompt_bytes=700,
+        calibrated_output=True,
+        include_git_diff=True,
+        cmd_name="apprentice_digest",
+    )
+    assert _eta_tiny_diff["est_output_tokens"] < 300 and _eta_tiny_diff["predicted_eta_s"] < 5.0, _eta_tiny_diff
+    _eta_gf_stage = estimate_eta(
+        mode="fast",
+        prompt_bytes=2600,
+        sys_prompt_bytes=920,
+        max_tokens=2048,
+        calibrated_output=True,
+        has_code_context=True,
+        cmd_name="apprentice_stage_patch",
+    )
+    assert 600 <= _eta_gf_stage["est_output_tokens"] <= 1450, f"expected greenfield stage out 600..1450: {_eta_gf_stage}"
+    _eta_gf_retry = estimate_eta(
+        mode="fast",
+        prompt_bytes=10500,
+        sys_prompt_bytes=920,
+        max_tokens=3072,
+        calibrated_output=True,
+        has_code_context=True,
+        cmd_name="apprentice_stage_patch_retry",
+        target_code_bytes=5600,
+    )
+    assert _eta_gf_retry["est_output_tokens"] >= 1650, f"expected multi-KB stage_patch_retry out >=1650: {_eta_gf_retry}"
+    with tempfile.TemporaryDirectory() as _oj_tmp:
+        _oj_dir = Path(_oj_tmp)
+        _old_oj_env = {k: os.environ.get(k) for k in ("APPRENTICE_TELEMETRY_LOG", "APPRENTICE_SCORECARD_PATH", "APPRENTICE_SCORECARD_ARCHIVE_PATH", "APPRENTICE_JOBS_DIR")}
+        try:
+            os.environ["APPRENTICE_TELEMETRY_LOG"] = str(_oj_dir / "tel.jsonl")
+            os.environ["APPRENTICE_SCORECARD_PATH"] = str(_oj_dir / "sc.json")
+            os.environ["APPRENTICE_SCORECARD_ARCHIVE_PATH"] = str(_oj_dir / "sc_arch.jsonl")
+            os.environ["APPRENTICE_JOBS_DIR"] = str(_oj_dir / "jobs")
+            assert _resolve_scorecard_archive_path() == _oj_dir / "sc_arch.jsonl"
+            (_oj_dir / "jobs").mkdir(parents=True, exist_ok=True)
+            _bad_job = _oj_dir / "jobs" / "BJOB-20261118_000001-bad001.json"
+            _write_private_json_atomic(
+                _bad_job,
+                {"job_id": "BJOB-20261118_000001-bad001", "status": "running", "spec": {"kind": "unsupported_kind_xyz", "kwargs": {"effort": "standard"}}},
+            )
+            _rc_bad = _execute_job_worker(_bad_job)
+            _saved_bad = json.loads(_bad_job.read_text(encoding="utf-8"))
+            _sc_oj = load_or_init_scorecard()
+            assert _rc_bad == 1 and _saved_bad["status"] == "failed" and str(_saved_bad.get("call_id") or "").startswith("BC-"), _saved_bad
+            assert _sc_oj["corrected"] == 1, _sc_oj
+        finally:
+            for _k, _v in _old_oj_env.items():
+                if _v is None:
+                    os.environ.pop(_k, None)
+                else:
+                    os.environ[_k] = _v
+    checks.append("v25_bench_cache_isolation_tiny_diff_eta_and_orphan_bjob_accounting")
 
     return {
         "schema_version": SCHEMA_VERSION,

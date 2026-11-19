@@ -3,7 +3,7 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "ab0211d317c9"
+tree_hash: "d35038dfe5aa"
 last_synced: "2026-11-18"
 ---
 
@@ -32,6 +32,10 @@ last_synced: "2026-11-18"
 │   ├── NetCom_Decision_Router.md
 │   ├── NetCom_Directory.md
 │   └── NetCom_memory_index.json
+├── Host_Runtime/
+│   ├── Pages/
+│   │   └── Host_Runtime_Lessons_Vol_02.md
+│   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
 ├── Profile/

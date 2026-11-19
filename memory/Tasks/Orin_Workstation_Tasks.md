@@ -19,7 +19,7 @@ last_synced: "2026-11-18"
 
 | Project | Checkpoint (`HEAD` · `Worktree`) | Open Tasks | Open `[TBD]`s | Latest Handoff / Next Kickstart |
 | :--- | :--- | :---: | :---: | :--- |
-| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-18`) | `2` | `0` | Next: Cut immutable v0.3.7 RAID deliverable (snapshot_homunculus_version.py --label memory_hygiene_v037). 2. Address Task #39 (Project... |
+| [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`#L28`) | `UNTRACKED` (`untracked`, `2026-11-18`) | `2` | `0` | Next: Monitor Apprentice v2.6.1 scorecard on multi-file commits. 2. Optionally index relative source paths in verify_claims.py... |
 <!-- AUTO-ROLLUP:END -->
 
 ---

@@ -12,7 +12,7 @@ last_synced: "2026-11-18"
 > **Project-Agnostic Principles Hub (`entity: "shared"` | `compartment: "cleanroom"` | `authoritative: false`)**:
 > Stores transferable engineering principles, architectural trade-offs, empirical dead-ends, and reusable wins promoted via **mutual Engineer $\leftrightarrow$ AI sign-off** (`sync_memory.py --promote-principle ... --user-confirmed --reason "..."`).
 > - **Zero Entity Bleed (`[PRINCIPLE_ENTITY_BLEED_BLOCKED]`)**: Every entry is deterministically sanitized so zero client names, project stems, `LL-xxx` ticket IDs, or local workstation paths ever enter `Principles/`. Authorized provenance lives solely in `0600` `Directory/lineage_registry.json` (`--trace-lineage <PRIN-ID|LIN-ID>`).
-> - **Active Window & Truth Firewall**: Maintains `<= 3` `TIER0` + `<= 7` unscoped `TIER2` full-context principles (graduating stabilized `TIER3`–`TIER5` entries to `0444` `Archive/Engineering_Principles_Archive.md`). Excluded from `verify_claims.py --sources` quantitative whitelists (`[GUARDRAIL CONTEXT ONLY]`).
+> - **Active Window & Truth Firewall**: Maintains `<= 3` `TIER0` + `<= 15` unscoped (`<= 24` total) full-context principles paginated across `Engineering_Principles.md` & `Pages/Engineering_Principles_Vol_NN.md` (graduating stabilized `TIER3`–`TIER5` entries to `0444` `Archive/Engineering_Principles_Archive*.md`). Excluded from `verify_claims.py --sources` quantitative whitelists (`[GUARDRAIL CONTEXT ONLY]`).
 
 ---
 

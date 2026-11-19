@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-13"
+last_synced: "2026-11-18"
 ---
 
 # 🗄️ Maker-Tools — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)

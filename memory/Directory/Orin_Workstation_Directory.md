@@ -3,7 +3,7 @@ title: "Orin_Workstation — Memory & Repository Directory Tree"
 entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "b24519d0be76"
+tree_hash: "add762d9a50f"
 last_synced: "2026-11-18"
 ---
 
@@ -32,6 +32,10 @@ last_synced: "2026-11-18"
 │   ├── Orin_Workstation_Decision_Router.md
 │   ├── Orin_Workstation_Directory.md
 │   └── Orin_Workstation_memory_index.json
+├── Host_Runtime/
+│   ├── Pages/
+│   │   └── Host_Runtime_Lessons_Vol_02.md
+│   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
 ├── Profile/
@@ -39,7 +43,8 @@ last_synced: "2026-11-18"
 ├── Projects/
 │   └── Workstation_Operations/
 │       ├── Archive/
-│       │   └── Workstation_Operations_Lessons_Archive.md
+│       │   ├── Workstation_Operations_Lessons_Archive.md
+│       │   └── Workstation_Operations_Lessons_Archive_Vol_02.md
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
 │       ├── Workstation_Operations.md
@@ -75,7 +80,7 @@ last_synced: "2026-11-18"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 868c6ff4621c`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 7adb62cc6fb3`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -109,6 +114,8 @@ last_synced: "2026-11-18"
 ├── apprentice_benchmark_history.jsonl
 ├── apprentice_engine.py
 ├── benchmark_apprentice.py
+├── benchmark_apprentice_high.py
+├── benchmark_apprentice_standard.py
 ├── benchmark_history.jsonl
 ├── benchmark_homunculus.py
 ├── bootstrap_workstation.sh

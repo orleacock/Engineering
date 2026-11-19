@@ -5,7 +5,7 @@ entity: "NetCom"
 compartment: "private"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-17"
+last_synced: "2026-11-18"
 ---
 
 # 🗄️ NetCom_Engineering_Assistant — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)

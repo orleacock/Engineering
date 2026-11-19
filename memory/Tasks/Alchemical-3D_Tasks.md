@@ -24,7 +24,7 @@ last_synced: "2026-11-18"
 | [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L76`) | `c7eaca6` (`clean`, `2026-11-16`) | `0` | `0` | Next: Alembic_Toolhead clean and synced on origin/main; no open tasks |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L103`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Extras`](../Projects/Extras/Extras.md) (`#L106`) | `cfef0fd` (`clean`, `2026-11-16`) | `0` | `1` | Next: Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired |
-| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `09a3bf3` (`clean`, `2026-11-18`) | `2` | `0` | Next: Cut immutable v0.3.7 RAID deliverable. 2. Address Task #73 ([SWARM & ORCHESTRATOR ALIGNMENT]) when ready. |
+| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L45`) | `1e84832` (`clean`, `2026-11-18`) | `2` | `0` | Next: Optionally index relative source paths alongside basenames in verify_claims.py SourceIndex in next release. 2. Run... |
 | [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`#L100`) | `29641c5` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`#L97`) | `b74920e` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L89`) | `7197d2b` (`clean`, `2026-11-17`) | `0` | `0` | Blocker: `None` (`0` open tasks, `0` open `[TBD]`s) · Next: `Pestle_Rotational_Bowden` is clean and synced on `origin/main` (`7197d2b`)... |

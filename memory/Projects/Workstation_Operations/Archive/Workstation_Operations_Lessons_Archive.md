@@ -5,7 +5,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-16"
+last_synced: "2026-11-18"
 ---
 
 # 🗄️ Workstation_Operations — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)
@@ -129,14 +129,5 @@ last_synced: "2026-11-16"
 - **Symptom / Trap:** V2.4.4 audit (BC-0225/BC-0228) uncovered .patch files omitted from verify_claims --sources, mixed unsliced+#L payloads bypassing chunking to ~42k tok, raw [:1500] JSON fail_detail clipping claims #3-#12, tight 45s/90s sub-timeouts inside async jobs, 3.45x-4.02x chunked ETA under-prediction, and missing kv_wait_s separation.
 - **Root Cause:** _VERIFY_ALLOWED_EXTS excluded .patch/.diff and capped unbacked_claims at [:8]; use_auto_chunk gated on not any_sliced while plan_line_preserving_chunks ignored slice_items; verify repair dumped full line_text JSON [:1500]; async sub-calls inherited sync 45s/90s timeouts and 1536 cont caps.
 - **Verified Resolution & Permanent Guardrail:** Lock 49152 gpu-daily as fixed baseline (retain gpu-max optional); add .patch/.diff + [:20] unbacked slice; split unsliced vs #L slices in chunker and _is_heavy_chunked_sync_candidate; use _format_compact_verify_failures() and LL_WS_12_GUARD frontmatter/patch rules; widen async sub-timeouts (120-180s), cont_max_toks (2560/3072), and explicit sync-guard; add estimate_chunked_eta() and kv_wait_s. (`local_sidecar.py` ([`Workstation_Operations_Software.md`](../Workstation_Operations_Software.md)), `bionic_sidecar/bionic_mcp_server.py` ([`Workstation_Operations_Software.md`](../Workstation_Operations_Software.md))).
-
----
-
-### `LL-WS-19` [TIER5] — Blindly raising max_slices_per_batch=6 on dense Python silently dropped BASE_GUARD (base_covered=false)... (`2026-11-16`)
-- **Retirement Provenance (`TIER5` — `2026-11-16`):** Consolidated into LL-WS-20 & LL-WS-21 under multi-backend Apprentice plugin; original Bionic/local_sidecar lessons retained in Archive/ at 0.0x recall weight for historical reference.
-- **Scope:** `script:bionic_sidecar`
-- **Symptom / Trap:** Blindly raising max_slices_per_batch=6 on dense Python silently dropped BASE_GUARD (base_covered=false) while Priority-Cap=10 dropped 8/18 (44.4%) markers; small multi-file #L digests (<36 KB) bypassed chunking into ~190-326s monolithic HIGH calls, and stage_patch Pass-2 deep retries burned ~97s without schema context.
-- **Root Cause:** Byte-only chunk threshold (>36KB/42KB) excluded compact >=5-slice explicit #L digests, pack_chunk_batches >4 files crowded multi-module sweeps, and stage_patch Pass-2 used mode=effective_mode without validated_files context.
-- **Verified Resolution & Permanent Guardrail:** Keep max_slices_per_batch=4; trigger Slice-Count Map-Reduce cleanly for >=5 explicit #L slices across >=3 files in bionic_mcp_server.py (100% 18/18 recall); switch stage_patch Pass-2 repair to fast mode with prioritized <=20KB #L context + AST sleep antipattern check; inject non-sleep injectable-clock .py Pass-1 staging rules; keep HTTP mock asserts on main thread. (`bionic_sidecar/bionic_mcp_server.py` ([`Workstation_Operations_Software.md`](../Workstation_Operations_Software.md)), `bionic_sidecar_plugin/rules/AGENTS.md` ([`Workstation_Operations.md`](../Workstation_Operations.md)), `bionic_sidecar_plugin/skills/bionic-local-sidecar/SKILL.md` ([`Workstation_Operations.md`](../Workstation_Operations.md)) (`SBX-20261116_115434-6a8592af / SBX-20261116_120126-ce5a5240`)).
 
 ---
