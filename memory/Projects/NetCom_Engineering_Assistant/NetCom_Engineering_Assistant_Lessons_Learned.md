@@ -4,7 +4,7 @@ parent_note: "NetCom_Engineering_Assistant"
 entity: "NetCom"
 compartment: "private"
 note_type: "lessons_learned"
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 
 # 🧠 NetCom Engineering Assistant (`NEA v2.2.3`) — Engineering Lessons Learned & Post-Mortem Ledger (`NetCom_Engineering_Assistant_Lessons_Learned`)

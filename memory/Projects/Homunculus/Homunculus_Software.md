@@ -4,8 +4,8 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 telemetry_domain: "software"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-inventory_sha256: "a0992f807d17"
-last_synced: "2026-11-18"
+inventory_sha256: "a3f1529bae4d"
+last_synced: "2026-11-19"
 ---
 
 # Homunculus — Software, CLI & Schema Telemetry (`_Software.md`)
@@ -63,7 +63,7 @@ last_synced: "2026-11-18"
 | `adapters/antigravity/hooks.json` | `JSON` | `{}` (empty object) | `ca3d163bab` |
 | `adapters/claude_code/settings.json` | `JSON` | `schema_version`, `description`, `permissions`, `hooks` | `afa6950342` |
 | `hooks/hooks.json` | `JSON` | `{}` (empty object) | `ca3d163bab` |
-| `scripts/kernel_seal.json` | `JSON` | `schema_version`, `ring`, `sealed_at`, `reason`, `entry_count`, `seal_digest` | `4cd4636ce0` |
+| `scripts/kernel_seal.json` | `JSON` | `schema_version`, `ring`, `sealed_at`, `reason`, `entry_count`, `seal_digest` | `f4fb74958b` |
 | `scripts/script_contracts.json` | `JSON` | `schema_version`, `description`, `coupling_policy`, `scripts` | `8c5f072959` |
 | `templates/homunculus_safety.example.json` | `JSON` | `schema_version`, `description`, `default_compartment`, `enforce_posix_win_user_paths_in_public`, `compartments` | `7e45cf72a5` |
 | `templates/diagrams/Diagram_Palettes.json` | `JSON` | `default_palette`, `palettes` | `8918674dd9` |
@@ -87,5 +87,5 @@ last_synced: "2026-11-18"
 | `tests/test_v037_memory_hygiene.py` | `TestV037MemoryHygieneAndPrinciples` | `8` | `bdf69782e8` |
 | `tests/test_v038_option_d_plus.py` | `TestOptionDPlusMemoryArchitecture` | `4` | `9eaf72e517` |
 
-**Latest Verified Test Receipt (`2026-11-18`):** 94/94 unittest OK | SBX-20261118_203920-eda0e867 (CoW +faults PASS) | Compare-Light SBX-20261118_202914-134a8559 (PARITY)
+**Latest Verified Test Receipt (`2026-11-19`):** 94/94 unittest OK | SBX-20261118_203920-eda0e867 | Compare-Light SBX-20261118_202914-134a8559 | e4a83c1 sealed PASS
 <!-- AUTO-SOFTWARE-TESTS:END -->

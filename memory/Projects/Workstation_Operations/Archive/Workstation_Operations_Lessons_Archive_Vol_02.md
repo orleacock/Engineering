@@ -6,7 +6,7 @@ compartment: "private"
 note_type: "lessons_archive"
 authoritative: false
 volume: 2
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 # Workstation_Operations — Archive — Volume 02
 

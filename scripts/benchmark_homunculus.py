@@ -1025,7 +1025,7 @@ def bench_profile_memory_engine(
 
         # 1. Golden Recall Query Benchmark (5 deterministic queries against active TIER2 lessons/playbooks)
         golden_queries = [
-            ("Homunculus", "2-tier single-source rule architecture AGENTS.md 22500 byte ceiling", {"LL-027"}),
+            ("Homunculus", "2-tier single-source rule architecture AGENTS.md 22500 byte ceiling", {"LL-027", "LL-055"}),
             ("Homunculus", "core script upgrade dual-repo clean-room sync governance re-seal sequence", {"PB-HOM-01"}),
             ("Homunculus", "TBD_SPECULATIVE_GUESS bracket smuggling git rev-list SHA PNG IHDR", {"LL-037"}),
             ("Homunculus", "stateful memory 3-stage repo resolution TIER0 TIER5 gravity store script_contracts", {"LL-038"}),

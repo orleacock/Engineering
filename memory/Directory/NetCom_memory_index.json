@@ -5,14 +5,14 @@
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
     "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
-    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Carbon` on deeper request).",
+    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Neon`/`Carbon` on deeper request; never auto-select `Orchestrator` models).",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 12$ unscoped / $\\le 6$ per-scope / $\\le 30$ total across paginated `Pages/*_Vol_NN.md` + `Host_Runtime/` Shelf 1B $\\rightarrow$ `TIER3`..."
   ],
   "entity": "NetCom",
-  "last_synced": "2026-11-18",
+  "last_synced": "2026-11-19",
   "projects": {
     "NetCom_Engineering_Assistant": {
       "compartment": "private",
@@ -208,12 +208,12 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "829be433d8606a42"
+      "sha256": "307f87dd3d9d5128"
     },
     "Projects/NetCom_Engineering_Assistant/Archive/NetCom_Engineering_Assistant_Lessons_Archive.md": {
       "lines": 29,
       "sections": 2,
-      "sha256": "6149f5a38f35ffa8"
+      "sha256": "136d0adadccbabd3"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md": {
       "lines": 209,
@@ -223,7 +223,7 @@
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md": {
       "lines": 68,
       "sections": 7,
-      "sha256": "8bc6e0befc83b9c0"
+      "sha256": "589afa17e9db23b5"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md": {
       "lines": 50,
@@ -233,5 +233,5 @@
   },
   "total_docs": 9,
   "vectors_cache_rel": ".cache/NetCom_scoring_vectors.json",
-  "vectors_digest": "4bbbaac603040a0e"
+  "vectors_digest": "c4396b028bfc7dea"
 }

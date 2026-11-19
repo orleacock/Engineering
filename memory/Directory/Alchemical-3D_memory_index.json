@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 241.94,
+  "avg_doc_len": 241.27,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
     "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
-    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Carbon` on deeper request).",
+    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Neon`/`Carbon` on deeper request; never auto-select `Orchestrator` models).",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 12$ unscoped / $\\le 6$ per-scope / $\\le 30$ total across paginated `Pages/*_Vol_NN.md` + `Host_Runtime/` Shelf 1B $\\rightarrow$ `TIER3`..."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-18",
+  "last_synced": "2026-11-19",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -637,8 +637,8 @@
           "governing_lls": [
             "LL-060"
           ],
-          "must_keep": "2-Shelf Pages/*_Vol_NN.md pagination; Host_Runtime/ Shelf 1B isolation; tapered TIER2 (12 unscoped / 6 per-scope / 30 total); design_intent MMR; Stage Z1 Host_Runtime/ exclusion",
-          "retired_bloat": "Strict 9-lesson flat TIER2 cap; leaking Host_Runtime/ lessons into Principles/ or --sources; linking optional Host_Runtime/ paths inside clean Memory_Map_README.md",
+          "must_keep": "2-Shelf Pages/*_Vol_NN.md pagination; Host_Runtime/ Shelf 1B isolation; tapered TIER2 (12 unscoped / 6 per-scope / 30 total); design_intent MMR; Stage Z1 Host_Runtime/ exclusion; Scan Host_Runtime Migrated-From IDs and Vol_02+ pages in _next_project_lesson_id(); strip Vol 1/Pages metadata bullets during slimming; expose add_host_runtime_lesson CLI path; reverse ../ relative links when repacking Pages/ back to Vol 1",
+          "retired_bloat": "Strict 9-lesson flat TIER2 cap; leaking Host_Runtime/ lessons into Principles/ or --sources; linking optional Host_Runtime/ paths inside clean Memory_Map_README.md; Mutating active Option D+ pages without Host_Runtime ID scans, bidirectional ../ link repair, migrated Quick-Lookup pruning, or multi-page Vol_02+ promote_cross_cutting_principle() lookup",
           "scope": "",
           "subsystem": "Option D+ Paginated Books (sync_memory.py & audit_memory_hygiene.py)",
           "tier": "TIER1",
@@ -656,13 +656,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 86,
+          "end_line": 88,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L81-L86",
+          "line_range": "#L83-L88",
           "location": "main",
           "scope": "",
-          "start_line": 81,
+          "start_line": 83,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -681,13 +681,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... -> Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity....",
-          "end_line": 91,
-          "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
+          "end_line": 23,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
           "id": "LL-052",
-          "line_range": "#L88-L91",
+          "line_range": "#L18-L23",
           "location": "main",
           "scope": "",
-          "start_line": 88,
+          "start_line": 18,
           "tier": "TIER2",
           "title": "Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... (`2026-11-14`)",
           "touched_files": [
@@ -700,13 +700,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... -> Defer remote turnkey burn until post-sign success via defer_turnkey_burn=True across homunculus_paths.py and seal_memory_governance(), evaluate .cache ignores relative to fw_root, pass resolved_effort into format_model_receipt_tag, and seal BUILTIN_RING1 updates via h-sudo seal (`scripts/homunculus_paths.py` (`Homunculus_Software.md`)...",
-          "end_line": 24,
+          "end_line": 31,
           "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
           "id": "LL-053",
-          "line_range": "#L18-L24",
+          "line_range": "#L25-L31",
           "location": "main",
           "scope": "script:homunculus_paths",
-          "start_line": 18,
+          "start_line": 25,
           "tier": "TIER2",
           "title": "Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... (`2026-11-16`)",
           "touched_files": [
@@ -719,13 +719,13 @@
         {
           "archetype": "win",
           "capsule_1line": "[WIN] Historical lessons risked in-place edits or dead repo anchors across refactors, fallback verify_claims... -> Enforce Ring-0 skills/memory-hygiene/scripts/audit_memory_hygiene.py (--check-commit and --audit --suggest-promotions), skills/project-memory/scripts/sync_memory.py (atomic read-only chmod permission (0444) TIER5 --supersede-lesson with Historical Context (Inert Origin) and mutual --promote-principle gated by...",
-          "end_line": 31,
+          "end_line": 38,
           "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
           "id": "LL-054",
-          "line_range": "#L26-L31",
+          "line_range": "#L33-L38",
           "location": "main",
           "scope": "",
-          "start_line": 26,
+          "start_line": 33,
           "tier": "TIER2",
           "title": "Historical lessons risked in-place edits or dead repo anchors across refactors, fallback verify_claims... (`2026-11-18`)",
           "touched_files": [
@@ -743,13 +743,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Introducing a middle Agent.md tier, exceeding the 24,000-byte AGENTS.md cap via out-of-tree rel_prefix... -> Preserve the 2-Tier Single-Source Rule Architecture (AGENTS.md <= 22,500 B via RULE_BYTE_CAP_EXCEEDED, MISNAMED_AGENTS_MD_CASE, and ADAPTER_STALE_DRIFT in skills/skill-architect/scripts/audit_skill_hygiene.py and scripts/build_adapters.py), use Path(__file__).resolve() + homunculus_paths.py co-bundling across symlinks/copies/.zips...",
-          "end_line": 38,
+          "end_line": 45,
           "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
           "id": "LL-055",
-          "line_range": "#L33-L38",
+          "line_range": "#L40-L45",
           "location": "main",
           "scope": "",
-          "start_line": 33,
+          "start_line": 40,
           "tier": "TIER0",
           "title": "Introducing a middle Agent.md tier, exceeding the 24,000-byte AGENTS.md cap via out-of-tree rel_prefix... (`2026-11-18`)",
           "touched_files": [
@@ -764,13 +764,13 @@
         {
           "archetype": "win",
           "capsule_1line": "[WIN] Unscoped lesson caps saturated per-project TIER2 windows and mixed host-runtime rules into project or... -> Ship Two-Shelf Option D+ paginated books (Principles/ Shelf 1A, Host_Runtime/ Shelf 1B, Pages/*_Vol_NN.md Shelf 2), tapered TIER2 gravity caps (12 unscoped / 6 per-scope / 30 total), design_intent MMR, Stage Z1 Host_Runtime/ source exclusion, and deterministic --migrate-option-d-plus migration....",
-          "end_line": 43,
+          "end_line": 50,
           "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
           "id": "LL-060",
-          "line_range": "#L40-L43",
+          "line_range": "#L47-L50",
           "location": "main",
           "scope": "",
-          "start_line": 40,
+          "start_line": 47,
           "tier": "TIER2",
           "title": "Unscoped lesson caps saturated per-project TIER2 windows and mixed host-runtime rules into project or... (`2026-11-18`)",
           "touched_files": [
@@ -778,6 +778,44 @@
             "audit_skill_hygiene.py",
             "sync_memory.py",
             "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Linking optional Host_Runtime in starter README breaks clean-init memory audits before --init-host-runtime... -> Keep Host_Runtime unlinked in Memory_Map_README while linking conditionally in Directory_Index.md, scan Host_Runtime IDs and skip metadata bullets across Vol 1/Pages slim tables in sync_memory.py, and queue direct CLI write exposure for add_host_runtime_lesson so new host entries avoid waiting for --migrate-option-d-plus....",
+          "end_line": 56,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-061",
+          "line_range": "#L52-L56",
+          "location": "main",
+          "scope": "script:sync_memory",
+          "start_line": 52,
+          "tier": "TIER2",
+          "title": "Linking optional Host_Runtime in starter README breaks clean-init memory audits before --init-host-runtime... (`2026-11-19`)",
+          "touched_files": [
+            "Directory_Index.md",
+            "Memory_Map_README.md",
+            "SKILL.md",
+            "sync_memory.py"
+          ]
+        },
+        {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Adding gemini-4-neon-high alongside carbon and banning auto-selection or fallback to... -> Keep always-on Neon and non-Orchestrator guardrails compact within the 22,500 B AGENTS.md cap (+221 B advisory tracked for Window 1 benchmark trim or Course D pin) and run homunculus_paths.py --verify-seal unsandboxed on host when verifying required OpenSSH signatures. (`rules/co-engineering-partner.md` (`Homunculus.md`)...",
+          "end_line": 62,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-062",
+          "line_range": "#L58-L62",
+          "location": "main",
+          "scope": "skill:subagent-orchestrator",
+          "start_line": 58,
+          "tier": "TIER2",
+          "title": "Adding gemini-4-neon-high alongside carbon and banning auto-selection or fallback to... (`2026-11-19`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "co-engineering-partner.md",
+            "homunculus_paths.py"
           ]
         },
         {
@@ -1884,8 +1922,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 296.18,
-      "proj_total_docs": 62,
+      "proj_avg_doc_len": 293.5,
+      "proj_total_docs": 64,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2406,7 +2444,7 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "829be433d8606a42"
+      "sha256": "307f87dd3d9d5128"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md": {
       "lines": 118,
@@ -2421,7 +2459,7 @@
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md": {
       "lines": 48,
       "sections": 3,
-      "sha256": "123a6dd29f260975"
+      "sha256": "b22a1666583e697a"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md": {
       "lines": 111,
@@ -2431,7 +2469,7 @@
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Lessons_Learned.md": {
       "lines": 43,
       "sections": 1,
-      "sha256": "c2f76513417b63ef"
+      "sha256": "89fb829570405891"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md": {
       "lines": 41,
@@ -2441,7 +2479,7 @@
     "Projects/Alchemical_Web_Docs/Archive/Alchemical_Web_Docs_Lessons_Archive.md": {
       "lines": 24,
       "sections": 1,
-      "sha256": "6bbf57ca385abca5"
+      "sha256": "e7b784e2e5cf01f6"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead.md": {
       "lines": 165,
@@ -2456,7 +2494,7 @@
     "Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md": {
       "lines": 49,
       "sections": 3,
-      "sha256": "55e3a9ec8332795f"
+      "sha256": "2352c8dc3c7a4e6a"
     },
     "Projects/Brand/Brand.md": {
       "lines": 126,
@@ -2466,7 +2504,7 @@
     "Projects/Brand/Brand_Lessons_Learned.md": {
       "lines": 50,
       "sections": 2,
-      "sha256": "f2568850180b9713"
+      "sha256": "30a2ba1350207b54"
     },
     "Projects/Brand/Brand_Software.md": {
       "lines": 41,
@@ -2486,52 +2524,52 @@
     "Projects/Extras/Extras_Lessons_Learned.md": {
       "lines": 49,
       "sections": 2,
-      "sha256": "c0ac81ad4c1f500d"
+      "sha256": "ac9e4a07475fafa3"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
       "lines": 120,
       "sections": 13,
-      "sha256": "056bd8a7d1022d7e"
+      "sha256": "7c849fd555f296e7"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_02.md": {
       "lines": 71,
       "sections": 4,
-      "sha256": "c086c8d8701f7309"
+      "sha256": "507ad844f3ccebe1"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_03.md": {
       "lines": 79,
       "sections": 6,
-      "sha256": "804ca91bf167811b"
+      "sha256": "978af5d39f2f7e24"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_04.md": {
       "lines": 84,
       "sections": 7,
-      "sha256": "ca2a52c4288b6c04"
+      "sha256": "06ae261d9367bcb4"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_05.md": {
       "lines": 114,
       "sections": 12,
-      "sha256": "d1aff2f8ca64c45e"
+      "sha256": "aeceabc1c28b7b1a"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_06.md": {
       "lines": 96,
       "sections": 8,
-      "sha256": "8ef6fe6a37419f00"
+      "sha256": "25b6c764223ec6ae"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive_Vol_07.md": {
       "lines": 50,
       "sections": 4,
-      "sha256": "203ee9dfb85e5a83"
+      "sha256": "12f35762a5e72ac7"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 292,
+      "lines": 293,
       "sections": 0,
-      "sha256": "d6dfa9e74239965c"
+      "sha256": "73479105765a14d1"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 96,
-      "sections": 2,
-      "sha256": "f27dac46141c1267"
+      "lines": 91,
+      "sections": 1,
+      "sha256": "f3f128bd601cf3e9"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2541,17 +2579,17 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 91,
       "sections": 0,
-      "sha256": "6cd0982e7eacdfc8"
+      "sha256": "f3ea88c86e500068"
     },
     "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md": {
-      "lines": 43,
-      "sections": 4,
-      "sha256": "f0c9dd61b7b175f9"
+      "lines": 62,
+      "sections": 7,
+      "sha256": "198e7849b5aa0762"
     },
     "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
       "lines": 24,
       "sections": 1,
-      "sha256": "0affaf9823786817"
+      "sha256": "d371e2b86f168c41"
     },
     "Projects/Maker-Tools/Maker-Tools.md": {
       "lines": 89,
@@ -2561,7 +2599,7 @@
     "Projects/Maker-Tools/Maker-Tools_Lessons_Learned.md": {
       "lines": 43,
       "sections": 1,
-      "sha256": "22d72ce1a5d339d5"
+      "sha256": "90b2d88ca10d6228"
     },
     "Projects/Maker-Tools/Maker-Tools_Software.md": {
       "lines": 41,
@@ -2571,7 +2609,7 @@
     "Projects/Organization_Profile/Archive/Organization_Profile_Lessons_Archive.md": {
       "lines": 22,
       "sections": 1,
-      "sha256": "856a21175e59f260"
+      "sha256": "8aa27be1e556cb66"
     },
     "Projects/Organization_Profile/Organization_Profile.md": {
       "lines": 80,
@@ -2581,7 +2619,7 @@
     "Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md": {
       "lines": 44,
       "sections": 1,
-      "sha256": "a7d690938ac78902"
+      "sha256": "56b0692af7c55a86"
     },
     "Projects/Organization_Profile/Organization_Profile_Software.md": {
       "lines": 41,
@@ -2601,12 +2639,12 @@
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md": {
       "lines": 48,
       "sections": 3,
-      "sha256": "be6dd74024c8644d"
+      "sha256": "56e973520e0975f5"
     },
     "Projects/Pneuma_Remote_Air/Archive/Pneuma_Remote_Air_Lessons_Archive.md": {
       "lines": 53,
       "sections": 6,
-      "sha256": "0abb9e87d919000c"
+      "sha256": "8d722e31c060d5ba"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md": {
       "lines": 141,
@@ -2621,7 +2659,7 @@
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md": {
       "lines": 64,
       "sections": 5,
-      "sha256": "a631ed0b3c811d6e"
+      "sha256": "9304a1d831d56bbe"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md": {
       "lines": 25,
@@ -2629,7 +2667,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 93,
+  "total_docs": 95,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "7835dcbfa6c42104"
+  "vectors_digest": "34792bad195bc5a9"
 }

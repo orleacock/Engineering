@@ -4,7 +4,7 @@ entity: "shared"
 compartment: "cleanroom"
 note_type: "engineering_principles"
 authoritative: false
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 
 # Engineering Memory — Cross-Cutting Engineering Principles (`PRIN-xxx`)
@@ -24,6 +24,9 @@ last_synced: "2026-11-18"
 | **`PRIN-02`** | `[TRADE-OFF]` | `TIER2` | `2026-11-18` | — | Maintain a strict two-tier architecture of compact always-on rules plus on-demand modular skills with safety byte... | `LIN-541fd2a351ef` |
 | **`PRIN-03`** | `[TRAP]` | `TIER2` | `2026-11-18` | — | Keep compact operational flags and negative domain constraints inline when companion docs are substantially larger, and... | `LIN-f1d9ee5282f8` |
 | **`PRIN-04`** | `[WIN]` | `TIER2` | `2026-11-18` | — | Consolidate pre-commit checks into a single process, pre-filter plain UTF-8 files safely before deep scanning, and cache... | `LIN-ed0e3df3e520` |
+| **`PRIN-05`** | `[TRAP]` | `TIER2` | `2026-11-19` | `global` | Isolate HOME, user profile, cache/config paths, and bytecode generation per worker while surfacing worker stderr on... | `LIN-47b6b33c3131` |
+| **`PRIN-06`** | `[TRAP]` | `TIER2` | `2026-11-19` | `global` | Resolve multi-file citation anchors by longest matching relative POSIX path suffix before basename fallback, preserve... | `LIN-967dfe659c07` |
+| **`PRIN-07`** | `[WIN]` | `TIER2` | `2026-11-19` | `global` | Separate shared host-runtime constraints from cleanroom principles and entity scopes, keep optional shelves unlinked in... | `LIN-819030510d1d` |
 
 ---
 
@@ -52,3 +55,21 @@ last_synced: "2026-11-18"
 - **Bottleneck / Challenge:** Spawning multiple interpreter processes per pre-commit check and rebuilding unchanged source indexes from scratch on every validation pass.
 - **Mechanism & Measured Gain:** Repeated interpreter startup and redundant full-file parsing dominate gate latency, whereas unsafe binary serialization caches introduce code-execution risks.
 - **Reusable Pattern & Integration Blueprint:** Consolidate pre-commit checks into a single process, pre-filter plain UTF-8 files safely before deep scanning, and cache parsed indexes as pure JSON keyed by file metadata and SHA-256 digests while keeping secret scans live.
+
+### `PRIN-05` [TIER2] [TRAP] — Per-Worker State Isolation in Parallel Test Suites and Supersession Checkpoints (`2026-11-19`)
+- **Lineage-Receipt:** `LIN-47b6b33c3131`
+- **Symptom / Trap:** Parallel test workers flake under shared host caches or bytecode writes when only TMPDIR is isolated, and golden-query regression suites break when superseded lesson IDs move to retired archives.
+- **Root Cause:** Concurrent worker processes collide inside shared user home, config, and cache directories, while downstream recall fixtures hardcode retired source IDs unless updated alongside lineage maturation.
+- **Verified Resolution, Guardrail & Applicability Boundary:** Isolate HOME, user profile, cache/config paths, and bytecode generation per worker while surfacing worker stderr on failure, and update downstream golden-query fixtures to accept successor IDs whenever lessons are superseded.
+
+### `PRIN-06` [TIER2] [TRAP] — POSIX Relative Path-Suffix Citation Matching and Working-Tree Patch Repair Fallback (`2026-11-19`)
+- **Lineage-Receipt:** `LIN-967dfe659c07`
+- **Symptom / Trap:** Checking line bounds by filename alone flags valid multi-directory citations when identically named files coexist, and single-file self-repair aborts when critiques reference working-tree diff hunks.
+- **Root Cause:** Basename-only lookup maps overwrite distinct sibling paths under the last indexed file, while claim repair pipelines omit transient working-tree diff patches and drop single-line fixes below arbitrary line minimums.
+- **Verified Resolution, Guardrail & Applicability Boundary:** Resolve multi-file citation anchors by longest matching relative POSIX path suffix before basename fallback, preserve repo-relative target labels, and mount working-tree diff patches during self-repair down to single-line edits.
+
+### `PRIN-07` [TIER2] [WIN] — Two-Shelf Memory Separation, Paginated Active Windows, and Tapered Scope Retrieval (`2026-11-19`)
+- **Lineage-Receipt:** `LIN-819030510d1d`
+- **Bottleneck / Challenge:** Unbounded single-file lesson logs and flat active ceilings crowd per-project windows, mix host-local tool rules with cleanroom principles, and break clean-init audits when root indexes link uninitialized optional shelves.
+- **Mechanism & Measured Gain:** Mixing portable design principles with host-local tool rules creates cross-project bleed, fixed global ceilings force premature retirement, and static root links to optional folders fail validation before initialization.
+- **Reusable Pattern & Integration Blueprint:** Separate shared host-runtime constraints from cleanroom principles and entity scopes, keep optional shelves unlinked in starter root hubs, paginate active books under 24 KB with tapered scope caps, scan overflow and shared shelves during ID allocation, and age-taper aged entries without muting safety traps.

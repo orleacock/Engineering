@@ -3,8 +3,8 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "fc979bf47f57"
-last_synced: "2026-11-18"
+tree_hash: "108327162f8e"
+last_synced: "2026-11-19"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -96,6 +96,7 @@ last_synced: "2026-11-18"
 │   │   │   ├── v0.3.4_Wave3_OpenSSH_Seal_Signatures_Worklog.md
 │   │   │   ├── v0.3.5_Efficiency_FastPath_and_Quarantine_Worklog.md
 │   │   │   ├── v0.3.6_to_v0.3.7_Hydrogen_and_Memory_Hygiene_Worklog.md
+│   │   │   ├── v0.3.8_Option_D_Plus_and_Apprentice_v2_6_1_Worklog.md
 │   │   │   └── Version_Logs_and_Artifact_Registry.md
 │   │   ├── Homunculus.md
 │   │   ├── Homunculus_Cleanroom_Promotion_Diff.md
@@ -397,7 +398,7 @@ last_synced: "2026-11-18"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 1e84832c9a01` | `Tree: b6b8ac5ad1cf`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: e4a83c1d3a0b` | `Tree: b6b8ac5ad1cf`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

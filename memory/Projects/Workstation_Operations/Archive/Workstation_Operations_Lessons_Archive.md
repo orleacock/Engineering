@@ -5,7 +5,7 @@ entity: "Orin_Workstation"
 compartment: "private"
 note_type: "lessons_archive"
 authoritative: false
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 
 # 🗄️ Workstation_Operations — Graduated & Historical Lessons Archive (`TIER3`–`TIER5`)

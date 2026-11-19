@@ -1141,7 +1141,7 @@ def _stitch_tail_continuation(head_clean: str, tail_raw: str) -> str:
 
 
 def _filter_chunk_extract_lines(raw_text: str) -> str:
-    """Drop empty lines, standalone NONE replies, and slice-local [TBD] absence noise."""
+    """Drop empty lines, standalone NONE replies, slice-local pipe-row NONE/Absent noise, and [TBD] absence noise."""
     absence_markers = ("slice", "chunk", "not in ", "absent", "not found", "not defined", "missing")
     kept: list[str] = []
     for raw_ln in raw_text.splitlines():
@@ -1149,6 +1149,10 @@ def _filter_chunk_extract_lines(raw_text: str) -> str:
         if not s:
             continue
         if re.match(r"^`?NONE`?(?:\s*[-—:(].*)?$", s, re.IGNORECASE):
+            continue
+        if re.search(r"\|\s*`?NONE`?\s*(?:\||$)", s, re.IGNORECASE):
+            continue
+        if re.search(r"\babsent\s+from\s+L?\d+", s, re.IGNORECASE):
             continue
         s_low = s.lower()
         if "[tbd:" in s_low and any(tok in s_low for tok in absence_markers):
@@ -2017,10 +2021,10 @@ def _apprentice_digest_sync(
                         f"{prompt.strip()}\n\n"
                         f"TASK FOR THIS SLICE ONLY:\n"
                         f"Extract ONLY matching items, fasteners (exact size + head style), specs, rules, symbols, or facts DIRECTLY RELEVANT to the user goal "
-                        f"that are ACTUALLY PRESENT in `{rel_label}#L{s_line}-L{e_line}` using terse lossless rows (`Item/Rule | Exact Literal/Qty/Spec | {rel_label}#L<start>-L<end>`, max ~24 rows). "
+                        f"that are ACTUALLY PRESENT in `{rel_label}#L{s_line}-L{e_line}` using terse lossless rows (`Item/Rule | Exact Literal/Qty/Spec | {rel_label}#Lstart-Lend`, max ~24 rows). "
                         f"`{rel_label}` IS one of the target files referenced in the user goal—preserve relevant edge specs without skipping, and omit unrelated sections.\n"
-                        f"- Cite exact `{rel_label}#L<start>-L<end>` anchors verbatim (`StartLine <= EndLine`).\n"
-                        f"- Do NOT emit `[TBD]` or mention items absent from lines L{s_line}-L{e_line} "
+                        f"- Cite exact `{rel_label}#Lstart-Lend` anchors verbatim (`StartLine <= EndLine`, no angle brackets) and bind every value strictly to its own enclosing key/metric_id/heading (never attribute a sibling record's fields to another key).\n"
+                        f"- Do NOT emit `[TBD]` or `| NONE |` rows for items absent from lines L{s_line}-L{e_line} "
                         f"(other chunks cover the rest of `{rel_label}` and other files).\n"
                         f"- Only reply `NONE` if lines L{s_line}-L{e_line} contain ZERO facts relevant to ANY part of the user goal. Zero preamble."
                     )
@@ -2142,8 +2146,8 @@ def _apprentice_digest_sync(
                 reduce_prompt = (
                     f"{prompt.strip()}\n\n"
                     "Below are verbatim per-slice extracts from the target file(s). "
-                    "Merge, deduplicate, and filter them so ONLY exact items requested above remain. "
-                    "Preserve every exact `file.ext#Lstart-Lend` anchor (without `<` `>` angle brackets) and literal verbatim; never alter line numbers or invent values. "
+                    "Merge, deduplicate, and filter them so ONLY exact items requested above remain; drop any slice-local `NONE`/absence rows whenever another slice found a match. "
+                    "Preserve every exact `file.ext#Lstart-Lend` anchor (without `<` `>` angle brackets), bind every metric/value strictly to its own enclosing key/metric_id/heading (never cross-attribute sibling records), and never alter line numbers or invent values. "
                     "Never invent parenthetical example numbers (e.g., 0.8mm), prefix `Warning:`/`Caution:` on any `[!WARNING]`/`[!CAUTION]` citation, "
                     "and ensure any `[CALC: ...]` uses ONLY literal source numbers on the left of `=`. Zero preamble.\n\n"
                     + "\n\n".join(kept_labeled_blocks)

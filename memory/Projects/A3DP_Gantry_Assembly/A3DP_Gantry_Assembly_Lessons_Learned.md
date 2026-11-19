@@ -4,7 +4,7 @@ parent_note: "A3DP_Gantry_Assembly"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 
 # 🧠 A3DP Gantry Assembly — Engineering Lessons Learned & Post-Mortem Ledger (`A3DP_Gantry_Assembly_Lessons_Learned`)

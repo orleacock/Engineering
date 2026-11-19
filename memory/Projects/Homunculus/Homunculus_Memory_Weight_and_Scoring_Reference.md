@@ -5,7 +5,7 @@ parent_note: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "private"
 authoritative: false
-last_synced: "2026-11-13"
+last_synced: "2026-11-19"
 ---
 
 # ⚖️ Homunculus — Memory Weight, Scoring & Headroom Reference
@@ -20,7 +20,7 @@ last_synced: "2026-11-13"
 | :--- | :---: | :--- | :--- |
 | `TIER0` | `4.0` | `<Project>_Lessons_Learned.md` (`<= 3` sections) | Shown in `[TIER0 Pinned Project Laws]` (`<= 360` chars); enters active match when `r_base >= 0.24` or exact ID queried. |
 | `TIER1` | `5.0` | `SUBSYSTEM-INVARIANTS` table | Rendered in `[TIER1 Subsystem Invariants]` (`Rank #1`: `850` / `450` chars; `Rank #2`: `520` / `300` chars). |
-| `TIER2` | `1.65` | `<Project>_Lessons_Learned.md` (`<= 9` sections) | Active dev-cycle full-context lessons (`r_base >= 0.13`; `>= 4`-term pure-text boost tapers below `max(bm25_norm, qcov) = 0.80`). |
+| `TIER2` | `1.65` | `*_Lessons_Learned.md` & `Pages/*_Vol_NN.md` (`<= 12` unscoped / `<= 6` per-scope / `<= 30` total) | Active dev-cycle full-context lessons (`r_base >= 0.13`; `>= 4`-term pure-text boost tapers below `max(bm25_norm, qcov) = 0.80`; Proposal-B age taper with trap/reinforcement guard + Proposal-D `design_intent` MMR; shared host bounds isolated in `Host_Runtime/`). |
 | `TIER3` | `1.0` | `Archive/<Project>_Lessons_Archive.md` (`0444`) | Graduated invariant-backed lessons (`r_base >= 0.13`). |
 | `TIER4` | `0.5` (`0.85` high-evidence) | `Archive/<Project>_Lessons_Archive.md` (`0444`) | Isolated polish / edge-case history (`r_base >= 0.13`). |
 | `TIER5` | `0.0` (`0.25` opt-in) | `Archive/<Project>_Lessons_Archive.md` (`0444`, sealed) | Excluded by default; emits zero-value-leak `[TIER5_SUPPRESSED]` ID-only footer when `bm25_sat >= 0.35`. |
@@ -41,4 +41,4 @@ last_synced: "2026-11-13"
 | Capsule Character Budget | `capsule_*_chars` | `110` / `340` / `460` | Guardrail-First 1-line capsule (`Symptom <= 110` -> `Guardrail <= 340`, max `460` chars). |
 | Pre-Write Deduplication Gate | `near_duplicate_cosine_gate` | `0.72` | Blocks duplicate `LL-*`/`PB-*` (`Cosine >= 0.72`) and redirects to `--reinforce-lesson` / `--update-playbook`. |
 | Lesson / Playbook Word Caps | `lesson_field_max_words` / `playbook_field_max_words` | `120/120/140w` / `100/180/120w` | Active prose field word caps on `--add-lesson` & `--add-playbook` (`authoritative: false` for playbooks). |
-| Active Governance Ceilings | `agents_md_max_*` / `decision_profile_max_lines` / `lessons_active_*` | `180w`/`2200B` / `60L` / `320L`/`12` | `memory/AGENTS.md <= 180`w (`2200` B), `Decision_Profile.md <= 60`L, `_Lessons_Learned.md <= 320`L (`<= 12` sections). |
+| Active Governance Ceilings | `agents_md_max_*` / `decision_profile_max_lines` / `lessons_active_*` | `180w`/`2200B` / `60L` / `320L`/`12`unscoped/`6`scope/`30`tot (`22KB` roll/`24KB` page) | `memory/AGENTS.md <= 180`w (`2200` B), `Decision_Profile.md <= 60`L, `_Lessons_Learned.md <= 320`L/page (`<= 12` unscoped / `<= 6` per-scope / `<= 30` total active `TIER2`, `<= 22,528` B roll / `24,576` B hard page), `Host_Runtime/` `0.82x`/`0.95x`, `Principles/` `0.78x`/`1.00x`. |

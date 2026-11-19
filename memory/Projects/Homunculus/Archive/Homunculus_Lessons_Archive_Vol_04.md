@@ -6,7 +6,7 @@ compartment: "cleanroom"
 note_type: "lessons_archive"
 authoritative: false
 volume: 4
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 # Homunculus — Archive — Volume 04
 

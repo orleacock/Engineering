@@ -1,18 +1,18 @@
 {
-  "avg_doc_len": 173.14,
+  "avg_doc_len": 170.09,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
     "2. **Token & Turn Efficiency (`#2`)**: Eliminate wasted reads, blind directory scans, and mid-task churn via targeted front-of-decision radar capsules (`<= 7,200` chars packet / `<= 12,000` chars cold load) and deferred `pre-commit-gate` batching.",
     "3. **Data Safety (`#3`)**: Enforce compartment boundaries (`audit_data_boundary.py`), zero credential exposure, and strict `entity:` isolation.",
-    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Carbon` on deeper request).",
+    "4. **Execution Speed (`#4`)**: Achieve speed through first-pass accuracy, deterministic CLI oracles, and right-sized Gemini 4 Hydrogen subagents (`Low`/`Medium`/`High` -> `XHigh` Full base; `Neon`/`Carbon` on deeper request; never auto-select `Orchestrator` models).",
     "- **Parent Workstation & Post-Install User Stations**: Absolute `local_path` bindings and local station indexes (`Directory/<Entity>_memory_index.json`) are first-class citizens. Never waste local turns scrubbing workstation paths from the private parent memory vault.",
     "- **Shipped Clean-Room Deliverable (`Homunculus`)**: Must ship 100% generic (`0` parent paths, project names, or `LL-xxx` IDs). Only `TIER0` & `TIER1` engine-universal invariants (`scripts/script_contracts.json`, `#L1-L55` `Contract :` pointers, and `tests/test_*.py`) promote from the parent vault into the clean-room deliverable.",
     "- **Sprint-by-Sprint Alignment**: Lock design questions and trade-offs *before* executing each sprint; verify every sprint against the persisted Deployment Plan via `sprint-auditor` so development never runs in circles.",
-    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 9$ $\\rightarrow$ `TIER3` stabilized archive $\\rightarrow$ `TIER4` isolated polish $\\rightarrow$ `TIER5` retired history)."
+    "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 12$ unscoped / $\\le 6$ per-scope / $\\le 30$ total across paginated `Pages/*_Vol_NN.md` + `Host_Runtime/` Shelf 1B $\\rightarrow$ `TIER3`..."
   ],
   "entity": "Orin_Workstation",
-  "last_synced": "2026-11-18",
+  "last_synced": "2026-11-19",
   "projects": {
     "Workstation_Operations": {
       "compartment": "private",
@@ -80,53 +80,22 @@
         },
         {
           "governing_lls": [
-            "LL-WS-07"
-          ],
-          "must_keep": "Single-source Alchemical3D/Homunculus only (0 duplicate copies); exit 4 for REGRESSION_ADVISORY (never exit 2 argparse collision); pure Markdown comparison charts (0 unsolicited SVG/PNG renders); write-once 0444/0555 RAID deliverables with pre-lock boundary, SHA-256, and bundle verification.",
-          "retired_bloat": "Maintaining a duplicate Engineering/Homunculus working tree; returning exit 2 for sub-ceiling advisories (collides with sandbox_runner.py VALIDATOR_CRASH); mutating RAID snapshots in place.",
-          "scope": "",
-          "subsystem": "version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py",
-          "tier": "TIER1",
-          "touched_files": [
-            "Workstation_Operations_Software.md",
-            "benchmark_homunculus.py",
-            "sandbox_runner.py",
-            "snapshot_homunculus_version.py",
-            "version_manager.py"
-          ]
-        },
-        {
-          "governing_lls": [
+            "LL-WS-07",
             "LL-WS-08"
           ],
-          "must_keep": "Dereference symlinked ~/.local/bin/h-sudo via os.path.realpath in h_sudo.sh and exclude volatile .obsidian/workspace*.json and .cache/ indices in snapshot_host_hashes",
-          "retired_bloat": "Using dirname BASH_SOURCE without symlink dereferencing in h_sudo.sh or hashing volatile Obsidian UI files during CLI benchmarks",
+          "must_keep": "Single-source `Alchemical3D/Homunculus` only (`0` duplicate copies); exit `4` for `REGRESSION_ADVISORY` (never exit `2` argparse collision); pure Markdown comparison charts (`0` unsolicited SVG/PNG renders); write-once `0444`/`0555` RAID deliverables with pre-lock boundary, SHA-256, and bundle verification; dereference symlinked `~/.local/bin/h-sudo` via `os.path.realpath` in `h_sudo.sh` and exclude volatile `.obsidian/workspace*.json` and `.cache/` indices in `snapshot_host_hashes`.",
+          "retired_bloat": "Maintaining a duplicate `Engineering/Homunculus` working tree; returning exit `2` for sub-ceiling advisories (collides with `sandbox_runner.py` `VALIDATOR_CRASH`); mutating RAID snapshots in place; using `dirname BASH_SOURCE` without symlink dereferencing in `h_sudo.sh` or hashing volatile Obsidian UI files during CLI benchmarks.",
           "scope": "",
-          "subsystem": "version_manager.py, benchmark_homunculus.py & snapshot_homunculus_version.py",
+          "subsystem": "`version_manager.py`, `benchmark_homunculus.py` & `snapshot_homunculus_version.py`",
           "tier": "TIER1",
           "touched_files": [
             "Workstation_Operations.md",
+            "Workstation_Operations_Software.md",
             "benchmark_homunculus.py",
             "h_sudo.sh",
+            "sandbox_runner.py",
             "snapshot_homunculus_version.py",
             "version_manager.py"
-          ]
-        },
-        {
-          "governing_lls": [],
-          "must_keep": "Trailing POSIX path-suffix citation resolution; repo-relative shadow targets; working_tree_delta.patch surgical fallback; ~0.90x 2-slot GPU ETA calibration; expanded GOVERNED_PY_SCRIPTS",
-          "retired_bloat": "Basename-only citation length checks across SKILL.md collisions; 0.5x wave-halving chunked ETA estimates; blocking homunculus_paths.py --map under SIDECAR_SCRIPT_RE",
-          "scope": "script:apprentice",
-          "subsystem": "Apprentice v2.6.1 Citation Suffixes, Single-GPU ETA & Hook Allowlist",
-          "tier": "TIER1",
-          "touched_files": [
-            "SKILL.md",
-            "Workstation_Operations_Software.md",
-            "apprentice_engine.py",
-            "apprentice_lifecycle_hook.py",
-            "apprentice_mcp_server.py",
-            "benchmark_apprentice_high.py",
-            "homunculus_paths.py"
           ]
         }
       ],
@@ -134,13 +103,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... -> Pruned Engineering/.agents and ~/.agents (including find-skills), removed --compat-symlinks and legacy Engineering/Homunculus probes, upgraded bootstrap_workstation.sh --check to enforce cmp byte parity on copied Alchemical3D git hooks, restored cross-repo AST matrix parity checks, and pruned duplicate memory Templates to sparse...",
-          "end_line": 44,
+          "end_line": 42,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-09",
-          "line_range": "#L39-L44",
+          "line_range": "#L37-L42",
           "location": "main",
           "scope": "",
-          "start_line": 39,
+          "start_line": 37,
           "tier": "TIER2",
           "title": "Retired parent workstation surfaces (.agents duplicate symlink trees, unused find-skills skill... (`2026-11-11`)",
           "touched_files": [
@@ -153,13 +122,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... -> Isolate per-worker HOME, USERPROFILE, XDG_CACHE_HOME, XDG_CONFIG_HOME, HOMUNCULUS_SANDBOX_CACHE, HOMUNCULUS_SUDO_CONFIG_DIR, and -B / PYTHONDONTWRITEBYTECODE=1 in run_unit_tests(['ALL']), and surface failing worker stderr in forensic_notes. (scripts/benchmark_homunculus.py (SBX-20261113_230606-cb97d55e)).",
-          "end_line": 51,
+          "end_line": 49,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-10",
-          "line_range": "#L46-L51",
+          "line_range": "#L44-L49",
           "location": "main",
           "scope": "",
-          "start_line": 46,
+          "start_line": 44,
           "tier": "TIER2",
           "title": "Parallel run_unit_tests(['ALL']) in benchmark_homunculus.py flaked 74/75 under concurrent load and... (`2026-11-13`)",
           "touched_files": [
@@ -169,13 +138,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Pre-commit Z5 memory hygiene checks risked being skipped on verified_fastpath cache hits or missing... -> Execute audit_memory_hygiene.py --check-commit outside verified_fastpath fp_hit branches in git_pre_commit_boundary.sh and normalize relative local_path frontmatter against mem_dir (`git_pre_commit_boundary.sh` (`Workstation_Operations_Software.md`) (`SBX-20261118_150719-9fd47d0e`)).",
-          "end_line": 59,
+          "end_line": 57,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
           "id": "LL-WS-25",
-          "line_range": "#L53-L59",
+          "line_range": "#L51-L57",
           "location": "main",
           "scope": "script:git_pre_commit_boundary",
-          "start_line": 53,
+          "start_line": 51,
           "tier": "TIER2",
           "title": "Pre-commit Z5 memory hygiene checks risked being skipped on verified_fastpath cache hits or missing... (`2026-11-18`)",
           "touched_files": [
@@ -185,22 +154,18 @@
         },
         {
           "archetype": "trap",
-          "capsule_1line": "Same-basename SKILL.md citations triggered false out-of-bounds anchor errors (BC-0290), chunked 8-batch... -> Match trailing POSIX path suffixes in citation bounds and emit repo-relative targets; fall back to working_tree_delta.patch and min_lines=1 during single-file shadow repair (BC-0292 100% healed, H5 3/3 Pass-1 clean); recalibrate estimate_chunked_eta to ~0.90x parallel GPU model; expand GOVERNED_PY_SCRIPTS. (`apprentice_engine.py`...",
-          "end_line": 65,
+          "capsule_1line": "Hardcoded retired LL-027 IDs inside benchmark_homunculus golden_queries broke recall assertions after... -> Keep golden_queries aligned with active successor lesson IDs after --supersede-lesson transitions, use --self-test strictly for subagent-ab, and execute full-system-suite unsandboxed on host after synced checkpoints. (`benchmark_homunculus.py` (`Workstation_Operations_Software.md`) (`SBX-20261118_150719-9fd47d0e`)).",
+          "end_line": 63,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md",
-          "id": "LL-WS-28",
-          "line_range": "#L61-L65",
+          "id": "LL-WS-31",
+          "line_range": "#L59-L63",
           "location": "main",
-          "scope": "script:apprentice",
-          "start_line": 61,
+          "scope": "script:benchmark_homunculus",
+          "start_line": 59,
           "tier": "TIER2",
-          "title": "Same-basename SKILL.md citations triggered false out-of-bounds anchor errors (BC-0290), chunked 8-batch... (`2026-11-18`)",
+          "title": "Hardcoded retired LL-027 IDs inside benchmark_homunculus golden_queries broke recall assertions after... (`2026-11-19`)",
           "touched_files": [
-            "SKILL.md",
-            "apprentice_engine.py",
-            "apprentice_lifecycle_hook.py",
-            "apprentice_mcp_server.py",
-            "benchmark_apprentice_high.py"
+            "benchmark_homunculus.py"
           ]
         },
         {
@@ -509,7 +474,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 173.14,
+      "proj_avg_doc_len": 170.09,
       "proj_total_docs": 22,
       "project": "Workstation_Operations"
     }
@@ -519,27 +484,27 @@
     "Profile/Decision_Profile.md": {
       "lines": 32,
       "sections": 0,
-      "sha256": "829be433d8606a42"
+      "sha256": "307f87dd3d9d5128"
     },
     "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive.md": {
       "lines": 133,
       "sections": 16,
-      "sha256": "ca5e22ac2c4300aa"
+      "sha256": "17daf92aaae5dee1"
     },
     "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md": {
       "lines": 26,
       "sections": 1,
-      "sha256": "60c0d0a191acdc8d"
+      "sha256": "4c42f8ca1390bde8"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 124,
+      "lines": 125,
       "sections": 0,
-      "sha256": "853b1b4ea2b54521"
+      "sha256": "0bd2fe45475f001a"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
-      "lines": 79,
+      "lines": 75,
       "sections": 4,
-      "sha256": "e765f2602b9ef9b7"
+      "sha256": "1cc3e63fc7f968f3"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -549,10 +514,10 @@
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
       "lines": 64,
       "sections": 0,
-      "sha256": "c665bcf5aa6ab892"
+      "sha256": "21ac8674b01d74fd"
     }
   },
   "total_docs": 22,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "7d56dd99ba017741"
+  "vectors_digest": "2e2b77d1a355c57f"
 }

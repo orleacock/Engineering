@@ -5,7 +5,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 note_type: "lessons_learned_page"
 volume: 2
-last_synced: "2026-11-18"
+last_synced: "2026-11-19"
 ---
 # Homunculus — Lessons Learned — Volume 02
 
@@ -14,6 +14,13 @@ last_synced: "2026-11-18"
 ---
 
 ## 2. Active Lessons Continuation (`TIER0` & `TIER2`)
+
+### `LL-052` [TIER2] — Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine... (`2026-11-14`)
+- **Symptom / Trap:** Repeated single-target verify_claims runs rebuilt SourceIndex on unchanged sources, top-level Quarantine paths lacked a schema or gateway door, boundary scans re-hashed duplicate tokens, and backticked rule examples inflated TBD counts.
+- **Root Cause:** verify_claims lacked a pure-JSON SourceIndex cache and multi-target CLI, memory_gateway lacked a per-project quarantine-note writer and TOP_LEVEL_QUARANTINE_FORBIDDEN audit, and sync_memory lacked INERT_META_TBD_RE backtick parity.
+- **Verified Resolution & Permanent Guardrail:** Ship fail-closed pure-JSON SourceIndex caching (--no-cache / HOMUNCULUS_DISABLE_FASTPATH=1) + multi-target --target, per-project QUARANTINE_NOTE_V1 + memory_gateway quarantine-note + TOP_LEVEL_QUARANTINE_FORBIDDEN, combined regex/seen_clean_tokens prefilters, and INERT_META_TBD_RE parity. (`skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `scripts/memory_gateway.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261114_153225-b191d46c`)).
+
+---
 
 ### `LL-053` [TIER2] — Remote turnkeys burned before ssh-keygen -Y lease signing, _is_ignored_ring_artifact filtered .cache... (`2026-11-16`)
 - **Scope:** `script:homunculus_paths`
@@ -41,3 +48,15 @@ last_synced: "2026-11-18"
 - **Bottleneck / Challenge:** Unscoped lesson caps saturated per-project TIER2 windows and mixed host-runtime rules into project or clean-room Principles ledgers.
 - **Mechanism & Measured Gain:** Fixed 9-lesson ceilings and single-file ledgers forced premature retirement or mixed host-specific tool constraints with project-agnostic Principles.
 - **Reusable Pattern & Integration Blueprint:** Ship Two-Shelf Option D+ paginated books (Principles/ Shelf 1A, Host_Runtime/ Shelf 1B, Pages/*_Vol_NN.md Shelf 2), tapered TIER2 gravity caps (12 unscoped / 6 per-scope / 30 total), design_intent MMR, Stage Z1 Host_Runtime/ source exclusion, and deterministic --migrate-option-d-plus migration. (`skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/memory-hygiene/scripts/audit_memory_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/skill-architect/scripts/audit_skill_hygiene.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/claim-verification/scripts/verify_claims.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`SBX-20261118_203920-eda0e867 / Compare-Light SBX-20261118_202914-134a8559`)).
+
+### `LL-061` [TIER2] [TRAP] — Linking optional Host_Runtime in starter README breaks clean-init memory audits before --init-host-runtime... (`2026-11-19`)
+- **Scope:** `script:sync_memory`
+- **Symptom / Trap:** Linking optional Host_Runtime in starter README breaks clean-init memory audits before --init-host-runtime runs, add_project_lesson risks ID collisions and schema/metadata-bullet corruption against Option D+ pages, and add_host_runtime_lesson lacks a direct CLI flag.
+- **Root Cause:** Memory_Map_README linked an optional file absent until Host_Runtime init, add_project_lesson did not scan Host_Runtime Migrated-From prefixes or detect 4-column slim tables, _slim_quick_lookup_table scraped metadata bullets into capsules, promote_cross_cutting_principle checked only Vol 1 files instead of paginated Pages/, and main() exposed only --init-host-runtime.
+- **Verified Resolution & Permanent Guardrail:** Keep Host_Runtime unlinked in Memory_Map_README while linking conditionally in Directory_Index.md, scan Host_Runtime IDs and skip metadata bullets across Vol 1/Pages slim tables in sync_memory.py, and queue direct CLI write exposure for add_host_runtime_lesson so new host entries avoid waiting for --migrate-option-d-plus. (`templates/memory/Memory_Map_README.md` ([`Homunculus.md`](../Homunculus.md)), `skills/project-memory/scripts/sync_memory.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)), `skills/project-memory/SKILL.md` ([`Homunculus.md`](../Homunculus.md)) (`SBX-20261118_203920-eda0e867`)).
+
+### `LL-062` [TIER2] [TRADE-OFF] — Adding gemini-4-neon-high alongside carbon and banning auto-selection or fallback to... (`2026-11-19`)
+- **Scope:** `skill:subagent-orchestrator`
+- **Decision Context & Options:** Adding gemini-4-neon-high alongside carbon and banning auto-selection or fallback to gemini-pro-orchestrator* increased always-on rules and AGENTS.md by +221 B, while bwrap sandboxes mask host sudo_policy.json so --verify-seal reports seal_signing off inside isolated shells.
+- **Why Chosen Path Won (& Cost Paid):** Gemini 4 Neon frontier escalation and non-Orchestrator portability constraints require explicit rule and skill guardrails, whereas standard sandboxes isolate host user-config directories that hold seal-signing policies.
+- **Transferable Rule & Invalidation Boundary:** Keep always-on Neon and non-Orchestrator guardrails compact within the 22,500 B AGENTS.md cap (+221 B advisory tracked for Window 1 benchmark trim or Course D pin) and run homunculus_paths.py --verify-seal unsandboxed on host when verifying required OpenSSH signatures. (`rules/co-engineering-partner.md` ([`Homunculus.md`](../Homunculus.md)), `skills/subagent-orchestrator/SKILL.md` ([`Homunculus.md`](../Homunculus.md)), `skills/engineering-sandbox/SKILL.md` ([`Homunculus.md`](../Homunculus.md)), `scripts/homunculus_paths.py` ([`Homunculus_Software.md`](../Homunculus_Software.md)) (`94/94 unittest OK`)).

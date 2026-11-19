@@ -1,5 +1,19 @@
 {
   "records": {
+    "LIN-47b6b33c3131": {
+      "archetype": "trap",
+      "lineage_id": "LIN-47b6b33c3131",
+      "principle_id": "PRIN-05",
+      "promoted_at": "2026-11-19",
+      "reason": "Approved cleanroom promotion of per-worker test isolation & supersession regression principle",
+      "scope": "",
+      "source_compartment": "private",
+      "source_disposition": "keep-active",
+      "source_entity": "Orin_Workstation",
+      "source_lesson_id": "LL-WS-10",
+      "source_project": "Workstation_Operations",
+      "tier": "TIER2"
+    },
     "LIN-541fd2a351ef": {
       "archetype": "trade-off",
       "lineage_id": "LIN-541fd2a351ef",
@@ -12,6 +26,34 @@
       "source_entity": "Alchemical-3D",
       "source_lesson_id": "LL-027",
       "source_project": "Homunculus",
+      "tier": "TIER2"
+    },
+    "LIN-819030510d1d": {
+      "archetype": "win",
+      "lineage_id": "LIN-819030510d1d",
+      "principle_id": "PRIN-07",
+      "promoted_at": "2026-11-19",
+      "reason": "Approved cleanroom promotion of 2-shelf paginated memory & retrieval principle (distilled from Vol_02 active window)",
+      "scope": "",
+      "source_compartment": "cleanroom",
+      "source_disposition": "keep-active",
+      "source_entity": "Alchemical-3D",
+      "source_lesson_id": null,
+      "source_project": "Homunculus",
+      "tier": "TIER2"
+    },
+    "LIN-967dfe659c07": {
+      "archetype": "trap",
+      "lineage_id": "LIN-967dfe659c07",
+      "principle_id": "PRIN-06",
+      "promoted_at": "2026-11-19",
+      "reason": "Approved cleanroom promotion of POSIX path-suffix citation bounds & working-tree patch repair fallback",
+      "scope": "",
+      "source_compartment": "private",
+      "source_disposition": "keep-active",
+      "source_entity": "Orin_Workstation",
+      "source_lesson_id": "LL-WS-28",
+      "source_project": "Workstation_Operations",
       "tier": "TIER2"
     },
     "LIN-d5193389260b": {

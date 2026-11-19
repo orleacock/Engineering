@@ -11,8 +11,8 @@ checkpoint_head_sha: "UNTRACKED"
 checkpoint_tree_hash: "7adb62cc6fb3"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
-last_synced: "2026-11-18"
-checkpoint_lessons_digest: "ba09f43cc2060a11"
+last_synced: "2026-11-19"
+checkpoint_lessons_digest: "4418ca8ea34107f4"
 ---
 
 # Workstation_Operations — Project Hub Dossier
@@ -55,13 +55,14 @@ checkpoint_lessons_digest: "ba09f43cc2060a11"
 > **Turn-1 Cold-Resume Rule**: When resuming `Workstation_Operations` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Workstation_Operations --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-18`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 7adb62cc6fb3` | `Worktree: untracked` | `Last Verification: SBX-20261118_205811-ca257d09 | BC-0292 | H5 PASS 3/3`
+- **Last Session Timestamp**: `2026-11-19`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 7adb62cc6fb3` | `Worktree: untracked` | `Last Verification: SBX-20261119_070028-c284d2b2 | 14/14 hook + 31/31 MCP PASS | LIN-47b6b33c3131 | LIN-967dfe659c07 | audit 0/118 PASS`
 - **Where We Stopped (Verified State & Context)**:
-  Shipped Apprentice v2.6.1 weak-spot fixes (BC-0292 HEALED, H5 PASS 3/3) and promoted Homunculus v0.3.8 Option D+ into live Engineering/memory with Host_Runtime shelf
+  Shipped Apprentice Neon routing (LL-WS-29), map-reduce NONE/key binding (LL-WS-30), benchmark lineage alignment (LL-WS-31), PRIN-05..07, Host_Runtime/ migration of LL-WS-28..30, LL-WS-07/08 invariant merge, and OpenSSH-signed 0444 governance seal (audit 0/118 PASS).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Monitor Apprentice v2.6.1 scorecard on multi-file commits. 2. Optionally index relative source paths in verify_claims.py SourceIndex in next release.
+  1. Window 3: Refine Project State Ledger format in rules/co-engineering-partner.md and embed Apprentice telemetry field inside the ledger (apprentice_plugin).
+- **Open Discussion / Alignment Questions**: Section 2 Option D+ & governance seal complete; ready for Window 3 in a fresh thread.
 <!-- SESSION-HANDOFF:END -->
 
 ---

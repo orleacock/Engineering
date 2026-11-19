@@ -86,8 +86,9 @@ GOVERNED_PY_SCRIPTS = frozenset(
 LMS_BLOCKED_SUBCMDS = frozenset({"daemon", "server", "load", "unload", "chat"})
 SHELL_WRAPPER_CMDS = frozenset({"sh", "bash", "zsh", "dash", "ksh", "ash", "fish"})
 EXPLICIT_TAG_RE = re.compile(r"\[(local|bionic|apprentice|ollama|llamacpp)\]", re.IGNORECASE)
-FRONTIER_MODEL_RE = re.compile(r"\b(?:carbon|argon|opus)\b", re.IGNORECASE)
+FRONTIER_MODEL_RE = re.compile(r"\b(?:carbon|neon|argon|opus)\b", re.IGNORECASE)
 EXECUTION_MODEL_RE = re.compile(r"\b(?:hydrogen|sonnet|haiku|flash)\b", re.IGNORECASE)
+_NEUTRAL_MODEL_PLACEHOLDERS = frozenset({"auto", "default", "inherit", "none", "unknown"})
 TRANSCRIPT_MODEL_HINT_RE = re.compile(
     r'(?:Model Selection`?\s+from\s+[^\n]+?\s+to\s+([^\n."]+)|"model"\s*:\s*"([^"]+)")',
     re.IGNORECASE,
@@ -301,7 +302,7 @@ def _validate_hook_response_schema(resp: dict[str, Any]) -> None:
 def _classify_model_string(raw_model: str) -> str:
     """Classify a harness model identifier into portable 'frontier', 'execution', or 'neutral'."""
     cleaned = (raw_model or "").strip().lower()
-    if not cleaned or cleaned in {"auto", "default", "inherit", "none", "unknown"}:
+    if not cleaned or cleaned in _NEUTRAL_MODEL_PLACEHOLDERS:
         return "neutral"
     if FRONTIER_MODEL_RE.search(cleaned):
         return "frontier"
@@ -310,18 +311,19 @@ def _classify_model_string(raw_model: str) -> str:
     return "neutral"
 
 
-def classify_host_model_tier(payload: dict[str, Any]) -> str:
-    """Resolve portable host tier ('execution', 'frontier', or 'neutral') from env, modelName, or <16KB transcript tail."""
+def _resolve_host_tier_signal(payload: dict[str, Any]) -> tuple[str, bool]:
+    """Resolve (tier, explicit_reset_to_neutral) from env, modelName, or <16KB transcript tail."""
     env_tier = os.environ.get("APPRENTICE_HOST_TIER", "").strip().lower()
     if env_tier in {"execution", "frontier"}:
-        return env_tier
+        return env_tier, False
     env_tier_cls = _classify_model_string(env_tier)
     if env_tier_cls != "neutral":
-        return env_tier_cls
+        return env_tier_cls, False
 
-    direct = _classify_model_string(str(payload.get("modelName") or ""))
+    raw_model_name = str(payload.get("modelName") or "").strip().lower()
+    direct = _classify_model_string(raw_model_name)
     if direct != "neutral":
-        return direct
+        return direct, False
 
     t_raw = str(payload.get("transcriptPath") or "").strip()
     if t_raw:
@@ -334,15 +336,33 @@ def classify_host_model_tier(payload: dict[str, Any]) -> str:
                     fh.seek(max(0, size - 16384), os.SEEK_SET)
                     tail_txt = fh.read().decode("utf-8", errors="ignore")
                 last_tier = "neutral"
+                explicit_neutral = False
                 for m in TRANSCRIPT_MODEL_HINT_RE.finditer(tail_txt):
-                    cand = _classify_model_string(m.group(1) or m.group(2) or "")
+                    ui_sel = m.group(1)
+                    if ui_sel is not None:
+                        ui_clean = ui_sel.strip().lower()
+                        if ui_clean and ui_clean not in _NEUTRAL_MODEL_PLACEHOLDERS:
+                            last_tier = _classify_model_string(ui_clean)
+                            explicit_neutral = last_tier == "neutral"
+                        continue
+                    cand = _classify_model_string(m.group(2) or "")
                     if cand != "neutral":
                         last_tier = cand
-                if last_tier != "neutral":
-                    return last_tier
+                        explicit_neutral = False
+                if last_tier != "neutral" or explicit_neutral:
+                    return last_tier, explicit_neutral
         except OSError:
             pass
-    return "neutral"
+
+    if raw_model_name and raw_model_name not in _NEUTRAL_MODEL_PLACEHOLDERS:
+        return "neutral", True
+    return "neutral", False
+
+
+def classify_host_model_tier(payload: dict[str, Any]) -> str:
+    """Resolve portable host tier ('execution', 'frontier', or 'neutral') from env, modelName, or <16KB transcript tail."""
+    tier, _ = _resolve_host_tier_signal(payload)
+    return tier
 
 
 def _format_tier_posture_hint(host_tier: str) -> str:
@@ -375,12 +395,15 @@ def evaluate_session_or_invocation(
     last_user_input = str(payload.get("lastUserInput") or "")
     input_sha = hashlib.sha256(last_user_input.encode("utf-8")).hexdigest()[:16] if last_user_input else ""
     has_explicit_tag = bool(EXPLICIT_TAG_RE.search(last_user_input))
-    host_tier = classify_host_model_tier(payload)
+    host_tier, explicit_neutral = _resolve_host_tier_signal(payload)
     now_utc = datetime.now(timezone.utc)
 
     prev = _load_conv_state(conv_id)
     prev_tier = str(prev.get("host_tier") or "neutral") if prev else "neutral"
-    eff_tier = host_tier if host_tier != "neutral" else prev_tier
+    if explicit_neutral:
+        eff_tier = "neutral"
+    else:
+        eff_tier = host_tier if host_tier != "neutral" else prev_tier
     if event == "SessionStart":
         _save_conv_state(
             conv_id,
@@ -414,7 +437,7 @@ def evaluate_session_or_invocation(
     tier_switched = bool(
         prev is not None
         and state == "ONLINE_READY"
-        and eff_tier in {"execution", "frontier"}
+        and (eff_tier in {"execution", "frontier"} or explicit_neutral)
         and prev_tier in {"execution", "frontier", "neutral"}
         and eff_tier != prev_tier
     )
@@ -1270,14 +1293,24 @@ def run_self_tests() -> dict[str, Any]:
             assert classify_host_model_tier({"modelName": "gemini-4-hydrogen-high"}) == "execution"
             assert classify_host_model_tier({"modelName": "claude-sonnet-4"}) == "execution"
             assert classify_host_model_tier({"modelName": "gemini-4-carbon-medium"}) == "frontier"
+            assert classify_host_model_tier({"modelName": "gemini-4-neon-high"}) == "frontier"
+            assert classify_host_model_tier({"modelName": "gemini-4-neon-xhigh"}) == "frontier"
             assert classify_host_model_tier({"modelName": "gemini-4-argon-medium"}) == "frontier"
             assert classify_host_model_tier({"modelName": "claude-opus-4"}) == "frontier"
             tr_mock = Path(td) / "mock_transcript.jsonl"
             tr_mock.write_text(
-                '{"step_index":0,"content":"Model Selection from Gemini 4 Hydrogen (High) to Gemini 4 Carbon (Medium)."}\n',
+                '{"step_index":0,"content":"Model Selection from Gemini 4 Hydrogen (High) to Gemini 4 Neon (High)."}\n'
+                '{"step_index":1,"content":"{\\"model\\": \\"qwen3.6-35b-a3b\\"}"}\n',
                 encoding="utf-8",
             )
             assert classify_host_model_tier({"modelName": "auto", "transcriptPath": str(tr_mock)}) == "frontier"
+            tr_reset = Path(td) / "mock_transcript_reset.jsonl"
+            tr_reset.write_text(
+                '{"step_index":0,"content":"Model Selection from None to Gemini 4 Hydrogen (High)."}\n'
+                '{"step_index":1,"content":"Model Selection from Gemini 4 Hydrogen (High) to FutureElement (High)."}\n',
+                encoding="utf-8",
+            )
+            assert classify_host_model_tier({"modelName": "auto", "transcriptPath": str(tr_reset)}) == "neutral"
 
             srv_tier = _start_mock_models_server(lambda: True)
             try:
@@ -1310,8 +1343,9 @@ def run_self_tests() -> dict[str, Any]:
                     {
                         "hookEventName": "PreInvocation",
                         "conversationId": "conv-tier-switch-14",
-                        "modelName": "gemini-4-carbon-medium",
-                        "lastUserInput": "turn 3 swapped to carbon",
+                        "modelName": "auto",
+                        "transcriptPath": str(tr_mock),
+                        "lastUserInput": "turn 3 swapped to neon via transcript",
                     },
                     api_url=tier_api,
                 )
@@ -1324,12 +1358,26 @@ def run_self_tests() -> dict[str, Any]:
                     {
                         "hookEventName": "PreInvocation",
                         "conversationId": "conv-tier-switch-14",
-                        "modelName": "gemini-4-carbon-medium",
-                        "lastUserInput": "turn 4 steady carbon",
+                        "modelName": "gemini-4-neon-xhigh",
+                        "lastUserInput": "turn 4 steady neon",
                     },
                     api_url=tier_api,
                 )
-                assert r_t4 == {}, f"Expected steady-state silence on Carbon, got {r_t4}"
+                assert r_t4 == {}, f"Expected steady-state silence on Neon, got {r_t4}"
+
+                r_t5 = evaluate_session_or_invocation(
+                    {
+                        "hookEventName": "PreInvocation",
+                        "conversationId": "conv-tier-switch-14",
+                        "modelName": "auto",
+                        "transcriptPath": str(tr_reset),
+                        "lastUserInput": "turn 5 swapped to unclassified model",
+                    },
+                    api_url=tier_api,
+                )
+                _validate_hook_response_schema(r_t5)
+                m_t5 = r_t5["injectSteps"][0]["systemMessage"]["systemMessage"]
+                assert "[APPRENTICE HOST TIER SWITCH: FRONTIER -> NEUTRAL]" in m_t5
             finally:
                 srv_tier.shutdown()
                 srv_tier.server_close()

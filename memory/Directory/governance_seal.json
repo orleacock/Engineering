@@ -1,6 +1,6 @@
 {
-  "last_sealed": "2026-11-18",
-  "latest_audit_entry_sha256": "ca7f2e48f9072e6cd5e3b3521721a02be1c0aaa6e2911611de5d9b23c3fc0072",
+  "last_sealed": "2026-11-19",
+  "latest_audit_entry_sha256": "697dbb2ef9968e25f3a2f0d50cd0c0f2f6581fe3681670542fb88261def41a8d",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -39,7 +39,7 @@
       ]
     },
     "Homunculus": {
-      "block_sha256": "18c8e416af15a6c6926284caa8159767fa5812c091ea16c6c7ed71a01289653b",
+      "block_sha256": "c3a60cf0ed1561cab2d6a5b6a961015341c02c0b76116c22c7f4e3148e10941a",
       "row_hashes": [
         "06740a8ed7b60115",
         "076698065104cacc",
@@ -47,8 +47,8 @@
         "1d29336100bf8915",
         "5c98f15c941c4a12",
         "7c5e16d783653463",
-        "7e963c6fd9b3ed14",
         "889fb437127cb836",
+        "96541f71fa27df84",
         "be6b9d15c8511594",
         "f9128e47d9cd5086"
       ]
@@ -90,27 +90,25 @@
       ]
     },
     "Workstation_Operations": {
-      "block_sha256": "086fb2e5e95c97430b524e676969ac9562972a35f98bb103d9fadb95d2aca760",
+      "block_sha256": "f039d25169d48b3309c10bca87b8ba12ccdc8da7eab00eced97dde6653ab6cff",
       "row_hashes": [
-        "22267a13be2c390c",
+        "00210a5dc9a133c4",
         "4d9f01bf1e6801ff",
-        "743bac2f8da3f1d3",
         "a8ee72806664d295",
-        "d83b880f9e8f299e",
-        "e6481e8149facd4b"
+        "d83b880f9e8f299e"
       ]
     }
   },
   "protected_files": {
     "AGENTS.md": "be72f862ac46ddafa46a6640f01ae0d9ca3f785b1698baf376718691ac485f15",
-    "Profile/Decision_Profile.md": "829be433d8606a42951ce2eb5779005f34073cca79c0c7e43011e43d2320c405",
+    "Profile/Decision_Profile.md": "307f87dd3d9d5128f3c5b5247cd457024525acdf5d02b21e3d06f2f6c6ceb05b",
     "Standards_and_Specs/Alchemical_Ecosystem_Links_and_Brand.md": "572018467687b7d783fbd31383259d48d01e04a959db330bd22b6449899dae6f",
     "Standards_and_Specs/Alchemical_Style_and_Voice_Guide.md": "cd996a33e1add47b81a7300b7acec3febc2da01140a64e3fb99b8cd2e44971b8",
     "Standards_and_Specs/Author_Voice_Cadence_Telemetry_Report.md": "e3fe3db7b12b4cf780306a4064538217c72c97003823f759a0366e3d21bbcdc4",
     "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
     "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
-    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "8d92c8ad6b1c33c94df5826baeb36785ea64e3223266f50f5fd371f90a771f17",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "7d16190d9ae10504e4b9ad8b73dce049c3fc56d97f6db83acb7594f1f30a2457",
     "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
     "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
     "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "d4f42737346d60abf21990a65a1384310e897348011ae2e929b3c2b3c61da679",
@@ -166,5 +164,5 @@
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "85ffc42cf766c18838b750dcdd481fe5d6c7c9d2bda80d4337a38fa2067b6c76"
+  "seal_root_sha256": "18932dc133f40a568a9e6fa0ca763dc0145e15e0679cb5bb844c216af8b21cf3"
 }
