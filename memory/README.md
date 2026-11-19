@@ -9,7 +9,7 @@ last_synced: "2026-11-19"
 # Engineering Memory — Dual-Mode Engineering Memory Hub
 
 > **Supreme Governing Priority Hierarchy (`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`)**
-> This memory tree operates identically in **Headless Mode** (standard Markdown in VS Code, Cursor, GitHub, or terminal) and **Obsidian Vault Mode** (`memory_mode: obsidian`). All internal links use portable POSIX relative paths (`[Label](relative/path.md)`) across Windows, macOS, and Linux.
+> This memory tree operates identically in **Headless Mode** (standard Markdown in VS Code, Cursor, GitHub, or terminal) and **Obsidian Vault Mode** (`memory_mode: obsidian`). All internal links use portable POSIX relative paths (`` `[Label](relative/path.md)` ``) across Windows, macOS, and Linux.
 
 ---
 
@@ -45,9 +45,10 @@ last_synced: "2026-11-19"
 | **A3DP_Gantry_Assembly** | `Alchemical-3D` | `public` | `hardware` | `2f33452` (`clean`) | [`A3DP_Gantry_Assembly.md`](Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) | [`_Hardware.md`](Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Alchemical_Web_Docs** | `Alchemical-3D` | `public` | `software` | `55b4795` (`clean`) | [`Alchemical_Web_Docs.md`](Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) | [`_Software.md`](Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Alembic_Toolhead** | `Alchemical-3D` | `public` | `hardware` | `c7eaca6` (`clean`) | [`Alembic_Toolhead.md`](Projects/Alembic_Toolhead/Alembic_Toolhead.md) | [`_Hardware.md`](Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
+| **Apprentice** | `Alchemical-3D` | `public` | `software` | `6147885` (`clean`) | [`Apprentice.md`](Projects/Apprentice/Apprentice.md) | [`_Software.md`](Projects/Apprentice/Apprentice_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Brand** | `Alchemical-3D` | `public` | `software` | `49354b3` (`clean`) | [`Brand.md`](Projects/Brand/Brand.md) | [`_Software.md`](Projects/Brand/Brand_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Extras** | `Alchemical-3D` | `public` | `hardware` | `cfef0fd` (`clean`) | [`Extras.md`](Projects/Extras/Extras.md) | [`_Hardware.md`](Projects/Extras/Extras_Hardware.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
-| **Homunculus** | `Alchemical-3D` | `cleanroom` | `software` | `e4a83c1` (`clean`) | [`Homunculus.md`](Projects/Homunculus/Homunculus.md) | [`_Software.md`](Projects/Homunculus/Homunculus_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
+| **Homunculus** | `Alchemical-3D` | `cleanroom` | `software` | `a25287c` (`clean`) | [`Homunculus.md`](Projects/Homunculus/Homunculus.md) | [`_Software.md`](Projects/Homunculus/Homunculus_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **Maker-Tools** | `Alchemical-3D` | `public` | `software` | `29641c5` (`clean`) | [`Maker-Tools.md`](Projects/Maker-Tools/Maker-Tools.md) | [`_Software.md`](Projects/Maker-Tools/Maker-Tools_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |
 | **NetCom_Engineering_Assistant** | `NetCom` | `private` | `software` | `UNTRACKED` (`untracked`) | [`NetCom_Engineering_Assistant.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md) | [`_Software.md`](Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md) | [`NetCom_Tasks.md`](Tasks/NetCom_Tasks.md) |
 | **Organization_Profile** | `Alchemical-3D` | `public` | `software` | `b74920e` (`clean`) | [`Organization_Profile.md`](Projects/Organization_Profile/Organization_Profile.md) | [`_Software.md`](Projects/Organization_Profile/Organization_Profile_Software.md) | [`Alchemical-3D_Tasks.md`](Tasks/Alchemical-3D_Tasks.md) |

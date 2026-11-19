@@ -21,6 +21,7 @@ last_synced: "2026-11-10"
 | **Project Hub (`AUTO-TREE`)** | [`Brand.md`](Brand.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Software Telemetry** | [`Brand_Software.md`](Brand_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Lessons Learned & Post-Mortems** | [`Brand_Lessons_Learned.md`](Brand_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Brand_Playbooks.md`](Brand_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Brand) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -124,3 +125,14 @@ Repository: Brand | HEAD SHA: 49354b32094e | Tree Hash: d0509ca37b2c
   1. Run `python3 skills/project-memory/scripts/sync_memory.py --project Brand --kickstart` to verify repository provenance.
   2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Brand).
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(Brand tokens and assets verified; place unverified notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

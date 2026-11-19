@@ -3,7 +3,8 @@ project: "Homunculus"
 parent_note: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
-last_synced: "2026-11-05"
+authoritative: false
+last_synced: "2026-11-19"
 ---
 
 # 🧬 Homunculus — Public Positioning, Architecture Talking Points & Adoption Guide
@@ -24,7 +25,7 @@ When a task is trivial—like writing a five-line regex or formatting a single J
 
 If an AI guesses a load-bearing detail at Step 1 to look responsive, that unverified assumption gets buried under Steps 2 through 10. You do not discover the crack in the foundation until your assembly fails to align, your schema breaks downstream scripts, or your BOM counts do not match the CAD on disk, which forces hours of destructive rework to tear down and rebuild the upper layers.
 
-**Homunculus** is built around an explicit governing priority law (`1. Accuracy -> 2. Efficiency -> 3. Speed`):
+**Homunculus** is built around an explicit governing priority law (`1. Accuracy & Truth -> 2. Efficiency -> 3. Data Safety -> 4. Speed`):
 - **Speed Through First-Pass Truth:** We do not trade accuracy away for speed, because eliminating cascading rework on the first pass is the fastest path to a finished product.
 - **Pre-Cascade Halts (`Tier A`):** When a missing specification, conflicting source, or unverified interface affects downstream architecture or safety, the system halts immediately before writing dependent code or documentation.
 - **End-of-Pass Batching (`Tier B`):** For narrative documentation where missing figures do not corrupt downstream logic, the agent drafts continuously with explicit `[TBD: <specific_missing_variable>]` markers and validates everything in a single pass at the end.

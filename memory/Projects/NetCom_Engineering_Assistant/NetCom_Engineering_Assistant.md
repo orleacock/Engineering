@@ -22,6 +22,7 @@ checkpoint_lessons_digest: "1aabdc7e19bec61a"
 | **Project Hub (`AUTO-TREE`)** | [`NetCom_Engineering_Assistant.md`](NetCom_Engineering_Assistant.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Software Telemetry** | [`NetCom_Engineering_Assistant_Software.md`](NetCom_Engineering_Assistant_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Lessons Learned & Post-Mortems** | [`NetCom_Engineering_Assistant_Lessons_Learned.md`](NetCom_Engineering_Assistant_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`NetCom_Engineering_Assistant_Playbooks.md`](NetCom_Engineering_Assistant_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`NetCom_Tasks.md`](../../Tasks/NetCom_Tasks.md#NetCom_Engineering_Assistant) | Single-writer task tracker for `NetCom` (zero duplicate checkboxes in hub). |
 
@@ -207,3 +208,14 @@ Full benchmark telemetry (`Runs #1`–`#7`) is archived in `2026-10-28_NEA_v1.3_
   2. Stage pre-commit-gate & commit NEA_v2.2.3 + NetCom memory updates when ready
 - **Open Discussion / Alignment Questions**: NetCom memory & governance seal are clean; ready to build GOV-001/008 CRL->BOM takeoff engine or commit current baseline.
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(Controlled `v2.2.3` baseline verified; place unverified notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

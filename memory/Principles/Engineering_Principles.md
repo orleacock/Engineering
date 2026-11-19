@@ -27,6 +27,8 @@ last_synced: "2026-11-19"
 | **`PRIN-05`** | `[TRAP]` | `TIER2` | `2026-11-19` | `global` | Isolate HOME, user profile, cache/config paths, and bytecode generation per worker while surfacing worker stderr on... | `LIN-47b6b33c3131` |
 | **`PRIN-06`** | `[TRAP]` | `TIER2` | `2026-11-19` | `global` | Resolve multi-file citation anchors by longest matching relative POSIX path suffix before basename fallback, preserve... | `LIN-967dfe659c07` |
 | **`PRIN-07`** | `[WIN]` | `TIER2` | `2026-11-19` | `global` | Separate shared host-runtime constraints from cleanroom principles and entity scopes, keep optional shelves unlinked in... | `LIN-819030510d1d` |
+| **`PRIN-08`** | `[TRADE-OFF]` | `TIER2` | `2026-11-19` | `domain:local_inference` | Auto-discover live model context and speed via rolling averages, scale output and chunk budgets dynamically as... | `LIN-91f14727907d` |
+| **`PRIN-09`** | `[TRAP]` | `TIER2` | `2026-11-19` | `domain:telemetry_testing` | Inject isolated temporary cache directories via environment overrides in every benchmark, unit test, and stress harness... | `LIN-6855dc81f288` |
 
 ---
 
@@ -73,3 +75,17 @@ last_synced: "2026-11-19"
 - **Bottleneck / Challenge:** Unbounded single-file lesson logs and flat active ceilings crowd per-project windows, mix host-local tool rules with cleanroom principles, and break clean-init audits when root indexes link uninitialized optional shelves.
 - **Mechanism & Measured Gain:** Mixing portable design principles with host-local tool rules creates cross-project bleed, fixed global ceilings force premature retirement, and static root links to optional folders fail validation before initialization.
 - **Reusable Pattern & Integration Blueprint:** Separate shared host-runtime constraints from cleanroom principles and entity scopes, keep optional shelves unlinked in starter root hubs, paginate active books under 24 KB with tapered scope caps, scan overflow and shared shelves during ID allocation, and age-taper aged entries without muting safety traps.
+
+### `PRIN-08` [TIER2] [TRADE-OFF] — Capability-Driven Dynamic Sizing and Task-Nature Routing Over Hardcoded Model Specs and Restrictive Byte Walls (`2026-11-19`)
+- **Scope:** `domain:local_inference`
+- **Lineage-Receipt:** `LIN-91f14727907d`
+- **Decision Context & Options:** Hardcoding single-model context ceilings, speed curves, or restrictive host-tier byte walls collapses routine sidecar offload volume while forcing compact GPUs into silent CPU fallbacks or context overflows.
+- **Why Chosen Path Won (& Cost Paid):** Static tuning constants and narrow size thresholds overfit one hardware profile, starving fast standard tasks while pushing all remaining traffic into slow, high-failure deep reasoning regimes.
+- **Transferable Rule & Invalidation Boundary:** Auto-discover live model context and speed via rolling averages, scale output and chunk budgets dynamically as percentages of live context across capability tiers, default routine tasks to fast standard mode, and route by task nature rather than arbitrary high byte walls.
+
+### `PRIN-09` [TIER2] [TRAP] — Strict Environment Isolation Between Benchmark Suites and Live Production Telemetry Caches (`2026-11-19`)
+- **Scope:** `domain:telemetry_testing`
+- **Lineage-Receipt:** `LIN-6855dc81f288`
+- **Symptom / Trap:** Running automated benchmarks or stress suites against default user cache paths inflates production usability scorecards and mixes synthetic test traffic with real operational telemetry.
+- **Root Cause:** Benchmark harnesses sharing default cache directories mutate live scorecard counters, masking real operational degradation behind passing synthetic replay scores.
+- **Verified Resolution, Guardrail & Applicability Boundary:** Inject isolated temporary cache directories via environment overrides in every benchmark, unit test, and stress harness, and verify zero write drift against live production telemetry files.

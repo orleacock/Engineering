@@ -30,12 +30,12 @@ last_synced: "2026-11-19"
 | `LL-BR-01` | `2026-11-05` | Automated image card formatting risked altering `images/alchemical-cd-master-guideline.png` | `alchemical-cd-master-guideline.png` is a full-bleed master brand specification sheet rather than a hardware documentation photo | Exempted master brand guideline assets from `format_image.py` re-framing and recorded the invariance in [`Brand.md`](Brand.md) (`VRF-6a3a65d81b80`) | [`Brand.md`](Brand.md) |
 | `LL-BR-02` | `2026-11-05` | Dark-mode vs. light-mode GitHub READMEs rendered low-contrast text or invisible dark logo marks when using single-mode assets | Transparent black-on-white (`BoW`) or white-on-black (`WoB`) marks blend into matching GitHub theme backgrounds | Standardized on gradient primary marks with baked-in `#FFFFFF` rounded-corner showcase cards (`20px` RGBA shadow margin) for hardware photos and `Alchemical3D_Color_Template` tokens for SVG/Mermaid diagrams | [`Brand.md`](Brand.md) |
 
-### `LL-BR-01` [TIER2] — Exempting Master Brand Guideline Sheets from Automated Image Card Framing (`2026-11-05`)
+### `LL-BR-01` [TIER2] [TRAP] — Exempting Master Brand Guideline Sheets from Automated Image Card Framing (`2026-11-05`)
 - **Symptom / Trap:** Automated image card formatting risked altering `images/alchemical-cd-master-guideline.png`.
 - **Root Cause:** `alchemical-cd-master-guideline.png` is a full-bleed master brand specification sheet rather than a hardware documentation photo.
 - **Verified Resolution & Permanent Guardrail:** Exempted master brand guideline assets from `format_image.py` re-framing and recorded the invariance in [`Brand.md`](Brand.md) (`VRF-6a3a65d81b80`).
 
-### `LL-BR-02` [TIER2] — Gradient Primary Marks & `#FFFFFF` Showcase Cards Across GitHub Dark/Light Themes (`2026-11-05`)
+### `LL-BR-02` [TIER2] [TRAP] — Gradient Primary Marks & `#FFFFFF` Showcase Cards Across GitHub Dark/Light Themes (`2026-11-05`)
 - **Symptom / Trap:** Dark-mode vs. light-mode GitHub READMEs rendered low-contrast text or invisible dark logo marks when using single-mode assets.
 - **Root Cause:** Transparent black-on-white (`BoW`) or white-on-black (`WoB`) marks blend into matching GitHub theme backgrounds.
 - **Verified Resolution & Permanent Guardrail:** Standardized on gradient primary marks with baked-in `#FFFFFF` rounded-corner showcase cards (`20px` RGBA shadow margin) for hardware photos and `Alchemical3D_Color_Template` tokens for SVG/Mermaid diagrams ([`Brand.md`](Brand.md)).

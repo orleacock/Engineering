@@ -3,7 +3,7 @@ title: "Orin_Workstation — Memory & Repository Directory Tree"
 entity: "Orin_Workstation"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "69745fd9f3bd"
+tree_hash: "71871e9928cb"
 last_synced: "2026-11-19"
 ---
 
@@ -24,8 +24,6 @@ last_synced: "2026-11-19"
 
 ./
 ├── Diagrams/
-│   ├── NEA_v2_Copilot_Execution_Flowchart.md
-│   ├── NEA_v2_Copilot_Execution_Flowchart.svg
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
 │   ├── Directory_Index.md
@@ -34,7 +32,6 @@ last_synced: "2026-11-19"
 │   └── Orin_Workstation_memory_index.json
 ├── Host_Runtime/
 │   ├── Pages/
-│   │   └── Host_Runtime_Lessons_Vol_02.md
 │   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
@@ -44,7 +41,8 @@ last_synced: "2026-11-19"
 │   └── Workstation_Operations/
 │       ├── Archive/
 │       │   ├── Workstation_Operations_Lessons_Archive.md
-│       │   └── Workstation_Operations_Lessons_Archive_Vol_02.md
+│       │   ├── Workstation_Operations_Lessons_Archive_Vol_02.md
+│       │   └── Workstation_Operations_Lessons_Archive_Vol_03.md
 │       ├── Pages/
 │       ├── Quarantine/
 │       │   └── Quarantine_README.md
@@ -81,7 +79,7 @@ last_synced: "2026-11-19"
 
 ## 2. `Orin_Workstation` Repository Directory Trees (`1` Indexed)
 
-### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 7adb62cc6fb3`)
+### [`Workstation_Operations`](../Projects/Workstation_Operations/Workstation_Operations.md) (`software` | `HEAD: UNTRACKED` | `Tree: 9a76b6a0b860`)
 - **Repository Location**: `../scripts`
 
 ```text
@@ -90,19 +88,6 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 
 ./
-├── apprentice/
-│   ├── apprentice_lifecycle_hook.py
-│   └── apprentice_mcp_server.py
-├── apprentice_plugin/
-│   ├── rules/
-│   │   └── AGENTS.md
-│   ├── skills/
-│   │   └── apprentice/
-│   │       ├── references/
-│   │       └── SKILL.md
-│   ├── hooks.json
-│   ├── mcp_config.json
-│   └── plugin.json
 ├── gmail_mcp/
 │   ├── gmail-workspace-assistant/
 │   │   └── SKILL.md
@@ -112,11 +97,6 @@ last_synced: "2026-11-19"
 ├── umbrella_configs/
 │   ├── Home.homunculus.json
 │   └── Projects.homunculus.json
-├── apprentice_benchmark_history.jsonl
-├── apprentice_engine.py
-├── benchmark_apprentice.py
-├── benchmark_apprentice_high.py
-├── benchmark_apprentice_standard.py
 ├── benchmark_history.jsonl
 ├── benchmark_homunculus.py
 ├── bootstrap_workstation.sh

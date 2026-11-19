@@ -22,6 +22,7 @@ checkpoint_lessons_digest: "300d460ff71ef035"
 | **Project Hub (`AUTO-TREE`)** | [`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`Pneuma_Remote_Air_Lessons_Learned.md`](Pneuma_Remote_Air_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Pneuma_Remote_Air_Playbooks.md`](Pneuma_Remote_Air_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Pneuma_Remote_Air) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -139,3 +140,14 @@ Repository: Pneuma_Remote_Air | HEAD SHA: 0702c9c1c541 | Tree Hash: c37739a571b2
   1. Physically count Rear_Cover, Front_Cover, 2nd Pump_Mount heatset, and optional Table_Mount_TPU fasteners on bench. 2. Measure and record TPU Shore hardness and slicer parameters in Print_Settings.md.
 - **Open Discussion / Alignment Questions**: A1: Dual-Pump standard (2 pumps, 0 solenoid valves; legacy 1/8-NPT note) | A2: Verified fasteners kept, unconfirmed rows tagged [TBD] | A3: As-needed tube fittings vs grommets/plugs + TPU slicer [TBD]s | A4: shutdown_speed: 0 on part-cooling pumps, 1 on hotend heatsink fans
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- Active open `[TBD]` items and `[CONFLICT]`s are tracked in the Open `[TBD]` / `[CONFLICT]` Ledger above; place unverified hypotheses here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.
+<!-- QUARANTINE-ZONE:END -->

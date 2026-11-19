@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "108327162f8e"
+tree_hash: "3e6bbe3a9ace"
 last_synced: "2026-11-19"
 ---
 
@@ -24,8 +24,6 @@ last_synced: "2026-11-19"
 
 ./
 ├── Diagrams/
-│   ├── NEA_v2_Copilot_Execution_Flowchart.md
-│   ├── NEA_v2_Copilot_Execution_Flowchart.svg
 │   └── Project_Ecosystem_Map.canvas
 ├── Directory/
 │   ├── Alchemical-3D_Decision_Router.md
@@ -34,7 +32,6 @@ last_synced: "2026-11-19"
 │   └── Directory_Index.md
 ├── Host_Runtime/
 │   ├── Pages/
-│   │   └── Host_Runtime_Lessons_Vol_02.md
 │   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
@@ -46,7 +43,8 @@ last_synced: "2026-11-19"
 │   │   │   └── Quarantine_README.md
 │   │   ├── A3DP_Gantry_Assembly.md
 │   │   ├── A3DP_Gantry_Assembly_Hardware.md
-│   │   └── A3DP_Gantry_Assembly_Lessons_Learned.md
+│   │   ├── A3DP_Gantry_Assembly_Lessons_Learned.md
+│   │   └── A3DP_Gantry_Assembly_Playbooks.md
 │   ├── Alchemical_Web_Docs/
 │   │   ├── Archive/
 │   │   │   └── Alchemical_Web_Docs_Lessons_Archive.md
@@ -54,25 +52,36 @@ last_synced: "2026-11-19"
 │   │   │   └── Quarantine_README.md
 │   │   ├── Alchemical_Web_Docs.md
 │   │   ├── Alchemical_Web_Docs_Lessons_Learned.md
+│   │   ├── Alchemical_Web_Docs_Playbooks.md
 │   │   └── Alchemical_Web_Docs_Software.md
 │   ├── Alembic_Toolhead/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Alembic_Toolhead.md
 │   │   ├── Alembic_Toolhead_Hardware.md
-│   │   └── Alembic_Toolhead_Lessons_Learned.md
+│   │   ├── Alembic_Toolhead_Lessons_Learned.md
+│   │   └── Alembic_Toolhead_Playbooks.md
+│   ├── Apprentice/
+│   │   ├── Quarantine/
+│   │   │   └── Quarantine_README.md
+│   │   ├── Apprentice.md
+│   │   ├── Apprentice_Lessons_Learned.md
+│   │   ├── Apprentice_Playbooks.md
+│   │   └── Apprentice_Software.md
 │   ├── Brand/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Brand.md
 │   │   ├── Brand_Lessons_Learned.md
+│   │   ├── Brand_Playbooks.md
 │   │   └── Brand_Software.md
 │   ├── Extras/
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Extras.md
 │   │   ├── Extras_Hardware.md
-│   │   └── Extras_Lessons_Learned.md
+│   │   ├── Extras_Lessons_Learned.md
+│   │   └── Extras_Playbooks.md
 │   ├── Homunculus/
 │   │   ├── Archive/
 │   │   │   ├── Homunculus_Lessons_Archive.md
@@ -116,6 +125,7 @@ last_synced: "2026-11-19"
 │   │   │   └── Quarantine_README.md
 │   │   ├── Maker-Tools.md
 │   │   ├── Maker-Tools_Lessons_Learned.md
+│   │   ├── Maker-Tools_Playbooks.md
 │   │   └── Maker-Tools_Software.md
 │   ├── Organization_Profile/
 │   │   ├── Archive/
@@ -124,6 +134,7 @@ last_synced: "2026-11-19"
 │   │   │   └── Quarantine_README.md
 │   │   ├── Organization_Profile.md
 │   │   ├── Organization_Profile_Lessons_Learned.md
+│   │   ├── Organization_Profile_Playbooks.md
 │   │   └── Organization_Profile_Software.md
 │   ├── Pestle_Rotational_Bowden/
 │   │   ├── Quarantine/
@@ -131,7 +142,8 @@ last_synced: "2026-11-19"
 │   │   │   └── Quarantine_README.md
 │   │   ├── Pestle_Rotational_Bowden.md
 │   │   ├── Pestle_Rotational_Bowden_Hardware.md
-│   │   └── Pestle_Rotational_Bowden_Lessons_Learned.md
+│   │   ├── Pestle_Rotational_Bowden_Lessons_Learned.md
+│   │   └── Pestle_Rotational_Bowden_Playbooks.md
 │   └── Pneuma_Remote_Air/
 │       ├── Archive/
 │       │   └── Pneuma_Remote_Air_Lessons_Archive.md
@@ -168,7 +180,7 @@ last_synced: "2026-11-19"
 
 ---
 
-## 2. `Alchemical-3D` Repository Directory Trees (`10` Indexed)
+## 2. `Alchemical-3D` Repository Directory Trees (`11` Indexed)
 
 ### [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`hardware` | `HEAD: 2f33452de3c6` | `Tree: 26262283bb41`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/A3DP_Gantry_Assembly`
@@ -329,6 +341,53 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 ```
 
+### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: 61478852e035` | `Tree: bf24de7ca6dc`)
+- **Repository Location**: `../../Alchemical3D/Apprentice`
+
+```text
++------------------------------------------------------------+
+            --- DIRECTORY STRUCTURE ---
++------------------------------------------------------------+
+
+./
+├── apprentice/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── backends.py
+│   ├── core.py
+│   ├── grounding.py
+│   ├── hook.py
+│   ├── mcp_stdio.py
+│   ├── planner.py
+│   ├── safety.py
+│   └── sprint.py
+├── plugin/
+│   ├── rules/
+│   │   └── AGENTS.md
+│   ├── skills/
+│   │   └── apprentice/
+│   │       └── SKILL.md
+│   ├── hooks.json.template
+│   ├── mcp_config.json.template
+│   └── plugin.json
+├── scripts/
+│   └── stress_test_v3.py
+├── tests/
+│   ├── test_backends_and_planner.py
+│   ├── test_grounding.py
+│   ├── test_mcp_and_hook.py
+│   ├── test_safety.py
+│   └── test_sprint_and_core.py
+├── .git/ (excluded)
+├── .gitignore
+├── ARCHITECTURE.md
+├── install.ps1
+├── install.sh
+├── LICENSE.md
+└── README.md
++------------------------------------------------------------+
+```
+
 ### [`Brand`](../Projects/Brand/Brand.md) (`software` | `HEAD: 49354b32094e` | `Tree: d0509ca37b2c`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Brand`
 
@@ -398,7 +457,7 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: e4a83c1d3a0b` | `Tree: b6b8ac5ad1cf`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: a25287c75793` | `Tree: b6b8ac5ad1cf`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

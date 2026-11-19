@@ -22,6 +22,7 @@ checkpoint_lessons_digest: "fc97389b91340449"
 | **Project Hub (`AUTO-TREE`)** | [`Pestle_Rotational_Bowden.md`](Pestle_Rotational_Bowden.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`Pestle_Rotational_Bowden_Hardware.md`](Pestle_Rotational_Bowden_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`Pestle_Rotational_Bowden_Lessons_Learned.md`](Pestle_Rotational_Bowden_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Pestle_Rotational_Bowden_Playbooks.md`](Pestle_Rotational_Bowden_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Pestle_Rotational_Bowden) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -118,3 +119,14 @@ Repository: Pestle_Rotational_Bowden | HEAD SHA: 7197d2bed1fd | Tree Hash: ac67b
 - **Next Session Kickstart & Discussion Points**:
   1. `Pestle_Rotational_Bowden` is clean and synced on `origin/main` (`7197d2b`); no open tasks remain.
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(All `Rev 1.2` specifications verified at `7197d2b`; place unverified notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

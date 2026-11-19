@@ -21,6 +21,7 @@ last_synced: "2026-11-10"
 | **Project Hub (`AUTO-TREE`)** | [`A3DP_Gantry_Assembly.md`](A3DP_Gantry_Assembly.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`A3DP_Gantry_Assembly_Hardware.md`](A3DP_Gantry_Assembly_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`A3DP_Gantry_Assembly_Lessons_Learned.md`](A3DP_Gantry_Assembly_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`A3DP_Gantry_Assembly_Playbooks.md`](A3DP_Gantry_Assembly_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#A3DP_Gantry_Assembly) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -116,3 +117,14 @@ Repository: A3DP_Gantry_Assembly | HEAD SHA: 2f33452de3c6 | Tree Hash: 26262283b
   1. Run `python3 skills/project-memory/scripts/sync_memory.py --project A3DP_Gantry_Assembly --kickstart` to verify repository provenance.
   2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#A3DP_Gantry_Assembly).
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(All specifications verified in Section 2; place unverified vendor quotes or preliminary notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

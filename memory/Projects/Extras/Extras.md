@@ -22,6 +22,7 @@ checkpoint_lessons_digest: "0fc39ba437d3d1c0"
 | **Project Hub (`AUTO-TREE`)** | [`Extras.md`](Extras.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`Extras_Hardware.md`](Extras_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`Extras_Lessons_Learned.md`](Extras_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Extras_Playbooks.md`](Extras_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Extras) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -81,3 +82,14 @@ Repository: Extras | HEAD SHA: cfef0fdbfcc8 | Tree Hash: 40edca68895b
 - **Next Session Kickstart & Discussion Points**:
   1. Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- Active open `[TBD]` items are tracked in the Open `[TBD]` / `[CONFLICT]` Ledger above; place unverified hypotheses here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.
+<!-- QUARANTINE-ZONE:END -->

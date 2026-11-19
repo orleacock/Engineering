@@ -22,6 +22,7 @@ checkpoint_lessons_digest: "b93136db87a387ee"
 | **Project Hub (`AUTO-TREE`)** | [`Alembic_Toolhead.md`](Alembic_Toolhead.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Hardware Telemetry** | [`Alembic_Toolhead_Hardware.md`](Alembic_Toolhead_Hardware.md) | CAD bounding boxes, cylindrical bore histograms, and firmware pinouts. |
 | **Lessons Learned & Post-Mortems** | [`Alembic_Toolhead_Lessons_Learned.md`](Alembic_Toolhead_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Alembic_Toolhead_Playbooks.md`](Alembic_Toolhead_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Alembic_Toolhead) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -163,3 +164,14 @@ Repository: Alembic_Toolhead | HEAD SHA: c7eaca69624a | Tree Hash: 78ce7aae3619
 - **Next Session Kickstart & Discussion Points**:
   1. Alembic_Toolhead clean and synced on origin/main; no open tasks
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(All `BOM.md`/`Assembly_Guide.md` specifications reconciled at `43ead67`; place unverified notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

@@ -3,8 +3,8 @@ title: "NetCom — Memory & Repository Directory Tree"
 entity: "NetCom"
 compartment: "private"
 type: "entity-directory"
-tree_hash: "d35038dfe5aa"
-last_synced: "2026-11-18"
+tree_hash: "7edd22b4d3b2"
+last_synced: "2026-11-19"
 ---
 
 # 🗂️ `NetCom` — Directory Lookup Map (`entity: NetCom`)
@@ -34,7 +34,6 @@ last_synced: "2026-11-18"
 │   └── NetCom_memory_index.json
 ├── Host_Runtime/
 │   ├── Pages/
-│   │   └── Host_Runtime_Lessons_Vol_02.md
 │   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
@@ -49,6 +48,7 @@ last_synced: "2026-11-18"
 │       ├── NetCom_Engineering_Assistant.md
 │       ├── NetCom_Engineering_Assistant_Lessons_Learned.md
 │       ├── NetCom_Engineering_Assistant_Module_Launchpad.md
+│       ├── NetCom_Engineering_Assistant_Playbooks.md
 │       └── NetCom_Engineering_Assistant_Software.md
 ├── Standards_and_Specs/
 │   ├── Alchemical_Ecosystem_Links_and_Brand.md

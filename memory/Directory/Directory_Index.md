@@ -1,8 +1,8 @@
 ---
 title: "Memory & Workspace Directory Index"
 type: "directory-index"
-tree_hash: "238f62dce42c"
-last_synced: "2026-11-18"
+tree_hash: "bf21d6383c7b"
+last_synced: "2026-11-19"
 ---
 
 # 🗂️ Engineering Memory — Directory Lookup Hub (`Directory/`)
@@ -29,7 +29,6 @@ last_synced: "2026-11-18"
 │   └── Directory_Index.md
 ├── Host_Runtime/
 │   ├── Pages/
-│   │   └── Host_Runtime_Lessons_Vol_02.md
 │   └── Host_Runtime_Lessons.md
 ├── Principles/
 │   └── Engineering_Principles.md
@@ -64,6 +63,6 @@ last_synced: "2026-11-18"
 
 | Entity Scope | Compartment | Projects Indexed | Entity Directory Map | Task Umbrella |
 | :--- | :--- | :---: | :--- | :--- |
-| `Alchemical-3D` | `cleanroom` | `10` | [`Alchemical-3D_Directory.md`](Alchemical-3D_Directory.md) | [`Alchemical-3D_Tasks.md`](../Tasks/Alchemical-3D_Tasks.md) |
+| `Alchemical-3D` | `cleanroom` | `11` | [`Alchemical-3D_Directory.md`](Alchemical-3D_Directory.md) | [`Alchemical-3D_Tasks.md`](../Tasks/Alchemical-3D_Tasks.md) |
 | `NetCom` | `private` | `1` | [`NetCom_Directory.md`](NetCom_Directory.md) | [`NetCom_Tasks.md`](../Tasks/NetCom_Tasks.md) |
 | `Orin_Workstation` | `private` | `1` | [`Orin_Workstation_Directory.md`](Orin_Workstation_Directory.md) | [`Orin_Workstation_Tasks.md`](../Tasks/Orin_Workstation_Tasks.md) |

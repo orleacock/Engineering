@@ -21,6 +21,7 @@ last_synced: "2026-11-10"
 | **Project Hub (`AUTO-TREE`)** | [`Alchemical_Web_Docs.md`](Alchemical_Web_Docs.md) | Canonical architecture overview, `SESSION-HANDOFF`, `AUTO-TREE`, and `[TBD]` Ledger. |
 | **Software Telemetry** | [`Alchemical_Web_Docs_Software.md`](Alchemical_Web_Docs_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Lessons Learned & Post-Mortems** | [`Alchemical_Web_Docs_Lessons_Learned.md`](Alchemical_Web_Docs_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Alchemical_Web_Docs_Playbooks.md`](Alchemical_Web_Docs_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Unverified Quarantine Zone** | [`Quarantine/Quarantine_README.md`](Quarantine/Quarantine_README.md) | Holding zone for unverified notes (`[QUARANTINED — DO NOT CITE AS FACT]`). |
 | **Active Task Umbrella** | [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Alchemical_Web_Docs) | Single-writer task tracker for `Alchemical-3D` (zero duplicate checkboxes in hub). |
 
@@ -109,3 +110,14 @@ Repository: alchemical-3d.github.io | HEAD SHA: 55b4795b1e8d | Tree Hash: ca85ba
   1. Run `python3 skills/project-memory/scripts/sync_memory.py --project Alchemical_Web_Docs --kickstart` to verify repository provenance.
   2. Review open tasks in [`Alchemical-3D_Tasks.md`](../../Tasks/Alchemical-3D_Tasks.md#Alchemical_Web_Docs).
 <!-- SESSION-HANDOFF:END -->
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until empirically verified.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(All specifications verified above; place unverified notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

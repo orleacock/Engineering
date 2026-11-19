@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 241.27,
+  "avg_doc_len": 236.61,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -46,13 +46,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "CNC Aluminum Thread Stripping & Anaerobic Threadlocker Stress-Cracking -> Enforced in `Fasteners_and_Inserts` and `A3DP_Gantry_Assembly`: enforce **`1.0 to 1.5 Nm`** on `M3` (`Loctite 222MS` Purple on metal-to-metal) and **`3.0 to 4.5 Nm`** on `M5` (`Loctite 243` Blue on metal-to-metal), with zero threadlocker near printed polymers.",
-          "end_line": 37,
+          "end_line": 43,
           "file": "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md",
           "id": "LL-GAN-01",
-          "line_range": "#L34-L37",
+          "line_range": "#L40-L43",
           "location": "main",
           "scope": "",
-          "start_line": 34,
+          "start_line": 40,
           "tier": "TIER2",
           "title": "CNC Aluminum Thread Stripping & Anaerobic Threadlocker Stress-Cracking",
           "touched_files": [
@@ -62,13 +62,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Unshimmed Dual-Shear Idler Binding & `>200 Hz` Belt Over-Tensioning -> Shim every idler stack with `M5x7x0.3mm` precision shims so inner races clamp solidly while outer idlers spin freely, and tune belt tension across a **`150mm` unsupported span** to **`110 Hz`** (`6mm` belts) or **`130\u2013140 Hz`** (`9mm` belts; `A3DP_Gantry_Assembly`).",
-          "end_line": 42,
+          "end_line": 48,
           "file": "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md",
           "id": "LL-GAN-02",
-          "line_range": "#L39-L42",
+          "line_range": "#L45-L48",
           "location": "main",
           "scope": "",
-          "start_line": 39,
+          "start_line": 45,
           "tier": "TIER2",
           "title": "Unshimmed Dual-Shear Idler Binding & `>200 Hz` Belt Over-Tensioning",
           "touched_files": []
@@ -76,13 +76,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "X-Carriage Mount & 9mm Belt Clamp Interface (`Alembic_Toolhead` Coupled) -> Print all retainers in `ABS`, `ASA`, or `PC` (`A3DP_Gantry_Assembly`).",
-          "end_line": 48,
+          "end_line": 54,
           "file": "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md",
           "id": "LL-GAN-03",
-          "line_range": "#L44-L48",
+          "line_range": "#L50-L54",
           "location": "main",
           "scope": "",
-          "start_line": 44,
+          "start_line": 50,
           "tier": "TIER2",
           "title": "X-Carriage Mount & 9mm Belt Clamp Interface (`Alembic_Toolhead` Coupled)",
           "touched_files": [
@@ -91,7 +91,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 126.67,
+      "proj_avg_doc_len": 123.67,
       "proj_total_docs": 3,
       "project": "A3DP_Gantry_Assembly"
     },
@@ -219,13 +219,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Unstaged `BOM.md` Working-Tree Divergence vs. Committed `HEAD` (`3ff29ce`) -> Quarantine dirty working-tree edits (`DIRTY_GIT_WORKTREE`) and anchor strictly on clean `HEAD:BOM.md` (`3ff29ce`) + `Alembic_Toolhead_Hardware` until the active `[TBD]` ledger in `Alembic_Toolhead` is reconciled.",
-          "end_line": 38,
+          "end_line": 44,
           "file": "Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md",
           "id": "LL-ALM-01",
-          "line_range": "#L35-L38",
+          "line_range": "#L41-L44",
           "location": "main",
           "scope": "",
-          "start_line": 35,
+          "start_line": 41,
           "tier": "TIER2",
           "title": "Unstaged `BOM.md` Working-Tree Divergence vs. Committed `HEAD` (`3ff29ce`)",
           "touched_files": [
@@ -236,13 +236,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`5mm OD x 3mm ID` Aluminum Tube Buckling & Bend-Jig Ear Fracture -> Enforced in `Alembic_Toolhead` (`Paramount Assembly Hazards`): set `5\u201310mm` initial spacing between bend jig halves, insert a `2.8mm` plastic welding rod (`<3mm` mandrel) during bending, rotate formed tubes `~5\u00b0` inward strictly above the nozzle plane, and snug `M3` cup-point grub screws just to lock rotation without crushing the...",
-          "end_line": 43,
+          "end_line": 49,
           "file": "Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md",
           "id": "LL-ALM-02",
-          "line_range": "#L40-L43",
+          "line_range": "#L46-L49",
           "location": "main",
           "scope": "",
-          "start_line": 40,
+          "start_line": 46,
           "tier": "TIER2",
           "title": "`5mm OD x 3mm ID` Aluminum Tube Buckling & Bend-Jig Ear Fracture",
           "touched_files": [
@@ -253,13 +253,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Coupled `6mm OD` Pneumatic Intake & `9x2` O-Ring Manifold Sealing (`Pneuma_Remote_Air` Coupled) -> Seat the upper `9x2` O-ring into the intake groove prior to threading `PC4-M10` and verify central `9x2` O-ring alignment before snugging the `65mm M3 BHCS` bolts to initial plastic compression (`Alembic_Toolhead`, `Fasteners_and_Inserts`).",
-          "end_line": 49,
+          "end_line": 55,
           "file": "Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md",
           "id": "LL-ALM-03",
-          "line_range": "#L45-L49",
+          "line_range": "#L51-L55",
           "location": "main",
           "scope": "",
-          "start_line": 45,
+          "start_line": 51,
           "tier": "TIER2",
           "title": "Coupled `6mm OD` Pneumatic Intake & `9x2` O-Ring Manifold Sealing (`Pneuma_Remote_Air` Coupled)",
           "touched_files": [
@@ -269,9 +269,120 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 154.0,
+      "proj_avg_doc_len": 151.0,
       "proj_total_docs": 3,
       "project": "Alembic_Toolhead"
+    },
+    "Apprentice": {
+      "compartment": "public",
+      "entity": "Alchemical-3D",
+      "invariants": [
+        {
+          "governing_lls": [],
+          "must_keep": "Enforce `entity: Alchemical-3D` (`compartment: public`) isolation, source-backed quantitative claims (`verify_claims.py`), and `Quarantine/` holding separation.",
+          "retired_bloat": "Guessing undocumented specifications from pretraining defaults or borrowing parameters across distinct entities/materials.",
+          "scope": "",
+          "subsystem": "`Apprentice` Core (`software`)",
+          "tier": "TIER1",
+          "touched_files": [
+            "Apprentice.md",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "governing_lls": [
+            "LL-02"
+          ],
+          "must_keep": "4 orthogonal tools (<=26 params), pure stdlib MCP, Tier S/M/L dynamic %-of-ctx sizing, Map-Locally >=4KB universal routing, <=3300 prod lines",
+          "retired_bloat": "Overlapping repo_audit monolith, 67-param schemas, external venv/pip deps, hardcoded model/GPU constants, restrictive <25KB host-tier byte walls",
+          "scope": "",
+          "subsystem": "Apprentice v3.0 Core & Tool Surface",
+          "tier": "TIER1",
+          "touched_files": [
+            "AGENTS.md",
+            "ARCHITECTURE.md",
+            "Apprentice.md",
+            "Apprentice_Software.md",
+            "core.py",
+            "mcp_stdio.py"
+          ]
+        },
+        {
+          "governing_lls": [
+            "LL-03"
+          ],
+          "must_keep": "Auto-discovered model/ctx EMA profiler, Tier S deep handoff_to_cloud, <1ms deterministic line/quote verifier with POSIX suffix match, fast STANDARD review default",
+          "retired_bloat": "Silent <=16k cpu-bg clamp, 90-line single-model ETA curve fits, forced HIGH review default, 500-line regex/LLM prose repair loops",
+          "scope": "",
+          "subsystem": "Backends, Planner & Deterministic Grounding",
+          "tier": "TIER1",
+          "touched_files": [
+            "Apprentice_Software.md",
+            "backends.py",
+            "grounding.py",
+            "hook.py",
+            "planner.py"
+          ]
+        }
+      ],
+      "lessons": [
+        {
+          "archetype": "trap",
+          "capsule_1line": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization -> Scaffolded `Apprentice` hub dossier, domain telemetry, `Quarantine/`, and `SUBSYSTEM-INVARIANTS` baseline under `entity: Alchemical-3D` (`public`; `Apprentice.md`).",
+          "end_line": 42,
+          "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
+          "id": "LL-01",
+          "line_range": "#L37-L42",
+          "location": "main",
+          "scope": "",
+          "start_line": 37,
+          "tier": "TIER2",
+          "title": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization (`2026-11-19`)",
+          "touched_files": []
+        },
+        {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... -> Enforce Apprentice 4 Core Goals (1. Reduce Quota Usage -> 2. Provide Accuracy Support -> 3. Help With Simple Tasks -> 4. Agile-Sprint Parallelism) under Alchemical-3D pillars: exactly 4 orthogonal tools (read, draft, review, runtime; <=26 params), pure Python stdlib zero-venv drop-in, self-calibrating Tier S/M/L dynamic %-of-ctx math...",
+          "end_line": 49,
+          "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
+          "id": "LL-02",
+          "line_range": "#L44-L49",
+          "location": "main",
+          "scope": "",
+          "start_line": 44,
+          "tier": "TIER0",
+          "title": "Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... (`2026-11-19`)",
+          "touched_files": [
+            "AGENTS.md",
+            "ARCHITECTURE.md",
+            "SKILL.md",
+            "core.py",
+            "mcp_stdio.py"
+          ]
+        },
+        {
+          "archetype": "dead-end",
+          "capsule_1line": "[DEAD-END] Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... -> Default all 4 tools to fast STANDARD with structured JSON + <1ms deterministic line-anchor/quote verification (including ordered elided-segment matching), never clamp compact GPU models to CPU defaults, and preserve deep-search lineage: trace cross-cutting pre-v3.0 lessons via Principles PRIN-06, PRIN-08, PRIN-09 (--trace-lineage)...",
+          "end_line": 54,
+          "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
+          "id": "LL-03",
+          "line_range": "#L51-L54",
+          "location": "main",
+          "scope": "",
+          "start_line": 51,
+          "tier": "TIER2",
+          "title": "Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... (`2026-11-19`)",
+          "touched_files": [
+            "backends.py",
+            "grounding.py",
+            "hook.py",
+            "planner.py"
+          ]
+        }
+      ],
+      "proj_avg_doc_len": 144.33,
+      "proj_total_docs": 3,
+      "project": "Apprentice"
     },
     "Brand": {
       "compartment": "public",
@@ -656,13 +767,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 88,
+          "end_line": 92,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L83-L88",
+          "line_range": "#L86-L92",
           "location": "main",
           "scope": "",
-          "start_line": 83,
+          "start_line": 86,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -816,6 +927,60 @@
             "SKILL.md",
             "co-engineering-partner.md",
             "homunculus_paths.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Same-basename files collided in SourceIndex across cold and JSON-cached lookups, unclosed open().read()... -> Register trailing POSIX path suffixes identically in SourceIndex.__init__ and _deserialize_source_index() with context-managed file opens; expose --add-host-runtime-lesson CLI; guard _append_governance_audit_entry() when seal_signing is off on signed seals; and roll back Pages on Vol 1 write failure...",
+          "end_line": 67,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-063",
+          "line_range": "#L64-L67",
+          "location": "main",
+          "scope": "",
+          "start_line": 64,
+          "tier": "TIER2",
+          "title": "Same-basename files collided in SourceIndex across cold and JSON-cached lookups, unclosed open().read()... (`2026-11-19`)",
+          "touched_files": [
+            "sync_memory.py",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Legacy flash model fallbacks routed subagents to sunsetting gemini-3.8-flash-tiered while swarm omitted... -> Switch all routing, teach_brief.py outputs, badges ([TIER: HYD/NEON/CARB // *]), and swarm nesting checks off flash onto canonical Gemini 4 Hydrogen/Neon/Carbon IDs while keeping legacy flash/pro read-only input upgrades; document swarm (no MCP/hooks) vs invoke_subagent/agy -p tradeoffs; and apply Course B trim holding AGENTS.md at...",
+          "end_line": 72,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-064",
+          "line_range": "#L69-L72",
+          "location": "main",
+          "scope": "",
+          "start_line": 69,
+          "tier": "TIER2",
+          "title": "Legacy flash model fallbacks routed subagents to sunsetting gemini-3.8-flash-tiered while swarm omitted... (`2026-11-19`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "build_adapters.py",
+            "co-engineering-partner.md",
+            "teach_brief.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Clean-room portability flagged multi-file Python packages lacking stem matches, while Entity_Directory.md... -> Include rel_parts[:-1] when __init__.py is present in audit_portability.py, and filter Diagrams/ in sync_directory_trees() via companion .md entity frontmatter. (scripts/audit_portability.py, skills/project-memory/scripts/sync_memory.py (SBX-20261119_161403-4dd809bf / 97/97 unittest OK)...",
+          "end_line": 78,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-065",
+          "line_range": "#L74-L78",
+          "location": "main",
+          "scope": "subsys:audit_portability",
+          "start_line": 74,
+          "tier": "TIER2",
+          "title": "Clean-room portability flagged multi-file Python packages lacking stem matches, while Entity_Directory.md... (`2026-11-19`)",
+          "touched_files": [
+            "audit_portability.py",
+            "sync_memory.py"
           ]
         },
         {
@@ -1922,8 +2087,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 293.5,
-      "proj_total_docs": 64,
+      "proj_avg_doc_len": 289.01,
+      "proj_total_docs": 67,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2088,13 +2253,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Top-Side Pivot Insert Binding & Cantilevered Support-Arm Shear Fractures -> Enforced as paramount `Mode B1` hazards in `Pestle_Rotational_Bowden`: press the lever pivot `M3x5x4mm` insert **from the bottom of `pestle_main_body.stl` strictly flush with the bottom face**, brace a wrench flat between the support-arm uprights against a table during `PC4-M6` press-fit, and compress the BMG thumbscrew spring...",
-          "end_line": 37,
+          "end_line": 43,
           "file": "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md",
           "id": "LL-PST-01",
-          "line_range": "#L34-L37",
+          "line_range": "#L40-L43",
           "location": "main",
           "scope": "",
-          "start_line": 34,
+          "start_line": 40,
           "tier": "TIER2",
           "title": "Top-Side Pivot Insert Binding & Cantilevered Support-Arm Shear Fractures",
           "touched_files": [
@@ -2105,13 +2270,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Monolithic `README.md` Table-to-Step Drift -> Enforced in `doc-and-card-studio` (`4+1` modular split + Check `#7b`); the `4` unresolved fastener/bearing conflicts are quarantined in `Pestle_Rotational_Bowden`'s `Open [TBD] Ledger` for resolution during the modular split.",
-          "end_line": 42,
+          "end_line": 48,
           "file": "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md",
           "id": "LL-PST-02",
-          "line_range": "#L39-L42",
+          "line_range": "#L45-L48",
           "location": "main",
           "scope": "",
-          "start_line": 39,
+          "start_line": 45,
           "tier": "TIER2",
           "title": "Monolithic `README.md` Table-to-Step Drift",
           "touched_files": [
@@ -2123,13 +2288,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Rotational Bowden Pivot vs. Fixed Frame Bowden Capstan Drag (`Alembic_Toolhead` Coupled) -> Swiveling the `BMG` + `LDO` `NEMA 14` (`36STH20-1004AHG-9T`) on an `F5-12M` axial thrust bearing (`5mm ID x 12mm OD x 4mm`) aims the extruder straight at `Alembic_Toolhead`, cutting PTFE length by `>50%` (`< 228.6mm`, `0.95 mm @ 40 mm/s` retraction, `0.280` PA; `Pestle_Rotational_Bowden`).",
-          "end_line": 48,
+          "end_line": 54,
           "file": "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md",
           "id": "LL-PST-03",
-          "line_range": "#L44-L48",
+          "line_range": "#L50-L54",
           "location": "main",
           "scope": "",
-          "start_line": 44,
+          "start_line": 50,
           "tier": "TIER2",
           "title": "Rotational Bowden Pivot vs. Fixed Frame Bowden Capstan Drag (`Alembic_Toolhead` Coupled)",
           "touched_files": [
@@ -2138,7 +2303,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 144.0,
+      "proj_avg_doc_len": 141.0,
       "proj_total_docs": 3,
       "project": "Pestle_Rotational_Bowden"
     },
@@ -2230,13 +2395,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation -> Documented in `Pneuma_Remote_Air`'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.",
-          "end_line": 39,
+          "end_line": 47,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-06",
-          "line_range": "#L36-L39",
+          "line_range": "#L44-L47",
           "location": "main",
           "scope": "",
-          "start_line": 36,
+          "start_line": 44,
           "tier": "TIER2",
           "title": "`Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation",
           "touched_files": [
@@ -2246,13 +2411,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count -> Tracked in `Pneuma_Remote_Air` (`[TBD: missing_Tube_Fitting_stl_and_grommet_port_count]`) and `Pneuma_Remote_Air_Hardware`.",
-          "end_line": 44,
+          "end_line": 52,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-08",
-          "line_range": "#L41-L44",
+          "line_range": "#L49-L52",
           "location": "main",
           "scope": "",
-          "start_line": 41,
+          "start_line": 49,
           "tier": "TIER2",
           "title": "Phantom `Tube_Fitting.stl` Reference & `5 \u00d7 \u00d812.00mm` Ports vs. `6` `TPU_Grommet` BOM Count",
           "touched_files": [
@@ -2263,13 +2428,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation -> Documented in `Pneuma_Remote_Air` and `Pneuma_Remote_Air_Hardware` so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.",
-          "end_line": 49,
+          "end_line": 57,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-09",
-          "line_range": "#L46-L49",
+          "line_range": "#L54-L57",
           "location": "main",
           "scope": "",
-          "start_line": 46,
+          "start_line": 54,
           "tier": "TIER2",
           "title": "Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation",
           "touched_files": [
@@ -2279,13 +2444,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... -> Keep shutdown_speed: 0 on both [fan_generic pump_cool] and [fan_generic pump_warm] in Firmware/Pneuma_Control.cfg so part-cooling air pumps de-energize cleanly on Klipper MCU shutdown (`Firmware/Pneuma_Control.cfg` (`Pneuma_Remote_Air_Hardware.md`) (`0702c9c`)).",
-          "end_line": 56,
+          "end_line": 64,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-10",
-          "line_range": "#L51-L56",
+          "line_range": "#L59-L64",
           "location": "main",
           "scope": "",
-          "start_line": 51,
+          "start_line": 59,
           "tier": "TIER2",
           "title": "Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... (`2026-11-18`)",
           "touched_files": [
@@ -2295,13 +2460,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Instructing builders to print every file in the STL directory without excluding COTS reference models... -> Explicitly segregate STL_Files/Pneuma_201 - Vacuum_Pump.stl and STEP_Files/Pneuma_201 - Vacuum_Pump.step as non-printed COTS reference models across BOM.md, Assembly_Guide.md, and Pneuma_Remote_Air_Hardware.md (`STL_Files/Pneuma_201 - Vacuum_Pump.stl` (`Pneuma_Remote_Air_Hardware.md`), `STEP_Files/Pneuma_201 - Vacuum_Pump.step`...",
-          "end_line": 64,
+          "end_line": 72,
           "file": "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md",
           "id": "LL-PNE-11",
-          "line_range": "#L58-L64",
+          "line_range": "#L66-L72",
           "location": "main",
           "scope": "pattern:cots_reference_cad",
-          "start_line": 58,
+          "start_line": 66,
           "tier": "TIER2",
           "title": "Instructing builders to print every file in the STL directory without excluding COTS reference models... (`2026-11-18`)",
           "touched_files": [
@@ -2434,7 +2599,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 170.0,
+      "proj_avg_doc_len": 169.25,
       "proj_total_docs": 12,
       "project": "Pneuma_Remote_Air"
     }
@@ -2447,9 +2612,9 @@
       "sha256": "307f87dd3d9d5128"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md": {
-      "lines": 118,
+      "lines": 130,
       "sections": 0,
-      "sha256": "2ed31c6547f2db69"
+      "sha256": "28ee6c90179bcfea"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Hardware.md": {
       "lines": 41,
@@ -2457,19 +2622,29 @@
       "sha256": "59aa6e259b53a86b"
     },
     "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md": {
-      "lines": 48,
+      "lines": 54,
       "sections": 3,
-      "sha256": "b22a1666583e697a"
+      "sha256": "aadf8cdf0ca00ff6"
+    },
+    "Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "73d4dc577fd043d0"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md": {
-      "lines": 111,
+      "lines": 123,
       "sections": 0,
-      "sha256": "b6c5c3f1edff8115"
+      "sha256": "1a235155f32a7f0a"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Lessons_Learned.md": {
       "lines": 43,
       "sections": 1,
-      "sha256": "89fb829570405891"
+      "sha256": "23577bafd7e26a48"
+    },
+    "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "79a76b9e003c2ba3"
     },
     "Projects/Alchemical_Web_Docs/Alchemical_Web_Docs_Software.md": {
       "lines": 41,
@@ -2482,9 +2657,9 @@
       "sha256": "e7b784e2e5cf01f6"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead.md": {
-      "lines": 165,
+      "lines": 177,
       "sections": 0,
-      "sha256": "438d8b9ad6c9556c"
+      "sha256": "bc9477abe3760756"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead_Hardware.md": {
       "lines": 92,
@@ -2492,19 +2667,49 @@
       "sha256": "01cda97ea132f101"
     },
     "Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md": {
-      "lines": 49,
+      "lines": 55,
       "sections": 3,
-      "sha256": "2352c8dc3c7a4e6a"
+      "sha256": "96291b65b0f91db0"
+    },
+    "Projects/Alembic_Toolhead/Alembic_Toolhead_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "cd4d3ad44e6628ab"
+    },
+    "Projects/Apprentice/Apprentice.md": {
+      "lines": 116,
+      "sections": 0,
+      "sha256": "08145c41778f9fc8"
+    },
+    "Projects/Apprentice/Apprentice_Lessons_Learned.md": {
+      "lines": 63,
+      "sections": 3,
+      "sha256": "63f08b3ae406edfa"
+    },
+    "Projects/Apprentice/Apprentice_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "3584628261012dd0"
+    },
+    "Projects/Apprentice/Apprentice_Software.md": {
+      "lines": 64,
+      "sections": 0,
+      "sha256": "0c3741b4e27f2068"
     },
     "Projects/Brand/Brand.md": {
-      "lines": 126,
+      "lines": 138,
       "sections": 0,
-      "sha256": "f3a368e2736364ad"
+      "sha256": "1628a62e572f80a5"
     },
     "Projects/Brand/Brand_Lessons_Learned.md": {
       "lines": 50,
       "sections": 2,
-      "sha256": "30a2ba1350207b54"
+      "sha256": "3a3709f8c4f30bec"
+    },
+    "Projects/Brand/Brand_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "be2e1a6736c57afd"
     },
     "Projects/Brand/Brand_Software.md": {
       "lines": 41,
@@ -2512,9 +2717,9 @@
       "sha256": "c97d90b2b854c17a"
     },
     "Projects/Extras/Extras.md": {
-      "lines": 83,
+      "lines": 95,
       "sections": 0,
-      "sha256": "83ffddff71f4d04a"
+      "sha256": "ceafe022e0da5ae6"
     },
     "Projects/Extras/Extras_Hardware.md": {
       "lines": 50,
@@ -2524,7 +2729,12 @@
     "Projects/Extras/Extras_Lessons_Learned.md": {
       "lines": 49,
       "sections": 2,
-      "sha256": "ac9e4a07475fafa3"
+      "sha256": "9a7eed1e5b805983"
+    },
+    "Projects/Extras/Extras_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "45f0ad5b1d0a835b"
     },
     "Projects/Homunculus/Archive/Homunculus_Lessons_Archive.md": {
       "lines": 120,
@@ -2562,14 +2772,14 @@
       "sha256": "12f35762a5e72ac7"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 293,
+      "lines": 304,
       "sections": 0,
-      "sha256": "73479105765a14d1"
+      "sha256": "a5f92722537fe469"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 91,
+      "lines": 95,
       "sections": 1,
-      "sha256": "f3f128bd601cf3e9"
+      "sha256": "7d735ddaeb4ead0e"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2579,12 +2789,12 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 91,
       "sections": 0,
-      "sha256": "f3ea88c86e500068"
+      "sha256": "369417ccb9b6a427"
     },
     "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md": {
-      "lines": 62,
-      "sections": 7,
-      "sha256": "198e7849b5aa0762"
+      "lines": 78,
+      "sections": 10,
+      "sha256": "c1d834bee2be06bf"
     },
     "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
       "lines": 24,
@@ -2592,14 +2802,19 @@
       "sha256": "d371e2b86f168c41"
     },
     "Projects/Maker-Tools/Maker-Tools.md": {
-      "lines": 89,
+      "lines": 101,
       "sections": 0,
-      "sha256": "e80518c499144263"
+      "sha256": "374dc6a75c349b6a"
     },
     "Projects/Maker-Tools/Maker-Tools_Lessons_Learned.md": {
       "lines": 43,
       "sections": 1,
-      "sha256": "90b2d88ca10d6228"
+      "sha256": "6ed0d5de2392df23"
+    },
+    "Projects/Maker-Tools/Maker-Tools_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "1d75e16b256ef137"
     },
     "Projects/Maker-Tools/Maker-Tools_Software.md": {
       "lines": 41,
@@ -2612,14 +2827,19 @@
       "sha256": "8aa27be1e556cb66"
     },
     "Projects/Organization_Profile/Organization_Profile.md": {
-      "lines": 80,
+      "lines": 92,
       "sections": 0,
-      "sha256": "56afe69519ddf1f6"
+      "sha256": "ca91b80559b45b43"
     },
     "Projects/Organization_Profile/Organization_Profile_Lessons_Learned.md": {
       "lines": 44,
       "sections": 1,
-      "sha256": "56b0692af7c55a86"
+      "sha256": "1e9a8f3ebbb4e86c"
+    },
+    "Projects/Organization_Profile/Organization_Profile_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "ad6179ac75429b45"
     },
     "Projects/Organization_Profile/Organization_Profile_Software.md": {
       "lines": 41,
@@ -2627,9 +2847,9 @@
       "sha256": "c6e4060bcfeb5ed1"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md": {
-      "lines": 120,
+      "lines": 132,
       "sections": 0,
-      "sha256": "8f5c06a4762ca30a"
+      "sha256": "204a3c298c515c8d"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Hardware.md": {
       "lines": 64,
@@ -2637,9 +2857,14 @@
       "sha256": "16892789cca05f57"
     },
     "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Lessons_Learned.md": {
-      "lines": 48,
+      "lines": 54,
       "sections": 3,
-      "sha256": "56e973520e0975f5"
+      "sha256": "fc284e98207205ca"
+    },
+    "Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "910a82f9aa755246"
     },
     "Projects/Pneuma_Remote_Air/Archive/Pneuma_Remote_Air_Lessons_Archive.md": {
       "lines": 53,
@@ -2647,9 +2872,9 @@
       "sha256": "8d722e31c060d5ba"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air.md": {
-      "lines": 141,
+      "lines": 153,
       "sections": 0,
-      "sha256": "165d92ab154f7476"
+      "sha256": "0f0e87b1ed434e7a"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Hardware.md": {
       "lines": 82,
@@ -2657,9 +2882,9 @@
       "sha256": "2c50249ab1cd8be8"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md": {
-      "lines": 64,
+      "lines": 72,
       "sections": 5,
-      "sha256": "9304a1d831d56bbe"
+      "sha256": "def99880db50755d"
     },
     "Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Playbooks.md": {
       "lines": 25,
@@ -2667,7 +2892,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 95,
+  "total_docs": 101,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "34792bad195bc5a9"
+  "vectors_digest": "08a1426d09cd5012"
 }

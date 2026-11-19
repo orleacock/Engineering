@@ -31,22 +31,30 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 
 ---
 
-## 1. Engineering Post-Mortems & Troubleshooting Entries
+## 1. Lessons Learned Ledger (`Symptom -> Root Cause -> Guardrail`)
 
-### `LL-PNE-06` [TIER2] — `Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation
-- **Symptom / Failed Approach (`Historical / Rejected`):** Assuming `Main_Body.stl` contains only `5` or `7` `Ø4.70mm` (`R2.35mm`) heat-set insert pockets based solely on `BOM.md:6,12` (`5` Rear Cover + `2` Optional Table Mount = `7` inserts).
+| ID | Date | Symptom / Failure Observed | Root Cause | Permanent Guardrail / Rule or Code Fix | Verification Anchor |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `LL-PNE-06` | `2026-11-05` | `Main_Body.stl` `8` heat-set pockets vs. `BOM.md` `5 + 2` allocation | CAD has `5` rear + `2` table + `1` aux boss; `BOM.md` lacks table-mount screws | Quarantine in `Open [TBD]` Ledger without guessing screw length | [`Pneuma_Remote_Air.md`](Pneuma_Remote_Air.md) |
+| `LL-PNE-08` | `2026-11-05` | Phantom `Tube_Fitting.stl` reference & `5 × Ø12.00mm` ports vs. `6` `TPU_Grommet` | No `Tube_Fitting.stl` exists in STL/CAD; `6th` grommet is spare (`5` active ports) | Track in `Open [TBD]` Ledger and `_Hardware.md` | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) |
+| `LL-PNE-09` | `2026-11-05` | Multi-pump Klipper `[gcode_macro M106]` ignores `P<index>` | Stock `M106` checks only `params.S` with `pump_warm` commented out | Explicitly bind `params.P` or separate fan macros | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) |
+| `LL-PNE-10` | `2026-11-18` | Non-zero `shutdown_speed` kept part-cooling pumps running on MCU fault | Diaphragm `[fan_generic]` pumps inherited hotend `[heater_fan]` fail-safe | Keep `shutdown_speed: 0` on `pump_cool` & `pump_warm` | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) |
+| `LL-PNE-11` | `2026-11-18` | Builders printed non-printable COTS `Vacuum_Pump` models | COTS pump STL/STEP lived alongside printable housing parts | Segregate `Vacuum_Pump.{stl,step}` as non-printed COTS across docs | [`Pneuma_Remote_Air_Hardware.md`](Pneuma_Remote_Air_Hardware.md) |
+
+### `LL-PNE-06` [TIER2] [TRAP] — `Main_Body.stl` `8` Heat-Set Insert Pockets vs. `BOM.md` `5 + 2` Insert Allocation
+- **Symptom / Trap:** Assuming `Main_Body.stl` contains only `5` or `7` `Ø4.70mm` (`R2.35mm`) heat-set insert pockets based solely on `BOM.md:6,12` (`5` Rear Cover + `2` Optional Table Mount = `7` inserts).
 - **Root Cause:** `Main_Body.stl` physically contains `8` `Ø4.70mm` heat-set insert pockets (`5` on the rear cover flange at `X = -65.00mm`, `2` on the bottom table-mount bosses at `Y = -58.50mm`, plus `1` unindexed auxiliary boss at `(21.0, 2.0, -32.2)`). Additionally, `BOM.md:6,12` lists `2` optional table-mount inserts (`Main Body (Optional)`) but `0` corresponding M3 mounting screws.
-- **Verified Resolution & Canonical Owner:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md)'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.
+- **Verified Resolution & Permanent Guardrail:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md)'s `Open [TBD] / [CONFLICT] Ledger` (`[TBD: table_mount_m3_screw_length_and_8th_insert_boss]`) so builders and auditors neither under-count the physical pockets nor invent an unverified screw length.
 
-### `LL-PNE-08` [TIER2] — Phantom `Tube_Fitting.stl` Reference & `5 × Ø12.00mm` Ports vs. `6` `TPU_Grommet` BOM Count
-- **Symptom / Failed Approach (`Historical / Rejected`):** Referencing `Tube_Fitting.stl` as an existing file in `STL/` (`Assembly_Guide.md:54`) or claiming `Main_Body.stl` has `6` `Ø12.00mm` ports to match the `6` `TPU_Grommet.stl` listed in `BOM.md:22`.
+### `LL-PNE-08` [TIER2] [TRAP] — Phantom `Tube_Fitting.stl` Reference & `5 × Ø12.00mm` Ports vs. `6` `TPU_Grommet` BOM Count
+- **Symptom / Trap:** Referencing `Tube_Fitting.stl` as an existing file in `STL/` (`Assembly_Guide.md:54`) or claiming `Main_Body.stl` has `6` `Ø12.00mm` ports to match the `6` `TPU_Grommet.stl` listed in `BOM.md:22`.
 - **Root Cause:** `Tube_Fitting.stl` is cited in `Assembly_Guide.md:54` (`> [!WARNING]`) for builds without `1-8-NPT` threaded fittings, but no `Tube_Fitting.stl` exists in `STL/` or `CAD/Pneuma_Remote_Air.step`. Meanwhile, `Main_Body.stl` has `5 × Ø12.00mm` (`R6.00mm`) pass-through ports (`4` top + `1` bottom) alongside `1 × Ø17.50mm` rear cable port (`Plug_Grommet_TPU.stl`), meaning the `6th` `TPU_Grommet.stl` in `BOM.md:22` is a spare (`5` active ports).
-- **Verified Resolution & Canonical Owner:** Tracked in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) (`[TBD: missing_Tube_Fitting_stl_and_grommet_port_count]`) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md).
+- **Verified Resolution & Permanent Guardrail:** Tracked in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) (`[TBD: missing_Tube_Fitting_stl_and_grommet_port_count]`) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md).
 
-### `LL-PNE-09` [TIER2] — Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation
-- **Symptom / Failed Approach (`Historical / Rejected`):** Assuming the stock `[gcode_macro M106]` in `Firmware/Pneuma_Control.cfg:22-30` supports independent slicer `M106 P<index> S<value>` addressing for `pump_cool` vs. `pump_warm`.
+### `LL-PNE-09` [TIER2] [TRAP] — Multi-Pump Klipper `[gcode_macro M106]` `P<index>` Indexing Limitation
+- **Symptom / Trap:** Assuming the stock `[gcode_macro M106]` in `Firmware/Pneuma_Control.cfg:22-30` supports independent slicer `M106 P<index> S<value>` addressing for `pump_cool` vs. `pump_warm`.
 - **Root Cause:** The stock `[gcode_macro M106]` checks only `params.S` (`SET_FAN_SPEED FAN=pump_cool SPEED={s}`) and leaves `SET_FAN_SPEED FAN=pump_warm` commented out (`#`), ignoring `params.P`.
-- **Verified Resolution & Canonical Owner:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md) so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.
+- **Verified Resolution & Permanent Guardrail:** Documented in [`Pneuma_Remote_Air`](Pneuma_Remote_Air.md) and [`Pneuma_Remote_Air_Hardware`](Pneuma_Remote_Air_Hardware.md) so multi-fan slicer configurations (`M106 P2`/`P3` or thermal regime macros) explicitly bind `params.P` or separate fan macros rather than silently driving only `pump_cool`.
 
 ### `LL-PNE-10` [TIER2] [TRAP] — Setting non-zero emergency shutdown duty on part-cooling diaphragm air pumps forces both pumps to run... (`2026-11-18`)
 - **Historical Context (Inert Origin):** Matured from LL-PNE-04 (resolved in 0702c9c where pre-fix Pneuma_Control.cfg set shutdown_speed: 1 on diaphragm pumps instead of reserving full-speed fail-safe behavior solely for hotend [heater_fan] sections).

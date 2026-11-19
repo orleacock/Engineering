@@ -30,20 +30,26 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 
 ---
 
-## 1. Engineering Post-Mortems & Troubleshooting Entries
+## 1. Lessons Learned Ledger (`Symptom -> Root Cause -> Guardrail`)
 
-### `LL-ALM-01` [TIER2] — Unstaged `BOM.md` Working-Tree Divergence vs. Committed `HEAD` (`3ff29ce`)
-- **Symptom / Failed Approach (`Historical / Quarantined`):** Editing `BOM.md` in the working tree without cross-checking procedural fastener callouts in `Assembly_Guide.md` Step 1 (`Lower_Body` grub-screw tube retention) or CAD bore histograms in [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) caused the unstaged `BOM.md` to drop required `M3` grub screws, `M3x24mm` fan-baffle bolts, and optional `M2` BDsensor fasteners relative to committed `3ff29ce`.
+| ID | Date | Symptom / Failure Observed | Root Cause | Permanent Guardrail / Rule or Code Fix | Verification Anchor |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `LL-ALM-01` | `2026-11-05` | Unstaged `BOM.md` working-tree edits dropped required `M3` grub screws and `M3x24mm` bolts | Pre-framework working-tree edit lacked `git show HEAD:BOM.md` provenance diffing | Quarantine dirty edits (`DIRTY_GIT_WORKTREE`) and anchor on clean `HEAD:BOM.md` + `_Hardware.md` | [`Alembic_Toolhead.md`](Alembic_Toolhead.md) |
+| `LL-ALM-02` | `2026-11-05` | `5mm OD x 3mm ID` aluminum tube buckling & bend-jig pivot ear fracture | Flush jig start loads ears in prying tension; hollow bending collapses thin wall | `5–10mm` initial jig gap, `2.8mm` `<3mm` mandrel, `~5°` toe-in above nozzle, snug `M3` grubs | [`Alembic_Toolhead.md`](Alembic_Toolhead.md) |
+| `LL-ALM-03` | `2026-11-05` | Coupled `6mm OD` pneumatic intake leaks & cracked manifold ears (`Pneuma_Remote_Air` coupled) | Threading `PC4-M10` before `9x2` O-ring or over-torquing `65mm M3 BHCS` into plastic | Seat upper `9x2` O-ring first, align center `9x2` O-ring, snug `65mm M3` to initial plastic compression | [`Alembic_Toolhead.md`](Alembic_Toolhead.md) |
+
+### `LL-ALM-01` [TIER2] [TRAP] — Unstaged `BOM.md` Working-Tree Divergence vs. Committed `HEAD` (`3ff29ce`)
+- **Symptom / Trap:** Editing `BOM.md` in the working tree without cross-checking procedural fastener callouts in `Assembly_Guide.md` Step 1 (`Lower_Body` grub-screw tube retention) or CAD bore histograms in [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) caused the unstaged `BOM.md` to drop required `M3` grub screws, `M3x24mm` fan-baffle bolts, and optional `M2` BDsensor fasteners relative to committed `3ff29ce`.
 - **Root Cause:** Unverified pre-framework edit across `8` working-tree files without `git show HEAD:BOM.md` provenance diffing.
-- **Verified Resolution & Canonical Owner:** Quarantine dirty working-tree edits (`DIRTY_GIT_WORKTREE`) and anchor strictly on clean `HEAD:BOM.md` (`3ff29ce`) + [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) until the active `[TBD]` ledger in [`Alembic_Toolhead`](Alembic_Toolhead.md) is reconciled.
+- **Verified Resolution & Permanent Guardrail:** Quarantine dirty working-tree edits (`DIRTY_GIT_WORKTREE`) and anchor strictly on clean `HEAD:BOM.md` (`3ff29ce`) + [`Alembic_Toolhead_Hardware`](Alembic_Toolhead_Hardware.md) until the active `[TBD]` ledger in [`Alembic_Toolhead`](Alembic_Toolhead.md) is reconciled.
 
-### `LL-ALM-02` [TIER2] — `5mm OD x 3mm ID` Aluminum Tube Buckling & Bend-Jig Ear Fracture
-- **Symptom / Failed Approach (`Historical / Rejected`):** Starting the tube wrap with `Bend_Tool_Base.stl` and `Bend_Tool_Lever.stl` pressed flush together snapped the printed pivot ears, while bending raw `5mm OD x 3mm ID` thin-wall aluminum tubing hollow caused inward wall collapse at the tight bend radius.
+### `LL-ALM-02` [TIER2] [TRAP] — `5mm OD x 3mm ID` Aluminum Tube Buckling & Bend-Jig Ear Fracture
+- **Symptom / Trap:** Starting the tube wrap with `Bend_Tool_Base.stl` and `Bend_Tool_Lever.stl` pressed flush together snapped the printed pivot ears, while bending raw `5mm OD x 3mm ID` thin-wall aluminum tubing hollow caused inward wall collapse at the tight bend radius.
 - **Root Cause:** Zero initial spacing loads the printed lever pivot in prying tension instead of rolling shear; thin aluminum tubing requires internal radial support during tight-radius forming, and parallel (unangled) tubes split airflow past either side of the molten bead.
-- **Verified Resolution & Canonical Owner:** Enforced in [`Alembic_Toolhead`](Alembic_Toolhead.md) (`Paramount Assembly Hazards`): set `5–10mm` initial spacing between bend jig halves, insert a `2.8mm` plastic welding rod (`<3mm` mandrel) during bending, rotate formed tubes `~5°` inward strictly above the nozzle plane, and snug `M3` cup-point grub screws just to lock rotation without crushing the `3mm ID` bore.
+- **Verified Resolution & Permanent Guardrail:** Enforced in [`Alembic_Toolhead`](Alembic_Toolhead.md) (`Paramount Assembly Hazards`): set `5–10mm` initial spacing between bend jig halves, insert a `2.8mm` plastic welding rod (`<3mm` mandrel) during bending, rotate formed tubes `~5°` inward strictly above the nozzle plane, and snug `M3` cup-point grub screws just to lock rotation without crushing the `3mm ID` bore.
 
-### `LL-ALM-03` [TIER2] — Coupled `6mm OD` Pneumatic Intake & `9x2` O-Ring Manifold Sealing (`Pneuma_Remote_Air` Coupled)
-- **Symptom / Failed Approach (`Historical / Rejected`):** Positive-pressure (`>= 70 kPa`) air leaks at the top `PC4-M10` fitting or central manifold split, followed by cracked printed `ABS`/`ASA` manifold ears when builders attempted to cure the leak by over-torquing the two `65mm M3 BHCS` vertical tie-bolts to metal torque specs (`~1.2 Nm`).
+### `LL-ALM-03` [TIER2] [TRAP] — Coupled `6mm OD` Pneumatic Intake & `9x2` O-Ring Manifold Sealing (`Pneuma_Remote_Air` Coupled)
+- **Symptom / Trap:** Positive-pressure (`>= 70 kPa`) air leaks at the top `PC4-M10` fitting or central manifold split, followed by cracked printed `ABS`/`ASA` manifold ears when builders attempted to cure the leak by over-torquing the two `65mm M3 BHCS` vertical tie-bolts to metal torque specs (`~1.2 Nm`).
 - **Root Cause:** Threading `PC4-M10` before seating the upper `9x2` (`23/64 x 5/64"`) O-ring or pinching a misaligned central `9x2` O-ring; over-torquing bolts into printed plastic crushes the O-ring seat rather than sealing it.
-- **Verified Resolution & Canonical Owner:** Seat the upper `9x2` O-ring into the intake groove prior to threading `PC4-M10` and verify central `9x2` O-ring alignment before snugging the `65mm M3 BHCS` bolts to initial plastic compression ([`Alembic_Toolhead`](Alembic_Toolhead.md), [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md)).
+- **Verified Resolution & Permanent Guardrail:** Seat the upper `9x2` O-ring into the intake groove prior to threading `PC4-M10` and verify central `9x2` O-ring alignment before snugging the `65mm M3 BHCS` bolts to initial plastic compression ([`Alembic_Toolhead`](Alembic_Toolhead.md), [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md)).
 - **Shared Interface Link:** Coupled with [`Pneuma_Remote_Air_Lessons_Learned`](../../Projects/Pneuma_Remote_Air/Pneuma_Remote_Air_Lessons_Learned.md) and [`A3DP_Gantry_Assembly_Lessons_Learned`](../../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly_Lessons_Learned.md).

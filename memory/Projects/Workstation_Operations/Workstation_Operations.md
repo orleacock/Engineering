@@ -6,9 +6,9 @@ project_type: "software"
 status: "active"
 local_path: "../scripts"
 repo_head_sha: "UNTRACKED"
-tree_hash: "7adb62cc6fb3"
+tree_hash: "9a76b6a0b860"
 checkpoint_head_sha: "UNTRACKED"
-checkpoint_tree_hash: "7adb62cc6fb3"
+checkpoint_tree_hash: "9a76b6a0b860"
 checkpoint_worktree: "untracked"
 task_umbrella: "../../Tasks/Orin_Workstation_Tasks.md"
 last_synced: "2026-11-19"
@@ -37,7 +37,7 @@ checkpoint_lessons_digest: "4418ca8ea34107f4"
 
 ## 2. Executive Architecture & Locked Specifications
 
-- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent & home umbrella config sync (`umbrella_configs/{Projects,Home}.homunculus.json`), Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`), and the standalone multi-backend **Apprentice** local sidecar plugin (`apprentice_engine.py`, `apprentice/`, `apprentice_plugin/`) supporting LM Studio Bionic, Ollama, llama.cpp, and OpenAI-compatible loopback endpoints for the local engineering workstation (`/home/orin/Projects/Engineering`).
+- **Core Objective**: Workstation bootstrap automation (`bootstrap_workstation.sh`), multi-compartment Git pre-commit/pre-push firewall hooks (`git_pre_commit_boundary.sh`, `pre_push_engineering_guard.sh`), parent & home umbrella config sync (`umbrella_configs/{Projects,Home}.homunculus.json`), Dual-Account Gmail MCP server (`gmail_mcp/gmail_mcp_server.py`), and workstation plugin deployment for the standalone **Apprentice v3.0** local sidecar (`../../Alchemical3D/Apprentice` $\rightarrow$ `~/.gemini/config/plugins/apprentice/`).
 - **Primary Repository Path**: `../scripts`
 - **Verified Key Parameters**:
   - **Workstation Bootstrap**: `bootstrap_workstation.sh` ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) wires `Homunculus/rules/*.md`, `Homunculus/skills/*`, and `Homunculus/addons/*` into `~/.gemini/config/` (`0` duplicate `.agents/` trees), registers `memory/` in `~/.config/obsidian/obsidian.json`, `cmp -s`-verifies `/home/orin/Projects/{.homunculus.json,.geminiignore}` + `/home/orin/.homunculus.json`, and installs + `realpath -m`-verifies symlinked `.git/hooks/{pre-commit,pre-push,post-checkout,post-merge,post-rewrite}` across `/home/orin/Projects/Engineering` and `/home/orin/Projects/Alchemical3D/*`.
@@ -46,7 +46,7 @@ checkpoint_lessons_digest: "4418ca8ea34107f4"
   - **Immutable RAID Deliverable Restore Guard (`S1-A`)**: `snapshot_homunculus_version.py` (`build_restore_script`) preserves live `~/.gemini/config/mcp_config.json` (staging redacted snapshot configs to `mcp_config.redacted_reference.json`) and prunes only `Homunculus`/`Engineering`/dangling symlinks in `~/.gemini/config/{rules,skills}`. Because the initial `v0.1.0_2026-11-10_foundation_baseline` RAID deliverable is write-once `0444`-locked (`0` in-place edits permitted), if ever running full-workstation recovery from that specific `v0.1.0` snapshot, invoke the updated `scripts/snapshot_homunculus_version.py` restore template or back up live `~/.gemini/config/mcp_config.json` and non-Homunculus user skills/rules first (its `--restore-engine-only` mode is already unaffected).
   - **Ring-0 & Memory Governance Human Turnkey (`h_sudo.sh` / `~/.local/bin/h-sudo`)**: Out-of-tree `/dev/tty` human turnkey helper ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) supporting `status`, `unlock [--with-memory] --files ... --reason "..."` (`unlock-all`), `seal [--with-memory] --reason "..."` (`seal-all`), `revoke`, `enroll-turnkeys`, `enroll-signer`, `policy`, `unlock-memory`, and `seal-memory`, sequencing Ring-0 and Memory Governance prompts inside a single interactive command to eliminate multi-line clipboard paste swallowing.
   - **Verified Anti-Hallucination Fast-Path Cache (`verified_fastpath.py`)**: Parent-only workstation accelerator ([`Workstation_Operations_Software.md`](Workstation_Operations_Software.md)) storing `VERIFIED_FASTPATH_V1` pure-JSON SHA-256 receipts in `.cache/verified_fastpath.json` (`0600` atomic writes, `EROFS` fallback), wired into `git_pre_commit_boundary.sh` for Stage-X `sync_memory.py --audit` deduplication while keeping `audit_data_boundary.py --staged` strictly live and uncached.
-  - **Apprentice Multi-Backend Local Sidecar (`apprentice_engine.py`, `apprentice_plugin/` & `~/.lmstudio/` Containment)**: Loopback-only (`127.0.0.1:1234` default + `auto`/`bionic`/`ollama`/`llamacpp`/`openai_compat` adapters) sidecar bridge (`Qwen3.6-35B-A3B` `Q4_K_M`, text-only on LM Studio Bionic `ROCm 2.73.0`, locked to `0.65` MoE @ `49,152` ctx alongside `CPU-Background` `--device none` `CCD2` `16,384` ctx), with `60.0s` `auto` / `90.0s` `explicit` ETA circuit breakers, Slice-Count Map-Reduce (`max_slices_per_batch=4`), and preserved telemetry inside `~/.cache/apprentice_plugin/`. The standalone `apprentice` Antigravity plugin (`apprentice_plugin/plugin.json` `1.0.0`, `apprentice/apprentice_lifecycle_hook.py` `14/14` self-tests, `apprentice/apprentice_mcp_server.py` `2.6.0`) exposes `5` MCP tools (`apprentice_control`, `apprentice_digest`, `apprentice_repo_audit`, `apprentice_stage_patch`, `apprentice_shadow_review`), Two-Posture Host-Tier Routing (`EXECUTION_TIER` Speed-First vs. `FRONTIER_TIER` Quota-Shield + mid-session tier switch detection), Turn-1 `PreInvocation` pure `systemMessage` notices (`900`s idle re-notify), `user_confirmed=True` lifecycle gating (`gpu-daily` `49,152` ctx / `gpu-max` / `cpu-bg`), `PreToolUse` `run_command` bypass blocking (`[APPRENTICE_UTILITY_REQUIRED]`), `_safe_subprocess_cwd` unlinked-`cwd` resilience, and `bootstrap_workstation.sh` plugin sync & strict validation. Enforces `~/.lmstudio/` containment (`logSensitiveData: false`, `webSearchEnabled: false`, `Manual Review` shell gate, `hardware-cad-inspector` disabled pending maturation), routing code drafts to scratch staging and audit notes strictly via `memory_gateway.py quarantine-note` into per-project `Quarantine/` folders.
+  - **Apprentice v3.0 Workstation Plugin Wiring (`bootstrap_workstation.sh#L113-L146`)**: `bootstrap_workstation.sh` removes any legacy `~/.gemini/config/plugins/bionic-sidecar` directory, deploys `Alchemical3D/Apprentice/install.sh` into `~/.gemini/config/plugins/apprentice/`, and validates the installed plugin via `agy plugin validate --strict --json`. (Core Apprentice v3.0 architecture, 4-tool MCP surface, and `20` unit tests are tracked directly in `../../Alchemical3D/Apprentice`; workstation host-runtime constraints live in [`Host_Runtime_Lessons.md`](../../Host_Runtime/Host_Runtime_Lessons.md).)
 
 ---
 
@@ -56,13 +56,12 @@ checkpoint_lessons_digest: "4418ca8ea34107f4"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-19`
-- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 7adb62cc6fb3` | `Worktree: untracked` | `Last Verification: SBX-20261119_070028-c284d2b2 | 14/14 hook + 31/31 MCP PASS | LIN-47b6b33c3131 | LIN-967dfe659c07 | audit 0/118 PASS`
+- **Checkpoint Provenance**: `HEAD SHA: UNTRACKED` | `Tree Hash: 9a76b6a0b860` | `Worktree: untracked` | `Last Verification: SBX-BOOTSTRAP-0-ERR | audit_memory_hygiene:0-defects | 96/96 Homunculus + 20/20 Apprentice unittest OK`
 - **Where We Stopped (Verified State & Context)**:
-  Shipped Apprentice Neon routing (LL-WS-29), map-reduce NONE/key binding (LL-WS-30), benchmark lineage alignment (LL-WS-31), PRIN-05..07, Host_Runtime/ migration of LL-WS-28..30, LL-WS-07/08 invariant merge, and OpenSSH-signed 0444 governance seal (audit 0/118 PASS).
-- **Active Project State Ledger & Blockers**: None
+  Completed Tracks 1-3 ecosystem cleanup: removed ~/.agents duplicate tree and orphaned bionic/Oct-14 skills, restored ~/.gemini/config symlink+hooks.json parity (bootstrap_workstation.sh --check 0 errors), purged deleted Apprentice v2 references from Workstation_Operations_Software.md/Workstation_Operations.md/Orin_Workstation_Tasks.md, updated Engineering/README.md and benchmark_homunculus.py to 10 core skills, moved 2 loose study_briefs into project subdirs, and modernized all 13 Project Hubs/Playbooks/Lessons.
+- **Active Project State Ledger & Blockers**: None (Ring-0/0444 Governance_and_Constraint_Architecture.md#L71 pending optional human turnkey)
 - **Next Session Kickstart & Discussion Points**:
-  1. Window 3: Refine Project State Ledger format in rules/co-engineering-partner.md and embed Apprentice telemetry field inside the ledger (apprentice_plugin).
-- **Open Discussion / Alignment Questions**: Section 2 Option D+ & governance seal complete; ready for Window 3 in a fresh thread.
+  1. Review remaining Ring-0/0444 Track 4 proposals and commit Engineering, Apprentice, and Homunculus when ready
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -71,20 +70,7 @@ checkpoint_lessons_digest: "4418ca8ea34107f4"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 7adb62cc6fb3
-  apprentice/
-  apprentice/apprentice_lifecycle_hook.py
-  apprentice/apprentice_mcp_server.py
-  apprentice_plugin/
-  apprentice_plugin/rules/
-  apprentice_plugin/rules/AGENTS.md
-  apprentice_plugin/skills/
-  apprentice_plugin/skills/apprentice/
-  apprentice_plugin/skills/apprentice/references/
-  apprentice_plugin/skills/apprentice/SKILL.md
-  apprentice_plugin/hooks.json
-  apprentice_plugin/mcp_config.json
-  apprentice_plugin/plugin.json
+Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 9a76b6a0b860
   gmail_mcp/
   gmail_mcp/gmail-workspace-assistant/
   gmail_mcp/gmail-workspace-assistant/SKILL.md
@@ -94,11 +80,6 @@ Repository: scripts | HEAD SHA: UNTRACKED | Tree Hash: 7adb62cc6fb3
   umbrella_configs/
   umbrella_configs/Home.homunculus.json
   umbrella_configs/Projects.homunculus.json
-  apprentice_benchmark_history.jsonl
-  apprentice_engine.py
-  benchmark_apprentice.py
-  benchmark_apprentice_high.py
-  benchmark_apprentice_standard.py
   benchmark_history.jsonl
   benchmark_homunculus.py
   bootstrap_workstation.sh

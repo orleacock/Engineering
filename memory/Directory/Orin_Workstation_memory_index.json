@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 170.09,
+  "avg_doc_len": 206.16,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -300,7 +300,6 @@
           "title": "restore_version.sh risked overwriting live mcp_config.json credentials and wiping custom ~/.gemini/config... (`2026-11-10`)",
           "touched_files": [
             "benchmark_homunculus.py",
-            "mcp_config.json",
             "snapshot_homunculus_version.py",
             "version_manager.py"
           ]
@@ -452,6 +451,162 @@
         },
         {
           "archetype": "trap",
+          "capsule_1line": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... -> Defer Turn-1 notices to PreInvocation pure systemMessage strings because metadata maps and premature SessionStart hooks collided with agy parsing; compare plugin trees (diff -rq) before reinstalling in bootstrap_workstation.sh and guard child spawns via _safe_subprocess_cwd() because inode swaps broke live cwd subprocesses; match...",
+          "end_line": 36,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-20",
+          "line_range": "#L28-L36",
+          "location": "archive",
+          "scope": "",
+          "start_line": 28,
+          "tier": "TIER5",
+          "title": "Sidecar startup banners dropped silently during CLI startup, hot plugin updates broke running daemon cwd... (`2026-11-16`)",
+          "touched_files": [
+            "bootstrap_workstation.sh"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... -> Preserve duplicate per-file hunks via parse_and_validate_context_items() in apprentice_engine.py because path-keyed dicts collapsed multi-slice inputs; split unsliced vs sliced items, cap dense batches at max_slices_per_batch=4, and trigger Slice-Count Map-Reduce for dense multi-file slices (>=5 slices across >=3 files) in...",
+          "end_line": 46,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-21",
+          "line_range": "#L38-L46",
+          "location": "archive",
+          "scope": "",
+          "start_line": 38,
+          "tier": "TIER5",
+          "title": "Multi-slice #Lstart-Lend inputs silently dropped earlier hunks from the same file, byte-only chunk... (`2026-11-16`)",
+          "touched_files": [
+            "audit_repo_docs.py",
+            "memory_gateway.py",
+            "verify_claims.py"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... -> Enforce acquire_bjob_worker_slot FIFO locking with explicit except TimeoutError before except OSError, support repo-relative containment in validate_input_paths, lower chunk targets (22000B/450L) with >=768 STANDARD token floor and <=300s reduce budget, and support job_ids batch collection on job-collect/job-collect-any because...",
+          "end_line": 56,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-22",
+          "line_range": "#L48-L56",
+          "location": "archive",
+          "scope": "",
+          "start_line": 48,
+          "tier": "TIER5",
+          "title": "Concurrent BJOB HIGH workers caused GPU KV-pool deadlocks, >100KB files hit chunk-reduce timeouts with... (`2026-11-16`)",
+          "touched_files": []
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... -> Default to effort=auto via classify_hybrid_effort (STANDARD default + stage_patch lock, HIGH_CROSS_SINGLE_SHOT <=36KB, lossless Map -> 8192-cap HIGH Reduce >36KB), raise PROFILES fast cap to 3072, mount .patch sources via _mount_optional_patch_sources() on include_git_diff=True, isolate second-eyes CPU+semantic critique in...",
+          "end_line": 66,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-23",
+          "line_range": "#L58-L66",
+          "location": "archive",
+          "scope": "",
+          "start_line": 58,
+          "tier": "TIER5",
+          "title": "4608-token reduce cap triggered Qwen3.6 <think> exhaustion and dropped cross-slice items, 2048 fast cap... (`2026-11-17`)",
+          "touched_files": []
+        },
+        {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... -> Enforce portable Two-Posture Host-Tier Routing (EXECUTION_TIER <25KB native Speed-First vs FRONTIER_TIER >=8KB sync log sieves + Gate 3 #L read_file, #L context_files on stage_patch, and override-only verdict calls) with transcriptPath <16KB tail tier detection and [APPRENTICE HOST TIER SWITCH] notices...",
+          "end_line": 76,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-24",
+          "line_range": "#L68-L76",
+          "location": "archive",
+          "scope": "",
+          "start_line": 68,
+          "tier": "TIER5",
+          "title": "Single-posture sidecar thresholds slowed Hydrogen on <25KB reads while Carbon Orchestrator sessions... (`2026-11-18`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Benchmark runs inflated v2.4 Apprentice usable rate to 89.8% (73.5% real prod across 34 calls), 4 failed... -> Isolate benchmark_apprentice to ~/.cache/apprentice_plugin/bench/ via _isolated_bench_env with SHA-256 zero-drift checks on live prod cache; record corrected call_id across all tool exception paths and orphan BJOB workers; filter Quarantine/non-auth/foreign-entity sources before select_collision_free_sources and attach 1 non-colliding...",
+          "end_line": 86,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-26",
+          "line_range": "#L78-L86",
+          "location": "archive",
+          "scope": "",
+          "start_line": 78,
+          "tier": "TIER5",
+          "title": "Benchmark runs inflated v2.4 Apprentice usable rate to 89.8% (73.5% real prod across 34 calls), 4 failed... (`2026-11-18`)",
+          "touched_files": [
+            "Quarantine_README.md"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Phase 3 STANDARD/HIGH suites exposed four failure modes: _deduplicate_full_context_diff emitted synthetic... -> Pass compact_git_diff=False in _apprentice_shadow_review_sync so shadow critics inspect raw '+' diff hunks (H5 3/3 traps, VRF=True, -67% clean latency); replace <file>#L<start>-L<end> prompt syntax with unbracketed file.ext#Lstart-Lend and flag _ANGLED_FILE_ANCHOR_RE deterministically (H3 100% first-pass clean); prepend...",
+          "end_line": 96,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-27",
+          "line_range": "#L88-L96",
+          "location": "archive",
+          "scope": "",
+          "start_line": 88,
+          "tier": "TIER5",
+          "title": "Phase 3 STANDARD/HIGH suites exposed four failure modes: _deduplicate_full_context_diff emitted synthetic... (`2026-11-18`)",
+          "touched_files": []
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Same-basename SKILL.md citations triggered false out-of-bounds anchor errors (BC-0290), chunked 8-batch... -> Match trailing POSIX path suffixes in citation bounds and emit repo-relative targets; fall back to working_tree_delta.patch and min_lines=1 during single-file shadow repair (BC-0292 100% healed, H5 3/3 Pass-1 clean); recalibrate estimate_chunked_eta to ~0.90x parallel GPU model; expand GOVERNED_PY_SCRIPTS. (`apprentice_engine.py`...",
+          "end_line": 106,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md",
+          "id": "LL-WS-28",
+          "line_range": "#L98-L106",
+          "location": "archive",
+          "scope": "",
+          "start_line": 98,
+          "tier": "TIER5",
+          "title": "Same-basename SKILL.md citations triggered false out-of-bounds anchor errors (BC-0290), chunked 8-batch... (`2026-11-18`)",
+          "touched_files": [
+            "SKILL.md"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "FRONTIER_MODEL_RE omitted neon, leaving Neon hosts in neutral fallback or stuck on stale prior tiers... -> Classify neon under FRONTIER_MODEL_RE (retaining argon as silent legacy regex alias), reset eff_tier on explicit non-placeholder Model Selection or concrete modelName changes while isolating tool JSON model keys, replace Argon with Neon in plugin docs, and verify via SBX-20261119_070028-c284d2b2...",
+          "end_line": 27,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_03.md",
+          "id": "LL-WS-29",
+          "line_range": "#L19-L27",
+          "location": "archive",
+          "scope": "",
+          "start_line": 19,
+          "tier": "TIER5",
+          "title": "FRONTIER_MODEL_RE omitted neon, leaving Neon hosts in neutral fallback or stuck on stale prior tiers... (`2026-11-19`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md"
+          ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Chunk mappers emitted Markdown pipe-row NONE or absent noise on empty slices, echoed bracketed start/end... -> Filter pipe-row NONE and absent from L-lines in _filter_chunk_extract_lines(), replace angle-bracket placeholders with unbracketed file.ext#Lstart-Lend in Map prompts, and enforce strict enclosing key/metric_id/heading binding across Map and Reduce passes. (`apprentice/apprentice_mcp_server.py` (`Workstation_Operations_Software.md`)...",
+          "end_line": 37,
+          "file": "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_03.md",
+          "id": "LL-WS-30",
+          "line_range": "#L29-L37",
+          "location": "archive",
+          "scope": "",
+          "start_line": 29,
+          "tier": "TIER5",
+          "title": "Chunk mappers emitted Markdown pipe-row NONE or absent noise on empty slices, echoed bracketed start/end... (`2026-11-19`)",
+          "touched_files": []
+        },
+        {
+          "archetype": "trap",
           "capsule_1line": "[PLAYBOOK] Workstation Homunculus v0.Y.Z release promotion, full-system-suite benchmark gate, and immutable 0444 RAID... -> 1. Run pre-commit-gate Stage X/Y/Z (homunculus_paths.py --sync-maps, sync_memory.py --sync-software, audit_portability.py, audit_data_boundary.py --worktree, sync_memory.py --audit --verify-checkpoints, sync_memory.py --lock-memory-rules, homunculus_paths.py --sudo-seal / h_sudo.sh seal-all) and benchmark_homunculus.py --profile...",
           "end_line": 25,
           "file": "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md",
@@ -474,8 +629,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 170.09,
-      "proj_total_docs": 22,
+      "proj_avg_doc_len": 206.16,
+      "proj_total_docs": 32,
       "project": "Workstation_Operations"
     }
   },
@@ -492,19 +647,24 @@
       "sha256": "17daf92aaae5dee1"
     },
     "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_02.md": {
-      "lines": 26,
-      "sections": 1,
-      "sha256": "4c42f8ca1390bde8"
+      "lines": 106,
+      "sections": 9,
+      "sha256": "dacffa20b35071df"
+    },
+    "Projects/Workstation_Operations/Archive/Workstation_Operations_Lessons_Archive_Vol_03.md": {
+      "lines": 37,
+      "sections": 2,
+      "sha256": "1b8e6290a189a553"
     },
     "Projects/Workstation_Operations/Workstation_Operations.md": {
-      "lines": 125,
+      "lines": 106,
       "sections": 0,
-      "sha256": "0bd2fe45475f001a"
+      "sha256": "a71a38f001ac5bba"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Lessons_Learned.md": {
       "lines": 75,
       "sections": 4,
-      "sha256": "1cc3e63fc7f968f3"
+      "sha256": "a81543eb17f1efb8"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Playbooks.md": {
       "lines": 25,
@@ -512,12 +672,12 @@
       "sha256": "fad3f88e68089c02"
     },
     "Projects/Workstation_Operations/Workstation_Operations_Software.md": {
-      "lines": 64,
+      "lines": 55,
       "sections": 0,
-      "sha256": "21ac8674b01d74fd"
+      "sha256": "aab49380e9f056b6"
     }
   },
-  "total_docs": 22,
+  "total_docs": 32,
   "vectors_cache_rel": ".cache/Orin_Workstation_scoring_vectors.json",
-  "vectors_digest": "2e2b77d1a355c57f"
+  "vectors_digest": "286f50dd63bb812b"
 }

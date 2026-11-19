@@ -1,6 +1,6 @@
 {
   "last_sealed": "2026-11-19",
-  "latest_audit_entry_sha256": "697dbb2ef9968e25f3a2f0d50cd0c0f2f6581fe3681670542fb88261def41a8d",
+  "latest_audit_entry_sha256": "000958c71424e8c9bdb4280aa22ffe06914ad8659a7ad204c9591353a23fa88f",
   "locked": true,
   "project_invariants": {
     "A3DP_Gantry_Assembly": {
@@ -23,6 +23,14 @@
         "16cb7026669787a3",
         "1f15c4fcd2a13b81",
         "a4d996a79076f801"
+      ]
+    },
+    "Apprentice": {
+      "block_sha256": "30b1f07dd30b3266d5e9b6f85423f91c054e1b7ef96f22cb8b70ce5ab845cce7",
+      "row_hashes": [
+        "5041bf30291a63a0",
+        "8da702fea80dee44",
+        "a7b8459a8401bbc2"
       ]
     },
     "Brand": {
@@ -108,7 +116,7 @@
     "Standards_and_Specs/Author_Voice_Verbatim_Exemplars.md": "4155211da2f9b4aff80ec9a13eec92073d855ced84396fcf380ded9490a5383a",
     "Standards_and_Specs/Author_Voice_and_Cadence.md": "481a431e517c8cd2263e509e1f94836c729ed212fb1b00dbf222632e97498e28",
     "Standards_and_Specs/Fasteners_and_Inserts.md": "bff91c67b6685d3e16b868505b1a805879584348bd354227699e85171436828f",
-    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "7d16190d9ae10504e4b9ad8b73dce049c3fc56d97f6db83acb7594f1f30a2457",
+    "Standards_and_Specs/Governance_and_Constraint_Architecture.md": "4c41370b738fa96260359b0f9be3e729f7dea8105bb70629f2a66e1e3aeb05ba",
     "Standards_and_Specs/Image_and_Style_Rules.md": "71f1f0e951d7fad1d543f5b96f78311432e470c6cdf0d362748643abe3c01801",
     "Standards_and_Specs/Standards_Index.md": "29dbd035cf954c9816be053aa318e66aa3165cba735631d10117197cf3ad20da",
     "Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md": "d4f42737346d60abf21990a65a1384310e897348011ae2e929b3c2b3c61da679",
@@ -154,15 +162,26 @@
     ],
     "Workstation_Operations": [
       "05c60d9ff9fc3fcc4cf8",
+      "2f49b5afdfc68c201485",
       "3391ad91903410bb6016",
+      "57da07a7f65cdd94844f",
+      "59484d8cdc022fc5708e",
+      "5a027f836720dde1d41c",
       "6374d179c507afbc3aa7",
       "6b12c0f83514f4c4ce49",
+      "7fc09545afaf6dc88991",
+      "84cc2ef30ab14decd0c9",
       "9b3c940c2984dd648d3b",
+      "a509ca02411a51ebf623",
       "c1b004594466e4fe4a19",
       "cb99d6f998c01cccd206",
+      "d5605c64711fb179e8ee",
+      "d5728c4af390549d8f92",
+      "d65fbfe6982149a0f43f",
       "faaf43b6e88c43034644"
     ]
   },
   "schema_version": "1.1",
-  "seal_root_sha256": "18932dc133f40a568a9e6fa0ca763dc0145e15e0679cb5bb844c216af8b21cf3"
+  "seal_root_sha256": "5a5521c92bba8fc2babf8c23c1a6ce3d5d0515a7f2b38d589ccb51b9d665ca36",
+  "ssh_signed": true
 }

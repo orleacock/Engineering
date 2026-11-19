@@ -29,20 +29,26 @@ Part of the [`README.md`](../../README.md) and project-scoped troubleshooting le
 
 ---
 
-## 1. Engineering Post-Mortems & Troubleshooting Entries
+## 1. Lessons Learned Ledger (`Symptom -> Root Cause -> Guardrail`)
 
-### `LL-GAN-01` [TIER2] — CNC Aluminum Thread Stripping & Anaerobic Threadlocker Stress-Cracking
-- **Symptom / Failed Approach (`Historical / Rejected`):** Tightening `M3` or `M5` fasteners into CNC-milled aluminum plates to steel torque specs (stripping internal aluminum threads), using medium-strength blue `Loctite 243` on small `M3` screws (snapping heads on disassembly), or allowing anaerobic threadlocker vapor/liquid to contact printed `ABS`/`ASA`/`PC` retainers.
+| ID | Date | Symptom / Failure Observed | Root Cause | Permanent Guardrail / Rule or Code Fix | Verification Anchor |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `LL-GAN-01` | `2026-11-05` | CNC aluminum thread stripping & anaerobic threadlocker stress-cracking | Fine internal 6061 threads shear under steel torques and methacrylates attack `ABS`/`ASA`/`PC` | Enforce `1.0–1.5 Nm` (`M3`, `Loctite 222MS`) & `3.0–4.5 Nm` (`M5`, `Loctite 243`) metal-only | [`A3DP_Gantry_Assembly.md`](A3DP_Gantry_Assembly.md) |
+| `LL-GAN-02` | `2026-11-05` | Unshimmed dual-shear idler binding & `>200 Hz` belt over-tensioning | Bearing/plate tolerance stack-up pinches shields without `0.3mm` shims | Shim every idler stack with `M5x7x0.3mm` shims; tune `150mm` span to `110 Hz` (`6mm`) / `130–140 Hz` (`9mm`) | [`A3DP_Gantry_Assembly.md`](A3DP_Gantry_Assembly.md) |
+| `LL-GAN-03` | `2026-11-05` | X-carriage retainer creep & cross-repo belt clamp CAD lookup | `A3DP_Gantry_Assembly` is docs-only; `Belt_Clamp_9mm.step` lives in `Alembic_Toolhead` | Print retainers in `ABS`, `ASA`, or `PC` (`PLA`/`PETG` prohibited) | [`A3DP_Gantry_Assembly.md`](A3DP_Gantry_Assembly.md) |
+
+### `LL-GAN-01` [TIER2] [TRAP] — CNC Aluminum Thread Stripping & Anaerobic Threadlocker Stress-Cracking
+- **Symptom / Trap:** Tightening `M3` or `M5` fasteners into CNC-milled aluminum plates to steel torque specs (stripping internal aluminum threads), using medium-strength blue `Loctite 243` on small `M3` screws (snapping heads on disassembly), or allowing anaerobic threadlocker vapor/liquid to contact printed `ABS`/`ASA`/`PC` retainers.
 - **Root Cause:** Fine internal threads in 6061/milled aluminum have lower shear strength than steel nuts, and anaerobic methacrylates chemically attack amorphous thermoplastics (`ABS`, `ASA`, `PC`), causing rapid brittle fracture.
-- **Verified Resolution & Canonical Owner:** Enforced in [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md) and [`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md): enforce **`1.0 to 1.5 Nm`** on `M3` (`Loctite 222MS` Purple on metal-to-metal) and **`3.0 to 4.5 Nm`** on `M5` (`Loctite 243` Blue on metal-to-metal), with zero threadlocker near printed polymers.
+- **Verified Resolution & Permanent Guardrail:** Enforced in [`Fasteners_and_Inserts`](../../Standards_and_Specs/Fasteners_and_Inserts.md) and [`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md): enforce **`1.0 to 1.5 Nm`** on `M3` (`Loctite 222MS` Purple on metal-to-metal) and **`3.0 to 4.5 Nm`** on `M5` (`Loctite 243` Blue on metal-to-metal), with zero threadlocker near printed polymers.
 
-### `LL-GAN-02` [TIER2] — Unshimmed Dual-Shear Idler Binding & `>200 Hz` Belt Over-Tensioning
-- **Symptom / Failed Approach (`Historical / Rejected`):** Clamping `(10)` smooth and `(2)` toothed `2GT` `9mm` idlers (`5mm` bore) between milled aluminum plates without `0.3mm` precision shims (pinching outer bearing shields or leaving axial play), or tensioning standard belts/single-shear mounts above `200 Hz` (bending motor shafts and brinelling `5mm` idler bearings).
+### `LL-GAN-02` [TIER2] [TRAP] — Unshimmed Dual-Shear Idler Binding & `>200 Hz` Belt Over-Tensioning
+- **Symptom / Trap:** Clamping `(10)` smooth and `(2)` toothed `2GT` `9mm` idlers (`5mm` bore) between milled aluminum plates without `0.3mm` precision shims (pinching outer bearing shields or leaving axial play), or tensioning standard belts/single-shear mounts above `200 Hz` (bending motor shafts and brinelling `5mm` idler bearings).
 - **Root Cause:** Machining + bearing width tolerance stack-up requires selective axial shimming across the inner race; `>200 Hz` span frequencies require both dual-shear pin support and explicitly rated high-tension belts.
-- **Verified Resolution & Canonical Owner:** Shim every idler stack with `M5x7x0.3mm` precision shims so inner races clamp solidly while outer idlers spin freely, and tune belt tension across a **`150mm` unsupported span** to **`110 Hz`** (`6mm` belts) or **`130–140 Hz`** (`9mm` belts; [`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md)).
+- **Verified Resolution & Permanent Guardrail:** Shim every idler stack with `M5x7x0.3mm` precision shims so inner races clamp solidly while outer idlers spin freely, and tune belt tension across a **`150mm` unsupported span** to **`110 Hz`** (`6mm` belts) or **`130–140 Hz`** (`9mm` belts; [`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md)).
 
-### `LL-GAN-03` [TIER2] — X-Carriage Mount & 9mm Belt Clamp Interface (`Alembic_Toolhead` Coupled)
-- **Symptom / Failed Approach (`Historical / Rejected`):** Printing `(2)` `Retaining Clip` or usermod brackets in `PLA`/`PETG` (creeping under belt tension and chamber heat), or assuming `A3DP_Gantry_Assembly` contains the toolhead belt-clamp CAD.
+### `LL-GAN-03` [TIER2] [TRAP] — X-Carriage Mount & 9mm Belt Clamp Interface (`Alembic_Toolhead` Coupled)
+- **Symptom / Trap:** Printing `(2)` `Retaining Clip` or usermod brackets in `PLA`/`PETG` (creeping under belt tension and chamber heat), or assuming `A3DP_Gantry_Assembly` contains the toolhead belt-clamp CAD.
 - **Root Cause:** `A3DP_Gantry_Assembly` is a documentation-only repository (CNC plate CAD resides with Rob @ A3DP), while the mating `9mm` belt clamp CAD (`Belt_Clamp_9mm.step`) lives in [`Alembic_Toolhead`](../../Projects/Alembic_Toolhead/Alembic_Toolhead.md).
-- **Verified Resolution & Canonical Owner:** Print all retainers in `ABS`, `ASA`, or `PC` ([`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md)).
+- **Verified Resolution & Permanent Guardrail:** Print all retainers in `ABS`, `ASA`, or `PC` ([`A3DP_Gantry_Assembly`](A3DP_Gantry_Assembly.md)).
 - **Shared Interface Link:** Coupled with [`Alembic_Toolhead_Lessons_Learned`](../../Projects/Alembic_Toolhead/Alembic_Toolhead_Lessons_Learned.md).

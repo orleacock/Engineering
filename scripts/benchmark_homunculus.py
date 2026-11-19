@@ -35,11 +35,11 @@ Responsibilities:
     - def bench_profile_oracle_claims (#L573-L999)   | def bench_profile_memory_engine (#L1002-L1334)
     - def bench_profile_hygiene_adapters (#L1337-L1486) | def bench_profile_doc_cad_visual (#L1489-L1749)
     - def _parse_jsonl_trajectory (#L1752-L1868)     | def bench_profile_subagent_ab (#L1871-L2016)
-    - def bench_profile_full_suite (#L2019-L2126)    | def build_universal_spine (#L2129-L2175)
-    - def apply_synthetic_regression (#L2178-L2215)  | def evaluate_comparisons (#L2218-L2315)
-    - def render_regression_autopsy_md (#L2318-L2406) | def _render_table_md (#L2409-L2448)
-    - def render_markdown_report (#L2451-L2486)      | def load_history_maps (#L2489-L2532)
-    - def update_ledger_and_history (#L2535-L2585)   | def main (#L2588-L2854)
+    - def bench_profile_full_suite (#L2019-L2125)    | def build_universal_spine (#L2128-L2174)
+    - def apply_synthetic_regression (#L2177-L2214)  | def evaluate_comparisons (#L2217-L2314)
+    - def render_regression_autopsy_md (#L2317-L2405) | def _render_table_md (#L2408-L2447)
+    - def render_markdown_report (#L2450-L2485)      | def load_history_maps (#L2488-L2531)
+    - def update_ledger_and_history (#L2534-L2584)   | def main (#L2587-L2853)
 === END NAVIGATION MAP ===
 """
 from __future__ import annotations
@@ -2094,9 +2094,8 @@ def bench_profile_full_suite(
         cloned = dataclasses.replace(src_row, row_num=idx)
         rows.append(cloned)
 
-    core_skills_bytes = sum(
-        len(p.read_bytes()) for p in sorted((homunculus_dir / "skills").glob("*/SKILL.md"))
-    )
+    core_skill_mds = sorted((homunculus_dir / "skills").glob("*/SKILL.md"))
+    core_skills_bytes = sum(len(p.read_bytes()) for p in core_skill_mds)
     total_active_bytes = base_stats["rules_bytes"] + core_skills_bytes
 
     return {
@@ -2111,7 +2110,7 @@ def bench_profile_full_suite(
         "unit_elapsed_ms": ut_ms,
         "oracle_bench_spawns": pre_ut_spawns,
         "unit_workers": ut_workers_box[0],
-        "context_tax_display": f"{total_active_bytes:,} B (3 rules + 9 core SKILL.md files)",
+        "context_tax_display": f"{total_active_bytes:,} B (3 rules + {len(core_skill_mds)} core SKILL.md files)",
         "context_tax_num": float(total_active_bytes),
         "context_tax_ceiling": "<= 115,000 B (modular sum <= 129,500 B)",
         "context_tax_hard_limit": 115000.0,

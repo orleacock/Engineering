@@ -110,43 +110,37 @@ if [[ -f "${GMAIL_SKILL_DIR}/SKILL.md" ]]; then
     ensure_link "${GEMINI_CFG}/skills/gmail-workspace-assistant" "../../../Projects/Engineering/scripts/gmail_mcp/gmail-workspace-assistant" "$GMAIL_SKILL_DIR"
 fi
 
-# 2ab. Local Workstation-Only Antigravity Plugin (apprentice)
-APPRENTICE_PLUGIN_SRC="${REPO_ROOT}/scripts/apprentice_plugin"
+# 2ab. Portable Standalone Antigravity Plugin (Alchemical3D/Apprentice v3.0)
+APPRENTICE_REPO="${ALCHEMICAL_DIR}/Apprentice"
 APPRENTICE_PLUGIN_DST="${GEMINI_CFG}/plugins/apprentice"
 LEGACY_PLUGIN_DST="${GEMINI_CFG}/plugins/bionic-sidecar"
 AGY_BIN="${AGY_BIN:-$(command -v agy 2>/dev/null || echo "${HOME}/.local/bin/agy")}"
-if [[ -f "${APPRENTICE_PLUGIN_SRC}/plugin.json" ]]; then
+if [[ -f "${APPRENTICE_REPO}/install.sh" && -f "${APPRENTICE_REPO}/plugin/plugin.json" ]]; then
     if [[ "$MODE" == "check" ]]; then
+        APPRENTICE_TMP_CHECK="$(mktemp -d)"
+        bash "${APPRENTICE_REPO}/install.sh" "$APPRENTICE_TMP_CHECK" >/dev/null 2>&1
         if [[ -d "$LEGACY_PLUGIN_DST" ]] || [[ -L "$LEGACY_PLUGIN_DST" ]]; then
             echo "[FAIL] Legacy plugin still present: $LEGACY_PLUGIN_DST (replaced by $APPRENTICE_PLUGIN_DST)" >&2
             errors=$((errors + 1))
-        elif [[ ! -d "$APPRENTICE_PLUGIN_DST" ]] || ! diff -rq "$APPRENTICE_PLUGIN_SRC" "$APPRENTICE_PLUGIN_DST" >/dev/null 2>&1; then
-            echo "[FAIL] Apprentice plugin missing or out of sync: $APPRENTICE_PLUGIN_DST (expected parity with $APPRENTICE_PLUGIN_SRC)" >&2
+        elif [[ ! -d "$APPRENTICE_PLUGIN_DST" ]] || ! diff -rq "$APPRENTICE_TMP_CHECK" "$APPRENTICE_PLUGIN_DST" >/dev/null 2>&1; then
+            echo "[FAIL] Apprentice v3.0 plugin missing or out of sync: $APPRENTICE_PLUGIN_DST (expected parity with $APPRENTICE_REPO)" >&2
             errors=$((errors + 1))
         elif [[ -x "$AGY_BIN" ]] && ! "$AGY_BIN" plugin validate "$APPRENTICE_PLUGIN_DST" --strict --json >/dev/null 2>&1; then
-            echo "[FAIL] Apprentice plugin failed strict validation: $APPRENTICE_PLUGIN_DST" >&2
+            echo "[FAIL] Apprentice v3.0 plugin failed strict validation: $APPRENTICE_PLUGIN_DST" >&2
             errors=$((errors + 1))
         else
-            echo "[OK]   $APPRENTICE_PLUGIN_DST (plugin in sync & validated)"
+            echo "[OK]   $APPRENTICE_PLUGIN_DST (Apprentice v3.0 in sync & validated)"
         fi
+        rm -rf "$APPRENTICE_TMP_CHECK"
     else
         if [[ -d "$LEGACY_PLUGIN_DST" ]] || [[ -L "$LEGACY_PLUGIN_DST" ]]; then
             rm -rf "$LEGACY_PLUGIN_DST"
             echo "[PRUNE] $LEGACY_PLUGIN_DST (removed superseded legacy plugin)"
         fi
-        if [[ -x "$AGY_BIN" ]] && ! "$AGY_BIN" plugin validate "$APPRENTICE_PLUGIN_SRC" --strict --json >/dev/null 2>&1; then
-            echo "[FAIL] Source Apprentice plugin failed strict validation: $APPRENTICE_PLUGIN_SRC" >&2
+        bash "${APPRENTICE_REPO}/install.sh" "$APPRENTICE_PLUGIN_DST"
+        if [[ -x "$AGY_BIN" ]] && ! "$AGY_BIN" plugin validate "$APPRENTICE_PLUGIN_DST" --strict --json >/dev/null 2>&1; then
+            echo "[FAIL] Installed Apprentice v3.0 plugin failed strict validation: $APPRENTICE_PLUGIN_DST" >&2
             errors=$((errors + 1))
-        elif [[ -d "$APPRENTICE_PLUGIN_DST" ]] && diff -rq "$APPRENTICE_PLUGIN_SRC" "$APPRENTICE_PLUGIN_DST" >/dev/null 2>&1; then
-            echo "[OK]   $APPRENTICE_PLUGIN_DST (plugin already in sync)"
-        elif [[ -x "$AGY_BIN" ]]; then
-            "$AGY_BIN" plugin install "$APPRENTICE_PLUGIN_SRC" >/dev/null
-            echo "[SYNC] $APPRENTICE_PLUGIN_DST <- $APPRENTICE_PLUGIN_SRC (via agy plugin install)"
-        else
-            mkdir -p "$(dirname "$APPRENTICE_PLUGIN_DST")"
-            rm -rf "$APPRENTICE_PLUGIN_DST"
-            cp -R "$APPRENTICE_PLUGIN_SRC" "$APPRENTICE_PLUGIN_DST"
-            echo "[SYNC] $APPRENTICE_PLUGIN_DST <- $APPRENTICE_PLUGIN_SRC (copied fallback)"
         fi
     fi
 fi

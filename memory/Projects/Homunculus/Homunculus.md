@@ -3,11 +3,11 @@ project: "Homunculus"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 project_type: "software"
-status: "v0.3.8 Option D+ Integrated (1e84832c9a01) + Neon Routing Sync (e4a83c1) — Pre-Benchmark Candidate"
+status: "v0.3.8 Graduated Baseline (03afb8c86cf3, BMK-20261119_140039-cbdb27bc)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "e4a83c1d3a0b"
+repo_head_sha: "a25287c75793"
 tree_hash: "b6b8ac5ad1cf"
-checkpoint_head_sha: "e4a83c1d3a0b"
+checkpoint_head_sha: "a25287c75793"
 checkpoint_tree_hash: "b6b8ac5ad1cf"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
@@ -23,6 +23,7 @@ checkpoint_lessons_digest: "d8395d93bee58f41"
 | **Software Telemetry** | [`Homunculus_Software.md`](Homunculus_Software.md) | Runtime entrypoints, CLI flags, public symbols, and JSON schemas. |
 | **Version Worklogs & Artifact Registry** | [`Version_Logs_and_Artifact_Registry.md`](Version_Logs/Version_Logs_and_Artifact_Registry.md) | **Non-authoritative** per-version worklogs (`W-1`), rejected/failed-ideas ledgers, and non-destructive artifact classification registry (`W-5`, `authoritative: false`). |
 | **Lessons Learned & Post-Mortems** | [`Homunculus_Lessons_Learned.md`](Homunculus_Lessons_Learned.md) | Root-cause post-mortems (`Symptom -> Root Cause -> Permanent Guardrail`). |
+| **Procedural Playbooks (`PB-xx`)** | [`Homunculus_Playbooks.md`](Homunculus_Playbooks.md) | Portable multi-step engineering workflows (`Trigger -> Ordered Procedure -> Verification Gate`). |
 | **Clean-Room Promotion Diff** | [`Homunculus_Cleanroom_Promotion_Diff.md`](Homunculus_Cleanroom_Promotion_Diff.md) | Authoritative file-by-file validation & promotion manifest (`Parent Workstation` vs. `Clean-Room`). |
 | **Stateful Memory Deployment Plan** | [`Homunculus_Stateful_Memory_Deployment_Plan.md`](Homunculus_Stateful_Memory_Deployment_Plan.md) | Locked 5-Sprint architecture, `TIER0`–`TIER5` gravity rules, pitfall guards, and per-sprint audit gates. |
 | **Script & Skill Interaction Matrix** | [`Homunculus_Script_Skill_Interaction_Matrix.md`](Homunculus_Script_Skill_Interaction_Matrix.md) | **Non-authoritative** maintainer lookup table mapping what each skill/script touches (`authoritative: false`). |
@@ -60,16 +61,16 @@ Part of the [`README.md`](../../README.md)
 - **Parent-First Validation & Clean-Room Downstream Architecture (``<legacy_builder_workspace>`` $\leftrightarrow$ `Homunculus` via [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)):** Core co-engineering rules, anti-bloat gates, and `skill-architect` (`+ audit_skill_hygiene.py`) are hardened and dogfooded on the parent workstation (``<legacy_builder_workspace>``) first so real-world weaknesses are captured in [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md) before porting into `/home/orin/Projects/Alchemical3D/Homunculus` (which operates under strict zero-PII / zero-path sanitization via `audit_data_boundary.py` + `scripts/audit_portability.py`), while standalone `Homunculus` innovations (declarative `homunculus_safety.json` engine, cross-OS/drop-in adapters, and Priority 2 Visual Studio upgrades) feed back into ``<legacy_builder_workspace>`` post-validation.
 
 ## 📍 Repository & File Inventory
-- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; baseline **`v0.3.7`** tagged at **`09a3bf30d062`**, **`v0.3.8` Option D+** at **`1e84832`**, and partial `Neon`/non-`Orchestrator` sync at **`e4a83c1`** — **`94 / 94` `unittest OK`**, `homunculus_paths.py --verify-seal` `PASS` (`seal_signing: "required"`, `43` OpenSSH-sealed entries, `0` open leases), `0` portability, boundary, doc, or hygiene defects across **`114` clean-room tracked files** with [`Homunculus_Software.md`](Homunculus_Software.md))
+- **Local Path:** `/home/orin/Projects/Alchemical3D/Homunculus` (Consolidated Single-Source Clean-Room Git Repository on the workstation — `0` duplicate copies; baseline **`v0.3.8`** tagged at **`03afb8c86cf3`** — **`96 / 96` `unittest OK`**, `homunculus_paths.py --verify-seal` `PASS` (`43` Ring-0 entries, `0` open leases), `0` portability, boundary, doc, or hygiene defects across **`114` clean-room tracked files** with [`Homunculus_Software.md`](Homunculus_Software.md))
 - **GitHub Remote:** `git@github-alchemical:Alchemical-3D/Homunculus.git` (`https://github.com/Alchemical-3D/Homunculus` — Open-Source `Apache-2.0` Core + Ko-fi & Commercial Consulting)
 - **Living Documentation & Reference:** `README.md`, `HOMUNCULUS_START_HERE.md` (Zero-Install Drop-In entry point), `LICENSE.md` (`Apache-2.0`), `docs/Capabilities_and_Architecture_Guide.md`, `docs/Commands_and_Prompts_Reference.md`, `docs/Developer_Data_Safety_Guidelines.md`, `docs/Release_and_Community_Guide.md`, `docs/FAQ.md`, `docs/Memory_Setup_README.md`, `docs/Quick_Start_and_Setup_Guide.md`, `install.sh` + `install.ps1` (Track 1 installers), `.gitignore`
-- **Clean-Room Module Directories (`113` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`10` core skills across `Ring 0` kernel skills including `memory-hygiene` + `Ring 1` consumer skills, plus `skills/skill-architect/references/{ring0_sudo_protocol,cleanup_and_builder_walkthroughs}.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/` including `AGENTS.md`, `Engineering_Principles.md` + `Quarantine_Note.md`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`, `test_v037_memory_hygiene.py`, `test_v038_option_d_plus.py`)
+- **Clean-Room Module Directories (`114` Files):** `rules/` (3 `always_on` rules: `co-engineering-partner.md`, `data-and-credential-safety.md`, `verifiable-accuracy.md`), `skills/` (`10` core skills across `Ring 0` kernel skills including `memory-hygiene` + `Ring 1` consumer skills, plus `skills/skill-architect/references/{ring0_sudo_protocol,cleanup_and_builder_walkthroughs}.md`), `addons/` (`addons/author-voice-cadence` and `addons/hardware-cad-inspector` `Ring 2` Drop-In add-ons), `adapters/` (`agents_md/AGENTS.md`, `antigravity/`, `claude_code/CLAUDE.md`, `claude_cowork/`, `cursor/`), `hooks/`, `templates/` (`memory/` including `AGENTS.md`, `Engineering_Principles.md` + `Quarantine_Note.md`, `diagrams/`, `hooks/`, `ignore/`, `community_sdk/Addon_Memory_Integration_Playbook.md`), `scripts/` (`homunculus_paths.py`, `memory_gateway.py`, `kernel_seal.json`, `script_contracts.json`, `audit_portability.py`, `audit_data_boundary.py`, `build_adapters.py`), `tests/` (`test_foundation.py`, `test_data_safety.py`, `test_adapters.py`, `test_project_memory.py`, `test_claim_verification.py`, `test_core_skills.py`, `test_teach_me.py`, `test_v030_memory_platform.py`, `test_v037_memory_hygiene.py`, `test_v038_option_d_plus.py`)
 - **CAD & Firmware Directories:** _None (Pure Software / AI Skill & Tooling Suite)_
 - **Standards Applied:** [`Governance_and_Constraint_Architecture`](../../Standards_and_Specs/Governance_and_Constraint_Architecture.md), [`Verifiable_Accuracy_and_Anti_Hallucination`](../../Standards_and_Specs/Verifiable_Accuracy_and_Anti_Hallucination.md), [`Author_Voice_and_Cadence`](../../Standards_and_Specs/Author_Voice_and_Cadence.md), [`Image_and_Style_Rules`](../../Standards_and_Specs/Image_and_Style_Rules.md), [`Alchemical3D_Color_Template`](../../Templates/Color_Palettes/Alchemical3D_Color_Template.md), [`Homunculus_Talking_Points`](Homunculus_Talking_Points.md), [`Homunculus_Lessons_Learned`](Homunculus_Lessons_Learned.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: e4a83c1d3a0b | Tree Hash: b6b8ac5ad1cf
+Repository: Homunculus | HEAD SHA: a25287c75793 | Tree Hash: b6b8ac5ad1cf
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -278,16 +279,26 @@ Repository: Homunculus | HEAD SHA: e4a83c1d3a0b | Tree Hash: b6b8ac5ad1cf
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-19`
-- **Checkpoint Provenance**: `HEAD SHA: e4a83c1d3a0b` | `Tree Hash: b6b8ac5ad1cf` | `Worktree: clean` | `Last Verification: e4a83c1 | 94/94 unittest OK | SBX-20261118_203920-eda0e867 | LIN-819030510d1d | audit 0/118 PASS`
+- **Checkpoint Provenance**: `HEAD SHA: a25287c75793` | `Tree Hash: b6b8ac5ad1cf` | `Worktree: clean` | `Last Verification: SBX-20261119_161403-4dd809bf; 97/97 unittest OK; portability 0 violations; kernel_seal verified`
 - **Where We Stopped (Verified State & Context)**:
-  Sealed Alchemical3D/Homunculus at e4a83c1 (94/94 unittest OK, 43 OpenSSH-sealed Ring-0 entries); completed Section 2 Option D+ governance sync (Decision_Profile, Governance_and_Constraint_Architecture, LL-060 reinforced, PRIN-05..07 OpenSSH-sealed with 0/118 audit violations).
+  Committed Track 4 Ring-0 fixes (a25287c), added LL-065, AST map sync, sandbox dry-run (+faults), and sealed kernel checks.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Window 1: Finish [SWARM & ORCHESTRATOR ALIGNMENT] (teach_brief.py#L492, playbook/docs, swarm vs invoke_subagent) + full-system-suite benchmark (+221 B Course B/D) & tag bump. 2. Window 2: verify_claims.py SourceIndex relative-path suffix keys (#L1503) & sync_memory.py host-shelf CLI / Pages promote fix (#L4877, #L5185).
-- **Open Discussion / Alignment Questions**: Ready for Window 1 in a fresh thread (push Alchemical3D/Homunculus e4a83c1 and Engineering commit when ready).
+  1. Ready for next clean-room feature or benchmark milestone.
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks
 *(Transcluded live from `### Homunculus` in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md) (`Tasks/Alchemical3D_Tasks.md#Homunculus`) — edit checkboxes in one place only)*
 
 > **Active Task Queue**: Tracked in [`Alchemical3D_Tasks`](../../Tasks/Alchemical-3D_Tasks.md#Homunculus) *(Single-Writer Task Umbrella)*.
+
+---
+
+## 🔒 Quarantine Zone (Unverified Notes, Scratch Specs & Open `[TBD]`s)
+
+> [!WARNING]
+> **`[QUARANTINED — DO NOT CITE AS FACT]`**: Everything inside this section (and inside [`Quarantine/`](Quarantine/Quarantine_README.md)) is explicitly unverified holding data. Downstream documentation, BOMs, calculations, and `verify_claims.py` must **never** treat items in this section as verified ground truth until they are empirically verified and moved to Verified Specs.
+
+<!-- QUARANTINE-ZONE:START -->
+- `None` *(All `v0.3.8` architectural specifications verified; place unverified hypotheses or preliminary notes here or in [`Quarantine/`](Quarantine/Quarantine_README.md) prior to verification.)*
+<!-- QUARANTINE-ZONE:END -->

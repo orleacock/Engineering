@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 181.44,
+  "avg_doc_len": 180.89,
   "compartment": "private",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -51,13 +51,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Overcoming M365 Copilot OneDrive Graph Latency & Ephemeral Container Boundaries -> Engineers upload live `.xlsx` deliverables **directly into the Copilot chat turn** (`+ Upload from device`), mounting exact bytes in `/mnt/data/` with `0` indexing latency; Mode 2 edits/repairs run `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) inside Code Interpreter and return a downloadable `.xlsx` artifact in chat...",
-          "end_line": 38,
+          "end_line": 48,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-01",
-          "line_range": "#L35-L38",
+          "line_range": "#L45-L48",
           "location": "main",
           "scope": "",
-          "start_line": 35,
+          "start_line": 45,
           "tier": "TIER2",
           "title": "Overcoming M365 Copilot OneDrive Graph Latency & Ephemeral Container Boundaries",
           "touched_files": []
@@ -65,13 +65,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Solving the `8,000`-Char Instruction Cap, Headroom Margin, `\"2.2.3\"` Semver Lock & `.txt` Knowledge Indexing -> `Scripts/build_copilot_agents.py` (`NEA-SCR-002`) compiles the **6-Agent Modular Specialist Suite** under an automated **`<= 6,500`-char NEA headroom ceiling** (`>= 1,500` chars below M365's `8,000` cap; currently `3,596`\u2013`6,206` chars / `45.0%`\u2013`77.6%`), pairing directional `\ud83d\udd04 [CROSS-DUTY -> <Agent>]` advisories with auto-synced...",
-          "end_line": 43,
+          "end_line": 53,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-02",
-          "line_range": "#L40-L43",
+          "line_range": "#L50-L53",
           "location": "main",
           "scope": "",
-          "start_line": 40,
+          "start_line": 50,
           "tier": "TIER2",
           "title": "Solving the `8,000`-Char Instruction Cap, Headroom Margin, `\"2.2.3\"` Semver Lock & `.txt` Knowledge Indexing",
           "touched_files": [
@@ -82,13 +82,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Preventing `openpyxl.save()` from Stripping Cross-Sheet `<extLst>` DataValidations -> Built `preserve_openxml_extensions()`, `[4E]` OpenXML DataValidation/AutoFilter auditing, `--repair [--out-dir <dir>]`, and `--verify-write ORIG EDITED` (`NEA-WRT-<12hex>`) into `Scripts/inspect_nea_workbooks.py` (`NEA-SCR-001`) and `nea-workbook-entry-guard` (`NEA-SKL-002`; `NetCom_Engineering_Assistant`).",
-          "end_line": 48,
+          "end_line": 58,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-04",
-          "line_range": "#L45-L48",
+          "line_range": "#L55-L58",
           "location": "main",
           "scope": "",
-          "start_line": 45,
+          "start_line": 55,
           "tier": "TIER2",
           "title": "Preventing `openpyxl.save()` from Stripping Cross-Sheet `<extLst>` DataValidations",
           "touched_files": [
@@ -98,13 +98,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Preventing Windows Desktop Excel OpenXML \"File is Corrupt\" Rejections on Generated Multi-Tab Workbooks -> Replaced `ElementTree` package serialization with deterministic UTF-8 XML builders (`_format_worksheet_xml_bytes()`, `SharedStringTable`, `_sort_sheetdata_rows_and_cells()`, per-sheet `drawing{idx}.xml` + unique `xr:uid`, and `validate_openxml_package_integrity()` inside `run_verify_write()`), verified by `xmllint --noout` and...",
-          "end_line": 53,
+          "end_line": 63,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-06",
-          "line_range": "#L50-L53",
+          "line_range": "#L60-L63",
           "location": "main",
           "scope": "",
-          "start_line": 50,
+          "start_line": 60,
           "tier": "TIER2",
           "title": "Preventing Windows Desktop Excel OpenXML \"File is Corrupt\" Rejections on Generated Multi-Tab Workbooks",
           "touched_files": [
@@ -114,13 +114,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Multi-Media Timesheet OCR Staging, Key Normalization & Non-Target Tab/Page Pruning -> Built `Templates/Timesheet_Template.xlsx` (`NEA-TPL-004`, `Expense Report` stripped, `AG35` restored, styled with the NetCom Corporate Color Palette `cellXfs 217..239`), enforced page-level classification and pruning of non-timesheet pages/tabs in `NEA Timesheet Consolidator` (`NEA-AGT-006`), and added...",
-          "end_line": 58,
+          "end_line": 68,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-07",
-          "line_range": "#L55-L58",
+          "line_range": "#L65-L68",
           "location": "main",
           "scope": "",
-          "start_line": 55,
+          "start_line": 65,
           "tier": "TIER2",
           "title": "Multi-Media Timesheet OCR Staging, Key Normalization & Non-Target Tab/Page Pruning",
           "touched_files": [
@@ -130,13 +130,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Three failure modes hit Copilot Skills: SKILL.md-only zips forced Code Interpreter to write ad-hoc... -> Enforce ONLY the 3 Core Guardrail Skills (nea-anti-hallucination, nea-workbook-entry-guard, nea-verification-and-receipt) in build_copilot_agents.py, packaging byte-0 SKILL.md (dash_lines == [1, 4], clean YAML description) plus scripts/inspect_nea_workbooks.py at archive root while keeping role behavior strictly in Instructions.txt...",
-          "end_line": 63,
+          "end_line": 73,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-08",
-          "line_range": "#L60-L63",
+          "line_range": "#L70-L73",
           "location": "main",
           "scope": "",
-          "start_line": 60,
+          "start_line": 70,
           "tier": "TIER2",
           "title": "Three failure modes hit Copilot Skills: SKILL.md-only zips forced Code Interpreter to write ad-hoc... (`2026-11-17`)",
           "touched_files": [
@@ -148,13 +148,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Phase B/C workbooks hit four regressions: separating Testbeds/307-2 without package_nea_delivery.py... -> Separate clean Templates/ (0-run CRL guarded) from Testbeds/307-2/ and exclude Testbeds in package_nea_delivery.py; resolve Cover Sheet rows via find_cover_sheet_coords() (keeping B30:C30 fallback); limit discover_xlsx_files() repo fallback strictly to 'Templates'; trap parse_xlsx() errors (exit 2); enforce CRL Row-2/BOM Row-7...",
-          "end_line": 68,
+          "end_line": 78,
           "file": "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md",
           "id": "LL-NEA-09",
-          "line_range": "#L65-L68",
+          "line_range": "#L75-L78",
           "location": "main",
           "scope": "",
-          "start_line": 65,
+          "start_line": 75,
           "tier": "TIER2",
           "title": "Phase B/C workbooks hit four regressions: separating Testbeds/307-2 without package_nea_delivery.py... (`2026-11-17`)",
           "touched_files": [
@@ -198,7 +198,7 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 181.44,
+      "proj_avg_doc_len": 180.89,
       "proj_total_docs": 9,
       "project": "NetCom_Engineering_Assistant"
     }
@@ -216,14 +216,19 @@
       "sha256": "136d0adadccbabd3"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant.md": {
-      "lines": 209,
+      "lines": 221,
       "sections": 0,
-      "sha256": "ecd3cd9d0cda8e05"
+      "sha256": "2c2760ff6e1698d0"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Lessons_Learned.md": {
-      "lines": 68,
+      "lines": 78,
       "sections": 7,
-      "sha256": "589afa17e9db23b5"
+      "sha256": "dac208393f190ce6"
+    },
+    "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Playbooks.md": {
+      "lines": 19,
+      "sections": 0,
+      "sha256": "970ff2cc036d8b1e"
     },
     "Projects/NetCom_Engineering_Assistant/NetCom_Engineering_Assistant_Software.md": {
       "lines": 50,
@@ -233,5 +238,5 @@
   },
   "total_docs": 9,
   "vectors_cache_rel": ".cache/NetCom_scoring_vectors.json",
-  "vectors_digest": "c4396b028bfc7dea"
+  "vectors_digest": "fde3c4b5aed0bb3f"
 }
