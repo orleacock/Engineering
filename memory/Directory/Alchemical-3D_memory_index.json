@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 235.77,
+  "avg_doc_len": 235.1,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 12$ unscoped / $\\le 6$ per-scope / $\\le 30$ total across paginated `Pages/*_Vol_NN.md` + `Host_Runtime/` Shelf 1B $\\rightarrow$ `TIER3`..."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-19",
+  "last_synced": "2026-11-20",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -329,13 +329,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization -> Scaffolded `Apprentice` hub dossier, domain telemetry, `Quarantine/`, and `SUBSYSTEM-INVARIANTS` baseline under `entity: Alchemical-3D` (`public`; `Apprentice.md`).",
-          "end_line": 43,
+          "end_line": 44,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-01",
-          "line_range": "#L38-L43",
+          "line_range": "#L39-L44",
           "location": "main",
           "scope": "",
-          "start_line": 38,
+          "start_line": 39,
           "tier": "TIER2",
           "title": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization (`2026-11-19`)",
           "touched_files": []
@@ -343,13 +343,13 @@
         {
           "archetype": "trade-off",
           "capsule_1line": "[TRADE-OFF] Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... -> Enforce Apprentice 4 Core Goals (1. Reduce Quota Usage -> 2. Provide Accuracy Support -> 3. Help With Simple Tasks -> 4. Agile-Sprint Parallelism) under Alchemical-3D pillars: exactly 4 orthogonal tools (read, draft, review, runtime; <=26 params), pure Python stdlib zero-venv drop-in, self-calibrating Tier S/M/L dynamic %-of-ctx math...",
-          "end_line": 50,
+          "end_line": 51,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-02",
-          "line_range": "#L45-L50",
+          "line_range": "#L46-L51",
           "location": "main",
           "scope": "",
-          "start_line": 45,
+          "start_line": 46,
           "tier": "TIER0",
           "title": "Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... (`2026-11-19`)",
           "touched_files": [
@@ -363,13 +363,13 @@
         {
           "archetype": "dead-end",
           "capsule_1line": "[DEAD-END] Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... -> Default all 4 tools to fast STANDARD with structured JSON + <1ms deterministic line-anchor/quote verification (including ordered elided-segment matching), never clamp compact GPU models to CPU defaults, and preserve deep-search lineage: trace cross-cutting pre-v3.0 lessons via Principles PRIN-06, PRIN-08, PRIN-09 (--trace-lineage)...",
-          "end_line": 57,
+          "end_line": 58,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-03",
-          "line_range": "#L52-L57",
+          "line_range": "#L53-L58",
           "location": "main",
           "scope": "",
-          "start_line": 52,
+          "start_line": 53,
           "tier": "TIER2",
           "title": "Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... (`2026-11-19`)",
           "touched_files": [
@@ -382,13 +382,13 @@
         {
           "archetype": "win",
           "capsule_1line": "[WIN] Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling ex.map()... -> Keep calibrated 2.5 B/tok structured estimation, decode-noise-gated prefill servo with staged timeout recovery, FIRST_COMPLETED partial-safe bounded tasks, @@ +new @@ real-line review diffs with .md-only bold normalization, Condition priority GPU gate, spoof-proof PreInvocation compaction/drift/Second-Eyes hooks with precommit_seen...",
-          "end_line": 63,
+          "end_line": 66,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-04",
-          "line_range": "#L59-L63",
+          "line_range": "#L60-L66",
           "location": "main",
           "scope": "script:apprentice",
-          "start_line": 59,
+          "start_line": 60,
           "tier": "TIER2",
           "title": "Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling ex.map()... (`2026-11-19`)",
           "touched_files": [
@@ -397,10 +397,27 @@
             "hook.py",
             "planner.py"
           ]
+        },
+        {
+          "archetype": "trap",
+          "capsule_1line": "Parallel same-turn async_job=True and collect MCP calls stalled 45-50s behind blocking reads on Frontier... -> Keep ThreadPoolExecutor(max_workers=4) tools/call dispatch with locked _write_reply() (no unlocked tracking set), keep inline initialize/ping ordering, surface tasks=[<= max_slots sync] / async_job=True, and route scratch-script nudges to apprentice_draft (verified 406.22s Frontier SUCCESS, -37.1% MCP wait) (`apprentice/mcp_stdio.py`...",
+          "end_line": 71,
+          "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
+          "id": "LL-05",
+          "line_range": "#L68-L71",
+          "location": "main",
+          "scope": "",
+          "start_line": 68,
+          "tier": "TIER2",
+          "title": "Parallel same-turn async_job=True and collect MCP calls stalled 45-50s behind blocking reads on Frontier... (`2026-11-20`)",
+          "touched_files": [
+            "hook.py",
+            "mcp_stdio.py"
+          ]
         }
       ],
-      "proj_avg_doc_len": 158.0,
-      "proj_total_docs": 4,
+      "proj_avg_doc_len": 159.6,
+      "proj_total_docs": 5,
       "project": "Apprentice"
     },
     "Brand": {
@@ -2716,14 +2733,14 @@
       "sha256": "cd4d3ad44e6628ab"
     },
     "Projects/Apprentice/Apprentice.md": {
-      "lines": 118,
+      "lines": 116,
       "sections": 0,
-      "sha256": "7b03c884a841079f"
+      "sha256": "9bf06a5ae918f95b"
     },
     "Projects/Apprentice/Apprentice_Lessons_Learned.md": {
-      "lines": 72,
-      "sections": 4,
-      "sha256": "1b048ee90a95c30b"
+      "lines": 80,
+      "sections": 5,
+      "sha256": "4fef43eeefc9e2c0"
     },
     "Projects/Apprentice/Apprentice_Playbooks.md": {
       "lines": 19,
@@ -2733,7 +2750,7 @@
     "Projects/Apprentice/Apprentice_Software.md": {
       "lines": 64,
       "sections": 0,
-      "sha256": "f9175c7096d13225"
+      "sha256": "36e2be1e177d996e"
     },
     "Projects/Brand/Brand.md": {
       "lines": 138,
@@ -2931,7 +2948,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 103,
+  "total_docs": 104,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "4a0df19d407f38b8"
+  "vectors_digest": "0c8d905b169af557"
 }

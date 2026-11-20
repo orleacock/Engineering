@@ -4,7 +4,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
 tree_hash: "3e6bbe3a9ace"
-last_synced: "2026-11-19"
+last_synced: "2026-11-20"
 ---
 
 # 🗂️ `Alchemical-3D` — Directory Lookup Map (`entity: Alchemical-3D`)
@@ -341,7 +341,7 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 ```
 
-### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: 4e7367cecf97` | `Tree: bf24de7ca6dc`)
+### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: ace80cd6b3cf` | `Tree: bf24de7ca6dc`)
 - **Repository Location**: `../../Alchemical3D/Apprentice`
 
 ```text

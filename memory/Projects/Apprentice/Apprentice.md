@@ -5,14 +5,14 @@ compartment: "public"
 project_type: "software"
 status: "active"
 local_path: "../../Alchemical3D/Apprentice"
-repo_head_sha: "4e7367cecf97"
+repo_head_sha: "ace80cd6b3cf"
 tree_hash: "bf24de7ca6dc"
-checkpoint_head_sha: "4e7367cecf97"
+checkpoint_head_sha: "ace80cd6b3cf"
 checkpoint_tree_hash: "bf24de7ca6dc"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
-last_synced: "2026-11-19"
-checkpoint_lessons_digest: "ce8fa102f668a8ee"
+last_synced: "2026-11-20"
+checkpoint_lessons_digest: "a63d6e219eea470e"
 ---
 
 # Apprentice — Project Hub Dossier
@@ -51,15 +51,13 @@ checkpoint_lessons_digest: "ce8fa102f668a8ee"
 > **Turn-1 Cold-Resume Rule**: When resuming `Apprentice` after a break, verify `Checkpoint Provenance` against the live repository (`sync_memory.py --memory-root <memory_root> --project Apprentice --kickstart`), surface the **Where We Stopped** summary and **Next Session Kickstart & Discussion Points** to the user, and confirm alignment before mutating files. Overwrite this block in place at session wrap-up (`--save-handoff`; supports detailed `500–800+ word` stopping context and `Project State Ledger` snapshots without growing the file over time).
 
 <!-- SESSION-HANDOFF:START -->
-- **Last Session Timestamp**: `2026-11-19`
-- **Checkpoint Provenance**: `HEAD SHA: 4e7367cecf97` | `Tree Hash: bf24de7ca6dc` | `Worktree: clean` | `Last Verification: SBX-20261119_202741-2e0c02e1`
+- **Last Session Timestamp**: `2026-11-20`
+- **Checkpoint Provenance**: `HEAD SHA: ace80cd6b3cf` | `Tree Hash: bf24de7ca6dc` | `Worktree: clean` | `Last Verification: SBX-20261120_064053-d6f0a889`
 - **Where We Stopped (Verified State & Context)**:
-  Apprentice v3.1 Round 1 committed locally (4e7367c): adaptive prefill servo, partial-safe reads, real-line review grounding, Condition GPU gate, compaction/drift/Second-Eyes hooks with precommit_seen bypass, and user-approved 3,600-L cap (3,520/3,600 L).
+  Apprentice v3.1 Round 2 (ace80cd): concurrent mcp_stdio tools/call dispatch + locked _write_reply, slot-aware <= max_slots sync hints, and apprentice_draft scratch-nudge fix; verified 26/26 OK, SBX-20261120_064053-d6f0a889, 3,544/3,600 L, and live 5A Arm B v3 Frontier SUCCESS (406.22s, -92.86s MCP wait, 10/10 facts, 26/26 citations, 0 wide reads)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Restart MCP sidecar / open fresh session to load v3.1 runtime in memory
-  2. Run live 5A fast-vs-frontier host-model comparison against v2.6.0 benchmark receipts
-- **Open Discussion / Alignment Questions**: Keep v3.1 ceiling at 3,600 L; alert user before raising any cap again
+  1. Optional: inspect remaining v3.1 backlog or run additional Tier S (4B/9B) live comparisons under APPRENTICE_CACHE_DIR isolation
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -68,7 +66,7 @@ checkpoint_lessons_digest: "ce8fa102f668a8ee"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Apprentice | HEAD SHA: 4e7367cecf97 | Tree Hash: bf24de7ca6dc
+Repository: Apprentice | HEAD SHA: ace80cd6b3cf | Tree Hash: bf24de7ca6dc
   apprentice/
   apprentice/__init__.py
   apprentice/__main__.py

@@ -3,7 +3,7 @@ title: "Alchemical-3D — Domain Task Umbrella"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "task_umbrella"
-last_synced: "2026-11-19"
+last_synced: "2026-11-20"
 ---
 
 # 🧪 Alchemical-3D — Active Engineering Task Umbrella (`Tasks/Alchemical-3D_Tasks.md`)
@@ -22,7 +22,7 @@ last_synced: "2026-11-19"
 | [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`#L89`) | `2f33452` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Alchemical_Web_Docs`](../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) (`#L97`) | `55b4795` (`clean`, `2026-11-10`) | `0` | `1` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L79`) | `c7eaca6` (`clean`, `2026-11-16`) | `0` | `0` | Next: Alembic_Toolhead clean and synced on origin/main; no open tasks |
-| [`Apprentice`](../Projects/Apprentice/Apprentice.md) | `4e7367c` (`clean`, `2026-11-19`) | `0` | `1` | Next: Restart MCP sidecar / open fresh session to load v3.1 runtime in memory · Run live 5A fast-vs-frontier host-model comparison... |
+| [`Apprentice`](../Projects/Apprentice/Apprentice.md) | `ace80cd` (`clean`, `2026-11-20`) | `0` | `1` | Next: Optional: inspect remaining v3.1 backlog or run additional Tier S (4B/9B) live comparisons under APPRENTICE_CACHE_DIR isolation |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L106`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Extras`](../Projects/Extras/Extras.md) (`#L109`) | `cfef0fd` (`clean`, `2026-11-16`) | `1` | `1` | Next: Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired |
 | [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L46`) | `bca695a` (`clean`, `2026-11-19`) | `1` | `0` | Next: Keep pre-commit-gate/SKILL.md clean-room; push repos only when explicitly requested |

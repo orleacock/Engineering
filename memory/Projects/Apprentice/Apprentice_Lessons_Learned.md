@@ -3,7 +3,7 @@ project: "Apprentice"
 entity: "Alchemical-3D"
 compartment: "public"
 note_type: "lessons_learned"
-last_synced: "2026-11-19"
+last_synced: "2026-11-20"
 ---
 
 # Apprentice — Engineering Lessons Learned & Architectural Decisions
@@ -34,6 +34,7 @@ last_synced: "2026-11-19"
 | `LL-02` (`TIER0`) | `2026-11-19` | [TRADE-OFF] Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas... | Reactive point fixes accumulate redundant tool parameters, third-party venv... | Enforce Apprentice 4 Core Goals (1. Reduce Quota Usage -> 2. Provide Accuracy Support -> 3. Help With... | `ARCHITECTURE.md` ([`Apprentice.md`](Apprentice.md)), `apprentice/core.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/mcp_stdio.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `plugin/rules/AGENTS.md` ([`Apprentice.md`](Apprentice.md)) |
 | `LL-03` (`TIER2`) | `2026-11-19` | [DEAD-END] Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls... | Choking off fast standard lightwork pushed daily usage down to 8 calls over 21 hours... | Default all 4 tools to fast STANDARD with structured JSON + <1ms deterministic line-anchor/quote... | `apprentice/backends.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/planner.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/grounding.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/hook.py` ([`Apprentice_Software.md`](Apprentice_Software.md)) |
 | `LL-04` (`TIER2`) | `2026-11-19` | [WIN] Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling... | Fixed 60s chunk timeouts, under-calibrated 3.6 B/tok estimates, sequential... | Keep calibrated 2.5 B/tok structured estimation, decode-noise-gated prefill servo with staged timeout... | `apprentice/backends.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/planner.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/core.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/hook.py` ([`Apprentice_Software.md`](Apprentice_Software.md)) (`SBX-20261119_202741-2e0c02e1`) |
+| `LL-05` (`TIER2`) | `2026-11-20` | Parallel same-turn async_job=True and collect MCP calls stalled 45-50s behind blocking... | Single-threaded serve_stdio() processed JSON-RPC tools/call synchronously on the stdin... | Keep ThreadPoolExecutor(max_workers=4) tools/call dispatch with locked _write_reply() (no unlocked... | `apprentice/mcp_stdio.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/hook.py` ([`Apprentice_Software.md`](Apprentice_Software.md)) (`SBX-20261120_064053-d6f0a889`) |
 
 ### `LL-01` [TIER2] [TRAP] — Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization (`2026-11-19`)
 - **Symptom / Trap:** Initial Dual-Mode Memory onboarding and compartment boundary initialization for `Apprentice`.
@@ -61,6 +62,13 @@ last_synced: "2026-11-19"
 - **Bottleneck / Challenge:** Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling ex.map() results; working-tree review diffs failed line grounding (0/3); post-compaction sessions drifted on Project State Ledger Apprentice telemetry and ignored Second-Eyes.
 - **Mechanism & Measured Gain:** Fixed 60s chunk timeouts, under-calibrated 3.6 B/tok estimates, sequential working_tree.patch numbering with leading diff prefixes, and one-shot SessionStart hooks without transcript delta resync caused silent abandonment and ledger hallucination.
 - **Reusable Pattern & Integration Blueprint:** Keep calibrated 2.5 B/tok structured estimation, decode-noise-gated prefill servo with staged timeout recovery, FIRST_COMPLETED partial-safe bounded tasks, @@ +new @@ real-line review diffs with .md-only bold normalization, Condition priority GPU gate, spoof-proof PreInvocation compaction/drift/Second-Eyes hooks with precommit_seen cooldown bypass, and the user-approved 3,600-line v3.1 ceiling (pause and ask before raising any cap again). (`apprentice/backends.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/planner.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/core.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/hook.py` ([`Apprentice_Software.md`](Apprentice_Software.md)) (`SBX-20261119_202741-2e0c02e1`)).
+
+---
+
+### `LL-05` [TIER2] [TRAP] — Parallel same-turn async_job=True and collect MCP calls stalled 45-50s behind blocking reads on Frontier... (`2026-11-20`)
+- **Symptom / Trap:** Parallel same-turn async_job=True and collect MCP calls stalled 45-50s behind blocking reads on Frontier hosts, while oversubscribed sync tasks=[4] batches caused partial turn penalties and scratch-script nudges pointed to apprentice_read
+- **Root Cause:** Single-threaded serve_stdio() processed JSON-RPC tools/call synchronously on the stdin loop without concurrency, and neither TOOL_DEFINITIONS nor _build_routing_hint stated max_slots sync limits or separate draft nudge remediation
+- **Verified Resolution & Permanent Guardrail:** Keep ThreadPoolExecutor(max_workers=4) tools/call dispatch with locked _write_reply() (no unlocked tracking set), keep inline initialize/ping ordering, surface tasks=[<= max_slots sync] / async_job=True, and route scratch-script nudges to apprentice_draft (verified 406.22s Frontier SUCCESS, -37.1% MCP wait) (`apprentice/mcp_stdio.py` ([`Apprentice_Software.md`](Apprentice_Software.md)), `apprentice/hook.py` ([`Apprentice_Software.md`](Apprentice_Software.md)) (`SBX-20261120_064053-d6f0a889`)).
 
 ---
 
