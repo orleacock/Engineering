@@ -341,7 +341,7 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 ```
 
-### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: 61478852e035` | `Tree: bf24de7ca6dc`)
+### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: 4e7367cecf97` | `Tree: bf24de7ca6dc`)
 - **Repository Location**: `../../Alchemical3D/Apprentice`
 
 ```text
@@ -457,7 +457,7 @@ last_synced: "2026-11-19"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: a25287c75793` | `Tree: b6b8ac5ad1cf`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bca695a40427` | `Tree: b6b8ac5ad1cf`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

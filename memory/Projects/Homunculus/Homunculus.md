@@ -5,9 +5,9 @@ compartment: "cleanroom"
 project_type: "software"
 status: "v0.3.8 Graduated Baseline (03afb8c86cf3, BMK-20261119_140039-cbdb27bc)"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-repo_head_sha: "a25287c75793"
+repo_head_sha: "bca695a40427"
 tree_hash: "b6b8ac5ad1cf"
-checkpoint_head_sha: "a25287c75793"
+checkpoint_head_sha: "bca695a40427"
 checkpoint_tree_hash: "b6b8ac5ad1cf"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
@@ -70,7 +70,7 @@ Part of the [`README.md`](../../README.md)
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Homunculus | HEAD SHA: a25287c75793 | Tree Hash: b6b8ac5ad1cf
+Repository: Homunculus | HEAD SHA: bca695a40427 | Tree Hash: b6b8ac5ad1cf
   adapters/
   adapters/agents_md/
   adapters/agents_md/AGENTS.md
@@ -279,12 +279,13 @@ Repository: Homunculus | HEAD SHA: a25287c75793 | Tree Hash: b6b8ac5ad1cf
 ## 🚀 Session Handoff & Multi-Session Kickstart (`SESSION-HANDOFF`)
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-19`
-- **Checkpoint Provenance**: `HEAD SHA: a25287c75793` | `Tree Hash: b6b8ac5ad1cf` | `Worktree: clean` | `Last Verification: SBX-20261119_161403-4dd809bf; 97/97 unittest OK; portability 0 violations; kernel_seal verified`
+- **Checkpoint Provenance**: `HEAD SHA: bca695a40427` | `Tree Hash: b6b8ac5ad1cf` | `Worktree: clean` | `Last Verification: SBX-20261119_203112-7df92ad3`
 - **Where We Stopped (Verified State & Context)**:
-  Committed Track 4 Ring-0 fixes (a25287c), added LL-065, AST map sync, sandbox dry-run (+faults), and sealed kernel checks.
+  Homunculus Ring-0 rule cleanup committed locally (bca695a): replaced stale Apprentice v2 ledger schema in rules/co-engineering-partner.md#L47 with version-agnostic verbatim slot (-49 B), rebuilt cross-client adapters, re-sealed Ring 0, and passed 97/97 post-seal tests.
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Ready for next clean-room feature or benchmark milestone.
+  1. Keep pre-commit-gate/SKILL.md clean-room; push repos only when explicitly requested
+- **Open Discussion / Alignment Questions**: None
 <!-- SESSION-HANDOFF:END -->
 
 ## 🎯 Active Tasks

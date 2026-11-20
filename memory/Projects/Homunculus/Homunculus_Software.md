@@ -4,7 +4,7 @@ entity: "Alchemical-3D"
 compartment: "cleanroom"
 telemetry_domain: "software"
 local_path: "/home/orin/Projects/Alchemical3D/Homunculus"
-inventory_sha256: "3cd5f45cff9d"
+inventory_sha256: "99dc9dc35937"
 last_synced: "2026-11-19"
 ---
 
@@ -63,7 +63,7 @@ last_synced: "2026-11-19"
 | `adapters/antigravity/hooks.json` | `JSON` | `{}` (empty object) | `ca3d163bab` |
 | `adapters/claude_code/settings.json` | `JSON` | `schema_version`, `description`, `permissions`, `hooks` | `afa6950342` |
 | `hooks/hooks.json` | `JSON` | `{}` (empty object) | `ca3d163bab` |
-| `scripts/kernel_seal.json` | `JSON` | `schema_version`, `ring`, `sealed_at`, `reason`, `entry_count`, `seal_digest` | `7857bfc584` |
+| `scripts/kernel_seal.json` | `JSON` | `schema_version`, `ring`, `sealed_at`, `reason`, `entry_count`, `seal_digest` | `0f4e428260` |
 | `scripts/script_contracts.json` | `JSON` | `schema_version`, `description`, `coupling_policy`, `scripts` | `8c5f072959` |
 | `templates/homunculus_safety.example.json` | `JSON` | `schema_version`, `description`, `default_compartment`, `enforce_posix_win_user_paths_in_public`, `compartments` | `7e45cf72a5` |
 | `templates/diagrams/Diagram_Palettes.json` | `JSON` | `default_palette`, `palettes` | `8918674dd9` |

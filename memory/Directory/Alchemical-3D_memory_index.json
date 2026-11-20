@@ -1,5 +1,5 @@
 {
-  "avg_doc_len": 236.61,
+  "avg_doc_len": 235.77,
   "compartment": "cleanroom",
   "decision_profile_tier0": [
     "1. **Accuracy & Truth (`#1`)**: Source-verified facts, dimensional math, and structural integrity supersede all else. Never trade truth or disable `verify_claims.py` for speed.",
@@ -329,13 +329,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization -> Scaffolded `Apprentice` hub dossier, domain telemetry, `Quarantine/`, and `SUBSYSTEM-INVARIANTS` baseline under `entity: Alchemical-3D` (`public`; `Apprentice.md`).",
-          "end_line": 42,
+          "end_line": 43,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-01",
-          "line_range": "#L37-L42",
+          "line_range": "#L38-L43",
           "location": "main",
           "scope": "",
-          "start_line": 37,
+          "start_line": 38,
           "tier": "TIER2",
           "title": "Initial Dual-Mode Memory Onboarding & Compartment Boundary Initialization (`2026-11-19`)",
           "touched_files": []
@@ -343,13 +343,13 @@
         {
           "archetype": "trade-off",
           "capsule_1line": "[TRADE-OFF] Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... -> Enforce Apprentice 4 Core Goals (1. Reduce Quota Usage -> 2. Provide Accuracy Support -> 3. Help With Simple Tasks -> 4. Agile-Sprint Parallelism) under Alchemical-3D pillars: exactly 4 orthogonal tools (read, draft, review, runtime; <=26 params), pure Python stdlib zero-venv drop-in, self-calibrating Tier S/M/L dynamic %-of-ctx math...",
-          "end_line": 49,
+          "end_line": 50,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-02",
-          "line_range": "#L44-L49",
+          "line_range": "#L45-L50",
           "location": "main",
           "scope": "",
-          "start_line": 44,
+          "start_line": 45,
           "tier": "TIER0",
           "title": "Sidecar plugin architectures drift toward overlapping monolithic tools, bloated schemas, and... (`2026-11-19`)",
           "touched_files": [
@@ -363,13 +363,13 @@
         {
           "archetype": "dead-end",
           "capsule_1line": "[DEAD-END] Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... -> Default all 4 tools to fast STANDARD with structured JSON + <1ms deterministic line-anchor/quote verification (including ordered elided-segment matching), never clamp compact GPU models to CPU defaults, and preserve deep-search lineage: trace cross-cutting pre-v3.0 lessons via Principles PRIN-06, PRIN-08, PRIN-09 (--trace-lineage)...",
-          "end_line": 54,
+          "end_line": 57,
           "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
           "id": "LL-03",
-          "line_range": "#L51-L54",
+          "line_range": "#L52-L57",
           "location": "main",
           "scope": "",
-          "start_line": 51,
+          "start_line": 52,
           "tier": "TIER2",
           "title": "Pre-v3.0 monolithic sidecar design combined restrictive Two-Posture host-tier byte walls (<25KB / 4-sliver... (`2026-11-19`)",
           "touched_files": [
@@ -378,10 +378,29 @@
             "hook.py",
             "planner.py"
           ]
+        },
+        {
+          "archetype": "win",
+          "capsule_1line": "[WIN] Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling ex.map()... -> Keep calibrated 2.5 B/tok structured estimation, decode-noise-gated prefill servo with staged timeout recovery, FIRST_COMPLETED partial-safe bounded tasks, @@ +new @@ real-line review diffs with .md-only bold normalization, Condition priority GPU gate, spoof-proof PreInvocation compaction/drift/Second-Eyes hooks with precommit_seen...",
+          "end_line": 63,
+          "file": "Projects/Apprentice/Apprentice_Lessons_Learned.md",
+          "id": "LL-04",
+          "line_range": "#L59-L63",
+          "location": "main",
+          "scope": "script:apprentice",
+          "start_line": 59,
+          "tier": "TIER2",
+          "title": "Large structured files (85 KB) timed out under 3.6 B/tok estimation and discarded sibling ex.map()... (`2026-11-19`)",
+          "touched_files": [
+            "backends.py",
+            "core.py",
+            "hook.py",
+            "planner.py"
+          ]
         }
       ],
-      "proj_avg_doc_len": 144.33,
-      "proj_total_docs": 3,
+      "proj_avg_doc_len": 158.0,
+      "proj_total_docs": 4,
       "project": "Apprentice"
     },
     "Brand": {
@@ -767,13 +786,13 @@
         {
           "archetype": "trap",
           "capsule_1line": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate... -> Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this...",
-          "end_line": 92,
+          "end_line": 93,
           "file": "Projects/Homunculus/Homunculus_Lessons_Learned.md",
           "id": "LL-032",
-          "line_range": "#L86-L92",
+          "line_range": "#L87-L93",
           "location": "main",
           "scope": "",
-          "start_line": 86,
+          "start_line": 87,
           "tier": "TIER0",
           "title": "Change Governance (`Option 1C`: `\"Ask Before Coding Heuristics\"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)",
           "touched_files": [
@@ -981,6 +1000,26 @@
           "touched_files": [
             "audit_portability.py",
             "sync_memory.py"
+          ]
+        },
+        {
+          "archetype": "trade-off",
+          "capsule_1line": "[TRADE-OFF] Hardcoding Apprentice v2 telemetry format (Calls = <clean>/<corr> (healed=<h>)) and conditional inclusion... -> Keep rules/co-engineering-partner.md#L47 version-agnostic by delegating exact Apprentice status formatting to the active plugin's hook/runtime output verbatim (-49 B net rule reduction; rebuild cross-client adapters via build_adapters.py --build-repo-adapters and re-seal Ring 0 after edits); keep pre-commit-gate/SKILL.md clean-room...",
+          "end_line": 84,
+          "file": "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md",
+          "id": "LL-066",
+          "line_range": "#L80-L84",
+          "location": "main",
+          "scope": "rules:global",
+          "start_line": 80,
+          "tier": "TIER2",
+          "title": "Hardcoding Apprentice v2 telemetry format (Calls = <clean>/<corr> (healed=<h>)) and conditional inclusion... (`2026-11-19`)",
+          "touched_files": [
+            "AGENTS.md",
+            "SKILL.md",
+            "build_adapters.py",
+            "co-engineering-partner.md",
+            "kernel_seal.json"
           ]
         },
         {
@@ -2087,8 +2126,8 @@
           ]
         }
       ],
-      "proj_avg_doc_len": 289.01,
-      "proj_total_docs": 67,
+      "proj_avg_doc_len": 287.51,
+      "proj_total_docs": 68,
       "project": "Homunculus"
     },
     "Maker-Tools": {
@@ -2677,14 +2716,14 @@
       "sha256": "cd4d3ad44e6628ab"
     },
     "Projects/Apprentice/Apprentice.md": {
-      "lines": 116,
+      "lines": 118,
       "sections": 0,
-      "sha256": "08145c41778f9fc8"
+      "sha256": "7b03c884a841079f"
     },
     "Projects/Apprentice/Apprentice_Lessons_Learned.md": {
-      "lines": 63,
-      "sections": 3,
-      "sha256": "63f08b3ae406edfa"
+      "lines": 72,
+      "sections": 4,
+      "sha256": "1b048ee90a95c30b"
     },
     "Projects/Apprentice/Apprentice_Playbooks.md": {
       "lines": 19,
@@ -2694,7 +2733,7 @@
     "Projects/Apprentice/Apprentice_Software.md": {
       "lines": 64,
       "sections": 0,
-      "sha256": "0c3741b4e27f2068"
+      "sha256": "f9175c7096d13225"
     },
     "Projects/Brand/Brand.md": {
       "lines": 138,
@@ -2772,14 +2811,14 @@
       "sha256": "12f35762a5e72ac7"
     },
     "Projects/Homunculus/Homunculus.md": {
-      "lines": 304,
+      "lines": 305,
       "sections": 0,
-      "sha256": "a5f92722537fe469"
+      "sha256": "75dd163cfc4608bf"
     },
     "Projects/Homunculus/Homunculus_Lessons_Learned.md": {
-      "lines": 95,
+      "lines": 96,
       "sections": 1,
-      "sha256": "7d735ddaeb4ead0e"
+      "sha256": "50c3e783c7cb4794"
     },
     "Projects/Homunculus/Homunculus_Playbooks.md": {
       "lines": 32,
@@ -2789,12 +2828,12 @@
     "Projects/Homunculus/Homunculus_Software.md": {
       "lines": 91,
       "sections": 0,
-      "sha256": "369417ccb9b6a427"
+      "sha256": "4e5ad8fb8473dca1"
     },
     "Projects/Homunculus/Pages/Homunculus_Lessons_Vol_02.md": {
-      "lines": 78,
-      "sections": 10,
-      "sha256": "c1d834bee2be06bf"
+      "lines": 84,
+      "sections": 11,
+      "sha256": "a91c39b4bc6fb31b"
     },
     "Projects/Maker-Tools/Archive/Maker-Tools_Lessons_Archive.md": {
       "lines": 24,
@@ -2892,7 +2931,7 @@
       "sha256": "c9fd0f112f120949"
     }
   },
-  "total_docs": 101,
+  "total_docs": 103,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "08a1426d09cd5012"
+  "vectors_digest": "4a0df19d407f38b8"
 }

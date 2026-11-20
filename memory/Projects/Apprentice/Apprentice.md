@@ -5,14 +5,14 @@ compartment: "public"
 project_type: "software"
 status: "active"
 local_path: "../../Alchemical3D/Apprentice"
-repo_head_sha: "61478852e035"
+repo_head_sha: "4e7367cecf97"
 tree_hash: "bf24de7ca6dc"
-checkpoint_head_sha: "61478852e035"
+checkpoint_head_sha: "4e7367cecf97"
 checkpoint_tree_hash: "bf24de7ca6dc"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-19"
-checkpoint_lessons_digest: "4a03fe176232994c"
+checkpoint_lessons_digest: "ce8fa102f668a8ee"
 ---
 
 # Apprentice — Project Hub Dossier
@@ -52,12 +52,14 @@ checkpoint_lessons_digest: "4a03fe176232994c"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-19`
-- **Checkpoint Provenance**: `HEAD SHA: 61478852e035` | `Tree Hash: bf24de7ca6dc` | `Worktree: clean` | `Last Verification: 20/20 unittest OK; audit_portability 0 violations (27 files); audit_data_boundary CLEAN`
+- **Checkpoint Provenance**: `HEAD SHA: 4e7367cecf97` | `Tree Hash: bf24de7ca6dc` | `Worktree: clean` | `Last Verification: SBX-20261119_202741-2e0c02e1`
 - **Where We Stopped (Verified State & Context)**:
-  Committed clean-room Apprentice v3.0 initial repository (6147885) with 27 files and 20/20 unit tests passing.
+  Apprentice v3.1 Round 1 committed locally (4e7367c): adaptive prefill servo, partial-safe reads, real-line review grounding, Condition GPU gate, compaction/drift/Second-Eyes hooks with precommit_seen bypass, and user-approved 3,600-L cap (3,520/3,600 L).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Configure git origin remote for Apprentice when ready to publish upstream.
+  1. Restart MCP sidecar / open fresh session to load v3.1 runtime in memory
+  2. Run live 5A fast-vs-frontier host-model comparison against v2.6.0 benchmark receipts
+- **Open Discussion / Alignment Questions**: Keep v3.1 ceiling at 3,600 L; alert user before raising any cap again
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -66,7 +68,7 @@ checkpoint_lessons_digest: "4a03fe176232994c"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Apprentice | HEAD SHA: 61478852e035 | Tree Hash: bf24de7ca6dc
+Repository: Apprentice | HEAD SHA: 4e7367cecf97 | Tree Hash: bf24de7ca6dc
   apprentice/
   apprentice/__init__.py
   apprentice/__main__.py

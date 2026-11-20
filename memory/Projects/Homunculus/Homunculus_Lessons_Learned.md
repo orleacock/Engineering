@@ -82,6 +82,7 @@ flowchart LR
 | **`LL-063`** (`TIER2`) | `[TRAP]` | `global` | [`Homunculus_Lessons_Vol_02.md`](Pages/Homunculus_Lessons_Vol_02.md): Same-basename files collided in SourceIndex across cold and... |
 | **`LL-064`** (`TIER2`) | `[TRADE-OFF]` | `global` | [`Homunculus_Lessons_Vol_02.md`](Pages/Homunculus_Lessons_Vol_02.md): Legacy flash model fallbacks routed subagents to sunsetting... |
 | **`LL-065`** (`TIER2`) | `[TRAP]` | `subsys:audit_portability` | [`Homunculus_Lessons_Vol_02.md`](Pages/Homunculus_Lessons_Vol_02.md): Clean-room portability flagged multi-file Python packages lacking... |
+| **`LL-066`** (`TIER2`) | `[TRADE-OFF]` | `rules:global` | [`Homunculus_Lessons_Vol_02.md`](Pages/Homunculus_Lessons_Vol_02.md): Hardcoding Apprentice v2 telemetry format (Calls = <clean>/<corr>... |
 
 ### `LL-032` [TIER0] [TRAP] — Change Governance (`Option 1C`: `"Ask Before Coding Heuristics"` Law, Pre-Mutation Advisory Gate, `3-Ring kernel_seal.json + sudo:`, & `Option 3` De-Bloating)
 - **Symptom / Trap:** Whenever a sandbox run exposed an edge case or missing specification in a target repo, our reflex was to add deeper regex heuristics into `Homunculus` core scripts (`verify_claims.py`, `inspect_hardware_ecosystem.py`, `audit_repo_docs.py`) instead of halting and asking the engineer (`ask_question` / `[TBD: ...]`). Over time, this created recursive complexity where fixes generated new false positives (`creating as much work as we fix, or more`).
