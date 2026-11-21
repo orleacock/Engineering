@@ -5,9 +5,9 @@ compartment: "public"
 project_type: "software"
 status: "active"
 local_path: "../../Alchemical3D/Apprentice"
-repo_head_sha: "01438d33b485"
+repo_head_sha: "bf78e782060c"
 tree_hash: "9a5a64b866c1"
-checkpoint_head_sha: "01438d33b485"
+checkpoint_head_sha: "bf78e782060c"
 checkpoint_tree_hash: "9a5a64b866c1"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
@@ -52,12 +52,12 @@ checkpoint_lessons_digest: "37d0da8cbaa01969"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-20`
-- **Checkpoint Provenance**: `HEAD SHA: 01438d33b485` | `Tree Hash: 9a5a64b866c1` | `Worktree: clean` | `Last Verification: SBX-20261120_190212-0a9d59b4`
+- **Checkpoint Provenance**: `HEAD SHA: bf78e782060c` | `Tree Hash: 9a5a64b866c1` | `Worktree: clean` | `Last Verification: VRF-d114a9346ef1`
 - **Where We Stopped (Verified State & Context)**:
-  Sprint 3 hardening & PEP-8 multi-line grounding fix complete (01438d3): 33/33 tests, SBX-20261120_190212-0a9d59b4, live S1-S3 100.0% VRF, 236.81s bench (-32.6%)
+  Overhauled README.md and ARCHITECTURE.md for Apprentice v3.0.0 with Option E2 quota/speed telemetry, Mermaid workflow, Tier S/M/L rules, CLI/MCP quick start, and firewall reference (33/33 tests, VRF-d114a9346ef1, BOUNDARY_CLEAN; pushed bf78e78).
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Enter next project development phase on a clean synced workstation; /compact recommended.
+  1. Enter next Apprentice development phase or Round 3 multi-model Tier S/M/L sweeps.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -66,7 +66,7 @@ checkpoint_lessons_digest: "37d0da8cbaa01969"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Apprentice | HEAD SHA: 01438d33b485 | Tree Hash: 9a5a64b866c1
+Repository: Apprentice | HEAD SHA: bf78e782060c | Tree Hash: 9a5a64b866c1
   apprentice/
   apprentice/__init__.py
   apprentice/__main__.py

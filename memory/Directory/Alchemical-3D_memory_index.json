@@ -12,7 +12,7 @@
     "- **`TIER0`\u2013`TIER5` Memory Gravity**: Organize lessons by importance (`TIER0` pinned laws/repeat offenders $\\rightarrow$ `TIER1` subsystem invariants $\\rightarrow$ `TIER2` active dev-cycle full-context window $\\le 12$ unscoped / $\\le 6$ per-scope / $\\le 30$ total across paginated `Pages/*_Vol_NN.md` + `Host_Runtime/` Shelf 1B $\\rightarrow$ `TIER3`..."
   ],
   "entity": "Alchemical-3D",
-  "last_synced": "2026-11-20",
+  "last_synced": "2026-11-21",
   "projects": {
     "A3DP_Gantry_Assembly": {
       "compartment": "public",
@@ -2794,7 +2794,7 @@
     "Projects/Apprentice/Apprentice.md": {
       "lines": 114,
       "sections": 0,
-      "sha256": "0b9c3968553421bb"
+      "sha256": "a05a4fbbf347a171"
     },
     "Projects/Apprentice/Apprentice_Lessons_Learned.md": {
       "lines": 97,
@@ -3014,5 +3014,5 @@
   },
   "total_docs": 107,
   "vectors_cache_rel": ".cache/Alchemical-3D_scoring_vectors.json",
-  "vectors_digest": "06f4b8e1d8d933c6"
+  "vectors_digest": "b77169b2087a59a9"
 }
