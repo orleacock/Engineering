@@ -3,7 +3,7 @@ title: "Alchemical-3D — Memory & Repository Directory Tree"
 entity: "Alchemical-3D"
 compartment: "cleanroom"
 type: "entity-directory"
-tree_hash: "3e6bbe3a9ace"
+tree_hash: "7586edbbd5de"
 last_synced: "2026-11-20"
 ---
 
@@ -62,6 +62,8 @@ last_synced: "2026-11-20"
 │   │   ├── Alembic_Toolhead_Lessons_Learned.md
 │   │   └── Alembic_Toolhead_Playbooks.md
 │   ├── Apprentice/
+│   │   ├── Pages/
+│   │   │   └── Apprentice_Lessons_Vol_02.md
 │   │   ├── Quarantine/
 │   │   │   └── Quarantine_README.md
 │   │   ├── Apprentice.md
@@ -341,7 +343,7 @@ last_synced: "2026-11-20"
 +------------------------------------------------------------+
 ```
 
-### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: ace80cd6b3cf` | `Tree: bf24de7ca6dc`)
+### [`Apprentice`](../Projects/Apprentice/Apprentice.md) (`software` | `HEAD: 01438d33b485` | `Tree: 9a5a64b866c1`)
 - **Repository Location**: `../../Alchemical3D/Apprentice`
 
 ```text
@@ -370,8 +372,6 @@ last_synced: "2026-11-20"
 │   ├── hooks.json.template
 │   ├── mcp_config.json.template
 │   └── plugin.json
-├── scripts/
-│   └── stress_test_v3.py
 ├── tests/
 │   ├── test_backends_and_planner.py
 │   ├── test_grounding.py
@@ -457,7 +457,7 @@ last_synced: "2026-11-20"
 +------------------------------------------------------------+
 ```
 
-### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: bca695a40427` | `Tree: b6b8ac5ad1cf`)
+### [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`software` | `HEAD: 1c5e34160b47` | `Tree: b6b8ac5ad1cf`)
 - **Repository Location**: `/home/orin/Projects/Alchemical3D/Homunculus`
 
 ```text

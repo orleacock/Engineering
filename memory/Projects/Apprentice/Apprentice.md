@@ -5,14 +5,14 @@ compartment: "public"
 project_type: "software"
 status: "active"
 local_path: "../../Alchemical3D/Apprentice"
-repo_head_sha: "ace80cd6b3cf"
-tree_hash: "bf24de7ca6dc"
-checkpoint_head_sha: "ace80cd6b3cf"
-checkpoint_tree_hash: "bf24de7ca6dc"
+repo_head_sha: "01438d33b485"
+tree_hash: "9a5a64b866c1"
+checkpoint_head_sha: "01438d33b485"
+checkpoint_tree_hash: "9a5a64b866c1"
 checkpoint_worktree: "clean"
 task_umbrella: "../../Tasks/Alchemical-3D_Tasks.md"
 last_synced: "2026-11-20"
-checkpoint_lessons_digest: "a63d6e219eea470e"
+checkpoint_lessons_digest: "37d0da8cbaa01969"
 ---
 
 # Apprentice — Project Hub Dossier
@@ -52,12 +52,12 @@ checkpoint_lessons_digest: "a63d6e219eea470e"
 
 <!-- SESSION-HANDOFF:START -->
 - **Last Session Timestamp**: `2026-11-20`
-- **Checkpoint Provenance**: `HEAD SHA: ace80cd6b3cf` | `Tree Hash: bf24de7ca6dc` | `Worktree: clean` | `Last Verification: SBX-20261120_064053-d6f0a889`
+- **Checkpoint Provenance**: `HEAD SHA: 01438d33b485` | `Tree Hash: 9a5a64b866c1` | `Worktree: clean` | `Last Verification: SBX-20261120_190212-0a9d59b4`
 - **Where We Stopped (Verified State & Context)**:
-  Apprentice v3.1 Round 2 (ace80cd): concurrent mcp_stdio tools/call dispatch + locked _write_reply, slot-aware <= max_slots sync hints, and apprentice_draft scratch-nudge fix; verified 26/26 OK, SBX-20261120_064053-d6f0a889, 3,544/3,600 L, and live 5A Arm B v3 Frontier SUCCESS (406.22s, -92.86s MCP wait, 10/10 facts, 26/26 citations, 0 wide reads)
+  Sprint 3 hardening & PEP-8 multi-line grounding fix complete (01438d3): 33/33 tests, SBX-20261120_190212-0a9d59b4, live S1-S3 100.0% VRF, 236.81s bench (-32.6%)
 - **Active Project State Ledger & Blockers**: None
 - **Next Session Kickstart & Discussion Points**:
-  1. Optional: inspect remaining v3.1 backlog or run additional Tier S (4B/9B) live comparisons under APPRENTICE_CACHE_DIR isolation
+  1. Enter next project development phase on a clean synced workstation; /compact recommended.
 <!-- SESSION-HANDOFF:END -->
 
 ---
@@ -66,7 +66,7 @@ checkpoint_lessons_digest: "a63d6e219eea470e"
 
 <!-- AUTO-TREE:START -->
 ```text
-Repository: Apprentice | HEAD SHA: ace80cd6b3cf | Tree Hash: bf24de7ca6dc
+Repository: Apprentice | HEAD SHA: 01438d33b485 | Tree Hash: 9a5a64b866c1
   apprentice/
   apprentice/__init__.py
   apprentice/__main__.py
@@ -87,8 +87,6 @@ Repository: Apprentice | HEAD SHA: ace80cd6b3cf | Tree Hash: bf24de7ca6dc
   plugin/hooks.json.template
   plugin/mcp_config.json.template
   plugin/plugin.json
-  scripts/
-  scripts/stress_test_v3.py
   tests/
   tests/test_backends_and_planner.py
   tests/test_grounding.py

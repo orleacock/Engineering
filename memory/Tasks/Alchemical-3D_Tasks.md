@@ -22,10 +22,10 @@ last_synced: "2026-11-20"
 | [`A3DP_Gantry_Assembly`](../Projects/A3DP_Gantry_Assembly/A3DP_Gantry_Assembly.md) (`#L89`) | `2f33452` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Alchemical_Web_Docs`](../Projects/Alchemical_Web_Docs/Alchemical_Web_Docs.md) (`#L97`) | `55b4795` (`clean`, `2026-11-10`) | `0` | `1` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Alembic_Toolhead`](../Projects/Alembic_Toolhead/Alembic_Toolhead.md) (`#L79`) | `c7eaca6` (`clean`, `2026-11-16`) | `0` | `0` | Next: Alembic_Toolhead clean and synced on origin/main; no open tasks |
-| [`Apprentice`](../Projects/Apprentice/Apprentice.md) | `ace80cd` (`clean`, `2026-11-20`) | `0` | `1` | Next: Optional: inspect remaining v3.1 backlog or run additional Tier S (4B/9B) live comparisons under APPRENTICE_CACHE_DIR isolation |
+| [`Apprentice`](../Projects/Apprentice/Apprentice.md) | `01438d3` (`clean`, `2026-11-20`) | `0` | `1` | Next: Enter next project development phase on a clean synced workstation; /compact recommended. |
 | [`Brand`](../Projects/Brand/Brand.md) (`#L106`) | `49354b3` (`clean`, `2026-11-10`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Extras`](../Projects/Extras/Extras.md) (`#L109`) | `cfef0fd` (`clean`, `2026-11-16`) | `1` | `1` | Next: Optional: confirm functional/visual distinction between Alch_Cube_20mm_V4.stl and Alchemical_20mm_Cube.stl if desired |
-| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L46`) | `bca695a` (`clean`, `2026-11-19`) | `1` | `0` | Next: Keep pre-commit-gate/SKILL.md clean-room; push repos only when explicitly requested |
+| [`Homunculus`](../Projects/Homunculus/Homunculus.md) (`#L46`) | `1c5e341` (`clean`, `2026-11-20`) | `1` | `0` | Next: Round 3: expanded multi-model Tier S/M/L sweeps for Apprentice. |
 | [`Maker-Tools`](../Projects/Maker-Tools/Maker-Tools.md) (`#L103`) | `29641c5` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Organization_Profile`](../Projects/Organization_Profile/Organization_Profile.md) (`#L100`) | `b74920e` (`clean`, `2026-11-06`) | `0` | `0` | Next: Review open tasks in `Alchemical-3D_Tasks.md`. |
 | [`Pestle_Rotational_Bowden`](../Projects/Pestle_Rotational_Bowden/Pestle_Rotational_Bowden.md) (`#L92`) | `7197d2b` (`clean`, `2026-11-17`) | `0` | `0` | Blocker: `None` (`0` open tasks, `0` open `[TBD]`s) · Next: `Pestle_Rotational_Bowden` is clean and synced on `origin/main` (`7197d2b`)... |
